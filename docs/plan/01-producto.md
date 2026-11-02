@@ -54,7 +54,7 @@ Estas reglas viven en `packages/dominio` y tienen pruebas. Si una tarea necesita
 - **Retención de asiento:** 10 minutos desde que se elige. Un asiento retenido o vendido no se puede elegir. Una retención vencida cuenta como libre. Máximo 6 asientos por compra.
 - **Venta:** cierra 15 minutos antes de la salida. Después, el viaje aparece pero con "venta cerrada".
 - **Cancelación:** más de 24 h antes, reembolso del 100 %; entre 24 h y 2 h, 50 %; menos de 2 h, sin reembolso. Cambiar a otra salida de la misma ruta es gratis una vez si faltan más de 2 h.
-- **Estados del viaje:** programado → abordando (desde 20 min antes) → en ruta → llegó. Desvíos: atrasado (con minutos), cancelado.
+- **Estados del viaje:** programado → abordando (desde 20 min antes) → en ruta → llegó. Desvíos: atrasado (con minutos), cancelado. La salida real es la salida programada más `minutosAtraso`; la llegada es la salida real más `duracionMin` de la ruta. Orden de precedencia: cancelado, llegó, en ruta (desde la salida real), atrasado (hay atraso y todavía no sale), abordando (20 min antes de la salida real) y programado. La venta cierra 15 min antes de la salida programada y nunca está abierta en un viaje cancelado.
 - **Código del boleto:** 8 caracteres de un alfabeto sin ambiguos (sin 0, O, 1, I, L), el último es dígito de control. Se puede validar sin conexión.
 - **Calificación del chofer:** promedio de las últimas 200 calificaciones; se muestra con un decimal y solo si tiene al menos 5.
 
