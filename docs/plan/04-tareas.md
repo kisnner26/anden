@@ -70,6 +70,18 @@ Cada tarea dice qué hacer, dónde, cuándo está hecha y qué commits se espera
 - hecho cuando: `npx expo export --platform android` y `--platform ios` empaquetan sin error y `pnpm verificar` sigue en verde.
 - commits: `fix: sacar la prueba del directorio de rutas` · `test: ningún archivo de prueba dentro de app` · `docs: regla de pruebas fuera de app`
 
+### T-009 · servicios del MTI
+- depende de: T-010 · zona: `packages/dominio`, `apps/movil/src/textos` · raíz: no · estado: libre
+- hacer: reemplazar `TIPOS_BUS` y el valor `interlocal` por `TIPOS_SERVICIO = ['ordinario', 'expreso', 'taxi-interlocal']` y `TipoServicio`, con su esquema; `Bus.tipo` pasa a `Bus.servicio`; `FiltroBusqueda.tipos` pasa a `servicios`; actualizar T-016 (`servicioActual`/`servicioNuevo`) y los textos visibles ("Interlocal" pasa a "Taxi interlocal"). Marco en `05-marco-mti.md`.
+- hecho cuando: `grep -ri interlocal` solo encuentra `taxi-interlocal` y su texto; pruebas, `pnpm verificar` y `expo export` en verde.
+- commits: un `refactor:` por tipo, esquema y consumidor, y un `docs:` de cierre.
+
+### T-012b · precio oficial del MTI
+- depende de: T-009 · zona: `packages/dominio` · raíz: no · estado: libre
+- hacer: tipo `Tarifa` y `Tarifario = Tarifa[]` con esquema (ver `03-arquitectura.md`) y `precioOficial(tarifario, rutaId, servicio, tramo, pasajeros)` que devuelve `Resultado<{ unitario: number; total: number }, 'sin-tarifa-autorizada' | 'tramo-invalido' | 'sin-pasajeros'>`. Busca la tarifa exacta del tramo y no calcula nada: sin multiplicadores, prorrateo ni redondeo. Retirar de T-012 los multiplicadores, `minutosDelTramo` y `tarifaBase` de `Ruta`, y migrar a `precioOficial` lo que usaba `calcularPrecio`. Los menores en brazos siguen gratis como regla de muestra.
+- hecho cuando: pruebas de tarifa exacta de un tramo completo y de uno intermedio, ruta o servicio sin tarifa, tramo inválido, menores en brazos y sin pasajeros; `rg -i multiplicador packages` sin resultados.
+- commits: un `feat:` por tipo, esquema y función, un `refactor:` por cada consumidor migrado y un `docs:` de cierre.
+
 ## fase 1 · dominio (TypeScript puro)
 
 Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el mismo commit (las reglas están en `01-producto.md`).
