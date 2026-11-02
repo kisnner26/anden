@@ -200,7 +200,7 @@ Requieren T-004 aprobado, T-005, T-006a, T-007. Zona: `apps/movil/src/componente
 - commits: `feat: vitrina de componentes en desarrollo`
 
 ### T-031 · Icono, Etiqueta, Tarjeta
-- depende de: T-030 · raíz: sí (agrega `react-native-svg`) · estado: libre
+- depende de: T-030 · raíz: sí (agrega `react-native-svg`) · estado: hecha
 - aviso: nada de `lucide-react-native` ni de otra librería de íconos; el dueño la rechazó por genérica. Si la rama ya tiene lucide, retirarlo en su propio commit `chore:` y rehacer `Icono` con los símbolos ilustrados del mockup v2 (`mockups/identidad-v2.html`, bloque `<defs>`).
 - commits: `chore: agregar react-native-svg` · `feat: símbolos de íconos ilustrados` · `feat: componente icono` · `feat: componente etiqueta` · `feat: componente tarjeta`
 
