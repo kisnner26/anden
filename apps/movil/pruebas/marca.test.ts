@@ -48,3 +48,19 @@ test('las capas adaptativas permiten que android aplique su mascara', () => {
   expect(tipoColorPng(adaptativo.foregroundImage)).toBe(6);
   expect(tipoColorPng(adaptativo.monochromeImage)).toBe(6);
 });
+
+test('la pantalla de arranque usa la marca en ambos temas', () => {
+  expect(configuracion.expo.plugins).toContainEqual([
+    'expo-splash-screen',
+    expect.objectContaining({
+      dark: expect.objectContaining({
+        image: './assets/marca/arranque.png',
+      }),
+      image: './assets/marca/arranque.png',
+    }),
+  ]);
+  expect(dimensionesPng('./assets/marca/arranque.png')).toEqual({
+    alto: 600,
+    ancho: 600,
+  });
+});
