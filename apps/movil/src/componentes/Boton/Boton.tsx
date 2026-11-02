@@ -19,6 +19,7 @@ export type VarianteBoton = 'pildora' | 'principal' | 'secundario';
 export interface PropiedadesBoton {
   alPresionar: () => void;
   cargando?: boolean;
+  deshabilitado?: boolean;
   etiqueta: string;
   variante?: VarianteBoton;
 }
@@ -26,6 +27,7 @@ export interface PropiedadesBoton {
 export function Boton({
   alPresionar,
   cargando = false,
+  deshabilitado = false,
   etiqueta,
   variante = 'principal',
 }: PropiedadesBoton) {
@@ -63,8 +65,8 @@ export function Boton({
     <Pressable
       accessibilityLabel={etiqueta}
       accessibilityRole="button"
-      accessibilityState={{ busy: cargando }}
-      disabled={cargando}
+      accessibilityState={{ busy: cargando, disabled: deshabilitado }}
+      disabled={cargando || deshabilitado}
       onPress={alPresionar}
       style={({ pressed }) => [
         estilos.base,
@@ -86,6 +88,7 @@ export function Boton({
           backgroundColor: colores.superficie,
           borderColor: colores.linea,
         },
+        deshabilitado && estilos.deshabilitado,
         pressed && estilos.presionado,
       ]}
     >
@@ -140,6 +143,7 @@ const estilos = StyleSheet.create({
     overflow: 'hidden',
     paddingHorizontal: espacios.dieciseis,
   },
+  deshabilitado: { opacity: 0.45 },
   flecha: {
     alignItems: 'center',
     borderRadius: radios.pildora,
