@@ -2,10 +2,15 @@ import { describe, expect, it } from 'vitest';
 
 import {
   esquemaAsiento,
+  esquemaBoleto,
   esquemaBus,
+  esquemaCalificacion,
   esquemaChofer,
   esquemaCoordenadas,
   esquemaParada,
+  esquemaPasajero,
+  esquemaPosicionBus,
+  esquemaRetencion,
   esquemaRuta,
   esquemaTerminal,
   esquemaViaje,
@@ -217,6 +222,141 @@ describe('esquemaAsiento', () => {
     );
     expect(
       esquemaAsiento.safeParse({ ...asiento, tipo: 'techo' }).success,
+    ).toBe(false);
+  });
+});
+
+const pasajero = { nombre: 'Ana Ruiz', esMenorEnBrazos: false };
+
+const boleto = {
+  id: 'bol_01',
+  codigo: 'K7RM4QX9',
+  viajeId: 'via_01',
+  duenoId: 'usu_01',
+  asiento: 8,
+  pasajero,
+  precio: 46,
+  estado: 'vigente',
+  compradoEn: '2026-11-02T13:50:00-06:00',
+};
+
+describe('esquemaRetencion', () => {
+  const retencion = {
+    id: 'ret_01',
+    viajeId: 'via_01',
+    asientos: [8, 9],
+    expira: '2026-11-02T14:00:00-06:00',
+    duenoId: 'usu_01',
+  };
+
+  it('acepta una retención con asientos', () => {
+    expect(esquemaRetencion.safeParse(retencion).success).toBe(true);
+  });
+
+  it('rechaza una retención sin asientos o con asiento cero', () => {
+    expect(
+      esquemaRetencion.safeParse({ ...retencion, asientos: [] }).success,
+    ).toBe(false);
+    expect(
+      esquemaRetencion.safeParse({ ...retencion, asientos: [0] }).success,
+    ).toBe(false);
+  });
+});
+
+describe('esquemaPasajero', () => {
+  it('acepta un pasajero con y sin cédula', () => {
+    expect(esquemaPasajero.safeParse(pasajero).success).toBe(true);
+    expect(
+      esquemaPasajero.safeParse({ ...pasajero, cedula: '001-010190-0001A' })
+        .success,
+    ).toBe(true);
+  });
+
+  it('rechaza nombre vacío y cédula vacía', () => {
+    expect(esquemaPasajero.safeParse({ ...pasajero, nombre: '' }).success).toBe(
+      false,
+    );
+    expect(
+      esquemaPasajero.safeParse({ ...pasajero, cedula: ' ' }).success,
+    ).toBe(false);
+  });
+});
+
+describe('esquemaBoleto', () => {
+  it('acepta un boleto completo', () => {
+    expect(esquemaBoleto.safeParse(boleto).success).toBe(true);
+  });
+
+  it('rechaza código de largo incorrecto o en minúsculas', () => {
+    expect(
+      esquemaBoleto.safeParse({ ...boleto, codigo: 'K7RM4QX' }).success,
+    ).toBe(false);
+    expect(
+      esquemaBoleto.safeParse({ ...boleto, codigo: 'k7rm4qx9' }).success,
+    ).toBe(false);
+  });
+
+  it('rechaza precio con decimales, negativo o estado desconocido', () => {
+    expect(esquemaBoleto.safeParse({ ...boleto, precio: 46.5 }).success).toBe(
+      false,
+    );
+    expect(esquemaBoleto.safeParse({ ...boleto, precio: -1 }).success).toBe(
+      false,
+    );
+    expect(
+      esquemaBoleto.safeParse({ ...boleto, estado: 'perdido' }).success,
+    ).toBe(false);
+  });
+
+  it('valida el pasajero anidado', () => {
+    expect(
+      esquemaBoleto.safeParse({ ...boleto, pasajero: { nombre: '' } }).success,
+    ).toBe(false);
+  });
+});
+
+describe('esquemaCalificacion', () => {
+  const calificacion = {
+    boletoId: 'bol_01',
+    choferId: 'cho_01',
+    estrellas: 5,
+    etiquetas: ['puntual', 'amable'],
+  };
+
+  it('acepta estrellas de 1 a 5', () => {
+    for (const estrellas of [1, 2, 3, 4, 5]) {
+      expect(
+        esquemaCalificacion.safeParse({ ...calificacion, estrellas }).success,
+      ).toBe(true);
+    }
+  });
+
+  it('rechaza 0, 6, decimales y etiquetas desconocidas', () => {
+    for (const estrellas of [0, 6, 4.5]) {
+      expect(
+        esquemaCalificacion.safeParse({ ...calificacion, estrellas }).success,
+      ).toBe(false);
+    }
+    expect(
+      esquemaCalificacion.safeParse({ ...calificacion, etiquetas: ['veloz'] })
+        .success,
+    ).toBe(false);
+  });
+});
+
+describe('esquemaPosicionBus', () => {
+  it('acepta una posición y rechaza coordenadas inválidas', () => {
+    const posicion = {
+      viajeId: 'via_01',
+      coordenadas,
+      registradaEn: '2026-11-02T14:45:10-06:00',
+    };
+    expect(esquemaPosicionBus.safeParse(posicion).success).toBe(true);
+    expect(
+      esquemaPosicionBus.safeParse({
+        ...posicion,
+        coordenadas: { lat: 100, lng: 0 },
+      }).success,
     ).toBe(false);
   });
 });
