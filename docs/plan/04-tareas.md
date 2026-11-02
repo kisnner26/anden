@@ -159,7 +159,8 @@ Todas en `packages/datos` salvo T-024 y T-025.
 - commits: `feat: contrato de repositorios` · `test: suite de contrato reutilizable`
 
 ### T-021 · semilla de Nicaragua
-- depende de: T-010 · raíz: no · estado: libre
+- depende de: T-009, T-012b · raíz: no · estado: libre
+- aviso: las tarifas de la semilla son de muestra y tienen que cargarse como un `Tarifario` (`Tarifa[]`), con `resolucion: 'muestra'`; los expresos solo de terminal a terminal; ningún precio se presenta como oficial hasta cumplir T-077.
 - hacer: terminales, rutas con paradas, buses, choferes (nombres inventados, sin fotos reales), viajes generados para 14 días desde una fecha base. Validados con los esquemas Zod. Rotular `// datos de muestra`.
 - hecho cuando: prueba que toda la semilla pasa los esquemas y que cada ruta tiene al menos 6 salidas diarias.
 - commits: `feat: terminales y rutas de muestra` · `feat: buses y choferes de muestra` · `feat: generador de salidas de muestra`
