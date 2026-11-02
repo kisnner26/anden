@@ -18,7 +18,9 @@ Cada pantalla tiene una sola cosa dominante (el bus, el titular o el tablero), u
 
 - Listas agrupadas de iOS, celdas con chevron, ajustes con interruptores en fila larga.
 - Azul de sistema, morado de "app moderna", degradados de arcoíris.
-- Tarjetas blancas planas con sombra gris.
+- Tarjetas planas con sombra gris. El relieve es siempre de luz y sombra cálidas.
+- Íconos de librería (lucide, feather, SF Symbols, Material). Los íconos son ilustrados y propios (ver `Icono`).
+- Elementos asimétricos o colgando: píldoras montadas en una esquina, halos borrosos, tarjetas cortadas por la barra inferior. La única pieza que cruza un borde es el bus sobre la tarjeta del próximo viaje, centrado.
 - Tipografías del sistema o Inter como fuente de marca.
 - Emojis, en cualquier lugar (botones, textos, notificaciones, datos de muestra).
 - Ilustraciones genéricas de personas, mapas de "pin rojo" por defecto.
