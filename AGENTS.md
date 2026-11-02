@@ -93,6 +93,26 @@ Regla de fondo: un commit cuenta una sola cosa, y el proyecto compila y pasa sus
 9. Historia real: no falsear fechas ni simular actividad. Los commits son pequeños porque el trabajo se hizo por partes.
 10. Subir solo con permiso. Nunca `--force`. Si un push es rechazado, `git fetch` y mirá qué hay antes de decidir. Desde una rama distinta de la principal: `git push origin HEAD:<rama>`, comprobando antes que es avance directo.
 
+### granularidad: lo más segmentado posible, sin bajar la calidad
+
+El dueño del proyecto quiere el historial más fino que el trabajo real permita. Antes de commitear, preguntate si lo que tenés en el índice todavía se puede partir en dos cosas que se entiendan solas. Si se puede, partilo.
+
+Una tarea del tablero suele dar de 6 a 12 commits, no 2 o 3. Ejemplos de dónde cortar:
+
+- cada función o regla de negocio es un commit `feat:`, y sus pruebas van en el commit `test:` siguiente; si la función tiene varios casos distintos (bordes, errores, caso feliz), cada grupo de casos es un `test:` aparte.
+- cada tipo, constante o esquema nuevo es su propio commit, antes de lo que lo usa.
+- cada componente visual: estructura, estados (vacío, error, cargando), interacción y accesibilidad son commits separados.
+- cada pantalla: primero el esqueleto con datos, después cada estado, después cada detalle de interacción.
+- cada exportación nueva en un `index.ts`, cada mejora de formato o de nombres (`refactor:`), cada decisión escrita en `decisiones.md` (`docs:`) y cada tarea nueva que encuentres en el camino (`docs:`).
+
+Lo que no vale, porque rompe la regla de fondo o inventa actividad:
+
+- partir una función a la mitad, una línea suelta o un archivo que no compila por separado.
+- commits vacíos, cambios de espacios sin motivo, o deshacer y rehacer lo mismo para sumar commits.
+- empujar trabajo que ya está hecho en un solo bloque partiéndolo después con fechas distintas. Se commitea mientras se trabaja, paso a paso, con la fecha real.
+
+Cada commit, por pequeño que sea, deja tipos, lint y pruebas del área en verde.
+
 Flujo corto por paso:
 
 ```sh
