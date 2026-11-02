@@ -244,7 +244,8 @@ Requieren T-004 aprobado, T-005, T-006a, T-007. Zona: `apps/movil/src/componente
 - commits: `feat: boton principal y secundario` · `feat: boton pildora con flecha` · `feat: estado cargando del boton` · `feat: componente chip`
 
 ### T-033 · BarraPestanas y Hoja
-- depende de: T-031 · raíz: sí (expo-blur) · estado: libre
+- depende de: T-031 · raíz: sí (expo-blur) · estado: **parcial**
+- avance: `BarraPestanas` hecha con relieve y píldora activa; falta la `Hoja` inferior.
 - hacer: barra flotante de cristal con 4 pestañas; hoja inferior con asa y gesto de cierre.
 - commits: `feat: barra de pestanas de cristal` · `feat: hoja inferior arrastrable`
 
@@ -253,7 +254,8 @@ Requieren T-004 aprobado, T-005, T-006a, T-007. Zona: `apps/movil/src/componente
 - commits: `feat: estado vacio` · `feat: estado de error con reintento` · `feat: esqueleto de carga`
 
 ### T-035 · TableroSalidas
-- depende de: T-031 · estado: libre
+- depende de: T-031 · estado: **parcial**
+- avance: `TableroSalidas` con fichas, andén y estados con forma; falta la animación split-flap y el modo sin animación.
 - hacer: fila de tablero y lista; split-flap por carácter con Reanimated; respeta reducir movimiento.
 - hecho cuando: en la vitrina, un botón cambia la hora y el estado y la fila gira solo en los caracteres que cambian.
 - commits: `feat: fila del tablero de salidas` · `feat: animacion split-flap por caracter` · `feat: tablero sin animacion con reducir movimiento`
@@ -286,7 +288,8 @@ Zona: `apps/movil/app/` y `apps/movil/src/pantallas/`. Raíz: no, salvo que se i
 - commits: `feat: navegacion por pestanas`
 
 ### T-041 · Viajar (inicio)
-- depende de: T-040, T-039, T-025 · estado: libre
+- depende de: T-040, T-039, T-025 · estado: **parcial**
+- avance: portada y pantalla Viajar con el próximo viaje y las salidas de hoy sobre datos de muestra; faltan `CampoLugar`, fecha, pasajeros y rutas frecuentes.
 - commits: `feat: titular y buscador de inicio` · `feat: selector de fecha y pasajeros` · `feat: tus rutas con proxima salida`
 
 ### T-042 · resultados
@@ -299,7 +302,8 @@ Zona: `apps/movil/app/` y `apps/movil/src/pantallas/`. Raíz: no, salvo que se i
 - commits: `feat: detalle del viaje` · `feat: chofer y bus en el detalle`
 
 ### T-044 · elegí tu asiento
-- depende de: T-043, T-036 · estado: libre
+- depende de: T-043, T-036 · estado: **parcial**
+- avance: pantalla de asientos con el plano real, tope de seis y total con la tarifa de muestra; falta retener de verdad con el contrato de datos.
 - hacer: mapa, retención al confirmar, cuenta regresiva de 10 min; al vencer, aviso y vuelta al mapa.
 - commits: `feat: pantalla de seleccion de asientos` · `feat: retener asientos elegidos` · `feat: cuenta regresiva y vencimiento de retencion`
 
@@ -323,7 +327,8 @@ Zona: `apps/movil/app/` y `apps/movil/src/pantallas/`. Raíz: no, salvo que se i
 - commits: `feat: cancelar boleto con reembolso` · `feat: cambiar a otra salida`
 
 ### T-049 · Horarios (tablero)
-- depende de: T-040, T-035 · estado: libre
+- depende de: T-040, T-035 · estado: **parcial**
+- avance: tablero de salidas con filtro por servicio sobre datos de muestra; faltan refresco, terminal más cercana y horario por ruta.
 - hacer: selector de terminal (la más cercana si hay permiso), tablero a pantalla completa que se refresca cada 30 s, horario completo por ruta.
 - commits: `feat: tablero de salidas por terminal` · `feat: refresco del tablero` · `feat: horario del dia por ruta` · `feat: terminal mas cercana con permiso de ubicacion`
 
