@@ -93,7 +93,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - commits: `feat: calcular precio por tramo y tipo de bus`
 
 ### T-013 · disponibilidad y retención
-- depende de: T-011, T-014 · estado: libre
+- depende de: T-011, T-014 · estado: hecha
 - hacer: tipo `Ocupacion` con su esquema (ver `03-arquitectura.md`; el esquema exige `expira` si está retenido y `boletoId` si está vendido); `estadoAsientos(config, ocupaciones, ahora)` que devuelve `{ numero, estado: 'libre' | 'retenido' | 'vendido', duenoId? }[]` y trata la retención vencida como libre; y `puedeRetener(viaje, config, ocupaciones, asientos, duenoId, ahora)` que devuelve `Resultado<void, 'sin-asientos' | 'maximo-6' | 'asiento-inexistente' | 'asiento-ocupado' | 'venta-cerrada'>`. Un asiento retenido por el mismo dueño se puede volver a retener (renueva); uno de otro dueño o vendido, no. Usa `ventaAbierta` de T-014.
 - hecho cuando: pruebas de choque (dos dueños, mismo asiento), renovación por el mismo dueño, retención vencida, más de 6, asiento inexistente, viaje cancelado y venta cerrada.
 - commits: `feat: estado de asientos con retenciones vencidas` · `feat: validar retencion de asientos`
