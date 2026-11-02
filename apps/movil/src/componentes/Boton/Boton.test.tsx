@@ -28,7 +28,11 @@ describe('Boton', () => {
   it('renderiza la variante secundaria sin indicador de avance', async () => {
     const etiqueta = t('vitrina.botonSecundario');
     const pantalla = await render(
-      <Boton alPresionar={jest.fn()} etiqueta={etiqueta} variante="secundario" />,
+      <Boton
+        alPresionar={jest.fn()}
+        etiqueta={etiqueta}
+        variante="secundario"
+      />,
     );
 
     expect(pantalla.getByRole('button', { name: etiqueta })).toBeOnTheScreen();
@@ -55,11 +59,32 @@ describe('Boton', () => {
 
     fireEvent.press(boton);
 
-    expect(boton.props.accessibilityState).toEqual(expect.objectContaining({
-      busy: true,
-      disabled: true,
-    }));
+    expect(boton.props.accessibilityState).toEqual(
+      expect.objectContaining({
+        busy: true,
+        disabled: true,
+      }),
+    );
     expect(pantalla.getByTestId('boton-cargando-barra')).toBeOnTheScreen();
+    expect(alPresionar).not.toHaveBeenCalled();
+  });
+
+  it('expone y respeta el estado deshabilitado', async () => {
+    const alPresionar = jest.fn();
+    const etiqueta = t('vitrina.botonSecundario');
+    const pantalla = await render(
+      <Boton alPresionar={alPresionar} deshabilitado etiqueta={etiqueta} />,
+    );
+    const boton = pantalla.getByRole('button', { name: etiqueta });
+
+    fireEvent.press(boton);
+
+    expect(boton.props.accessibilityState).toEqual(
+      expect.objectContaining({
+        busy: false,
+        disabled: true,
+      }),
+    );
     expect(alPresionar).not.toHaveBeenCalled();
   });
 });
