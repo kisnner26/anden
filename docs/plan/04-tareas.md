@@ -17,7 +17,7 @@ Cada tarea dice qué hacer, dónde, cuándo está hecha y qué commits se espera
 - commits: `chore: crear workspace de pnpm` · `chore: agregar app expo con expo router` · `chore: agregar paquetes dominio y datos` · `docs: fijar versiones del stack`
 
 ### T-001 · calidad del código
-- depende de: T-000 · zona: raíz · raíz: sí · estado: libre
+- depende de: T-000 · zona: raíz · raíz: sí · estado: hecha
 - hacer: TypeScript estricto (`strict`, `noUncheckedIndexedAccess`) con `tsconfig` base; ESLint y Prettier compartidos; script `pnpm verificar` que corre tipos, lint y pruebas de todo.
 - hecho cuando: `pnpm verificar` pasa en verde.
 - commits: `chore: configurar typescript estricto` · `chore: configurar eslint y prettier` · `chore: agregar script verificar`
