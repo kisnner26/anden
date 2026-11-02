@@ -91,7 +91,7 @@ Tipos en `packages/dominio/src/tipos.ts`, cada uno con su esquema Zod en `esquem
 | `Terminal` | id, nombre, ciudad, codigo (3 letras, ej. `UCA`), coordenadas, andenes |
 | `Ruta` | id, origenId, destinoId, paradas (terminal o punto con minutos desde el origen), distanciaKm, duracionMin; la tarifa ya no vive aquí sino en `Tarifa` |
 | `Tarifa` | rutaId, servicio, desdeParada, hastaParada (índices de `ruta.paradas`), cordobas (enteros, la tarifa oficial del MTI), resolucion (por ejemplo `RM 051-2017`) |
-| `Bus` | id, placa, cooperativa, tipo (`ordinario`, `interlocal`, `expreso`), configuracion (`micro15`, `coaster26`, `bus45`), comodidades |
+| `Bus` | id, placa, cooperativa, servicio (`ordinario`, `expreso`, `taxi-interlocal`, los del MTI), configuracion (`micro15`, `coaster26`, `bus45`), comodidades |
 | `Chofer` | id, nombre, fotoUrl, aniosManejando, licenciaVerificada, viajesRealizados |
 | `Viaje` | id, rutaId, busId, choferId, salida (ISO), anden, estado, minutosAtraso |
 | `Asiento` | numero, fila, columna, tipo (`ventana`, `pasillo`, `preferencial`) |
