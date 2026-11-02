@@ -79,3 +79,26 @@ export const paletaIconos = {
   verdeClaro: '#9BE8BE',
   verdeOscuro: '#2E9E6B',
 } as const;
+
+/** colores del bus de personaje; son los mismos en claro y oscuro */
+export const paletaAutobus = {
+  banda: '#FFB21E',
+  bandaClara: '#FFD468',
+  bandaOscura: '#E08C00',
+  borde: '#8A6A22',
+  carroceriaClara: '#FFFDF7',
+  carroceriaMedia: '#F1E8D2',
+  carroceriaOscura: '#D8CCB0',
+  faro: '#FFF1B8',
+  faroBorde: '#E5B84A',
+  faroBrillo: '#FFC94D',
+  llantaClara: '#FFFFFF',
+  llantaOscura: '#B9B2A0',
+  paragolpes: '#262520',
+  rueda: '#13120F',
+  ruedaArco: '#1B1A16',
+  ruedaCentro: '#6B665A',
+  sombraSuelo: '#3A2A08',
+  vidrioClaro: '#3A414B',
+  vidrioOscuro: '#11141A',
+} as const;
