@@ -80,7 +80,7 @@ Dos familias, cargadas con `@expo-google-fonts`:
 | `dato` | JetBrains Mono 500 | 15 / 20 | horas en listas, asientos, andén |
 | `etiqueta` | JetBrains Mono 500 | 11 / 14, espaciado 0.08em, mayúsculas | rótulos tipo "SALIDA", "ANDÉN" |
 
-Titular a dos tonos: la primera parte en `tinta`, la palabra clave en `ambar` ("¿Para dónde **vas**?").
+Titular a dos tonos: la primera parte en `tinta`, la palabra clave en `ambarTitular` ("¿Para dónde **vas**?"). El nombre "ANDÉN" de la portada es un degradado gris cálido con sombra, enorme (alrededor de 150 px en ExtraCondensed 900) y queda detrás del bus.
 
 ## forma, espacio y movimiento
 
