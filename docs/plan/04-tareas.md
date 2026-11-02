@@ -113,8 +113,8 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 
 ### T-016 · cancelación y cambio
 - depende de: T-014 · estado: libre
-- hacer: `politicaCancelacion(boleto, viaje, ahora)` → porcentaje y monto; `puedeCambiar(...)`.
-- hecho cuando: pruebas en 24 h y 2 h exactas, cambio ya usado.
+- hacer: campo `cambioUsado: boolean` en `Boleto` (tipo, esquema y pruebas que lo construyen); `politicaCancelacion(boleto, viaje, ahora)` que devuelve `Resultado<{ porcentaje: 0 | 50 | 100; monto: number }, 'boleto-no-vigente'>`; y `puedeCambiar({ boleto, viajeActual, viajeNuevo, tipoBusActual, tipoBusNuevo, ahora })` que devuelve `Resultado<void, 'boleto-no-vigente' | 'cambio-ya-usado' | 'mismo-viaje' | 'otra-ruta' | 'distinto-tipo-de-bus' | 'muy-cerca-de-la-salida' | 'viaje-nuevo-no-disponible'>`. Las reglas exactas están en `01-producto.md`; `viaje-nuevo-no-disponible` cubre el viaje cancelado y la venta cerrada (usa `ventaAbierta` de T-014).
+- hecho cuando: pruebas en 24 h y 2 h exactas, justo bajo 2 h, redondeo hacia abajo del monto, boleto no vigente, y cada error de `puedeCambiar` más el caso feliz.
 - commits: `feat: reembolso segun anticipacion` · `feat: regla de cambio de salida`
 
 ### T-017 · código de boleto
