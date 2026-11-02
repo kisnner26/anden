@@ -23,7 +23,7 @@ Cada tarea dice qué hacer, dónde, cuándo está hecha y qué commits se espera
 - commits: `chore: configurar typescript estricto` · `chore: configurar eslint y prettier` · `chore: agregar script verificar`
 
 ### T-002 · pruebas en paquetes y app
-- depende de: T-001 · zona: raíz · raíz: sí · estado: libre
+- depende de: T-001 · zona: raíz · raíz: sí · estado: hecha
 - hacer: Vitest en `dominio` y `datos` con una prueba de humo cada uno; Jest + React Native Testing Library en `movil` con una prueba de render de la pantalla inicial.
 - hecho cuando: las tres pruebas de humo corren dentro de `pnpm verificar`.
 - commits: `chore: configurar vitest en paquetes` · `chore: configurar jest en la app`
