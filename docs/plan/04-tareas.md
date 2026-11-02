@@ -11,7 +11,7 @@ Cada tarea dice qué hacer, dónde, cuándo está hecha y qué commits se espera
 ## fase 0 · cimientos
 
 ### T-000 · monorepo y app vacía
-- depende de: nada · zona: raíz · raíz: sí · estado: libre
+- depende de: nada · zona: raíz · raíz: sí · estado: hecha
 - hacer: `pnpm` workspaces con `apps/movil` (Expo con Expo Router y TypeScript, versión estable vigente), `packages/dominio` y `packages/datos` vacíos con `package.json` (`@anden/dominio`, `@anden/datos`). bundle id `com.kisnner.anden`, esquema `anden`. Anotar versiones en la tabla de `03-arquitectura.md`.
 - hecho cuando: `pnpm install` limpio; la app abre en iOS y Android en compilación de desarrollo mostrando una pantalla con el texto "Andén".
 - commits: `chore: crear workspace de pnpm` · `chore: agregar app expo con expo router` · `chore: agregar paquetes dominio y datos` · `docs: fijar versiones del stack`
