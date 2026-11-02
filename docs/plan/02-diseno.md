@@ -142,4 +142,4 @@ Las capturas de `mockups/capturas/v2/` son la referencia exacta.
 
 ## mapa
 
-Estilo base gratuito sin clave (OpenFreeMap) con una capa de estilo propia en `apps/movil/src/mapa/estilo-oscuro.json`: tierra `fondo`, calles `linea`, agua `#14202A`, etiquetas `tintaSuave`, rutas en `ambar`. Sin pines rojos: las terminales son cuadrados ámbar con el código de terminal en mono.
+Estilo base gratuito sin clave (OpenFreeMap) con una capa de estilo propia en `apps/movil/src/mapa/estilo-claro.json` y su variante `estilo-oscuro.json` para la noche: tierra `fondo`, calles `linea`, agua en un azul grisáceo suave, etiquetas `tintaSuave`, rutas en `ambar` (con `ambarTexto` para rótulos). Sin pines rojos: las terminales son losetas ámbar con el código de terminal en mono.
