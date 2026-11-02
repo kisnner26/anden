@@ -8,10 +8,7 @@ export interface PropiedadesTarjeta extends PropsWithChildren {
   etiquetaAccesible?: string;
 }
 
-export function Tarjeta({
-  children,
-  etiquetaAccesible,
-}: PropiedadesTarjeta) {
+export function Tarjeta({ children, etiquetaAccesible }: PropiedadesTarjeta) {
   const { colores } = useTema();
   return (
     <View
