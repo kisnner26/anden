@@ -15,7 +15,7 @@ export const tipografia = {
     lineHeight: 32,
   },
   display: {
-    fontFamily: 'Archivo_800ExtraCondensed',
+    fontFamily: 'ArchivoNarrow_700Bold',
     fontSize: 56,
     lineHeight: 52,
   },
@@ -37,7 +37,7 @@ export const tipografia = {
     lineHeight: 26,
   },
   titulo: {
-    fontFamily: 'Archivo_700Condensed',
+    fontFamily: 'ArchivoNarrow_700Bold',
     fontSize: 34,
     lineHeight: 36,
   },

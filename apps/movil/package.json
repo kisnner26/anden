@@ -44,7 +44,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "test": "jest --preset jest-expo --runInBand",
+    "test": "jest --runInBand",
     "tipos": "tsc --noEmit",
     "lint": "expo lint"
   },

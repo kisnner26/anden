@@ -20,4 +20,17 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'error',
     },
   },
+  {
+    files: ['apps/movil/jest.config.cjs', 'apps/movil/jest.setup.js'],
+    languageOptions: {
+      globals: {
+        jest: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
 );
