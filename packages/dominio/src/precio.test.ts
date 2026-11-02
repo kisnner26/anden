@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { minutosDelTramo, MULTIPLICADORES_BUS } from './precio';
+import {
+  minutosDelTramo,
+  MULTIPLICADORES_BUS,
+  precioUnitario,
+} from './precio';
 import type { Ruta } from './tipos';
 
 const ruta: Ruta = {
@@ -35,5 +39,15 @@ describe('MULTIPLICADORES_BUS', () => {
       interlocal: 1.2,
       expreso: 1.5,
     });
+  });
+});
+
+describe('precioUnitario', () => {
+  it('mantiene la tarifa base en el tramo completo', () => {
+    expect(precioUnitario(ruta, { desde: 0, hasta: 2 }, 'ordinario')).toBe(46);
+  });
+
+  it('prorratea por minutos y redondea una sola vez', () => {
+    expect(precioUnitario(ruta, { desde: 0, hasta: 1 }, 'interlocal')).toBe(36);
   });
 });
