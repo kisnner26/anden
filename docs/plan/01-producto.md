@@ -24,7 +24,7 @@ Todo lo de esta tabla entra en la primera versión publicable. El orden de const
 | área | función | detalle |
 |---|---|---|
 | buscar | buscador de viaje | origen, destino, fecha, número de pasajeros; rutas frecuentes y recientes arriba |
-| buscar | resultados | lista de salidas con hora, duración, tipo de bus (expreso, interlocal, ordinario), precio en C$, asientos libres, calificación del chofer |
+| buscar | resultados | lista de salidas con hora, duración, servicio (ordinario, expreso o taxi interlocal), precio en C$, asientos libres, calificación del chofer |
 | horarios | tablero de salidas | por terminal, al estilo tablero de andén: próximas salidas, andén, estado (a tiempo, abordando, atrasado, salió) |
 | horarios | horario por ruta | todas las salidas del día de una ruta, con primera y última |
 | rutas | mapa de rutas | todas las rutas sobre un mapa oscuro; tocar una muestra paradas, distancia y duración |
