@@ -25,3 +25,18 @@ export function minutosDelTramo(ruta: Ruta, tramo: Tramo): number | null {
   if (!salida || !llegada) return null;
   return llegada.minutosDesdeOrigen - salida.minutosDesdeOrigen;
 }
+
+/** tarifa de una persona que paga, redondeada una sola vez al córdoba entero */
+export function precioUnitario(
+  ruta: Ruta,
+  tramo: Tramo,
+  tipoBus: TipoBus,
+): number | null {
+  const minutos = minutosDelTramo(ruta, tramo);
+  if (minutos === null || minutos <= 0) return null;
+
+  return Math.ceil(
+    (ruta.tarifaBase * minutos * MULTIPLICADORES_BUS[tipoBus]) /
+      ruta.duracionMin,
+  );
+}
