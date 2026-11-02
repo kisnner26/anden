@@ -1,7 +1,16 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import {
+  AccessibilityInfo,
+  Animated,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 import { Icono } from '@/componentes/Icono';
 import { espacios, radios, tamanosControl } from '@/tema/espacios';
+import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 
@@ -9,23 +18,53 @@ export type VarianteBoton = 'pildora' | 'principal' | 'secundario';
 
 export interface PropiedadesBoton {
   alPresionar: () => void;
+  cargando?: boolean;
   etiqueta: string;
   variante?: VarianteBoton;
 }
 
 export function Boton({
   alPresionar,
+  cargando = false,
   etiqueta,
   variante = 'principal',
 }: PropiedadesBoton) {
   const { colores } = useTema();
+  const movimientoReducido = useMovimientoReducido();
+  const avance = useRef(new Animated.Value(0)).current;
   const colorTexto =
-    variante === 'principal' ? colores.sobreAmbar : colores.tinta;
+    variante === 'principal' && !cargando
+      ? colores.sobreAmbar
+      : colores.tinta;
+
+  useEffect(() => {
+    if (!cargando) {
+      avance.setValue(0);
+      return;
+    }
+
+    if (movimientoReducido) {
+      avance.setValue(0.7);
+      return;
+    }
+
+    const animacion = Animated.loop(
+      Animated.timing(avance, {
+        duration: movimiento.entradaPantalla * 3,
+        toValue: 1,
+        useNativeDriver: true,
+      }),
+    );
+    animacion.start();
+    return () => animacion.stop();
+  }, [avance, cargando, movimientoReducido]);
 
   return (
     <Pressable
       accessibilityLabel={etiqueta}
       accessibilityRole="button"
+      accessibilityState={{ busy: cargando }}
+      disabled={cargando}
       onPress={alPresionar}
       style={({ pressed }) => [
         estilos.base,
@@ -42,6 +81,10 @@ export function Boton({
           borderColor: colores.linea,
           borderRadius: radios.pildora,
           justifyContent: 'space-between',
+        },
+        cargando && {
+          backgroundColor: colores.superficie,
+          borderColor: colores.linea,
         },
         pressed && estilos.presionado,
       ]}
@@ -62,11 +105,30 @@ export function Boton({
           />
         </View>
       )}
+      {cargando && (
+        <Animated.View
+          style={[
+            estilos.barraCarga,
+            {
+              backgroundColor: colores.ambar,
+              transform: [{ scaleX: avance }],
+            },
+          ]}
+          testID="boton-cargando-barra"
+        />
+      )}
     </Pressable>
   );
 }
 
 const estilos = StyleSheet.create({
+  barraCarga: {
+    bottom: 0,
+    height: espacios.cuatro,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+  },
   base: {
     alignItems: 'center',
     borderRadius: radios.cuadrado,
@@ -75,6 +137,7 @@ const estilos = StyleSheet.create({
     gap: espacios.doce,
     height: tamanosControl.altoBoton,
     justifyContent: 'center',
+    overflow: 'hidden',
     paddingHorizontal: espacios.dieciseis,
   },
   flecha: {
@@ -86,3 +149,18 @@ const estilos = StyleSheet.create({
   },
   presionado: { opacity: 0.82 },
 });
+
+function useMovimientoReducido() {
+  const [reducido, establecerReducido] = useState(false);
+
+  useEffect(() => {
+    void AccessibilityInfo.isReduceMotionEnabled().then(establecerReducido);
+    const suscripcion = AccessibilityInfo.addEventListener(
+      'reduceMotionChanged',
+      establecerReducido,
+    );
+    return () => suscripcion.remove();
+  }, []);
+
+  return reducido;
+}
