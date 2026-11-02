@@ -205,7 +205,7 @@ Requieren T-004 aprobado, T-005, T-006a, T-007. Zona: `apps/movil/src/componente
 - commits: `chore: agregar react-native-svg` · `feat: símbolos de íconos ilustrados` · `feat: componente icono` · `feat: componente etiqueta` · `feat: componente tarjeta`
 
 ### T-032 · Boton y Chip
-- depende de: T-031 · estado: libre
+- depende de: T-031 · estado: hecha
 - hacer: variantes y estado cargando de `02-diseno.md`; háptica ligera.
 - commits: `feat: boton principal y secundario` · `feat: boton pildora con flecha` · `feat: estado cargando del boton` · `feat: componente chip`
 
