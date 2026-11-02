@@ -28,25 +28,39 @@ Cada pantalla tiene una sola cosa dominante (el bus, el titular o el tablero), u
 
 ## color
 
-Modo oscuro por defecto. Los valores viven en `apps/movil/src/tema/colores.ts` y nadie escribe un hex fuera de ese archivo.
+Claro cálido de día y oscuro automático de noche (de 18:00 a 06:00, o el del sistema si la persona lo fija). Los valores viven en `apps/movil/src/tema/colores.ts` y nadie escribe un hexadecimal fuera de ese archivo.
 
-| token | oscuro | claro | uso |
+| token | claro | oscuro | uso |
 |---|---|---|---|
-| `fondo` | `#0E0F11` | `#F4F1EA` | fondo de pantalla |
-| `superficie` | `#16181B` | `#FBF9F4` | tarjetas, hojas |
-| `superficieAlta` | `#1F2226` | `#FFFFFF` | elementos sobre tarjetas |
-| `linea` | `#2C3036` | `#DDD8CC` | bordes y separadores |
-| `tinta` | `#F2EFE8` | `#141517` | texto principal |
-| `tintaSuave` | `#A9A59C` | `#5C5A55` | texto secundario |
-| `ambar` | `#FFB21E` | `#B86E00` | acento único: acción principal, selección, tablero |
-| `sobreAmbar` | `#1A1205` | `#FFFFFF` | texto sobre ámbar |
+| `fondo` | `#F5F1E8` | `#121210` | fondo de pantalla |
+| `fondoProfundo` | `#E8E1D1` | `#0B0B09` | final del degradado del fondo |
+| `barroClaro` | `#F2EDE1` | `#2A2923` | inicio del degradado de un bloque blando |
+| `barroOscuro` | `#E3DCCB` | `#1C1B17` | final del degradado de un bloque blando |
+| `superficie` | `#EDE7DA` | `#201F1B` | hojas y paneles planos |
+| `superficieAlta` | `#FBF8EF` | `#2B2A25` | píldoras y elementos sobre bloques |
+| `linea` | `#D8D0BD` | `#34322B` | separadores y asientos vendidos |
+| `bloqueNegro` | `#1C1B17` | `#0B0B09` | tablero, tarjeta del próximo viaje, barra de pago |
+| `tinta` | `#17160F` | `#F2EFE8` | texto principal |
+| `tintaSuave` | `#605B50` | `#A9A59C` | texto secundario |
+| `ambar` | `#FFB21E` | `#FFB21E` | relleno del acento: botón, asiento elegido, tablero |
+| `ambarProfundo` | `#F29A00` | `#E08C00` | final del degradado del ámbar |
+| `ambarTexto` | `#874F00` | `#FFB21E` | texto ámbar de menos de 24 px sobre claro |
+| `ambarTitular` | `#B86E00` | `#FFB21E` | titulares ámbar grandes sobre el fondo |
+| `sobreAmbar` | `#1A1205` | `#1A1205` | texto sobre ámbar |
 | `papel` | `#F2EBDD` | `#F2EBDD` | boleto (igual en los dos modos) |
 | `tintaPapel` | `#1B1A17` | `#1B1A17` | texto del boleto |
-| `aTiempo` | `#5FD39A` | `#1E8A57` | estado a tiempo |
-| `atrasado` | `#FF7A59` | `#C2410C` | estado atrasado |
-| `cancelado` | `#FF5A6E` | `#B4233A` | estado cancelado, errores |
+| `aTiempo` | `#166D43` | `#5FD39A` | estado a tiempo |
+| `atrasado` | `#A8360A` | `#FF7A59` | estado atrasado |
+| `cancelado` | `#B4233A` | `#FF5A6E` | estado cancelado y errores |
 
-Reglas: el ámbar nunca es fondo de pantalla completa; un solo botón ámbar por pantalla; los estados nunca se comunican solo con color (llevan texto o forma). Todo par texto/fondo pasa AA (4.5:1 normal, 3:1 grande); la tarea T-071 lo verifica con un script.
+Relieve (bloques blandos): luz `#FFFFFF` al 90 % arriba a la izquierda y sombra `#7D6941` al 20 % abajo a la derecha en claro; en oscuro luz blanca al 4 % y sombra negra al 50 %. Se definen en `tema/colores.ts` junto con el resto.
+
+Reglas:
+
+- El ámbar es relleno, no texto: el texto ámbar usa `ambarTexto` o `ambarTitular`. Sobre claro, `#FFB21E` solo se admite como relleno con `sobreAmbar` encima.
+- Un solo botón ámbar por pantalla; el ámbar nunca es el fondo de una pantalla entera.
+- Los estados nunca se comunican solo con color: llevan texto o forma.
+- Todo par texto/fondo pasa AA (4.5:1 normal, 3:1 grande), también sobre `barroOscuro`. Los valores de la tabla se calcularon contra `fondo` y `barroOscuro`; los del mockup (`#8C8676` para texto suave y `#F29A00` para texto ámbar) no llegaban a AA y por eso no se usan como texto. La tarea T-071 lo verifica con un script.
 
 ## tipografía
 
