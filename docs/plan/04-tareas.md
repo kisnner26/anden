@@ -41,7 +41,7 @@ Cada tarea dice qué hacer, dónde, cuándo está hecha y qué commits se espera
 - commits: `feat: mockup de inicio y tablero` · `feat: mockup de asientos y boleto` · `docs: capturas del mockup`
 
 ### T-005 · tema
-- depende de: T-002, T-004 · zona: `apps/movil/src/tema/` · raíz: no · estado: libre
+- depende de: T-002, T-004 · zona: `apps/movil/src/tema/` · raíz: no · estado: hecha
 - hacer: `colores.ts` (oscuro y claro), `tipografia.ts`, `espacios.ts`, `movimiento.ts`, y un hook `useTema()` que sigue el modo del sistema con preferencia guardada.
 - hecho cuando: prueba que verifica que ambos modos tienen las mismas claves; ningún hex fuera de `colores.ts` (regla de lint o prueba que lo busque).
 - commits: `feat: tokens de color oscuro y claro` · `feat: escala tipográfica` · `feat: espacios y duraciones` · `feat: hook usetema con preferencia guardada`
