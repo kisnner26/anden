@@ -1,4 +1,5 @@
-import type { Ruta, TipoBus, Tramo } from './tipos';
+import { error, ok, type Resultado } from './resultado';
+import type { Pasajero, Ruta, TipoBus, Tramo } from './tipos';
 
 export const MULTIPLICADORES_BUS: Record<TipoBus, number> = {
   ordinario: 1,
@@ -39,4 +40,20 @@ export function precioUnitario(
     (ruta.tarifaBase * minutos * MULTIPLICADORES_BUS[tipoBus]) /
       ruta.duracionMin,
   );
+}
+
+export function calcularPrecio(
+  ruta: Ruta,
+  tramo: Tramo,
+  tipoBus: TipoBus,
+  pasajeros: Pasajero[],
+): Resultado<{ unitario: number; total: number }, 'tramo-invalido' | 'sin-pasajeros'> {
+  const unitario = precioUnitario(ruta, tramo, tipoBus);
+  if (unitario === null) return error('tramo-invalido');
+
+  const cantidad = pasajeros.filter((pasajero) => !pasajero.esMenorEnBrazos)
+    .length;
+  if (cantidad === 0) return error('sin-pasajeros');
+
+  return ok({ unitario, total: unitario * cantidad });
 }
