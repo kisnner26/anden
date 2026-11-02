@@ -97,21 +97,27 @@ Cada uno vive en `apps/movil/src/componentes/<Nombre>/` con su archivo, su prueb
 
 | componente | descripción |
 |---|---|
-| `Boton` | variantes: `principal` (ámbar, cuadrado, radio 4, texto `sobreAmbar`), `secundario` (borde `linea`), `pildora` (cristal con círculo-flecha a la derecha). Altura 52. Estado cargando con barra ámbar que avanza, no spinner. |
-| `Tarjeta` | `superficie`, radio 20, borde 1 `linea`, sin sombra en oscuro. |
-| `Etiqueta` | texto mono en mayúsculas con espaciado; opcional caja con borde. |
-| `Chip` | píldora seleccionable (filtros: tipo de bus, hora). |
-| `CampoLugar` | origen/destino con autocompletado de terminales y botón para intercambiar (giro de 180° al tocarlo). |
-| `TableroSalidas` | filas de tablero: hora (mono ámbar), destino (condensado, mayúsculas), andén en caja, estado. Animación split-flap por carácter al cambiar un valor. |
-| `LineaRuta` | recorrido vertical tipo plano de metro: línea ámbar, paradas como nodos, horas a la izquierda, bus en vivo como píldora que avanza. |
-| `MapaAsientos` | plano visto desde arriba según la configuración del bus: volante, puerta, pasillo. Asientos como cuadrados redondeados con número en mono. Libre: borde `linea`. Elegido: relleno ámbar. Retenido por otro: punteado. Vendido: rayado diagonal (no solo gris). |
-| `Talon` | boleto en `papel` con muescas laterales y línea perforada. Arriba: origen → destino en `display`, fecha, hora, asiento, andén. Abajo, al arrastrar el talón: código y QR, y el brillo de pantalla sube. |
-| `TarjetaChofer` | foto en círculo, nombre, años, calificación con un decimal, insignia "licencia verificada". |
+| `Autobus` | el bus de personaje, ilustrado con `react-native-svg` a partir del símbolo `bus` del mockup: carrocería crema con banda ámbar, ventanas de vidrio oscuro, letrero ámbar con el destino, faro cálido y ruedas. Se usa en la portada, en la tarjeta del próximo viaje y en el ícono. Recibe el texto del letrero. |
+| `Icono` | set de íconos ilustrados propios, rellenos y con volumen (campana, boleto, rayo, taxi, lupa, reloj, volante, flechas y los cuatro de la barra). Ya implementado en T-031; la paleta vive en el tema. |
+| `Bloque` | bloque de barro: degradado `barroClaro` a `barroOscuro`, radio 26, doble sombra y reborde de luz. Variante `hundido` con las sombras hacia adentro. |
+| `BloqueNegro` | bloque `bloqueNegro` con radio 30, para el tablero, el próximo viaje y la barra de pago. |
+| `Boton` | variantes: `principal` (píldora ámbar con degradado y círculo negro con flecha o ícono a la derecha, alto 54 a 58), `secundario` (píldora de barro), `pildora` (con avance). Estado cargando con barra ámbar que avanza, no spinner. Un solo `principal` por pantalla. |
+| `Chip` | píldora de barro seleccionable; la activa es negra con texto claro. Filtros de servicio y de hora. |
+| `Etiqueta` | texto mono en mayúsculas con espaciado, opcional con caja. |
+| `EtiquetaMuestra` | píldora hundida con un punto ámbar y el texto "Tarifas de muestra"; se muestra mientras el tarifario oficial no esté cargado (T-078). |
+| `Loseta` | cuadrado redondeado (18) que aloja un `Icono` ilustrado o el código de una terminal en mono. |
+| `FilaSalida` | bloque de barro con `Loseta`, destino, servicio y andén, hora en mono ámbar y un círculo a la derecha: negro con check si ya tenés boleto, hundido vacío si no. |
+| `TarjetaProximoViaje` | `BloqueNegro` con el `Autobus` centrado cruzando su borde superior, destino en condensada, andén y servicio en mono, hora en ámbar mono con "sale en N min" y un `Boton` principal de ancho completo. |
+| `TableroSalidas` | filas de tablero dentro de un `BloqueNegro`: hora en fichas split-flap, destino en condensada mayúscula, andén en caja, estado con forma y texto. Animación split-flap por carácter al cambiar un valor. |
+| `MapaAsientos` | plano visto desde arriba en una carcasa de barro con volante ilustrado y puerta. Libre: relieve; elegido: relleno ámbar con brillo; apartado por otro: punteado; vendido: hundido con rayado (no solo gris). |
+| `Talon` | boleto en `papel` con muescas y línea perforada; el talón se arrastra para mostrar el código y el QR y sube el brillo de pantalla. Arriba: origen y destino en condensada, fecha, hora, asiento, andén, servicio, cooperativa, placa y tarifa. |
+| `LineaRuta` | recorrido vertical con paradas como nodos, horas a la izquierda y el bus en vivo como píldora que avanza. |
+| `CampoLugar` | origen y destino con autocompletado de terminales y botón para intercambiar (giro de 180°). |
+| `TarjetaChofer` | foto en círculo, nombre, años, calificación con un decimal e insignia de licencia verificada. |
 | `Estrellas` | calificación de 1 a 5 con trazos propios, accesible como control deslizante. |
-| `BarraPestanas` | cristal flotante a 12 del borde inferior, 4 pestañas: Viajar, Horarios, Rutas, Boletos. Cuenta va arriba a la derecha en cada pantalla. |
-| `Hoja` | hoja inferior de cristal con asa, para filtros, detalle de parada y confirmaciones. |
-| `EstadoVacio`, `EstadoError`, `Esqueleto` | vacío con texto directo y una acción; error con causa y reintentar; carga con bloques que respiran (sin spinner). |
-| `Icono` | set de íconos ilustrados propios, rellenos y con volumen, dibujados con `react-native-svg` a partir de los símbolos de `mockups/identidad-v2.html` (campana, boleto, rayo, taxi, lupa, reloj, volante, flechas y los cuatro de la barra). Prohibido usar librerías de íconos de línea como lucide, feather o los símbolos del sistema. Ninguna pantalla importa íconos directo. |
+| `BarraPestanas` | píldora de barro flotante con cuatro pestañas (Viajar, Horarios, Rutas, Boletos); la activa es una píldora negra con ícono relleno y nombre. |
+| `Hoja` | hoja inferior de barro con asa, para filtros, detalle de parada y confirmaciones. |
+| `EstadoVacio`, `EstadoError`, `Esqueleto` | vacío con texto directo y una acción; error con causa y reintentar; carga con bloques de barro que respiran (sin spinner). |
 
 ## pantallas clave
 
