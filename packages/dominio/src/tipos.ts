@@ -1,7 +1,11 @@
 // modelo de dominio de 03-arquitectura.md; fechas y horas como texto ISO 8601
 
-export const TIPOS_BUS = ['ordinario', 'interlocal', 'expreso'] as const;
-export type TipoBus = (typeof TIPOS_BUS)[number];
+export const TIPOS_SERVICIO = [
+  'ordinario',
+  'expreso',
+  'taxi-interlocal',
+] as const;
+export type TipoServicio = (typeof TIPOS_SERVICIO)[number];
 
 export const CONFIGURACIONES_BUS = ['micro15', 'coaster26', 'bus45'] as const;
 export type ConfiguracionBus = (typeof CONFIGURACIONES_BUS)[number];
@@ -89,7 +93,7 @@ export interface Bus {
   id: string;
   placa: string;
   cooperativa: string;
-  tipo: TipoBus;
+  servicio: TipoServicio;
   configuracion: ConfiguracionBus;
   comodidades: Comodidad[];
 }

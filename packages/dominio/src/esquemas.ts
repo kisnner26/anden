@@ -7,7 +7,7 @@ import {
   ESTADOS_VIAJE,
   ETIQUETAS_CALIFICACION,
   TIPOS_ASIENTO,
-  TIPOS_BUS,
+  TIPOS_SERVICIO,
   type Asiento,
   type Boleto,
   type Bus,
@@ -85,7 +85,7 @@ export const esquemaBus: z.ZodType<Bus> = z.object({
   id,
   placa: texto,
   cooperativa: texto,
-  tipo: z.enum(TIPOS_BUS),
+  servicio: z.enum(TIPOS_SERVICIO),
   configuracion: z.enum(CONFIGURACIONES_BUS),
   comodidades: z.array(z.enum(COMODIDADES)),
 });

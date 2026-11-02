@@ -42,7 +42,7 @@ describe('MULTIPLICADORES_BUS', () => {
   it('aplica la tarifa esperada a cada tipo de bus', () => {
     expect(MULTIPLICADORES_BUS).toEqual({
       ordinario: 1,
-      interlocal: 1.2,
+      'taxi-interlocal': 1.2,
       expreso: 1.5,
     });
   });
@@ -71,7 +71,9 @@ describe('precioUnitario', () => {
   });
 
   it('prorratea por minutos y redondea una sola vez', () => {
-    expect(precioUnitario(ruta, { desde: 0, hasta: 1 }, 'interlocal')).toBe(36);
+    expect(
+      precioUnitario(ruta, { desde: 0, hasta: 1 }, 'taxi-interlocal'),
+    ).toBe(36);
   });
 });
 

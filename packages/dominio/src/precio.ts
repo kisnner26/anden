@@ -1,9 +1,9 @@
 import { error, ok, type Resultado } from './resultado';
-import type { Pasajero, Ruta, TipoBus, Tramo } from './tipos';
+import type { Pasajero, Ruta, TipoServicio, Tramo } from './tipos';
 
-export const MULTIPLICADORES_BUS: Record<TipoBus, number> = {
+export const MULTIPLICADORES_BUS: Record<TipoServicio, number> = {
   ordinario: 1,
-  interlocal: 1.2,
+  'taxi-interlocal': 1.2,
   expreso: 1.5,
 };
 
@@ -31,7 +31,7 @@ export function minutosDelTramo(ruta: Ruta, tramo: Tramo): number | null {
 export function precioUnitario(
   ruta: Ruta,
   tramo: Tramo,
-  tipoBus: TipoBus,
+  tipoBus: TipoServicio,
 ): number | null {
   const minutos = minutosDelTramo(ruta, tramo);
   if (minutos === null || minutos <= 0) return null;
@@ -49,7 +49,7 @@ export function precioUnitario(
 export function calcularPrecio(
   ruta: Ruta,
   tramo: Tramo,
-  tipoBus: TipoBus,
+  tipoBus: TipoServicio,
   pasajeros: Pasajero[],
 ): Resultado<
   { unitario: number; total: number },

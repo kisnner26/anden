@@ -141,7 +141,7 @@ const bus = {
   id: 'bus_01',
   placa: 'M 245-118',
   cooperativa: 'Cooperativa de muestra',
-  tipo: 'interlocal',
+  servicio: 'taxi-interlocal',
   configuracion: 'coaster26',
   comodidades: ['aire-acondicionado', 'carga-usb'],
 };
@@ -172,7 +172,9 @@ describe('esquemaBus', () => {
   });
 
   it('rechaza tipo, configuración o comodidad desconocidos', () => {
-    expect(esquemaBus.safeParse({ ...bus, tipo: 'lujo' }).success).toBe(false);
+    expect(esquemaBus.safeParse({ ...bus, servicio: 'lujo' }).success).toBe(
+      false,
+    );
     expect(
       esquemaBus.safeParse({ ...bus, configuracion: 'bus99' }).success,
     ).toBe(false);
