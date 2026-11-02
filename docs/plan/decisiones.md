@@ -4,7 +4,7 @@ Registro de decisiones tomadas durante el desarrollo. Una por entrada, la más r
 
 | fecha | tarea | decisión | por qué |
 |---|---|---|---|
-| 2026-11-02 | T-014 | **abierta**: definir cómo `estadoViaje(viaje, ahora)` conoce la llegada | `Viaje` no tiene duración ni llegada y la firma no recibe `Ruta`, por lo que no puede distinguir “en ruta” de “llegó” |
+| 2026-11-02 | T-014 | **resuelta**: `estadoViaje` recibe la ruta y la llegada es la salida real más la duración (regla en `01-producto.md`). Pregunta original: cómo `estadoViaje(viaje, ahora)` conoce la llegada | `Viaje` no tiene duración ni llegada y la firma no recibe `Ruta`, por lo que no puede distinguir “en ruta” de “llegó” |
 | 2026-11-02 | T-013 | **abierta**: definir el tipo de entrada `ocupaciones` y la forma de representar ventas | `estadoAsientos(config, ocupaciones, ahora)` y `puedeRetener(...)` se piden sin contrato para diferenciar una `Retencion` de un asiento vendido ni sus datos de viaje |
 | 2026-11-02 | T-012 | **abierta**: definir la representación de `tramo` y el prorrateo de la tarifa parcial | el plan pide `calcularPrecio(ruta, tramo, tipoBus, pasajeros)` y probar un tramo parcial, pero `Ruta` no define el tramo ni la regla de reparto de su tarifa base |
 | 2026-11-02 | plan | nombre Andén, bundle `com.kisnner.anden` | nombre corto, propio del viaje en bus; un solo App ID por el límite de la cuenta gratuita de Apple |
