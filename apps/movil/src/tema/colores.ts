@@ -56,7 +56,7 @@ export const coloresClaros = {
   tintaSuave: '#605B50',
 } as const satisfies Record<keyof typeof coloresOscuros, string>;
 
-export type Colores = typeof coloresOscuros;
+export type Colores = Record<keyof typeof coloresOscuros, string>;
 
 /** colores de los íconos ilustrados; son los mismos en claro y oscuro */
 export const paletaIconos = {
