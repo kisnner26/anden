@@ -106,8 +106,9 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 
 ### T-015 · búsqueda
 - depende de: T-012, T-014 · estado: libre
-- hacer: `buscarViajes(filtro, datos, ahora)` que filtra por origen/destino (incluye paradas intermedias), fecha, asientos libres suficientes, y ordena por salida; filtros por tipo de bus y franja horaria.
-- hecho cuando: pruebas con una semilla pequeña de 3 rutas.
+- hacer: tipos con su esquema `FranjaHoraria` (`madrugada`, `manana`, `tarde`, `noche`), `FiltroBusqueda` `{ origenId, destinoId, fecha (AAAA-MM-DD), pasajeros, tipos?: TipoBus[], franja?: FranjaHoraria }`, `DatosViajes` `{ terminales, rutas, buses, choferes, viajes, ocupaciones }` (listas simples, sin red) y `ResultadoViaje` `{ viaje, ruta, bus, chofer, tramo, salidaOrigen (ISO), llegadaDestino (ISO), precioUnitario, asientosLibres, ventaAbierta, estado }`; y `buscarViajes(filtro, datos, ahora): ResultadoViaje[]`.
+- reglas: un viaje coincide si su ruta tiene paradas de terminal con `origenId` antes de `destinoId`; el `tramo` son los índices de esas paradas. `salidaOrigen` y `llegadaDestino` se calculan con los `minutosDesdeOrigen` de esas paradas sobre la salida programada del viaje. La fecha y la franja se toman de `salidaOrigen` en hora de Managua. Se excluyen los viajes cancelados, los que ya salieron del origen (salida programada más atraso anterior a `ahora`) y los que no tienen `asientosLibres` para los pasajeros pedidos (usa `estadoAsientos` con las ocupaciones de ese viaje). Un viaje con la venta cerrada sí aparece, con `ventaAbierta: false`. El precio sale de `calcularPrecio` para un pasajero que paga. Orden: por `salidaOrigen`, y a igual hora por precio. La calificación del chofer se suma en T-022 cuando exista T-019.
+- hecho cuando: pruebas con una semilla pequeña de 3 rutas que cubran parada intermedia, fecha y franja, tipo de bus, falta de asientos, viaje cancelado, viaje ya salido y venta cerrada.
 - commits: `feat: buscar viajes por origen y destino` · `feat: filtros de tipo y franja horaria`
 
 ### T-016 · cancelación y cambio
