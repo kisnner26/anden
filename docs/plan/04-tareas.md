@@ -117,7 +117,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - commits: `feat: reembolso segun anticipacion` · `feat: regla de cambio de salida`
 
 ### T-017 · código de boleto
-- depende de: T-010 · estado: libre
+- depende de: T-010 · estado: hecha
 - hacer: `generarCodigo(aleatorio)` y `codigoValido(codigo)` con alfabeto sin ambiguos y dígito de control.
 - hecho cuando: pruebas de validez, un carácter alterado falla, generador inyectable para pruebas deterministas.
 - commits: `feat: codigo de boleto con digito de control`
