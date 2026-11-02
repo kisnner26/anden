@@ -125,7 +125,7 @@ interface RepositorioBoletos {
   comprar(retencionId: string, pasajeros: Pasajero[], pago: ComprobantePago): Promise<Resultado<Boleto[], ErrorCompra>>
   misBoletos(duenoId: string): Promise<Boleto[]>
   cancelar(boletoId: string): Promise<Resultado<Reembolso, ErrorCancelacion>>
-  cambiar(boletoId: string, nuevoViajeId: string): Promise<Resultado<Boleto, ErrorCambio>>
+  cambiar(boletoId: string, nuevoViajeId: string, asiento: number): Promise<Resultado<Boleto, ErrorCambio>>
 }
 ```
 
