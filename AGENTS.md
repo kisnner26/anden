@@ -11,6 +11,7 @@ Leé, en este orden:
 3. `docs/plan/03-arquitectura.md` — stack, capas, contratos y comandos.
 4. `docs/plan/04-tareas.md` — el tablero.
 5. `docs/plan/decisiones.md` — decisiones tomadas en el camino.
+6. `docs/plan/05-marco-mti.md` — la norma del MTI de Nicaragua: todo precio, servicio y ruta tiene que respetarla.
 
 El plan es el contrato. Si el código y el plan no coinciden, manda el plan; si el plan está mal, se corrige el plan primero (commit `docs:` propio) y después el código.
 
