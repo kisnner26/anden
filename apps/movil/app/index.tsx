@@ -12,7 +12,7 @@ export default function Inicio() {
       <Text style={[tipografia.display, { color: colores.tinta }]}>
         {t('inicio.marca')}
       </Text>
-      <Text style={[tipografia.datoGrande, { color: colores.ambar }]}>
+      <Text style={[tipografia.datoGrande, { color: colores.ambarTitular }]}>
         {t('inicio.horaMuestra')}
       </Text>
     </View>
