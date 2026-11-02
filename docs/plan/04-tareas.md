@@ -77,7 +77,7 @@ Cada tarea dice qué hacer, dónde, cuándo está hecha y qué commits se espera
 - commits: un `refactor:` por tipo, esquema y consumidor, y un `docs:` de cierre.
 
 ### T-012b · precio oficial del MTI
-- depende de: T-009 · zona: `packages/dominio` · raíz: no · estado: libre
+- depende de: T-009 · zona: `packages/dominio` · raíz: no · estado: hecha
 - hacer: tipo `Tarifa` y `Tarifario = Tarifa[]` con esquema (ver `03-arquitectura.md`) y `precioOficial(tarifario, rutaId, servicio, tramo, pasajeros)` que devuelve `Resultado<{ unitario: number; total: number }, 'sin-tarifa-autorizada' | 'tramo-invalido' | 'sin-pasajeros'>`. Busca la tarifa exacta del tramo y no calcula nada: sin multiplicadores, prorrateo ni redondeo. Retirar de T-012 los multiplicadores, `minutosDelTramo` y `tarifaBase` de `Ruta`, y migrar a `precioOficial` lo que usaba `calcularPrecio`. Los menores en brazos siguen gratis como regla de muestra.
 - hecho cuando: pruebas de tarifa exacta de un tramo completo y de uno intermedio, ruta o servicio sin tarifa, tramo inválido, menores en brazos y sin pasajeros; `rg -i multiplicador packages` sin resultados.
 - commits: un `feat:` por tipo, esquema y función, un `refactor:` por cada consumidor migrado y un `docs:` de cierre.
