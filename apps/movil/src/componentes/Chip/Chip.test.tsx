@@ -22,11 +22,30 @@ describe('Chip', () => {
 
     fireEvent.press(chip);
 
-    expect(chip.props.accessibilityState).toEqual(expect.objectContaining({
-      selected: false,
-    }));
+    expect(chip.props.accessibilityState).toEqual(
+      expect.objectContaining({
+        selected: false,
+      }),
+    );
     expect(impactAsync).toHaveBeenCalledWith(ImpactFeedbackStyle.Light);
     expect(alCambiar).toHaveBeenCalledWith(true);
     expect(pantalla.queryByTestId('chip-seleccionado-indicador')).toBeNull();
+  });
+
+  it('expone el filtro seleccionado con una marca visible', async () => {
+    const etiqueta = t('vitrina.chipManana');
+    const pantalla = await render(
+      <Chip alCambiar={jest.fn()} etiqueta={etiqueta} seleccionado />,
+    );
+    const chip = pantalla.getByRole('button', { name: etiqueta });
+
+    expect(chip.props.accessibilityState).toEqual(
+      expect.objectContaining({
+        selected: true,
+      }),
+    );
+    expect(
+      pantalla.getByTestId('chip-seleccionado-indicador'),
+    ).toBeOnTheScreen();
   });
 });
