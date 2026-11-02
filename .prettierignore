@@ -1,0 +1,6 @@
+node_modules/
+apps/movil/.expo/
+apps/movil/android/
+apps/movil/ios/
+coverage/
+dist/
