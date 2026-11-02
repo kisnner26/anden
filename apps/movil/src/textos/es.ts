@@ -4,6 +4,7 @@ export const textos = {
     horaMuestra: '06:30',
   },
   vitrina: {
+    marca: 'Andén',
     titulo: 'Vitrina',
     subtitulo: 'Sistema visual de Andén',
     temaOscuro: 'Tema oscuro',
