@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { Boton } from '@/componentes/Boton';
+import { Chip } from '@/componentes/Chip';
 import { Icono, NOMBRES_ICONO } from '@/componentes/Icono';
 import { coloresClaros, coloresOscuros } from '@/tema/colores';
 import { espacios, radios } from '@/tema/espacios';
@@ -41,11 +43,64 @@ export function Vitrina() {
       </View>
       <MuestraTipografia colores={colores} />
       <MuestraIconos colores={colores} />
+      <MuestraControles colores={colores} />
       <MuestraColores colores={colores} />
       <MuestraEspacios colores={colores} />
     </ScrollView>
   );
 }
+
+function MuestraControles({
+  colores,
+}: {
+  colores: typeof coloresOscuros | typeof coloresClaros;
+}) {
+  const [filtro, establecerFiltro] = useState<'hoy' | 'manana'>('hoy');
+  return (
+    <View style={[estilos.seccion, { borderColor: colores.linea }]}>
+      <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+        {t('vitrina.botones')}
+      </Text>
+      <View style={estilos.columnaControles}>
+        <Boton alPresionar={sinAccion} etiqueta={t('vitrina.botonPrincipal')} />
+        <Boton
+          alPresionar={sinAccion}
+          etiqueta={t('vitrina.botonSecundario')}
+          variante="secundario"
+        />
+        <Boton
+          alPresionar={sinAccion}
+          etiqueta={t('vitrina.botonPildora')}
+          variante="pildora"
+        />
+        <Boton
+          alPresionar={sinAccion}
+          cargando
+          etiqueta={t('vitrina.botonCargando')}
+        />
+        <Boton
+          alPresionar={sinAccion}
+          deshabilitado
+          etiqueta={t('vitrina.botonSecundario')}
+        />
+      </View>
+      <View style={estilos.filaControles}>
+        <Chip
+          alCambiar={() => establecerFiltro('hoy')}
+          etiqueta={t('vitrina.chipHoy')}
+          seleccionado={filtro === 'hoy'}
+        />
+        <Chip
+          alCambiar={() => establecerFiltro('manana')}
+          etiqueta={t('vitrina.chipManana')}
+          seleccionado={filtro === 'manana'}
+        />
+      </View>
+    </View>
+  );
+}
+
+function sinAccion() {}
 
 function MuestraIconos({
   colores,
@@ -200,6 +255,7 @@ function SelectorTema({
 
 const estilos = StyleSheet.create({
   cabecera: { gap: espacios.veinticuatro },
+  columnaControles: { gap: espacios.doce },
   color: {
     borderRadius: radios.cuadrado,
     borderWidth: 1,
@@ -218,6 +274,11 @@ const estilos = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     gap: espacios.dieciseis,
+  },
+  filaControles: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: espacios.ocho,
   },
   selector: {
     alignSelf: 'flex-start',
