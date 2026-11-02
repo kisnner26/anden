@@ -35,8 +35,10 @@ export function Chip({
       style={({ pressed }) => [
         estilos.base,
         {
-          backgroundColor: seleccionado ? colores.ambar : colores.superficie,
-          borderColor: seleccionado ? colores.ambar : colores.linea,
+          backgroundColor: seleccionado
+            ? colores.bloqueNegro
+            : colores.superficieAlta,
+          borderColor: seleccionado ? colores.bloqueNegro : colores.linea,
         },
         deshabilitado && estilos.deshabilitado,
         pressed && estilos.presionado,
@@ -44,14 +46,14 @@ export function Chip({
     >
       {seleccionado && (
         <View
-          style={[estilos.indicador, { backgroundColor: colores.sobreAmbar }]}
+          style={[estilos.indicador, { backgroundColor: colores.ambar }]}
           testID="chip-seleccionado-indicador"
         />
       )}
       <Text
         style={[
           tipografia.pequeno,
-          { color: seleccionado ? colores.sobreAmbar : colores.tinta },
+          { color: seleccionado ? colores.sobreNegro : colores.tinta },
         ]}
       >
         {etiqueta}
