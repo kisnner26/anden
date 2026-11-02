@@ -34,4 +34,14 @@ describe('Boton', () => {
     expect(pantalla.getByRole('button', { name: etiqueta })).toBeOnTheScreen();
     expect(pantalla.queryByTestId('boton-pildora-flecha')).toBeNull();
   });
+
+  it('renderiza la variante pildora con indicador de avance', async () => {
+    const etiqueta = t('vitrina.botonPildora');
+    const pantalla = await render(
+      <Boton alPresionar={jest.fn()} etiqueta={etiqueta} variante="pildora" />,
+    );
+
+    expect(pantalla.getByRole('button', { name: etiqueta })).toBeOnTheScreen();
+    expect(pantalla.getByTestId('boton-pildora-flecha')).toBeOnTheScreen();
+  });
 });
