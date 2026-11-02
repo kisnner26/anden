@@ -388,3 +388,15 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - depende de: T-075 · estado: libre
 - hacer: README breve con capturas reales de la app en iOS y Android (no del mockup), cómo correrla, estructura.
 - commits: `docs: capturas de la app` · `docs: readme del proyecto`
+
+## fase 7 · marco del MTI
+
+### T-077 · tarifario oficial del MTI
+- depende de: decisión del dueño del proyecto · estado: **bloqueada**
+- hacer: conseguir el anexo vigente de la resolución de tarifas del MTI (la última confirmada es la RM 051-2017; el anexo es aparte, de 19 folios) y convertirlo en `Tarifa[]`. Cargarlo en la semilla y en `supabase/seed`, marcar `TARIFARIO_OFICIAL = true` y quitar el aviso de T-078. No empezar sin el anexo.
+
+### T-078 · aviso de tarifas de muestra
+- depende de: T-041 · estado: libre
+- hacer: mientras `TARIFARIO_OFICIAL` sea `false`, mostrar "tarifas de muestra, no oficiales" en el buscador, en los resultados, en el pago y en el boleto.
+- hecho cuando: el aviso aparece en las cuatro pantallas y desaparece con la constante en `true`.
+- commits: `feat: constante del tarifario oficial` · un `feat:` por pantalla · `test:` de visibilidad
