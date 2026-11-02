@@ -88,6 +88,34 @@ Cada tarea dice qué hacer, dónde, cuándo está hecha y qué commits se espera
 - hecho cuando: el dueño lo aprueba. Si lo aprueba, `02-diseno.md` se reescribe para esta dirección antes de construir nada más de interfaz (T-005 a T-007 y la fase 3 se reajustan). **Hasta entonces nadie construye componentes nuevos ni pantallas.**
 - commits: `feat: mockup v2 con bloques blandos y bus de personaje` · `feat: ícono de la app con el bus de personaje` · `docs: capturas v2`
 
+## reajuste a la dirección visual v2
+
+La v2 está aprobada y escrita en `02-diseno.md`. Estas tareas llevan lo ya construido a esa dirección. Toda tarea de componentes (T-033 a T-039) y de pantallas (T-040 en adelante) depende además de T-005b y T-031b.
+
+### T-005b · tema v2
+- depende de: T-004b · zona: `apps/movil/src/tema/` · raíz: no · estado: libre
+- hacer: `colores.ts` con la paleta clara y oscura de `02-diseno.md` (claves nuevas `fondoProfundo`, `barroClaro`, `barroOscuro`, `bloqueNegro`, `ambarProfundo`, `ambarTexto`, `ambarTitular` y las del relieve), manteniendo la prueba de paridad entre modos y la de hexadecimales; `useTema` con modo automático (oscuro de 18:00 a 06:00, claro el resto) y preferencia guardada; sombras de relieve en `tema/`; ajustar los consumidores existentes (vitrina, etiqueta, tarjeta, botón, chip).
+- hecho cuando: `pnpm verificar` en verde, la vitrina muestra la paleta nueva en ambos modos y los pares de texto declarados en `02-diseno.md` cumplen AA en una prueba.
+- commits: un `feat:` por grupo de tokens, un `test:` por caso, un `refactor:` por consumidor ajustado.
+
+### T-031b · Autobus, Bloque, BloqueNegro y Loseta
+- depende de: T-005b · zona: `apps/movil/src/componentes/` · raíz: no · estado: libre
+- hacer: `Autobus` (símbolo `bus` del mockup con `react-native-svg`, letrero configurable), `Bloque` (con variante hundido), `BloqueNegro` y `Loseta`, todos con relieve del tema, accesibles y con su prueba y su entrada en la vitrina. Prohibido usar librerías de íconos.
+- hecho cuando: la vitrina los muestra y se parecen a `mockups/capturas/v2/`.
+- commits: un `feat:` por componente y por estado, un `test:` por caso.
+
+### T-032b · botones y chips v2
+- depende de: T-031b · zona: `apps/movil/src/componentes/Boton`, `Chip` · raíz: no · estado: libre
+- hacer: llevar `Boton` y `Chip` a la v2: principal ámbar en píldora con círculo negro y flecha, secundario de barro, chip activo negro; conservar estados, háptica y pruebas.
+- hecho cuando: `pnpm verificar` en verde y la vitrina muestra los controles como en las capturas v2.
+- commits: un `refactor:` por componente y variante.
+
+### T-074b · ícono y arranque v2
+- depende de: T-031b · zona: `apps/movil/assets`, `apps/movil/app.json` · raíz: sí · estado: libre
+- hacer: reemplazar el ícono "boleto-bus" de T-074 por `mockups/capturas/v2/icono.png` (bus de personaje sobre fondo oscuro con brillo ámbar) y regenerar el adaptativo, el monocromo y el de la pantalla de arranque; la pantalla de arranque pasa a ser la portada ("ANDÉN" y el bus). Mantener las pruebas de dimensiones y transparencia.
+- hecho cuando: `expo prebuild` y las exportaciones de Android e iOS pasan, y el ícono nuevo se ve en el teléfono.
+- commits: un `feat:` por activo y un `test:` por validación.
+
 ## fase 1 · dominio (TypeScript puro)
 
 Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el mismo commit (las reglas están en `01-producto.md`).
