@@ -59,7 +59,7 @@ Cada tarea dice qué hacer, dónde, cuándo está hecha y qué commits se espera
 - commits: `feat: catalogo de textos en español`
 
 ### T-008 · pruebas fuera del directorio de rutas
-- depende de: T-002 · zona: `apps/movil` · raíz: no · estado: libre
+- depende de: T-002 · zona: `apps/movil` · raíz: no · estado: hecha
 - hacer: Expo Router trata todo archivo de `apps/movil/app/` como una pantalla, así que `app/index.test.tsx` rompe el empaquetado (Metro no resuelve `@testing-library/react-native`). Mover la prueba a `apps/movil/pruebas/` y agregar una prueba que falle si aparece un `*.test.*` dentro de `app/`.
 - hecho cuando: `npx expo export --platform android` y `--platform ios` empaquetan sin error y `pnpm verificar` sigue en verde.
 - commits: `fix: sacar la prueba del directorio de rutas` · `test: ningún archivo de prueba dentro de app` · `docs: regla de pruebas fuera de app`
