@@ -151,7 +151,8 @@ function SelectorTema({
   return (
     <Pressable
       accessibilityLabel={t('vitrina.cambiarTema')}
-      accessibilityRole="button"
+      accessibilityRole="switch"
+      accessibilityState={{ checked: modo === 'claro' }}
       onPress={() => alCambiar(siguiente)}
       style={[
         estilos.selector,
