@@ -81,4 +81,16 @@ describe('precioOficial', () => {
       ),
     ).toEqual({ ok: false, error: 'tramo-invalido' });
   });
+
+  it('cobra solo pasajeros que ocupan asiento', () => {
+    expect(
+      precioOficial(
+        tarifario,
+        'rut_uca_gra',
+        'ordinario',
+        { desde: 0, hasta: 2 },
+        [pasajero, { nombre: 'Luis Ruiz', esMenorEnBrazos: true }, pasajero],
+      ),
+    ).toEqual({ ok: true, valor: { unitario: 46, total: 92 } });
+  });
 });
