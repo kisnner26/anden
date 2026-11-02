@@ -27,7 +27,11 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#0E0F11",
+          "backgroundColor": "#F4F1EA",
+          "dark": {
+            "backgroundColor": "#0E0F11",
+            "image": "./assets/marca/arranque.png"
+          },
           "image": "./assets/marca/arranque.png",
           "imageWidth": 220,
           "resizeMode": "contain"
