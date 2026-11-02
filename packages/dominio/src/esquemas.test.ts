@@ -13,6 +13,7 @@ import {
   esquemaRetencion,
   esquemaRuta,
   esquemaTerminal,
+  esquemaTramo,
   esquemaViaje,
 } from './esquemas';
 
@@ -121,6 +122,17 @@ describe('esquemaRuta', () => {
     expect(esquemaRuta.safeParse({ ...ruta, duracionMin: 0 }).success).toBe(
       false,
     );
+  });
+});
+
+describe('esquemaTramo', () => {
+  it('acepta índices de parada en orden', () => {
+    expect(esquemaTramo.safeParse({ desde: 0, hasta: 2 }).success).toBe(true);
+  });
+
+  it('rechaza un tramo invertido o sin recorrido', () => {
+    expect(esquemaTramo.safeParse({ desde: 2, hasta: 0 }).success).toBe(false);
+    expect(esquemaTramo.safeParse({ desde: 1, hasta: 1 }).success).toBe(false);
   });
 });
 
