@@ -2,14 +2,17 @@
 
 Esta es la referencia visual. Ninguna pantalla se hace "a ojo": se usa lo que está aquí, y si falta algo se agrega aquí primero en un commit `docs:`.
 
-## concepto: el tablero y el talón
+## concepto: barro, tablero y talón
 
-La app toma dos objetos reales del viaje en bus y los vuelve interfaz:
+Dirección v2, aprobada el 2 de noviembre de 2026 a partir de `mockups/identidad-v2.html` (capturas en `mockups/capturas/v2/`). La v1 oscura quedó reemplazada.
 
-1. **El tablero de andén.** Fondo carbón, letras ámbar como de LED, filas que cambian letra por letra (split-flap) cuando se actualiza una salida. Es la cara de los horarios.
-2. **El boleto con talón.** Papel crema con muescas a los lados, línea perforada y un talón que se separa para mostrar el código. Es la cara de la compra.
+La app es un objeto táctil y amable, no un panel de datos. Tres ideas la sostienen:
 
-Todo lo demás (buscador, rutas, choferes) usa la misma gramática: carbón, crema, un solo acento ámbar, titulares condensados enormes y datos en mono.
+1. **Barro.** Fondo crema cálido y bloques blandos con relieve, como de arcilla: luz arriba a la izquierda, sombra abajo a la derecha. Todo lo que se puede tocar parece que se puede tocar.
+2. **El tablero de andén**, dentro de un bloque negro. Letras ámbar como de LED con split-flap. Es la cara de los horarios y la única zona oscura grande de la pantalla.
+3. **El bus de personaje.** Un bus ilustrado, redondo y con volumen, que es la mascota de la marca: aparece enorme en la portada, cruza el borde de la tarjeta del próximo viaje y está en el ícono. El boleto sigue siendo papel crema con muescas y talón.
+
+Cada pantalla tiene una sola cosa dominante (el bus, el titular o el tablero), un solo botón ámbar y todo alineado a la cuadrícula: nada colgando de una esquina ni a medio cortar.
 
 ## lo que no se hace
 
