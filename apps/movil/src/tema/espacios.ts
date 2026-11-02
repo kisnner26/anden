@@ -14,3 +14,9 @@ export const radios = {
   pildora: 999,
   tarjeta: 20,
 } as const;
+
+export const tamanosIcono = {
+  pequeno: 16,
+  mediano: 20,
+  grande: 24,
+} as const;
