@@ -105,6 +105,11 @@ Una tarea del tablero suele dar de 12 a 25 commits, no 2 o 3. La unidad mínima 
 - cada pantalla: primero el esqueleto con datos, después cada estado, después cada detalle de interacción.
 - cada exportación nueva en un `index.ts`, cada mejora de formato o de nombres (`refactor:`), cada decisión escrita en `decisiones.md` (`docs:`) y cada tarea nueva que encuentres en el camino (`docs:`).
 
+Dos pasos más para llegar a ese nivel sin inflar nada:
+
+- escribí primero el caso de prueba que falla y después el código que lo hace pasar: son dos commits, y el segundo no puede ser el mismo archivo con todo mezclado. Si el caso de prueba nuevo ya pasa con lo existente, es un `test:` solo.
+- cuando una función crece (un caso especial, una validación, un borde), cada ampliación es un `feat:` o `fix:` aparte, con su caso de prueba; no la escribas completa y la commitees de una vez.
+
 Lo que no vale, porque rompe la regla de fondo o inventa actividad:
 
 - partir una función a la mitad, una línea suelta o un archivo que no compila por separado.
