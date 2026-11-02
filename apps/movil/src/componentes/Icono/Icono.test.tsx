@@ -28,4 +28,11 @@ describe('Icono', () => {
     const pantalla = await render(<Icono nombre="campana" />);
     expect(pantalla.queryByRole('image')).toBeNull();
   });
+
+  it('anuncia como imagen el ícono con etiqueta', async () => {
+    const pantalla = await render(
+      <Icono etiquetaAccesible={t('vitrina.iconoLupa')} nombre="lupa" />,
+    );
+    expect(pantalla.getByRole('image', { name: 'Buscar' })).toBeTruthy();
+  });
 });
