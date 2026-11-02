@@ -1,4 +1,10 @@
-import type { Ruta, Tramo } from './tipos';
+import type { Ruta, TipoBus, Tramo } from './tipos';
+
+export const MULTIPLICADORES_BUS: Record<TipoBus, number> = {
+  ordinario: 1,
+  interlocal: 1.2,
+  expreso: 1.5,
+};
 
 function esTramoValido(ruta: Ruta, tramo: Tramo): boolean {
   return (
