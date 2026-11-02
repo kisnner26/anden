@@ -53,7 +53,7 @@ Cada tarea dice qué hacer, dónde, cuándo está hecha y qué commits se espera
 - commits: `chore: agregar fuentes archivo y jetbrains mono` · `feat: esperar fuentes antes de mostrar la app`
 
 ### T-006b · titular en Archivo ExtraCondensed
-- depende de: T-006a · zona: `apps/movil/assets/fuentes/`, `apps/movil/src/tema/` · raíz: sí · estado: libre
+- depende de: T-006a · zona: `apps/movil/assets/fuentes/`, `apps/movil/src/tema/` · raíz: sí · estado: hecha
 - hacer: el mockup aprobado usa Archivo ExtraCondensed 800 (display) y Condensed 700 (título). Incluir esos dos cortes estáticos con licencia OFL como archivos locales en `apps/movil/assets/fuentes/`, cargarlos con `expo-font` y apuntar `display` y `titulo` de `tipografia.ts` a ellos en lugar de Archivo Narrow.
 - hecho cuando: el titular de la pantalla inicial se ve tan condensado como en `mockups/capturas/viajar.png`, en iOS y Android.
 - commits: `chore: agregar cortes condensados de archivo` · `feat: cargar cortes condensados` · `refactor: titulares con archivo condensado`
