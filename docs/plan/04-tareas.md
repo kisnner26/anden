@@ -378,7 +378,7 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - commits: un `fix:` o `refactor:` por mejora, con medición antes y después en el mensaje del cuerpo
 
 ### T-074 · ícono y pantalla de arranque
-- depende de: T-004 · raíz: sí · estado: libre
+- depende de: T-004 · raíz: sí · estado: hecha
 - commits: `feat: icono de la app` · `feat: pantalla de arranque`
 
 ### T-075 · compilaciones
