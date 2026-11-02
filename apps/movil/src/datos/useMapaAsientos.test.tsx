@@ -31,4 +31,9 @@ describe('useMapaAsientos', () => {
     );
     expect(result.current).toBeNull();
   });
+
+  it('informa la configuración del bus del viaje', async () => {
+    const { result } = await renderHook(() => useMapaAsientos(VIAJE_GRANADA));
+    expect(result.current?.configuracion).toBe('coaster26');
+  });
 });
