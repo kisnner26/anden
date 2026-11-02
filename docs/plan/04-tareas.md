@@ -93,13 +93,13 @@ Cada tarea dice qué hacer, dónde, cuándo está hecha y qué commits se espera
 La v2 está aprobada y escrita en `02-diseno.md`. Estas tareas llevan lo ya construido a esa dirección. Toda tarea de componentes (T-033 a T-039) y de pantallas (T-040 en adelante) depende además de T-005b y T-031b.
 
 ### T-005b · tema v2
-- depende de: T-004b · zona: `apps/movil/src/tema/` · raíz: no · estado: libre
+- depende de: T-004b · zona: `apps/movil/src/tema/` · raíz: no · estado: hecha
 - hacer: `colores.ts` con la paleta clara y oscura de `02-diseno.md` (claves nuevas `fondoProfundo`, `barroClaro`, `barroOscuro`, `bloqueNegro`, `ambarProfundo`, `ambarTexto`, `ambarTitular` y las del relieve), manteniendo la prueba de paridad entre modos y la de hexadecimales; `useTema` con modo automático (oscuro de 18:00 a 06:00, claro el resto) y preferencia guardada; sombras de relieve en `tema/`; ajustar los consumidores existentes (vitrina, etiqueta, tarjeta, botón, chip).
 - hecho cuando: `pnpm verificar` en verde, la vitrina muestra la paleta nueva en ambos modos y los pares de texto declarados en `02-diseno.md` cumplen AA en una prueba.
 - commits: un `feat:` por grupo de tokens, un `test:` por caso, un `refactor:` por consumidor ajustado.
 
 ### T-031b · Autobus, Bloque, BloqueNegro y Loseta
-- depende de: T-005b · zona: `apps/movil/src/componentes/` · raíz: no · estado: libre
+- depende de: T-005b · zona: `apps/movil/src/componentes/` · raíz: no · estado: hecha
 - hacer: `Autobus` (símbolo `bus` del mockup con `react-native-svg`, letrero configurable), `Bloque` (con variante hundido), `BloqueNegro` y `Loseta`, todos con relieve del tema, accesibles y con su prueba y su entrada en la vitrina. Prohibido usar librerías de íconos.
 - hecho cuando: la vitrina los muestra y se parecen a `mockups/capturas/v2/`.
 - commits: un `feat:` por componente y por estado, un `test:` por caso.
