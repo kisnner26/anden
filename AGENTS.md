@@ -97,9 +97,9 @@ Regla de fondo: un commit cuenta una sola cosa, y el proyecto compila y pasa sus
 
 El dueño del proyecto quiere el historial más fino que el trabajo real permita. Antes de commitear, preguntate si lo que tenés en el índice todavía se puede partir en dos cosas que se entiendan solas. Si se puede, partilo.
 
-Una tarea del tablero suele dar de 6 a 12 commits, no 2 o 3. Ejemplos de dónde cortar:
+Una tarea del tablero suele dar de 12 a 25 commits, no 2 o 3. La unidad mínima es una cosa que se entiende y se prueba sola. Ejemplos de dónde cortar:
 
-- cada función o regla de negocio es un commit `feat:`, y sus pruebas van en el commit `test:` siguiente; si la función tiene varios casos distintos (bordes, errores, caso feliz), cada grupo de casos es un `test:` aparte.
+- cada función, regla de negocio o constante es un commit `feat:`, y sus pruebas van después; cada caso de prueba (`it`) es un commit `test:` propio: el caso feliz, cada borde, cada error esperado.
 - cada tipo, constante o esquema nuevo es su propio commit, antes de lo que lo usa.
 - cada componente visual: estructura, estados (vacío, error, cargando), interacción y accesibilidad son commits separados.
 - cada pantalla: primero el esqueleto con datos, después cada estado, después cada detalle de interacción.
