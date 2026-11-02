@@ -59,7 +59,7 @@ Cada tarea dice qué hacer, dónde, cuándo está hecha y qué commits se espera
 - commits: `chore: agregar cortes condensados de archivo` · `feat: cargar cortes condensados` · `refactor: titulares con archivo condensado`
 
 ### T-007 · textos
-- depende de: T-000 · zona: `apps/movil/src/textos/` · raíz: no · estado: libre
+- depende de: T-000 · zona: `apps/movil/src/textos/` · raíz: no · estado: hecha
 - hacer: `es.ts` tipado (objeto anidado por pantalla) y helper `t('viajar.titulo')` con autocompletado de claves.
 - hecho cuando: una clave inexistente falla en `tsc`.
 - commits: `feat: catalogo de textos en español`
