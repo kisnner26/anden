@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import {
   AccessibilityInfo,
   Animated,
@@ -35,9 +36,7 @@ export function Boton({
   const movimientoReducido = useMovimientoReducido();
   const avance = useRef(new Animated.Value(0)).current;
   const colorTexto =
-    variante === 'principal' && !cargando
-      ? colores.sobreAmbar
-      : colores.tinta;
+    variante === 'principal' && !cargando ? colores.sobreAmbar : colores.tinta;
 
   useEffect(() => {
     if (!cargando) {
@@ -61,13 +60,18 @@ export function Boton({
     return () => animacion.stop();
   }, [avance, cargando, movimientoReducido]);
 
+  function presionar() {
+    void impactAsync(ImpactFeedbackStyle.Light);
+    alPresionar();
+  }
+
   return (
     <Pressable
       accessibilityLabel={etiqueta}
       accessibilityRole="button"
       accessibilityState={{ busy: cargando, disabled: deshabilitado }}
       disabled={cargando || deshabilitado}
-      onPress={alPresionar}
+      onPress={presionar}
       style={({ pressed }) => [
         estilos.base,
         variante === 'principal' && {
