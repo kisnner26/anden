@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "test": "pnpm --workspace-root exec vitest run packages/datos",
     "tipos": "pnpm --workspace-root exec tsc --project packages/datos/tsconfig.json --noEmit"
   }
 }
