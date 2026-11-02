@@ -3,6 +3,8 @@ import {
   Archivo_500Medium,
   Archivo_600SemiBold,
 } from '@expo-google-fonts/archivo';
+import ArchivoCondensed_700Bold from '../assets/fuentes/Archivo-Condensed-Bold.ttf';
+import ArchivoExtraCondensed_800ExtraBold from '../assets/fuentes/Archivo-ExtraCondensed-ExtraBold.ttf';
 import {
   JetBrainsMono_500Medium,
   JetBrainsMono_600SemiBold,
@@ -19,8 +21,8 @@ export default function DisenoRaiz() {
     Archivo_400Regular,
     Archivo_500Medium,
     Archivo_600SemiBold,
-    ArchivoCondensed_700Bold: require('../assets/fuentes/Archivo-Condensed-Bold.ttf'),
-    ArchivoExtraCondensed_800ExtraBold: require('../assets/fuentes/Archivo-ExtraCondensed-ExtraBold.ttf'),
+    ArchivoCondensed_700Bold,
+    ArchivoExtraCondensed_800ExtraBold,
     JetBrainsMono_500Medium,
     JetBrainsMono_600SemiBold,
   });
