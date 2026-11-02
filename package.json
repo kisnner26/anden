@@ -6,7 +6,8 @@
   "scripts": {
     "formato": "prettier --check \"{apps,packages}/**/*.{ts,tsx,json}\" \"*.{json,mjs}\"",
     "lint": "eslint .",
-    "tipos": "pnpm --filter @anden/dominio run tipos && pnpm --filter @anden/datos run tipos && pnpm --filter movil run tipos"
+    "tipos": "pnpm --filter @anden/dominio run tipos && pnpm --filter @anden/datos run tipos && pnpm --filter movil run tipos",
+    "verificar": "pnpm tipos && pnpm lint && pnpm formato && pnpm -r --if-present run test"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
