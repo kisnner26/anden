@@ -35,4 +35,29 @@ describe('Icono', () => {
     );
     expect(pantalla.getByRole('image', { name: 'Buscar' })).toBeTruthy();
   });
+
+  it('usa el tamaño destacado por defecto', async () => {
+    const pantalla = await render(
+      <Icono etiquetaAccesible="reloj" nombre="reloj" />,
+    );
+    const medida = tamanosIcono.destacado;
+    expect(pantalla.getByLabelText('reloj').props.style).toEqual({
+      height: medida,
+      width: medida,
+    });
+  });
+
+  it.each(Object.keys(tamanosIcono) as TamanoIcono[])(
+    'respeta la medida %s de la escala',
+    async (tamano) => {
+      const pantalla = await render(
+        <Icono etiquetaAccesible="taxi" nombre="taxi" tamano={tamano} />,
+      );
+      const medida = tamanosIcono[tamano];
+      expect(pantalla.getByLabelText('taxi').props.style).toEqual({
+        height: medida,
+        width: medida,
+      });
+    },
+  );
 });
