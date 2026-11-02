@@ -7,3 +7,5 @@ Registro de decisiones tomadas durante el desarrollo. Una por entrada, la más r
 | 2026-11-02 | plan | nombre Andén, bundle `com.kisnner.anden` | nombre corto, propio del viaje en bus; un solo App ID por el límite de la cuenta gratuita de Apple |
 | 2026-11-02 | plan | Expo + Supabase, datos en memoria primero | la app se puede construir y probar completa antes de tener backend |
 | 2026-11-02 | T-066 | **abierta**: pasarela de pago real | Stripe no opera en Nicaragua; hay que elegir una que sí |
+| 2026-11-02 | T-010 | `Retencion` lleva `id` y `Boleto` lleva `duenoId` | el contrato usa `liberar(retencionId)`, `comprar(retencionId, ...)` y `misBoletos(duenoId)`, que no se pueden cumplir sin esos campos |
+| 2026-11-02 | T-010 | fechas y horas como texto ISO 8601 con desfase; los esquemas lo exigen | el viaje sale en hora de Managua (-06:00) y el servidor puede devolver UTC; ambas se aceptan |
