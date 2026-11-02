@@ -19,4 +19,6 @@ export const tamanosIcono = {
   pequeno: 16,
   mediano: 20,
   grande: 24,
+  destacado: 26,
+  ilustracion: 34,
 } as const;
