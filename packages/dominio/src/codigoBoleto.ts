@@ -2,10 +2,12 @@ const ALFABETO = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 const LONGITUD_CUERPO = 7;
 
 function digitoControl(cuerpo: string): number {
-  return [...cuerpo].reduce((suma, caracter, indice) => {
-    const valor = ALFABETO.indexOf(caracter) + 1;
-    return suma + valor * (indice + 1);
-  }, 0) % 10;
+  return (
+    [...cuerpo].reduce((suma, caracter, indice) => {
+      const valor = ALFABETO.indexOf(caracter) + 1;
+      return suma + valor * (indice + 1);
+    }, 0) % 10
+  );
 }
 
 export function generarCodigo(aleatorio: () => number): string {
