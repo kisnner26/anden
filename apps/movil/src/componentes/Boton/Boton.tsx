@@ -4,7 +4,7 @@ import { espacios, radios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 
-export type VarianteBoton = 'principal';
+export type VarianteBoton = 'principal' | 'secundario';
 
 export interface PropiedadesBoton {
   alPresionar: () => void;
@@ -18,6 +18,8 @@ export function Boton({
   variante = 'principal',
 }: PropiedadesBoton) {
   const { colores } = useTema();
+  const colorTexto =
+    variante === 'principal' ? colores.sobreAmbar : colores.tinta;
 
   return (
     <Pressable
@@ -30,10 +32,14 @@ export function Boton({
           backgroundColor: colores.ambar,
           borderColor: colores.ambar,
         },
+        variante === 'secundario' && {
+          backgroundColor: colores.superficie,
+          borderColor: colores.linea,
+        },
         pressed && estilos.presionado,
       ]}
     >
-      <Text style={[tipografia.subtitulo, { color: colores.sobreAmbar }]}>
+      <Text style={[tipografia.subtitulo, { color: colorTexto }]}>
         {etiqueta}
       </Text>
     </Pressable>
