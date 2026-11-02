@@ -89,6 +89,17 @@ export interface Tramo {
   hasta: number;
 }
 
+export interface Tarifa {
+  rutaId: string;
+  servicio: TipoServicio;
+  desdeParada: number;
+  hastaParada: number;
+  cordobas: number;
+  resolucion: string;
+}
+
+export type Tarifario = Tarifa[];
+
 export interface Bus {
   id: string;
   placa: string;
