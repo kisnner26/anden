@@ -84,9 +84,10 @@ Titular a dos tonos: la primera parte en `tinta`, la palabra clave en `ambarTitu
 
 ## forma, espacio y movimiento
 
-- Espaciado en múltiplos de 4: 4, 8, 12, 16, 24, 32, 48. Margen lateral de pantalla: 20.
-- Radios: 4 en el tablero y botones cuadrados, 20 en tarjetas y hojas, 999 en píldoras.
-- Cristal: barra de pestañas flotante y hojas inferiores con desenfoque (`expo-blur`; en iOS 26+ vidrio nativo si el SDK de Expo lo ofrece). En Android, sin desenfoque: `superficieAlta` al 94 % de opacidad.
+- Espaciado en múltiplos de 4: 4, 8, 12, 16, 24, 32, 48. Margen lateral de pantalla: 20. Todo se alinea a esos márgenes: dos bloques hermanos tienen el mismo ancho y la misma separación.
+- Radios: 12 en asientos, 18 en losetas de ícono, 26 en bloques de barro, 30 en bloques negros, 56 en la carcasa del plano del bus, 999 en píldoras y botones.
+- Relieve: dos sombras (luz arriba a la izquierda, sombra abajo a la derecha) más un reborde de luz de 1 px. El estado "hundido" (casilla sin elegir, asiento vendido) invierte las sombras hacia adentro. En React Native las sombras exteriores van con las propiedades de sombra; las interiores se dibujan con `react-native-svg` en un degradado.
+- Barra de pestañas flotante: píldora de barro a 14 px de los bordes y a 26 del pie, con la pestaña activa en una píldora negra con ícono y nombre. Sin desenfoque.
 - Duraciones: 180 ms (toques), 240 ms (cambios de estado), 320 ms (entradas de pantalla). Curva de salida suave. Con "reducir movimiento" activado, todo pasa a fundido de 120 ms y el split-flap cambia sin girar.
 - Respuesta háptica ligera al elegir asiento, al confirmar pago y al separar el talón.
 
