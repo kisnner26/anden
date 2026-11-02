@@ -97,7 +97,7 @@ Tipos en `packages/dominio/src/tipos.ts`, cada uno con su esquema Zod en `esquem
 | `Retencion` | id, viajeId, asientos, expira (ISO), duenoId |
 | `Ocupacion` | una fila por asiento ocupado de un viaje, igual que la tabla `ocupaciones`: viajeId, asiento, estado (`retenido`, `vendido`), duenoId, expira (ISO, obligatoria si está retenido) y boletoId (obligatorio si está vendido) |
 | `Pasajero` | nombre, cedula opcional, esMenorEnBrazos |
-| `Boleto` | id, codigo, viajeId, duenoId, asiento, pasajero, precio, estado (`vigente`, `usado`, `cancelado`, `reembolsado`), compradoEn |
+| `Boleto` | id, codigo, viajeId, duenoId, asiento, pasajero, precio, estado (`vigente`, `usado`, `cancelado`, `reembolsado`), compradoEn, cambioUsado |
 | `Calificacion` | boletoId, choferId, estrellas, etiquetas |
 | `PosicionBus` | viajeId, coordenadas, registradaEn |
 
