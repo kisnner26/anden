@@ -51,12 +51,16 @@ export function calcularPrecio(
   tramo: Tramo,
   tipoBus: TipoBus,
   pasajeros: Pasajero[],
-): Resultado<{ unitario: number; total: number }, 'tramo-invalido' | 'sin-pasajeros'> {
+): Resultado<
+  { unitario: number; total: number },
+  'tramo-invalido' | 'sin-pasajeros'
+> {
   const unitario = precioUnitario(ruta, tramo, tipoBus);
   if (unitario === null) return error('tramo-invalido');
 
-  const cantidad = pasajeros.filter((pasajero) => !pasajero.esMenorEnBrazos)
-    .length;
+  const cantidad = pasajeros.filter(
+    (pasajero) => !pasajero.esMenorEnBrazos,
+  ).length;
   if (cantidad === 0) return error('sin-pasajeros');
 
   return ok({ unitario, total: unitario * cantidad });

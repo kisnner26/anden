@@ -14,7 +14,12 @@ const ruta: Ruta = {
   destinoId: 'ter_gra',
   paradas: [
     { tipo: 'terminal', terminalId: 'ter_uca', minutosDesdeOrigen: 0 },
-    { tipo: 'punto', nombre: 'Nandasmo', coordenadas: { lat: 12, lng: -86 }, minutosDesdeOrigen: 35 },
+    {
+      tipo: 'punto',
+      nombre: 'Nandasmo',
+      coordenadas: { lat: 12, lng: -86 },
+      minutosDesdeOrigen: 35,
+    },
     { tipo: 'terminal', terminalId: 'ter_gra', minutosDesdeOrigen: 55 },
   ],
   distanciaKm: 45,
@@ -46,6 +51,23 @@ describe('MULTIPLICADORES_BUS', () => {
 describe('precioUnitario', () => {
   it('mantiene la tarifa base en el tramo completo', () => {
     expect(precioUnitario(ruta, { desde: 0, hasta: 2 }, 'ordinario')).toBe(46);
+  });
+
+  it('mantiene la tarifa completa aunque las paradas no alcancen la duración', () => {
+    const rutaConEscalaIncompleta = {
+      ...ruta,
+      paradas: [
+        ruta.paradas[0]!,
+        { ...ruta.paradas[2]!, minutosDesdeOrigen: 50 },
+      ],
+    };
+    expect(
+      precioUnitario(
+        rutaConEscalaIncompleta,
+        { desde: 0, hasta: 1 },
+        'ordinario',
+      ),
+    ).toBe(46);
   });
 
   it('prorratea por minutos y redondea una sola vez', () => {
