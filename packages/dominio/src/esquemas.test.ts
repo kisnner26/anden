@@ -9,6 +9,7 @@ import {
   esquemaCoordenadas,
   esquemaParada,
   esquemaPasajero,
+  esquemaOcupacion,
   esquemaPosicionBus,
   esquemaRetencion,
   esquemaRuta,
@@ -271,6 +272,37 @@ describe('esquemaRetencion', () => {
     ).toBe(false);
     expect(
       esquemaRetencion.safeParse({ ...retencion, asientos: [0] }).success,
+    ).toBe(false);
+  });
+});
+
+describe('esquemaOcupacion', () => {
+  it('exige expiración al retener y boleto al vender', () => {
+    expect(
+      esquemaOcupacion.safeParse({
+        viajeId: 'via_01',
+        asiento: 8,
+        estado: 'retenido',
+        duenoId: 'usu_01',
+        expira: '2026-11-02T14:00:00-06:00',
+      }).success,
+    ).toBe(true);
+    expect(
+      esquemaOcupacion.safeParse({
+        viajeId: 'via_01',
+        asiento: 8,
+        estado: 'vendido',
+        duenoId: 'usu_01',
+        boletoId: 'bol_01',
+      }).success,
+    ).toBe(true);
+    expect(
+      esquemaOcupacion.safeParse({
+        viajeId: 'via_01',
+        asiento: 8,
+        estado: 'retenido',
+        duenoId: 'usu_01',
+      }).success,
     ).toBe(false);
   });
 });
