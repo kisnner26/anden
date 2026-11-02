@@ -7,6 +7,10 @@
     "tipos": "pnpm --filter @anden/dominio run tipos && pnpm --filter @anden/datos run tipos && pnpm --filter movil run tipos"
   },
   "devDependencies": {
-    "typescript": "~6.0.3"
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.14.0",
+    "prettier": "^3.9.10",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.72.1"
   }
 }
