@@ -91,7 +91,7 @@ Cada uno vive en `apps/movil/src/componentes/<Nombre>/` con su archivo, su prueb
 | `BarraPestanas` | cristal flotante a 12 del borde inferior, 4 pestañas: Viajar, Horarios, Rutas, Boletos. Cuenta va arriba a la derecha en cada pantalla. |
 | `Hoja` | hoja inferior de cristal con asa, para filtros, detalle de parada y confirmaciones. |
 | `EstadoVacio`, `EstadoError`, `Esqueleto` | vacío con texto directo y una acción; error con causa y reintentar; carga con bloques que respiran (sin spinner). |
-| `Icono` | envoltorio único sobre `lucide-react-native`, trazo 1.75, tamaños 16/20/24. Ninguna pantalla importa iconos directo. |
+| `Icono` | set de íconos ilustrados propios, rellenos y con volumen, dibujados con `react-native-svg` a partir de los símbolos de `mockups/identidad-v2.html` (campana, boleto, rayo, taxi, lupa, reloj, volante, flechas y los cuatro de la barra). Prohibido usar librerías de íconos de línea como lucide, feather o los símbolos del sistema. Ninguna pantalla importa íconos directo. |
 
 ## pantallas clave
 
