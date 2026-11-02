@@ -14,7 +14,9 @@ describe('Vitrina', () => {
   it('alterna entre los dos temas', async () => {
     const pantalla = await render(<Vitrina />);
     expect(pantalla.getByText('Tema oscuro')).toBeTruthy();
-    await fireEvent.press(pantalla.getByLabelText('Cambiar tema de la vitrina'));
+    await fireEvent.press(
+      pantalla.getByLabelText('Cambiar tema de la vitrina'),
+    );
     expect(pantalla.getByText('Tema claro')).toBeTruthy();
   });
 
