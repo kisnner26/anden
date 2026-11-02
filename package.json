@@ -2,5 +2,11 @@
   "name": "anden",
   "version": "0.0.0",
   "private": true,
-  "packageManager": "pnpm@12.11.2"
+  "packageManager": "pnpm@12.11.2",
+  "scripts": {
+    "tipos": "pnpm --filter @anden/dominio run tipos && pnpm --filter @anden/datos run tipos && pnpm --filter movil run tipos"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.3"
+  }
 }

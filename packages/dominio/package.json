@@ -1,5 +1,8 @@
 {
   "name": "@anden/dominio",
   "version": "0.0.0",
-  "private": true
+  "private": true,
+  "scripts": {
+    "tipos": "pnpm --workspace-root exec tsc --project packages/dominio/tsconfig.json --noEmit"
+  }
 }
