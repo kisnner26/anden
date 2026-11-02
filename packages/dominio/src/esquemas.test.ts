@@ -1,10 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  esquemaAsiento,
+  esquemaBus,
+  esquemaChofer,
   esquemaCoordenadas,
   esquemaParada,
   esquemaRuta,
   esquemaTerminal,
+  esquemaViaje,
 } from './esquemas';
 
 const coordenadas = { lat: 12.1328, lng: -86.2504 };
@@ -112,5 +116,107 @@ describe('esquemaRuta', () => {
     expect(esquemaRuta.safeParse({ ...ruta, duracionMin: 0 }).success).toBe(
       false,
     );
+  });
+});
+
+const bus = {
+  id: 'bus_01',
+  placa: 'M 245-118',
+  cooperativa: 'Cooperativa de muestra',
+  tipo: 'interlocal',
+  configuracion: 'coaster26',
+  comodidades: ['aire-acondicionado', 'carga-usb'],
+};
+
+const chofer = {
+  id: 'cho_01',
+  nombre: 'Ernesto Calero',
+  fotoUrl: 'choferes/cho_01.png',
+  aniosManejando: 11,
+  licenciaVerificada: true,
+  viajesRealizados: 3200,
+};
+
+const viaje = {
+  id: 'via_01',
+  rutaId: 'rut_uca_gra',
+  busId: 'bus_01',
+  choferId: 'cho_01',
+  salida: '2026-11-02T14:40:00-06:00',
+  anden: 4,
+  estado: 'programado',
+  minutosAtraso: 0,
+};
+
+describe('esquemaBus', () => {
+  it('acepta un bus completo', () => {
+    expect(esquemaBus.safeParse(bus).success).toBe(true);
+  });
+
+  it('rechaza tipo, configuración o comodidad desconocidos', () => {
+    expect(esquemaBus.safeParse({ ...bus, tipo: 'lujo' }).success).toBe(false);
+    expect(
+      esquemaBus.safeParse({ ...bus, configuracion: 'bus99' }).success,
+    ).toBe(false);
+    expect(
+      esquemaBus.safeParse({ ...bus, comodidades: ['jacuzzi'] }).success,
+    ).toBe(false);
+  });
+});
+
+describe('esquemaChofer', () => {
+  it('acepta un chofer completo', () => {
+    expect(esquemaChofer.safeParse(chofer).success).toBe(true);
+  });
+
+  it('rechaza años o viajes negativos y nombre vacío', () => {
+    expect(
+      esquemaChofer.safeParse({ ...chofer, aniosManejando: -1 }).success,
+    ).toBe(false);
+    expect(
+      esquemaChofer.safeParse({ ...chofer, viajesRealizados: -5 }).success,
+    ).toBe(false);
+    expect(esquemaChofer.safeParse({ ...chofer, nombre: '  ' }).success).toBe(
+      false,
+    );
+  });
+});
+
+describe('esquemaViaje', () => {
+  it('acepta un viaje con fecha ISO y con desfase horario', () => {
+    expect(esquemaViaje.safeParse(viaje).success).toBe(true);
+    expect(
+      esquemaViaje.safeParse({ ...viaje, salida: '2026-11-02T20:40:00Z' })
+        .success,
+    ).toBe(true);
+  });
+
+  it('rechaza una fecha que no es ISO 8601', () => {
+    expect(
+      esquemaViaje.safeParse({ ...viaje, salida: '2 de noviembre 2:40 pm' })
+        .success,
+    ).toBe(false);
+  });
+
+  it('rechaza estado desconocido y atraso negativo', () => {
+    expect(
+      esquemaViaje.safeParse({ ...viaje, estado: 'perdido' }).success,
+    ).toBe(false);
+    expect(
+      esquemaViaje.safeParse({ ...viaje, minutosAtraso: -10 }).success,
+    ).toBe(false);
+  });
+});
+
+describe('esquemaAsiento', () => {
+  it('acepta un asiento y rechaza número cero o tipo desconocido', () => {
+    const asiento = { numero: 8, fila: 2, columna: 3, tipo: 'ventana' };
+    expect(esquemaAsiento.safeParse(asiento).success).toBe(true);
+    expect(esquemaAsiento.safeParse({ ...asiento, numero: 0 }).success).toBe(
+      false,
+    );
+    expect(
+      esquemaAsiento.safeParse({ ...asiento, tipo: 'techo' }).success,
+    ).toBe(false);
   });
 });
