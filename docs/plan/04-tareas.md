@@ -100,8 +100,8 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 
 ### T-014 · horarios y estado del viaje
 - depende de: T-010 · estado: libre
-- hacer: `estadoViaje(viaje, ahora)` (programado, abordando, en ruta, llegó, atrasado, cancelado), `llegadaEstimada(viaje, ruta, parada)`, `ventaAbierta(viaje, ahora)`.
-- hecho cuando: pruebas en los bordes exactos (20 min, 15 min, atraso).
+- hacer: `estadoViaje(viaje, ruta, ahora)` (programado, abordando, en ruta, llegó, atrasado, cancelado; recibe la ruta porque la llegada depende de su duración), `llegadaEstimada(viaje, ruta, parada)` y `ventaAbierta(viaje, ahora)`. Las reglas y su orden de precedencia están en `01-producto.md`.
+- hecho cuando: pruebas en los bordes exactos (20 min, 15 min, salida real con atraso, llegada) y de la precedencia (un viaje cancelado nunca aparece como en ruta ni con la venta abierta).
 - commits: `feat: estado del viaje segun la hora` · `feat: llegada estimada por parada` · `feat: cierre de venta`
 
 ### T-015 · búsqueda
