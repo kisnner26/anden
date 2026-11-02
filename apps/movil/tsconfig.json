@@ -3,6 +3,7 @@
   "compilerOptions": {
     "noUncheckedIndexedAccess": true,
     "strict": true,
+    "types": ["node"],
     "paths": {
       "@/*": ["./src/*"],
       "@/assets/*": ["./assets/*"]
