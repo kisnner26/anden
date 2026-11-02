@@ -4,6 +4,7 @@ Registro de decisiones tomadas durante el desarrollo. Una por entrada, la más r
 
 | fecha | tarea | decisión | por qué |
 |---|---|---|---|
+| 2026-11-02 | T-015 | **abierta**: definir las formas públicas de `FiltroBusqueda`, `datos` y `ResultadoViaje` para `buscarViajes` | el tablero especifica la regla pero no las estructuras de entrada ni salida; inventarlas cambiaría un contrato público del dominio |
 | 2026-11-02 | T-014 | **resuelta**: `estadoViaje` recibe la ruta y la llegada es la salida real más la duración (regla en `01-producto.md`). Pregunta original: cómo `estadoViaje(viaje, ahora)` conoce la llegada | `Viaje` no tiene duración ni llegada y la firma no recibe `Ruta`, por lo que no puede distinguir “en ruta” de “llegó” |
 | 2026-11-02 | T-013 | **resuelta**: la entrada es `Ocupacion[]`, una fila por asiento como la tabla `ocupaciones`, y T-013 pasa a depender de T-014 por `ventaAbierta`. Pregunta original: el tipo de entrada `ocupaciones` y la forma de representar ventas | `estadoAsientos(config, ocupaciones, ahora)` y `puedeRetener(...)` se piden sin contrato para diferenciar una `Retencion` de un asiento vendido ni sus datos de viaje |
 | 2026-11-02 | T-012 | **resuelta**: `Tramo` son índices de `ruta.paradas` y el parcial se prorratea por minutos (regla en `01-producto.md`). Pregunta original: la representación de `tramo` y el prorrateo de la tarifa parcial | el plan pide `calcularPrecio(ruta, tramo, tipoBus, pasajeros)` y probar un tramo parcial, pero `Ruta` no define el tramo ni la regla de reparto de su tarifa base |
