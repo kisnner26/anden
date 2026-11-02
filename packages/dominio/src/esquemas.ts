@@ -20,6 +20,7 @@ import {
   type PosicionBus,
   type Retencion,
   type Ruta,
+  type Tarifa,
   type Terminal,
   type Tramo,
   type Viaje,
@@ -78,6 +79,19 @@ export const esquemaTramo: z.ZodType<Tramo> = z
     hasta: entero.min(0),
   })
   .refine((tramo) => tramo.desde < tramo.hasta, {
+    message: 'el inicio debe ser anterior al final',
+  });
+
+export const esquemaTarifa: z.ZodType<Tarifa> = z
+  .object({
+    rutaId: id,
+    servicio: z.enum(TIPOS_SERVICIO),
+    desdeParada: entero.min(0),
+    hastaParada: entero.min(0),
+    cordobas: entero.positive(),
+    resolucion: texto,
+  })
+  .refine((tarifa) => tarifa.desdeParada < tarifa.hastaParada, {
     message: 'el inicio debe ser anterior al final',
   });
 
