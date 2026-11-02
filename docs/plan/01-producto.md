@@ -50,7 +50,7 @@ Fuera de la v1 (anotado para no perderlo): app del chofer, panel de la cooperati
 
 Estas reglas viven en `packages/dominio` y tienen pruebas. Si una tarea necesita otra regla, se agrega aquí en su propio commit `docs:`.
 
-- **Precio:** tarifa base de la ruta por tramo × multiplicador del tipo de bus (ordinario 1.0, interlocal 1.2, expreso 1.5). Redondeo al córdoba entero hacia arriba. Niños menores de 3 años en brazos no pagan ni ocupan asiento. Moneda única: córdoba (C$).
+- **Precio:** tarifa base de la ruta por tramo × multiplicador del tipo de bus (ordinario 1.0, interlocal 1.2, expreso 1.5). Redondeo al córdoba entero hacia arriba. Niños menores de 3 años en brazos no pagan ni ocupan asiento. Moneda única: córdoba (C$). El tramo va de una parada a otra de la ruta; el tramo completo cuesta exactamente `tarifaBase` y uno parcial se prorratea por los minutos entre sus paradas: `tarifaBase × minutosDelTramo / duracionMin`. Se aplica el multiplicador del bus, se redondea hacia arriba una sola vez al córdoba entero y el total es ese precio por los pasajeros que pagan.
 - **Retención de asiento:** 10 minutos desde que se elige. Un asiento retenido o vendido no se puede elegir. Una retención vencida cuenta como libre. Máximo 6 asientos por compra.
 - **Venta:** cierra 15 minutos antes de la salida. Después, el viaje aparece pero con "venta cerrada".
 - **Cancelación:** más de 24 h antes, reembolso del 100 %; entre 24 h y 2 h, 50 %; menos de 2 h, sin reembolso. Cambiar a otra salida de la misma ruta es gratis una vez si faltan más de 2 h.
