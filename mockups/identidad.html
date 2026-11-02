@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Andén · identidad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fondo:#0E0F11;--superficie:#16181B;--superficieAlta:#1F2226;--linea:#2C3036;
+  --tinta:#F2EFE8;--tintaSuave:#A9A59C;--ambar:#FFB21E;--sobreAmbar:#1A1205;
+  --papel:#F2EBDD;--tintaPapel:#1B1A17;--aTiempo:#5FD39A;--atrasado:#FF7A59;--cancelado:#FF5A6E;
+  --mono:'JetBrains Mono',ui-monospace,monospace;--sans:'Archivo',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#08090A;color:var(--tinta);font-family:var(--sans);min-height:100vh}
+.portada{padding:40px 48px 8px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
+.portada h1{font-size:64px;line-height:.9;font-weight:800;font-stretch:62%;letter-spacing:-.01em}
+.portada h1 em{font-style:normal;color:var(--ambar)}
+.etiqueta{font:500 11px/14px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--tintaSuave)}
+.galeria{display:flex;flex-wrap:wrap;gap:40px;padding:32px 48px 64px}
+.marco{display:flex;flex-direction:column;gap:12px}
+.telefono{width:390px;height:844px;border-radius:54px;background:var(--fondo);position:relative;overflow:hidden;
+  box-shadow:0 0 0 10px #1A1B1E,0 0 0 11px #2A2B2F,0 40px 80px -20px rgba(0,0,0,.7)}
+.solo .portada,.solo .marco>.etiqueta{display:none}
+.solo body,body.solo{background:var(--fondo)}
+.solo .galeria{padding:0;gap:0}
+.solo .marco{display:none}
+.solo .marco.activo{display:flex}
+.solo .telefono{border-radius:0;box-shadow:none}
+
+/* barra de estado */
+.estado{height:54px;display:flex;justify-content:space-between;align-items:center;padding:14px 32px 0;font:600 16px var(--sans)}
+.estado .ico{display:flex;gap:6px;align-items:center}
+.pantalla{position:absolute;inset:54px 0 0 0;padding:0 20px;display:flex;flex-direction:column}
+
+/* tipografía */
+.display{font-weight:800;font-stretch:62%;font-size:56px;line-height:52px;letter-spacing:-.01em}
+.display em,.titulo em{font-style:normal;color:var(--ambar)}
+.titulo{font-weight:700;font-stretch:75%;font-size:34px;line-height:36px}
+.subtitulo{font-weight:600;font-size:20px;line-height:26px}
+.pequeno{font-weight:500;font-size:13px;line-height:18px;color:var(--tintaSuave)}
+.dato{font:500 15px/20px var(--mono)}
+.datoGrande{font:600 28px/32px var(--mono)}
+
+/* piezas */
+.cabecera{display:flex;justify-content:space-between;align-items:center;height:44px}
+.cuenta{width:40px;height:40px;border-radius:999px;border:1px solid var(--linea);display:grid;place-items:center;font:600 13px var(--mono);color:var(--tinta);background:var(--superficie)}
+.tarjeta{background:var(--superficie);border:1px solid var(--linea);border-radius:20px}
+.chip{height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--linea);display:inline-flex;align-items:center;font-weight:500;font-size:14px;color:var(--tinta)}
+.chip.activo{background:var(--tinta);color:var(--fondo);border-color:var(--tinta)}
+.boton{height:52px;border-radius:4px;background:var(--ambar);color:var(--sobreAmbar);display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-weight:700;font-size:16px}
+.boton .flecha{font:600 18px var(--mono)}
+.pildora{height:48px;border-radius:999px;background:rgba(242,239,232,.08);border:1px solid rgba(242,239,232,.16);display:inline-flex;align-items:center;gap:12px;padding:0 6px 0 18px;font-weight:600;font-size:15px;color:var(--tinta)}
+.pildora .circulo{width:36px;height:36px;border-radius:999px;border:1px solid rgba(242,239,232,.3);display:grid;place-items:center}
+.pestanas{position:absolute;left:12px;right:12px;bottom:28px;height:68px;border-radius:999px;
+  background:rgba(31,34,38,.72);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);
+  border:1px solid rgba(242,239,232,.12);display:flex;justify-content:space-around;align-items:center;padding:0 8px}
+.pestana{display:flex;flex-direction:column;align-items:center;gap:4px;font:500 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--tintaSuave);width:76px}
+.pestana.activa{color:var(--ambar)}
+.pestana svg{width:22px;height:22px}
+svg.i{fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+
+/* viajar */
+.lugares{margin-top:24px;position:relative}
+.lugar{padding:16px 18px;display:flex;flex-direction:column;gap:4px}
+.lugar+.lugar{border-top:1px solid var(--linea)}
+.lugar .nombre{font-weight:700;font-stretch:75%;font-size:26px;line-height:30px}
+.lugar .nombre small{font-weight:500;font-stretch:100%;font-size:14px;color:var(--tintaSuave);margin-left:6px}
+.intercambiar{position:absolute;right:18px;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:999px;background:var(--superficieAlta);border:1px solid var(--linea);display:grid;place-items:center;color:var(--ambar)}
+.fila{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.contador{display:flex;align-items:center;gap:14px}
+.contador .menos,.contador .mas{width:36px;height:36px;border-radius:999px;border:1px solid var(--linea);display:grid;place-items:center;font:500 18px var(--mono)}
+.mini{margin-top:12px}
+.mini .ruta{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:14px 18px;align-items:center}
+.mini .ruta+.ruta{border-top:1px solid var(--linea)}
+.mini .trayecto{font-weight:600;font-size:16px}
+.mini .hora{font:600 20px var(--mono);color:var(--ambar);text-align:right}
+.mini .falta{text-align:right}
+
+/* tablero */
+.terminal{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding:12px 16px}
+.terminal .codigo{width:44px;height:44px;border-radius:4px;background:var(--ambar);color:var(--sobreAmbar);display:grid;place-items:center;font:700 14px var(--mono)}
+.tablero{margin-top:16px;background:#0A0B0C;border:1px solid var(--linea);border-radius:4px;overflow:hidden}
+.tablero .encabezado,.tablero .salida{display:grid;grid-template-columns:64px 1fr 36px 84px;align-items:center;gap:8px;padding:0 12px}
+.tablero .encabezado{height:32px;border-bottom:1px solid var(--linea)}
+.tablero .salida{height:58px;border-bottom:1px solid #1A1C1F}
+.tablero .salida:last-child{border-bottom:0}
+.flaps{display:flex;gap:2px}
+.flap{width:15px;height:28px;background:#17191C;border-radius:2px;position:relative;display:grid;place-items:center;font:600 17px var(--mono);color:var(--ambar)}
+.flap::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:#0A0B0C}
+.flap.sep{width:6px;background:none;font-size:15px}
+.flap.sep::after{display:none}
+.destino{font-weight:800;font-stretch:62%;font-size:23px;line-height:24px;text-transform:uppercase;letter-spacing:.01em;white-space:nowrap;overflow:hidden}
+.destino small{display:block;font:500 10px/14px var(--mono);letter-spacing:.06em;color:var(--tintaSuave);font-stretch:100%}
+.anden{width:36px;height:30px;border:1px solid var(--linea);border-radius:4px;display:grid;place-items:center;font:600 15px var(--mono)}
+.est{font:600 10px/13px var(--mono);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.est::before{content:"";width:7px;height:7px;flex:none}
+.est.abordando{color:var(--ambar)}.est.abordando::before{background:var(--ambar);border-radius:999px}
+.est.tiempo{color:var(--aTiempo)}.est.tiempo::before{border:1.5px solid var(--aTiempo);border-radius:999px}
+.est.atrasado{color:var(--atrasado)}.est.atrasado::before{background:var(--atrasado);transform:rotate(45deg)}
+.est.salio{color:var(--tintaSuave)}.est.salio::before{width:8px;height:1.5px;background:var(--tintaSuave)}
+.tablero .salida.pasada .flap{color:var(--tintaSuave)}
+.tablero .salida.pasada .destino{color:var(--tintaSuave)}
+.girando{animation:girar 1.6s ease-in-out infinite}
+@keyframes girar{0%,70%{transform:rotateX(0)}80%{transform:rotateX(90deg)}90%{transform:rotateX(0)}}
+@media (prefers-reduced-motion:reduce){.girando{animation:none}}
+</style>
+</head>
+<body>
+<header class="portada">
+  <h1>Andén.<br><em>Identidad.</em></h1>
+  <div class="etiqueta">T-004 · mockup para aprobación · 390 × 844 · modo oscuro</div>
+</header>
+
+<main class="galeria">
+
+<!-- 1 · viajar -->
+<section class="marco" id="viajar">
+  <div class="etiqueta">01 / viajar</div>
+  <div class="telefono">
+    <div class="estado"><span>2:28</span><span class="ico etiqueta" style="color:var(--tinta)">5G · 82%</span></div>
+    <div class="pantalla">
+      <div class="cabecera">
+        <span class="etiqueta">Andén · Managua</span>
+        <span class="cuenta">AR</span>
+      </div>
+      <h2 class="display" style="margin-top:20px">¿Para dónde<br><em>vas?</em></h2>
+
+      <div class="tarjeta lugares">
+        <div class="lugar">
+          <span class="etiqueta">Desde</span>
+          <span class="nombre">UCA<small>Managua</small></span>
+        </div>
+        <div class="lugar">
+          <span class="etiqueta">Hasta</span>
+          <span class="nombre">Granada<small>Terminal Granada</small></span>
+        </div>
+        <span class="intercambiar"><svg class="i" width="20" height="20" viewBox="0 0 24 24"><path d="M7 4v16M7 4 3 8M7 4l4 4M17 20V4M17 20l-4-4M17 20l4-4"/></svg></span>
+      </div>
+
+      <div class="fila" style="margin-top:16px">
+        <div style="display:flex;gap:8px">
+          <span class="chip activo">Hoy</span><span class="chip">Mañana</span><span class="chip">Elegir</span>
+        </div>
+        <div class="contador">
+          <span class="menos">−</span><span class="dato">2</span><span class="mas">+</span>
+        </div>
+      </div>
+
+      <div class="boton" style="margin-top:16px"><span>Buscar salidas</span><span class="flecha">→</span></div>
+
+      <div class="fila" style="margin-top:28px">
+        <span class="subtitulo">Tus rutas</span>
+        <span class="etiqueta">Próxima salida</span>
+      </div>
+      <div class="tarjeta mini">
+        <div class="ruta">
+          <span class="trayecto">UCA → Granada</span><span class="hora">2:40</span>
+          <span class="pequeno">Interlocal · andén 4</span><span class="etiqueta falta" style="color:var(--ambar)">en 12 min</span>
+        </div>
+        <div class="ruta">
+          <span class="trayecto">Huembes → Masaya</span><span class="hora">2:45</span>
+          <span class="pequeno">Expreso · andén 2</span><span class="etiqueta falta">en 17 min</span>
+        </div>
+      </div>
+    </div>
+    <nav class="pestanas">
+      <span class="pestana activa"><svg class="i" viewBox="0 0 24 24"><path d="M5 17h14M6 17V7a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v10M6 12h12M8 20v-3M16 20v-3"/></svg>Viajar</span>
+      <span class="pestana"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 12h18M8 5v14"/></svg>Horarios</span>
+      <span class="pestana"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h6"/></svg>Rutas</span>
+      <span class="pestana"><svg class="i" viewBox="0 0 24 24"><path d="M4 6h16v4a2 2 0 0 0 0 4v4H4v-4a2 2 0 0 0 0-4z"/><path d="M14 6v12" stroke-dasharray="2 2.5"/></svg>Boletos</span>
+    </nav>
+  </div>
+</section>
+
+<!-- 2 · horarios -->
+<section class="marco" id="horarios">
+  <div class="etiqueta">02 / horarios · tablero de salidas</div>
+  <div class="telefono">
+    <div class="estado"><span>2:28</span><span class="ico etiqueta" style="color:var(--tinta)">5G · 82%</span></div>
+    <div class="pantalla">
+      <div class="cabecera">
+        <span class="titulo">Salidas<em>.</em></span>
+        <span class="cuenta">AR</span>
+      </div>
+      <div class="tarjeta terminal">
+        <div style="display:flex;gap:12px;align-items:center">
+          <span class="codigo">UCA</span>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <span style="font-weight:600;font-size:16px">Terminal UCA</span>
+            <span class="pequeno">Managua · a 1.2 km</span>
+          </div>
+        </div>
+        <svg class="i" width="20" height="20" viewBox="0 0 24 24" style="color:var(--tintaSuave)"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="fila" style="margin-top:14px">
+        <span class="etiqueta">2:28 p. m. · actualizado hace 12 s</span>
+        <span class="etiqueta" style="color:var(--aTiempo)">En vivo</span>
+      </div>
+
+      <div class="tablero">
+        <div class="encabezado etiqueta" style="font-size:10px"><span>Hora</span><span>Destino</span><span>Andén</span><span>Estado</span></div>
+        <div class="salida pasada">
+          <span class="flaps"><b class="flap">2</b><b class="flap sep">:</b><b class="flap">2</b><b class="flap">0</b></span>
+          <span class="destino">Masaya<small>Interlocal</small></span><span class="anden">3</span><span class="est salio">Salió</span>
+        </div>
+        <div class="salida">
+          <span class="flaps"><b class="flap">2</b><b class="flap sep">:</b><b class="flap">3</b><b class="flap">0</b></span>
+          <span class="destino">Jinotepe<small>Ordinario</small></span><span class="anden">6</span><span class="est abordando">Abordando</span>
+        </div>
+        <div class="salida">
+          <span class="flaps"><b class="flap">2</b><b class="flap sep">:</b><b class="flap">4</b><b class="flap girando">0</b></span>
+          <span class="destino">Granada<small>Interlocal</small></span><span class="anden">4</span><span class="est tiempo">A tiempo</span>
+        </div>
+        <div class="salida">
+          <span class="flaps"><b class="flap">2</b><b class="flap sep">:</b><b class="flap">5</b><b class="flap">0</b></span>
+          <span class="destino">León<small>Expreso</small></span><span class="anden">1</span><span class="est atrasado">+10 min</span>
+        </div>
+        <div class="salida">
+          <span class="flaps"><b class="flap">3</b><b class="flap sep">:</b><b class="flap">0</b><b class="flap">0</b></span>
+          <span class="destino">Diriamba<small>Interlocal</small></span><span class="anden">5</span><span class="est tiempo">A tiempo</span>
+        </div>
+        <div class="salida">
+          <span class="flaps"><b class="flap">3</b><b class="flap sep">:</b><b class="flap">1</b><b class="flap">5</b></span>
+          <span class="destino">San Marcos<small>Interlocal</small></span><span class="anden">6</span><span class="est tiempo">A tiempo</span>
+        </div>
+        <div class="salida">
+          <span class="flaps"><b class="flap">3</b><b class="flap sep">:</b><b class="flap">2</b><b class="flap">0</b></span>
+          <span class="destino">Masaya<small>Expreso</small></span><span class="anden">3</span><span class="est tiempo">A tiempo</span>
+        </div>
+        <div class="salida">
+          <span class="flaps"><b class="flap">3</b><b class="flap sep">:</b><b class="flap">3</b><b class="flap">0</b></span>
+          <span class="destino">Granada<small>Expreso</small></span><span class="anden">4</span><span class="est tiempo">A tiempo</span>
+        </div>
+      </div>
+    </div>
+    <nav class="pestanas">
+      <span class="pestana"><svg class="i" viewBox="0 0 24 24"><path d="M5 17h14M6 17V7a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v10M6 12h12M8 20v-3M16 20v-3"/></svg>Viajar</span>
+      <span class="pestana activa"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 12h18M8 5v14"/></svg>Horarios</span>
+      <span class="pestana"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h6"/></svg>Rutas</span>
+      <span class="pestana"><svg class="i" viewBox="0 0 24 24"><path d="M4 6h16v4a2 2 0 0 0 0 4v4H4v-4a2 2 0 0 0 0-4z"/><path d="M14 6v12" stroke-dasharray="2 2.5"/></svg>Boletos</span>
+    </nav>
+  </div>
+</section>
+
+<!-- pantallas 3 y 4 -->
+
+</main>
+<script>
+// ?pantalla=viajar muestra solo ese teléfono, para las capturas
+const p = new URLSearchParams(location.search).get('pantalla');
+if (p) { document.documentElement.classList.add('solo'); document.getElementById(p)?.classList.add('activo'); }
+</script>
+</body>
+</html>
