@@ -48,4 +48,25 @@ describe('precioOficial', () => {
       ),
     ).toEqual({ ok: true, valor: { unitario: 21, total: 21 } });
   });
+
+  it('rechaza ruta o servicio sin tarifa autorizada', () => {
+    expect(
+      precioOficial(
+        tarifario,
+        'rut_otra',
+        'ordinario',
+        { desde: 0, hasta: 2 },
+        [pasajero],
+      ),
+    ).toEqual({ ok: false, error: 'sin-tarifa-autorizada' });
+    expect(
+      precioOficial(
+        tarifario,
+        'rut_uca_gra',
+        'expreso',
+        { desde: 0, hasta: 2 },
+        [pasajero],
+      ),
+    ).toEqual({ ok: false, error: 'sin-tarifa-autorizada' });
+  });
 });
