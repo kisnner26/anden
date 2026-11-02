@@ -17,4 +17,12 @@ describe('Vitrina', () => {
     await fireEvent.press(pantalla.getByLabelText('Cambiar tema de la vitrina'));
     expect(pantalla.getByText('Tema claro')).toBeTruthy();
   });
+
+  it('expone el selector como interruptor accesible', async () => {
+    const pantalla = await render(<Vitrina />);
+    const selector = pantalla.getByRole('switch', {
+      name: 'Cambiar tema de la vitrina',
+    });
+    expect(selector.props.accessibilityState).toEqual({ checked: false });
+  });
 });
