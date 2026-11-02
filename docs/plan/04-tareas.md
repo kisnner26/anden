@@ -35,7 +35,7 @@ Cada tarea dice qué hacer, dónde, cuándo está hecha y qué commits se espera
 - commits: `chore: agregar ci con verificar`
 
 ### T-004 · mockup de identidad
-- depende de: nada · zona: `mockups/` · raíz: no · estado: libre
+- depende de: nada · zona: `mockups/` · raíz: no · estado: hecha
 - hacer: un HTML estático (`mockups/identidad.html`) con 4 pantallas a tamaño de teléfono siguiendo `02-diseno.md`: Viajar, Horarios (tablero), Elegí tu asiento, Tu boleto. Fuentes reales, colores del plan, textos reales con voseo. Captura PNG de cada pantalla en `mockups/capturas/`.
 - hecho cuando: el dueño del proyecto lo aprueba. **Bloquea toda la fase 3.** Si pide cambios, se ajusta `02-diseno.md` en su propio commit.
 - commits: `feat: mockup de inicio y tablero` · `feat: mockup de asientos y boleto` · `docs: capturas del mockup`
