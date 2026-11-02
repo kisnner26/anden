@@ -1,9 +1,10 @@
 import { describe, expect, it } from '@jest/globals';
 import { render } from '@testing-library/react-native';
 
+import { tamanosIcono } from '@/tema/espacios';
 import { t } from '@/textos/t';
 
-import { Icono } from './Icono';
+import { Icono, NOMBRES_ICONO, type TamanoIcono } from './Icono';
 
 describe('Icono', () => {
   it('expone una etiqueta cuando comunica significado', async () => {
@@ -12,4 +13,14 @@ describe('Icono', () => {
     );
     expect(pantalla.getByLabelText('Boleto')).toBeTruthy();
   });
+
+  it.each(NOMBRES_ICONO)(
+    'dibuja el ícono %s con su etiqueta',
+    async (nombre) => {
+      const pantalla = await render(
+        <Icono etiquetaAccesible={nombre} nombre={nombre} />,
+      );
+      expect(pantalla.getByLabelText(nombre)).toBeTruthy();
+    },
+  );
 });
