@@ -36,4 +36,16 @@ describe('precioOficial', () => {
       ),
     ).toEqual({ ok: true, valor: { unitario: 46, total: 46 } });
   });
+
+  it('devuelve la tarifa autorizada del tramo intermedio', () => {
+    expect(
+      precioOficial(
+        tarifario,
+        'rut_uca_gra',
+        'ordinario',
+        { desde: 1, hasta: 2 },
+        [pasajero],
+      ),
+    ).toEqual({ ok: true, valor: { unitario: 21, total: 21 } });
+  });
 });
