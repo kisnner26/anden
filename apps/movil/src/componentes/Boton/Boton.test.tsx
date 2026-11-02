@@ -24,4 +24,14 @@ describe('Boton', () => {
     expect(impactAsync).toHaveBeenCalledWith(ImpactFeedbackStyle.Light);
     expect(alPresionar).toHaveBeenCalledTimes(1);
   });
+
+  it('renderiza la variante secundaria sin indicador de avance', async () => {
+    const etiqueta = t('vitrina.botonSecundario');
+    const pantalla = await render(
+      <Boton alPresionar={jest.fn()} etiqueta={etiqueta} variante="secundario" />,
+    );
+
+    expect(pantalla.getByRole('button', { name: etiqueta })).toBeOnTheScreen();
+    expect(pantalla.queryByTestId('boton-pildora-flecha')).toBeNull();
+  });
 });
