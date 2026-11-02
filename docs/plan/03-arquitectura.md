@@ -21,10 +21,10 @@ Las versiones exactas se fijan en T-000 con la versión estable vigente de Expo 
 
 | paquete | versión fijada |
 |---|---|
-| Expo SDK | (se completa en T-000) |
-| React Native | (se completa en T-000) |
-| Node | 24 LTS o superior |
-| pnpm | 10 o superior |
+| Expo SDK | 58.0.22 |
+| React Native | 0.88.1 |
+| Node | 26.8.1 |
+| pnpm | 12.11.2 |
 
 La app necesita compilación de desarrollo (`expo prebuild` / `expo run:ios`, `expo run:android`), no Expo Go, porque MapLibre y MMKV son nativos.
 
