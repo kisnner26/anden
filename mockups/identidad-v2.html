@@ -68,30 +68,6 @@ svg.i{fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke
 /* viajar */
 .cabecera{display:flex;align-items:center;gap:12px;height:56px}
 .avatar{width:46px;height:46px;border-radius:999px;background:linear-gradient(145deg,#2B2A25,#0E0E0C);color:#fff;display:grid;place-items:center;font:700 14px var(--mono)}
-.proximo{position:relative;margin-top:50px;height:178px;border-radius:30px;background:linear-gradient(150deg,#262520,var(--negro));color:#fff;
-  box-shadow:10px 14px 26px rgba(40,30,10,.32),inset 0 1px 0 rgba(255,255,255,.12)}
-.proximo .foto{position:absolute;left:14px;top:-34px;width:150px;height:150px;border-radius:26px;background:linear-gradient(160deg,#FFFFFF,#EFE9DB);
-  box-shadow:0 12px 22px rgba(0,0,0,.28);display:grid;place-items:center;overflow:hidden;border:4px solid #fff}
-.proximo .foto svg{width:138px;height:auto}
-.proximo .datos{position:absolute;left:176px;right:16px;top:22px}
-.proximo .dest{font-weight:800;font-stretch:62%;font-size:44px;line-height:42px}
-.proximo .ruta{font:500 12px/16px var(--mono);letter-spacing:.04em;color:#B9B3A2;margin-top:8px}
-.proximo .reloj{position:absolute;left:176px;bottom:56px;font:700 24px var(--mono);color:var(--ambar)}
-.pastilla{position:absolute;right:14px;bottom:-22px;height:46px;padding:0 8px 0 18px;border-radius:999px;display:flex;align-items:center;gap:10px;
-  background:linear-gradient(145deg,#FFFFFF,#ECE6D8);box-shadow:var(--relieve);color:var(--tinta);font-weight:700;font-size:14px}
-.pastilla .circulo{width:32px;height:32px}
-.seccion{display:flex;justify-content:space-between;align-items:center;margin-top:44px}
-.fila{display:flex;align-items:center;gap:12px;padding:12px 12px 12px 12px;margin-top:12px}
-.loseta{width:50px;height:50px;border-radius:18px;display:grid;place-items:center;flex:none}
-.loseta.verde{background:linear-gradient(145deg,#7FD3A8,#2E9E6B);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),4px 6px 10px rgba(30,100,60,.3)}
-.loseta.ambar{background:linear-gradient(145deg,#FFD36B,var(--ambar2));color:var(--sobreAmbar);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),4px 6px 10px rgba(200,120,0,.3)}
-.loseta.negra{background:linear-gradient(145deg,#3B3A33,#0E0E0C);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.2),4px 6px 10px rgba(30,20,5,.35)}
-.fila .txt{flex:1;min-width:0}
-.fila .nombre{font-weight:800;font-size:18px;line-height:22px}
-.fila .hora{font:700 15px var(--mono);color:var(--ambar2);margin-right:2px}
-.estadisticas{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
-.estadisticas .barro{padding:16px 16px 14px;height:128px;display:flex;flex-direction:column;justify-content:space-between}
-.estadisticas b{font:700 26px/28px var(--mono);letter-spacing:-.02em}
 
 /* barra */
 .pestanas{position:absolute;left:14px;right:14px;bottom:26px;height:74px;border-radius:999px;background:linear-gradient(145deg,#F7F3EA,#E7E0D0);box-shadow:var(--relieve);
@@ -148,6 +124,40 @@ svg.i{fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke
 .boton-ambar{height:52px;padding:0 8px 0 22px;border-radius:999px;display:flex;align-items:center;gap:12px;font-weight:800;font-size:16px;color:var(--sobreAmbar);
   background:linear-gradient(145deg,#FFCB52,var(--ambar2));box-shadow:4px 6px 12px rgba(200,120,0,.4),inset 0 1px 0 rgba(255,255,255,.6)}
 .boton-ambar .circulo{width:36px;height:36px;background:#1A1205;color:#fff}
+
+
+.seccion{display:flex;justify-content:space-between;align-items:center;margin-top:24px}
+.fila{display:flex;align-items:center;gap:12px;padding:11px 12px;margin-top:10px}
+.loseta{width:50px;height:50px;border-radius:18px;display:grid;place-items:center;flex:none}
+.fila .txt{flex:1;min-width:0}
+.fila .nombre{font-weight:800;font-size:18px;line-height:22px}
+.fila .hora{font:700 15px var(--mono);color:var(--ambar2);margin-right:2px}
+.ic{display:block;flex:none}
+.loseta.claro{background:linear-gradient(145deg,#FBF8EF,#E4DDCC);box-shadow:3px 5px 10px rgba(125,105,65,.26),-3px -3px 7px rgba(255,255,255,.95),inset 0 1px 0 rgba(255,255,255,.9)}
+.loseta .ic{width:34px;height:34px}
+.loseta.codigo{background:linear-gradient(145deg,#FFD36B,var(--ambar2));color:var(--sobreAmbar);font:800 15px/1 var(--mono);letter-spacing:.02em;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),4px 6px 10px rgba(200,120,0,.3)}
+.hero{position:relative;margin-top:106px}
+.hero-bus{position:absolute;left:50%;top:-114px;width:262px;transform:translateX(-50%);z-index:2;filter:drop-shadow(0 14px 10px rgba(40,25,5,.38))}
+.hero-card{position:relative;padding:48px 20px 16px;border-radius:30px;background:linear-gradient(150deg,#262520,var(--negro));color:#fff;
+  box-shadow:10px 14px 26px rgba(40,30,10,.32),inset 0 1px 0 rgba(255,255,255,.12)}
+.hero-fila{display:flex;justify-content:space-between;align-items:flex-end}
+.hero .dest{font-weight:800;font-stretch:62%;font-size:46px;line-height:42px}
+.hero .ruta{font:500 12px/16px var(--mono);letter-spacing:.05em;color:#B9B3A2;margin-top:8px}
+.hero-hora{text-align:right}
+.hero-hora b{display:block;font:700 24px/26px var(--mono);color:var(--ambar)}
+.hero-hora span{font:500 12px/16px var(--sans);color:#B9B3A2}
+.cta-ambar{margin-top:16px;height:54px;border-radius:999px;display:flex;align-items:center;justify-content:space-between;padding:0 9px 0 26px;
+  background:linear-gradient(145deg,#FFCB52,var(--ambar2));color:var(--sobreAmbar);font-weight:800;font-size:17px;
+  box-shadow:4px 6px 14px rgba(200,120,0,.4),inset 0 1px 0 rgba(255,255,255,.6)}
+.cta-ambar .circulo{width:40px;height:40px;background:linear-gradient(145deg,#2B2A25,#0C0C0A)}
+.etiqueta-muestra{height:30px;padding:0 12px 0 10px;border-radius:999px;display:flex;align-items:center;gap:7px;font:600 11px var(--mono);letter-spacing:.04em;color:var(--suave);background:linear-gradient(145deg,#E6E0D1,#EEE9DD);box-shadow:var(--hundido)}
+.etiqueta-muestra::before{content:"";width:8px;height:8px;border-radius:999px;background:var(--ambar)}
+.estado .barras{display:flex;align-items:center;gap:8px}
+.pestana .ic{width:26px;height:26px}
+.pestana{--detalle:#EDE7D8}
+.pestana.activa{--detalle:#121210}
+.circulo .ic{width:26px;height:26px}
+.circulo.chico{width:34px;height:34px}.circulo.chico .ic{width:22px;height:22px}
 </style>
 </head>
 <body>
@@ -164,6 +174,75 @@ svg.i{fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke
     <radialGradient id="gBrillo" cx=".3" cy=".25" r=".6"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
     <clipPath id="cCarro"><path d="M76,52 H398 C430,52 448,64 460,90 L494,170 C500,184 502,194 502,208 V230 C502,242 494,248 482,248 H54 C40,248 32,240 32,228 V94 C32,70 48,52 76,52 Z"/></clipPath>
     <filter id="fDifuso" x="-10%" y="-50%" width="120%" height="200%"><feGaussianBlur stdDeviation="7"/></filter>
+
+    <linearGradient id="gI-amb" x1="0" y1="0" x2=".7" y2="1"><stop offset="0" stop-color="#FFE59A"/><stop offset=".5" stop-color="#FFB21E"/><stop offset="1" stop-color="#DE8500"/></linearGradient>
+    <linearGradient id="gI-neg" x1="0" y1="0" x2=".7" y2="1"><stop offset="0" stop-color="#55544A"/><stop offset="1" stop-color="#0F0F0C"/></linearGradient>
+    <linearGradient id="gI-cre" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#D9D0BA"/></linearGradient>
+    <linearGradient id="gI-ver" x1="0" y1="0" x2=".7" y2="1"><stop offset="0" stop-color="#9BE8BE"/><stop offset="1" stop-color="#2E9E6B"/></linearGradient>
+    <symbol id="i-boleto" viewBox="0 0 48 48">
+      <path d="M8 12H40A4 4 0 0 1 44 16V20.500A3.500 3.500 0 0 0 44 27.500V32A4 4 0 0 1 40 36H8A4 4 0 0 1 4 32V27.500A3.500 3.500 0 0 0 4 20.500V16A4 4 0 0 1 8 12Z" fill="url(#gI-amb)"/>
+      <path d="M33 15V33" stroke="#8A4F00" stroke-opacity=".5" stroke-width="2.200" stroke-dasharray="2.600 3.200" stroke-linecap="round"/>
+      <g fill="#2A1A02" opacity=".88"><rect x="9" y="18" width="3" height="12" rx="1.200"/><rect x="14" y="18" width="2" height="12" rx="1"/><rect x="18.500" y="18" width="4.500" height="12" rx="1.200"/><rect x="25.500" y="18" width="2.500" height="12" rx="1.200"/></g>
+      <path d="M8 14.500H40" stroke="#fff" stroke-opacity=".7" stroke-width="2.200" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-campana" viewBox="0 0 48 48">
+      <path d="M24 7C22.300 7 21 8.300 21 10V10.900C16.400 12.300 14 16.300 14 21V27L10.500 31.500C9.600 32.600 10.400 34 11.800 34H36.200C37.600 34 38.400 32.600 37.500 31.500L34 27V21C34 16.300 31.600 12.300 27 10.900V10C27 8.300 25.700 7 24 7Z" fill="url(#gI-amb)"/>
+      <path d="M19.500 37.500a4.500 4.500 0 0 0 9 0Z" fill="url(#gI-neg)"/>
+      <path d="M18 21c0-3 1.500-5.500 4-6.500" stroke="#fff" stroke-opacity=".75" stroke-width="2.600" stroke-linecap="round" fill="none"/>
+    </symbol>
+    <symbol id="i-rayo" viewBox="0 0 48 48">
+      <path d="M28 4L10 27H21L18 44L38 19H26.500Z" fill="url(#gI-amb)" stroke="#B86E00" stroke-opacity=".35" stroke-width="1.500" stroke-linejoin="round"/>
+      <path d="M26 8L15 23" stroke="#fff" stroke-opacity=".75" stroke-width="2.600" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-taxi" viewBox="0 0 48 48">
+      <rect x="18" y="9" width="12" height="6" rx="2.500" fill="url(#gI-amb)"/>
+      <path d="M6 31L9.500 21.500C10.200 19.400 12.100 18 14.300 18H33.700C35.900 18 37.800 19.400 38.500 21.500L42 31V37A2 2 0 0 1 40 39H37A2 2 0 0 1 35 37V36H13V37A2 2 0 0 1 11 39H8A2 2 0 0 1 6 37Z" fill="url(#gI-ver)"/>
+      <path d="M13.500 21.500H34.500L37 28.500H11Z" fill="url(#gI-neg)"/>
+      <path d="M16 23L20 23L17.500 27H14.500Z" fill="#fff" opacity=".18"/>
+      <circle cx="14.500" cy="35.500" r="4.600" fill="#17160F"/><circle cx="14.500" cy="35.500" r="2" fill="#D9D0BA"/>
+      <circle cx="33.500" cy="35.500" r="4.600" fill="#17160F"/><circle cx="33.500" cy="35.500" r="2" fill="#D9D0BA"/>
+      <circle cx="9" cy="31" r="1.800" fill="#FFE59A"/><circle cx="39" cy="31" r="1.800" fill="#FFE59A"/>
+    </symbol>
+    <symbol id="i-lupa" viewBox="0 0 48 48">
+      <path d="M31 31L41 41" stroke="url(#gI-neg)" stroke-width="6.500" stroke-linecap="round"/>
+      <circle cx="21" cy="21" r="13" fill="url(#gI-cre)" stroke="#2B2A25" stroke-width="4.500"/>
+      <path d="M14 20c.5-3.500 3-6 6.500-6.800" stroke="#FFB21E" stroke-width="3" stroke-linecap="round" fill="none"/>
+    </symbol>
+    <symbol id="i-reloj" viewBox="0 0 48 48">
+      <rect x="19.500" y="3.500" width="9" height="5" rx="2.200" fill="url(#gI-neg)"/>
+      <circle cx="24" cy="27" r="17" fill="url(#gI-cre)" stroke="#2B2A25" stroke-width="3.800"/>
+      <path d="M24 16.500V27.500L31 32" stroke="#E48A00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </symbol>
+    <symbol id="i-volante" viewBox="0 0 48 48">
+      <circle cx="24" cy="24" r="17.500" fill="none" stroke="url(#gI-neg)" stroke-width="5.500"/>
+      <path d="M24 30V43M18.500 22.500L6.500 19.500M29.500 22.500L41.500 19.500" stroke="url(#gI-neg)" stroke-width="4.600" stroke-linecap="round"/>
+      <circle cx="24" cy="24" r="6" fill="url(#gI-amb)" stroke="#2B2A25" stroke-width="2.600"/>
+    </symbol>
+    <symbol id="i-volver" viewBox="0 0 48 48"><path d="M29.500 11L17 24L29.500 37" stroke="#17160F" stroke-width="5.200" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+    <symbol id="i-check" viewBox="0 0 48 48"><path d="M12 25.500L20.500 34L36.500 14.500" stroke="#fff" stroke-width="5.200" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+    <symbol id="i-mas" viewBox="0 0 48 48"><path d="M24 11V37M11 24H37" stroke="#17160F" stroke-width="5.200" stroke-linecap="round" fill="none"/></symbol>
+    <symbol id="i-flecha" viewBox="0 0 48 48"><path d="M10 24H37M26.500 13L37.500 24L26.500 35" stroke="#fff" stroke-width="5.200" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+    <symbol id="i-flecha-neg" viewBox="0 0 48 48"><path d="M10 24H37M26.500 13L37.500 24L26.500 35" stroke="#17160F" stroke-width="5.200" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+    <symbol id="t-viajar" viewBox="0 0 48 48">
+      <rect x="9" y="5" width="30" height="32" rx="9" fill="currentColor"/>
+      <rect x="13.500" y="10" width="21" height="12" rx="4" fill="var(--detalle)"/>
+      <circle cx="17" cy="29" r="2.600" fill="var(--detalle)"/><circle cx="31" cy="29" r="2.600" fill="var(--detalle)"/>
+      <rect x="12" y="35" width="7" height="8" rx="2.600" fill="currentColor"/><rect x="29" y="35" width="7" height="8" rx="2.600" fill="currentColor"/>
+    </symbol>
+    <symbol id="t-horarios" viewBox="0 0 48 48">
+      <rect x="4" y="8" width="40" height="32" rx="9" fill="currentColor"/>
+      <g fill="var(--detalle)"><rect x="9.500" y="14.500" width="10" height="5" rx="2.200"/><rect x="23" y="14.500" width="15.500" height="5" rx="2.200" opacity=".55"/><rect x="9.500" y="22.500" width="10" height="5" rx="2.200"/><rect x="23" y="22.500" width="15.500" height="5" rx="2.200" opacity=".55"/><rect x="9.500" y="30.500" width="10" height="5" rx="2.200"/><rect x="23" y="30.500" width="9" height="5" rx="2.200" opacity=".55"/></g>
+    </symbol>
+    <symbol id="t-rutas" viewBox="0 0 48 48">
+      <ellipse cx="24" cy="43" rx="11" ry="2.800" fill="currentColor" opacity=".35"/>
+      <path d="M24 3C16.800 3 11.500 8.300 11.500 15.500C11.500 24.500 24 38 24 38S36.500 24.500 36.500 15.500C36.500 8.300 31.200 3 24 3Z" fill="currentColor"/>
+      <circle cx="24" cy="15.500" r="5.600" fill="var(--detalle)"/>
+    </symbol>
+    <symbol id="t-boletos" viewBox="0 0 48 48">
+      <path d="M8 10H40A4 4 0 0 1 44 14V19.500A4.500 4.500 0 0 0 44 28.500V34A4 4 0 0 1 40 38H8A4 4 0 0 1 4 34V28.500A4.500 4.500 0 0 0 4 19.500V14A4 4 0 0 1 8 10Z" fill="currentColor"/>
+      <path d="M32 14V34" stroke="var(--detalle)" stroke-width="2.600" stroke-dasharray="3 3.600" stroke-linecap="round"/>
+      <g fill="var(--detalle)"><rect x="10" y="17" width="3.400" height="14" rx="1.400"/><rect x="16" y="17" width="2.400" height="14" rx="1.200"/><rect x="21.500" y="17" width="5" height="14" rx="1.400"/></g>
+    </symbol>
     <symbol id="bus" viewBox="0 0 520 300">
       <ellipse cx="268" cy="272" rx="232" ry="15" fill="#3A2A08" opacity=".3" filter="url(#fDifuso)"/>
       <g clip-path="url(#cCarro)">
@@ -219,11 +298,11 @@ svg.i{fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke
       <path d="M-20 250 C 70 120, 150 230, 230 140 S 350 70, 420 20" stroke="#CDC4AE" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 11"/>
       <g fill="#F5F1E8" stroke="#CDC4AE" stroke-width="2.5"><circle cx="74" cy="182" r="7"/><circle cx="230" cy="140" r="7"/><circle cx="336" cy="84" r="7"/></g>
     </svg>
-    <div class="estado"><span>9:41</span><span class="ico">5G · 82%</span></div>
+    <div class="estado"><span>9:41</span><span class="barras"><svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.500" width="3" height="6.500" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="27" height="12" viewBox="0 0 27 12"><rect x=".5" y=".5" width="22.500" height="11" rx="3.500" fill="none" stroke="currentColor" stroke-opacity=".45"/><rect x="2" y="2" width="17" height="8" rx="2" fill="currentColor"/><rect x="24.500" y="4" width="2" height="4" rx="1" fill="currentColor" fill-opacity=".5"/></svg></span></div>
     <div class="lema"><span class="etiqueta">Managua · Nicaragua</span><div class="subtitulo" style="margin-top:6px;max-width:190px;line-height:26px">Tu viaje en bus,<br>sin hacer fila.</div></div>
     <div class="marca">ANDÉN</div>
     <svg class="bus-portada" viewBox="0 0 520 300"><use href="#bus"/></svg>
-    <div class="cta"><span>Empezar</span><span class="circulo negro"><svg class="i" width="22" height="22" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+    <div class="cta"><span>Empezar</span><span class="circulo negro"><svg class="ic" viewBox="0 0 48 48"><use href="#i-flecha"/></svg></span></div>
   </div>
 </section>
 
@@ -231,47 +310,47 @@ svg.i{fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke
 <section class="marco" id="viajar">
   <div class="etiqueta">02 / viajar</div>
   <div class="telefono">
-    <div class="estado"><span>2:28</span><span class="ico">5G · 82%</span></div>
+    <div class="estado"><span>2:28</span><span class="barras"><svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.500" width="3" height="6.500" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="27" height="12" viewBox="0 0 27 12"><rect x=".5" y=".5" width="22.500" height="11" rx="3.500" fill="none" stroke="currentColor" stroke-opacity=".45"/><rect x="2" y="2" width="17" height="8" rx="2" fill="currentColor"/><rect x="24.500" y="4" width="2" height="4" rx="1" fill="currentColor" fill-opacity=".5"/></svg></span></div>
     <div class="pantalla">
       <div class="cabecera">
         <span class="avatar">AR</span>
         <div style="flex:1"><div class="subtitulo">Hola, Ana</div><div class="suave">¿A dónde vas hoy?</div></div>
-        <span class="circulo barro" style="border-radius:999px"><svg class="i" width="21" height="21" viewBox="0 0 24 24"><path d="M6 17h12l-1.5-2V11a4.5 4.5 0 0 0-9 0v4zM10 20h4"/></svg></span>
+        <span class="circulo barro" style="border-radius:999px"><svg class="ic" viewBox="0 0 48 48"><use href="#i-campana"/></svg></span>
       </div>
 
-      <div class="proximo">
-        <div class="foto"><svg viewBox="0 0 520 300"><use href="#bus"/></svg></div>
-        <div class="datos"><div class="dest">Granada</div><div class="ruta">ANDÉN 4 · ORDINARIO</div></div>
-        <div class="reloj">2:40 p. m.</div>
-        <div class="pastilla"><span>Ver boleto</span><span class="circulo ambar"><svg class="i" width="17" height="17" viewBox="0 0 24 24"><path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"/></svg></span></div>
+      <div class="hero">
+        <svg class="hero-bus" viewBox="0 0 520 300"><use href="#bus"/></svg>
+        <div class="hero-card">
+          <div class="hero-fila">
+            <div><div class="dest">Granada</div><div class="ruta">ANDÉN 4 · ORDINARIO</div></div>
+            <div class="hero-hora"><b>2:40 p. m.</b><span>sale en 12 min</span></div>
+          </div>
+          <div class="cta-ambar"><span>Ver boleto</span><span class="circulo"><svg class="ic" viewBox="0 0 48 48"><use href="#i-boleto"/></svg></span></div>
+        </div>
       </div>
 
-      <div class="seccion"><span class="subtitulo">Salidas de hoy</span><span class="circulo barro" style="width:34px;height:34px;border-radius:999px"><svg class="i" width="17" height="17" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span></div>
+      <div class="seccion"><span class="subtitulo">Salidas de hoy</span><span class="etiqueta-muestra">Tarifas de muestra</span></div>
 
       <div class="fila barro">
-        <span class="loseta negra"><svg class="i" width="25" height="25" viewBox="0 0 24 24"><path d="M5 16V8a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v8M5 12h14M8 19v-3M16 19v-3"/></svg></span>
+        <span class="loseta claro"><svg class="ic" style="width:44px;height:auto" viewBox="22 44 490 246"><use href="#bus"/></svg></span>
         <div class="txt"><div class="nombre">Granada</div><div class="suave">Ordinario · andén 4</div></div>
         <span class="hora">2:40</span>
-        <span class="circulo negro"><svg class="i" width="20" height="20" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></span>
+        <span class="circulo negro"><svg class="ic" viewBox="0 0 48 48"><use href="#i-check"/></svg></span>
       </div>
       <div class="fila barro">
-        <span class="loseta ambar"><svg class="i" width="25" height="25" viewBox="0 0 24 24"><path d="M13 3L5 14h6l-1 7 8-11h-6z"/></svg></span>
+        <span class="loseta claro"><svg class="ic" viewBox="0 0 48 48"><use href="#i-rayo"/></svg></span>
         <div class="txt"><div class="nombre">Masaya</div><div class="suave">Expreso · andén 2</div></div>
         <span class="hora">2:45</span>
         <span class="circulo hundido" style="border-radius:999px"></span>
       </div>
-
-<div class="estadisticas">
-        <div class="barro"><span class="loseta ambar" style="width:42px;height:42px;border-radius:15px"><svg class="i" width="21" height="21" viewBox="0 0 24 24"><path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"/></svg></span><div><b>C$ 46</b><div class="suave" style="margin-top:2px">Tarifa de muestra</div></div></div>
-        <div class="barro"><span class="loseta negra" style="width:42px;height:42px;border-radius:15px"><svg class="i" width="21" height="21" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="11" rx="3"/><path d="M8 15v4M16 15v4M5 19h14"/></svg></span><div><b>14</b><div class="suave" style="margin-top:2px">Asientos libres</div></div></div>
+      <div class="fila barro">
+        <span class="loseta claro"><svg class="ic" viewBox="0 0 48 48"><use href="#i-taxi"/></svg></span>
+        <div class="txt"><div class="nombre">Jinotepe</div><div class="suave">Taxi interlocal · andén 6</div></div>
+        <span class="hora">2:50</span>
+        <span class="circulo hundido" style="border-radius:999px"></span>
       </div>
     </div>
-    <nav class="pestanas">
-      <span class="pestana activa"><svg class="i" viewBox="0 0 24 24"><path d="M5 17h14M6 17V8a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v9M6 12h12M8 20v-3M16 20v-3"/></svg>Viajar</span>
-      <span class="pestana"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 12h18M8 5v14"/></svg>Horarios</span>
-      <span class="pestana"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h6"/></svg>Rutas</span>
-      <span class="pestana"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"/><path d="M14 7v10" stroke-dasharray="2 2.5"/></svg>Boletos</span>
-    </nav>
+    <nav class="pestanas"><span class="pestana activa"><svg class="ic" viewBox="0 0 48 48"><use href="#t-viajar"/></svg>Viajar</span><span class="pestana"><svg class="ic" viewBox="0 0 48 48"><use href="#t-horarios"/></svg>Horarios</span><span class="pestana"><svg class="ic" viewBox="0 0 48 48"><use href="#t-rutas"/></svg>Rutas</span><span class="pestana"><svg class="ic" viewBox="0 0 48 48"><use href="#t-boletos"/></svg>Boletos</span></nav>
   </div>
 </section>
 
@@ -279,13 +358,13 @@ svg.i{fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke
 <section class="marco" id="horarios">
   <div class="etiqueta">03 / horarios · tablero</div>
   <div class="telefono">
-    <div class="estado"><span>2:28</span><span class="ico">5G · 82%</span></div>
+    <div class="estado"><span>2:28</span><span class="barras"><svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.500" width="3" height="6.500" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="27" height="12" viewBox="0 0 27 12"><rect x=".5" y=".5" width="22.500" height="11" rx="3.500" fill="none" stroke="currentColor" stroke-opacity=".45"/><rect x="2" y="2" width="17" height="8" rx="2" fill="currentColor"/><rect x="24.500" y="4" width="2" height="4" rx="1" fill="currentColor" fill-opacity=".5"/></svg></span></div>
     <div class="pantalla">
-      <div class="cabecera"><span class="titulo">Salidas<em>.</em></span><span style="flex:1"></span><span class="circulo barro" style="border-radius:999px"><svg class="i" width="21" height="21" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4-4"/></svg></span></div>
+      <div class="cabecera"><span class="titulo">Salidas<em>.</em></span><span style="flex:1"></span><span class="circulo barro" style="border-radius:999px"><svg class="ic" viewBox="0 0 48 48"><use href="#i-lupa"/></svg></span></div>
       <div class="barro" style="margin-top:14px;padding:12px 14px;display:flex;align-items:center;gap:12px">
-        <span class="loseta ambar" style="width:46px;height:46px;border-radius:16px;font:800 14px var(--mono)">UCA</span>
-        <div style="flex:1"><div class="nombre" style="font-weight:800;font-size:17px">Terminal UCA</div><div class="suave">Managua · a 1.2 km</div></div>
-        <svg class="i" width="20" height="20" viewBox="0 0 24 24" style="color:#8C8676"><path d="m6 9 6 6 6-6"/></svg>
+        <span class="loseta codigo" style="width:50px;height:50px">UCA</span>
+        <div style="flex:1"><div style="font-weight:800;font-size:17px;line-height:21px">Terminal UCA</div><div class="suave">Managua · a 1.2 km</div></div>
+        <span class="circulo chico hundido" style="border-radius:999px"><svg class="ic" viewBox="0 0 48 48"><path d="M14 19L24 30L34 19" stroke="#17160F" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
       </div>
       <div class="chips"><span class="chip activo">Todos</span><span class="chip">Ordinario</span><span class="chip">Expreso</span><span class="chip">Taxi</span></div>
       <div class="tablero">
@@ -299,12 +378,7 @@ svg.i{fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke
         <div class="fila-t"><span class="flaps"><b class="flap">3</b><b class="flap sep">:</b><b class="flap">3</b><b class="flap">0</b></span><span class="destino">Estelí<small>Expreso</small></span><span class="anden">1</span><span class="est tiempo">A tiempo</span></div>
       </div>
     </div>
-    <nav class="pestanas">
-      <span class="pestana"><svg class="i" viewBox="0 0 24 24"><path d="M5 17h14M6 17V8a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v9M6 12h12M8 20v-3M16 20v-3"/></svg>Viajar</span>
-      <span class="pestana activa"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 12h18M8 5v14"/></svg>Horarios</span>
-      <span class="pestana"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h6"/></svg>Rutas</span>
-      <span class="pestana"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"/><path d="M14 7v10" stroke-dasharray="2 2.5"/></svg>Boletos</span>
-    </nav>
+    <nav class="pestanas"><span class="pestana"><svg class="ic" viewBox="0 0 48 48"><use href="#t-viajar"/></svg>Viajar</span><span class="pestana activa"><svg class="ic" viewBox="0 0 48 48"><use href="#t-horarios"/></svg>Horarios</span><span class="pestana"><svg class="ic" viewBox="0 0 48 48"><use href="#t-rutas"/></svg>Rutas</span><span class="pestana"><svg class="ic" viewBox="0 0 48 48"><use href="#t-boletos"/></svg>Boletos</span></nav>
   </div>
 </section>
 
@@ -312,9 +386,9 @@ svg.i{fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke
 <section class="marco" id="asientos">
   <div class="etiqueta">04 / elegí tu asiento</div>
   <div class="telefono">
-    <div class="estado"><span>2:29</span><span class="ico">5G · 82%</span></div>
+    <div class="estado"><span>2:29</span><span class="barras"><svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.500" width="3" height="6.500" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="27" height="12" viewBox="0 0 27 12"><rect x=".5" y=".5" width="22.500" height="11" rx="3.500" fill="none" stroke="currentColor" stroke-opacity=".45"/><rect x="2" y="2" width="17" height="8" rx="2" fill="currentColor"/><rect x="24.500" y="4" width="2" height="4" rx="1" fill="currentColor" fill-opacity=".5"/></svg></span></div>
     <div class="pantalla">
-      <div class="cabecera"><span class="circulo barro" style="border-radius:999px"><svg class="i" width="20" height="20" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></span><span style="flex:1"></span><span class="retencion"><svg class="i" width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M10 2h4"/></svg>09:42</span></div>
+      <div class="cabecera"><span class="circulo barro" style="border-radius:999px"><svg class="ic" viewBox="0 0 48 48"><use href="#i-volver"/></svg></span><span style="flex:1"></span><span class="retencion"><svg class="ic" viewBox="0 0 48 48" style="width:24px;height:24px"><use href="#i-reloj"/></svg>09:42</span></div>
       <h2 class="titulo" style="margin-top:12px">Elegí tu <em>asiento.</em></h2>
       <span class="etiqueta" style="margin-top:8px">UCA → Granada · 2:40 p. m. · ordinario</span>
       <div class="leyenda suave"><span><i class="m libre"></i>Libre</span><span><i class="m tuyo"></i>Tuyo</span><span><i class="m apartado"></i>Apartado</span><span><i class="m vendido"></i>Vendido</span></div>
@@ -322,7 +396,7 @@ svg.i{fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke
     </div>
     <div class="pie">
       <div><div class="etiqueta" style="color:#8E887A">2 asientos · 8 y 9</div><div class="mono" style="font-weight:700;font-size:26px;margin-top:2px">C$ 92</div><div style="font-size:11px;color:#8E887A;margin-top:1px">tarifa de muestra · C$ 46 c/u</div></div>
-      <span class="boton-ambar"><span>Seguir</span><span class="circulo"><svg class="i" width="19" height="19" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
+      <span class="boton-ambar"><span>Seguir</span><span class="circulo"><svg class="ic" viewBox="0 0 48 48"><use href="#i-flecha"/></svg></span></span>
     </div>
   </div>
 </section>
@@ -333,7 +407,7 @@ const p = new URLSearchParams(location.search).get('pantalla');
 if (p) { document.documentElement.classList.add('solo'); document.getElementById(p)?.classList.add('activo'); }
 const vendidos=[2,3,5,10,11,14,19,22,23], apartados=[6,15], tuyos=[8,9];
 const celda=(n)=>{const e=tuyos.includes(n)?' tuyo':apartados.includes(n)?' apartado':vendidos.includes(n)?' vendido':'';return `<span class="asiento${e}">${n}</span>`;};
-let plano=`<span class="volante"><svg class="i" width="26" height="26" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 14.5V21M9.6 11.2 3.4 9.5M14.4 11.2l6.2-1.7"/></svg></span>${celda(1)}<span></span><span class="puerta">Puerta</span>`;
+let plano=`<span class="volante"><svg class="ic" style="width:34px;height:34px" viewBox="0 0 48 48"><use href="#i-volante"/></svg></span>${celda(1)}<span></span><span class="puerta">Puerta</span>`;
 let n=2;for(let f=0;f<5;f++){plano+=celda(n++)+celda(n++)+'<span></span>'+celda(n++)+celda(n++);}
 for(let i=0;i<5;i++)plano+=celda(n++);
 document.getElementById('plano').innerHTML=plano;
