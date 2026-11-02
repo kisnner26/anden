@@ -14,6 +14,7 @@ import {
   esquemaRetencion,
   esquemaRuta,
   esquemaTerminal,
+  esquemaTarifa,
   esquemaTramo,
   esquemaViaje,
 } from './esquemas';
@@ -134,6 +135,21 @@ describe('esquemaTramo', () => {
   it('rechaza un tramo invertido o sin recorrido', () => {
     expect(esquemaTramo.safeParse({ desde: 2, hasta: 0 }).success).toBe(false);
     expect(esquemaTramo.safeParse({ desde: 1, hasta: 1 }).success).toBe(false);
+  });
+});
+
+describe('esquemaTarifa', () => {
+  it('acepta una tarifa autorizada para un tramo', () => {
+    expect(
+      esquemaTarifa.safeParse({
+        rutaId: 'rut_uca_gra',
+        servicio: 'ordinario',
+        desdeParada: 0,
+        hastaParada: 2,
+        cordobas: 46,
+        resolucion: 'RM 051-2017',
+      }).success,
+    ).toBe(true);
   });
 });
 
