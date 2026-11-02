@@ -23,4 +23,9 @@ describe('Icono', () => {
       expect(pantalla.getByLabelText(nombre)).toBeTruthy();
     },
   );
+
+  it('oculta a los lectores de pantalla el ícono sin etiqueta', async () => {
+    const pantalla = await render(<Icono nombre="campana" />);
+    expect(pantalla.queryByRole('image')).toBeNull();
+  });
 });
