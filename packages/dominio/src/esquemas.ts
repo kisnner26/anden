@@ -67,7 +67,6 @@ export const esquemaRuta: z.ZodType<Ruta> = z
     paradas: z.array(esquemaParada),
     distanciaKm: z.number().positive(),
     duracionMin: entero.positive(),
-    tarifaBase: entero.positive(),
   })
   .refine((ruta) => ruta.origenId !== ruta.destinoId, {
     message: 'el origen y el destino deben ser distintos',

@@ -46,7 +46,6 @@ const ruta = {
   ],
   distanciaKm: 45,
   duracionMin: 55,
-  tarifaBase: 46,
 };
 
 describe('esquemaCoordenadas', () => {
@@ -117,10 +116,7 @@ describe('esquemaRuta', () => {
     ).toBe(false);
   });
 
-  it('rechaza tarifa o duración que no son enteros positivos', () => {
-    expect(esquemaRuta.safeParse({ ...ruta, tarifaBase: 45.5 }).success).toBe(
-      false,
-    );
+  it('rechaza una duración que no es un entero positivo', () => {
     expect(esquemaRuta.safeParse({ ...ruta, duracionMin: 0 }).success).toBe(
       false,
     );

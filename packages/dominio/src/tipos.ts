@@ -79,8 +79,6 @@ export interface Ruta {
   paradas: Parada[];
   distanciaKm: number;
   duracionMin: number;
-  /** córdobas enteros por el recorrido completo en bus ordinario */
-  tarifaBase: number;
 }
 
 /** índices de las paradas que delimitan el recorrido comprado */

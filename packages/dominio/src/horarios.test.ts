@@ -13,7 +13,6 @@ const ruta: Ruta = {
   ],
   distanciaKm: 45,
   duracionMin: 60,
-  tarifaBase: 46,
 };
 
 const viaje: Viaje = {
