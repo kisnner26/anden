@@ -3,6 +3,7 @@ import {
   estadoAsientos,
   PLANOS,
   type Asiento,
+  type ConfiguracionBus,
   type EstadoAsiento,
   type Plano,
 } from '@anden/dominio';
@@ -12,6 +13,7 @@ import { useAhora, useSalidas } from './useSalidas';
 
 export interface MapaAsientosViaje {
   asientos: Asiento[];
+  configuracion: ConfiguracionBus;
   estados: Map<number, EstadoAsiento>;
   plano: Plano;
   tarifa: number | null;
@@ -37,6 +39,7 @@ export function useMapaAsientos(viajeId: string): MapaAsientosViaje | null {
     );
     return {
       asientos: asientosDe(bus.configuracion),
+      configuracion: bus.configuracion,
       estados,
       plano: PLANOS[bus.configuracion],
       tarifa:
