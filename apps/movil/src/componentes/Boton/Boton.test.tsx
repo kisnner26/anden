@@ -44,4 +44,22 @@ describe('Boton', () => {
     expect(pantalla.getByRole('button', { name: etiqueta })).toBeOnTheScreen();
     expect(pantalla.getByTestId('boton-pildora-flecha')).toBeOnTheScreen();
   });
+
+  it('expone el progreso y bloquea la accion mientras carga', async () => {
+    const alPresionar = jest.fn();
+    const etiqueta = t('vitrina.botonCargando');
+    const pantalla = await render(
+      <Boton alPresionar={alPresionar} cargando etiqueta={etiqueta} />,
+    );
+    const boton = pantalla.getByRole('button', { name: etiqueta });
+
+    fireEvent.press(boton);
+
+    expect(boton.props.accessibilityState).toEqual(expect.objectContaining({
+      busy: true,
+      disabled: true,
+    }));
+    expect(pantalla.getByTestId('boton-cargando-barra')).toBeOnTheScreen();
+    expect(alPresionar).not.toHaveBeenCalled();
+  });
 });
