@@ -93,4 +93,16 @@ describe('precioOficial', () => {
       ),
     ).toEqual({ ok: true, valor: { unitario: 46, total: 92 } });
   });
+
+  it('rechaza una compra sin pasajeros que pagan', () => {
+    expect(
+      precioOficial(
+        tarifario,
+        'rut_uca_gra',
+        'ordinario',
+        { desde: 0, hasta: 2 },
+        [{ nombre: 'Luis Ruiz', esMenorEnBrazos: true }],
+      ),
+    ).toEqual({ ok: false, error: 'sin-pasajeros' });
+  });
 });
