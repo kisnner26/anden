@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "Andén",
+    "slug": "anden",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "anden",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "bundleIdentifier": "com.kisnner.anden"
+    },
+    "android": {
+      "package": "com.kisnner.anden",
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "server"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
