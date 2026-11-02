@@ -151,6 +151,18 @@ describe('esquemaTarifa', () => {
       }).success,
     ).toBe(true);
   });
+
+  it('rechaza tramos invertidos y valores no enteros', () => {
+    const tarifa = {
+      rutaId: 'rut_uca_gra',
+      servicio: 'ordinario',
+      desdeParada: 2,
+      hastaParada: 1,
+      cordobas: 45.5,
+      resolucion: 'RM 051-2017',
+    };
+    expect(esquemaTarifa.safeParse(tarifa).success).toBe(false);
+  });
 });
 
 const bus = {
