@@ -1,4 +1,4 @@
-import type { ConfiguracionBus } from './tipos';
+import type { Asiento, ConfiguracionBus, TipoAsiento } from './tipos';
 
 /** una casilla del plano del bus visto desde arriba */
 export type Celda = 'asiento' | 'pasillo' | 'puerta' | 'volante' | 'vacio';
@@ -51,3 +51,32 @@ export const PLANOS: Record<ConfiguracionBus, Plano> = {
     'AAAAA',
   ]),
 };
+
+/** filas con asientos, contadas desde el frente, que quedan como preferenciales */
+const FILAS_PREFERENCIALES = 2;
+
+/**
+ * asientos de la configuración numerados desde 1, de arriba abajo y de izquierda a derecha.
+ * preferencial: las primeras filas con asientos; ventana: las columnas de los bordes; el resto, pasillo.
+ */
+export function asientosDe(configuracion: ConfiguracionBus): Asiento[] {
+  const filas = PLANOS[configuracion];
+  const ultimaColumna = (filas[0]?.length ?? 1) - 1;
+  const asientos: Asiento[] = [];
+  let filasConAsientos = 0;
+
+  filas.forEach((celdas, fila) => {
+    const enFila = celdas.some((celda) => celda === 'asiento');
+    if (enFila) filasConAsientos += 1;
+
+    celdas.forEach((celda, columna) => {
+      if (celda !== 'asiento') return;
+      let tipo: TipoAsiento = 'pasillo';
+      if (filasConAsientos <= FILAS_PREFERENCIALES) tipo = 'preferencial';
+      else if (columna === 0 || columna === ultimaColumna) tipo = 'ventana';
+      asientos.push({ numero: asientos.length + 1, fila, columna, tipo });
+    });
+  });
+
+  return asientos;
+}
