@@ -36,6 +36,10 @@ export function precioUnitario(
   const minutos = minutosDelTramo(ruta, tramo);
   if (minutos === null || minutos <= 0) return null;
 
+  if (tramo.desde === 0 && tramo.hasta === ruta.paradas.length - 1) {
+    return Math.ceil(ruta.tarifaBase * MULTIPLICADORES_BUS[tipoBus]);
+  }
+
   return Math.ceil(
     (ruta.tarifaBase * minutos * MULTIPLICADORES_BUS[tipoBus]) /
       ruta.duracionMin,
