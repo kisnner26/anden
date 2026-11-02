@@ -94,9 +94,9 @@ Tipos en `packages/dominio/src/tipos.ts`, cada uno con su esquema Zod en `esquem
 | `Chofer` | id, nombre, fotoUrl, aniosManejando, licenciaVerificada, viajesRealizados |
 | `Viaje` | id, rutaId, busId, choferId, salida (ISO), anden, estado, minutosAtraso |
 | `Asiento` | numero, fila, columna, tipo (`ventana`, `pasillo`, `preferencial`) |
-| `Retencion` | viajeId, asientos, expira (ISO), duenoId |
+| `Retencion` | id, viajeId, asientos, expira (ISO), duenoId |
 | `Pasajero` | nombre, cedula opcional, esMenorEnBrazos |
-| `Boleto` | id, codigo, viajeId, asiento, pasajero, precio, estado (`vigente`, `usado`, `cancelado`, `reembolsado`), compradoEn |
+| `Boleto` | id, codigo, viajeId, duenoId, asiento, pasajero, precio, estado (`vigente`, `usado`, `cancelado`, `reembolsado`), compradoEn |
 | `Calificacion` | boletoId, choferId, estrellas, etiquetas |
 | `PosicionBus` | viajeId, coordenadas, registradaEn |
 
