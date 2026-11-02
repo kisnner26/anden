@@ -2,7 +2,7 @@ import { expect, test } from '@jest/globals';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { coloresClaros, coloresOscuros } from './colores';
+import { coloresClaros, coloresOscuros, paletaIconos } from './colores';
 
 test('los temas tienen las mismas claves de color', () => {
   expect(Object.keys(coloresClaros).sort()).toEqual(
@@ -33,4 +33,10 @@ test('los hexadecimales solo viven en colores', () => {
   });
 
   expect(archivosConHex).toEqual([]);
+});
+
+test('la paleta de íconos usa hexadecimales válidos', () => {
+  for (const color of Object.values(paletaIconos)) {
+    expect(color).toMatch(/^#[0-9A-F]{6}$/);
+  }
 });
