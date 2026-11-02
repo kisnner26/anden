@@ -107,6 +107,46 @@ svg.i{fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;strok
 .girando{animation:girar 1.6s ease-in-out infinite}
 @keyframes girar{0%,70%{transform:rotateX(0)}80%{transform:rotateX(90deg)}90%{transform:rotateX(0)}}
 @media (prefers-reduced-motion:reduce){.girando{animation:none}}
+
+/* asientos */
+.volver{width:40px;height:40px;border-radius:999px;border:1px solid var(--linea);display:grid;place-items:center;background:var(--superficie)}
+.leyenda{display:flex;justify-content:space-between;margin-top:14px}
+.leyenda span{display:flex;align-items:center;gap:6px}
+.muestra{width:14px;height:14px;border-radius:4px;border:1.5px solid var(--linea)}
+.muestra.elegido,.asiento.elegido{background:var(--ambar);border-color:var(--ambar);color:var(--sobreAmbar)}
+.muestra.retenido,.asiento.retenido{border-style:dashed;border-color:var(--tintaSuave);color:var(--tintaSuave)}
+.muestra.vendido,.asiento.vendido{border-color:#24272B;color:#5A5850;background:repeating-linear-gradient(135deg,#24272B 0 2px,transparent 2px 6px)}
+.bus{margin:16px auto 0;width:262px;border:1.5px solid var(--linea);border-radius:56px 56px 20px 20px;padding:30px 20px 18px;background:linear-gradient(180deg,rgba(242,239,232,.03),transparent 30%)}
+.plano{display:grid;grid-template-columns:repeat(5,38px);gap:8px;justify-content:center}
+.asiento{height:38px;border-radius:8px;border:1.5px solid var(--linea);display:grid;place-items:center;font:600 13px var(--mono);color:var(--tinta)}
+.asiento.pref{box-shadow:inset 0 -3px 0 var(--linea)}
+.volante{height:38px;display:grid;place-items:center;color:var(--tintaSuave)}
+.puerta{grid-column:span 2;height:38px;border-left:2px solid var(--linea);display:flex;align-items:center;justify-content:center}
+.retencion{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid rgba(255,178,30,.35);color:var(--ambar);font:600 14px var(--mono)}
+.pie{position:absolute;left:12px;right:12px;bottom:28px;border-radius:24px;padding:16px;
+  background:rgba(31,34,38,.78);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(242,239,232,.12)}
+
+/* boleto */
+.boleto{margin-top:14px;filter:drop-shadow(0 30px 40px rgba(0,0,0,.5))}
+.cuerpo,.talon{background:var(--papel);color:var(--tintaPapel)}
+.cuerpo{border-radius:20px 20px 0 0;padding:20px 22px 18px;position:relative;
+  -webkit-mask:radial-gradient(circle 12px at 0 100%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 12px at 100% 100%,#0000 98%,#000) right/51% 100% no-repeat;
+  mask:radial-gradient(circle 12px at 0 100%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 12px at 100% 100%,#0000 98%,#000) right/51% 100% no-repeat}
+.cuerpo::after{content:"";position:absolute;left:18px;right:18px;bottom:0;border-bottom:2px dashed rgba(27,26,23,.25)}
+.talon{border-radius:0 0 20px 20px;padding:18px 22px 20px;margin-top:10px;transform:rotate(-1.2deg) translateX(2px);transform-origin:left top;
+  display:grid;grid-template-columns:1fr 104px;gap:14px;align-items:center;
+  -webkit-mask:radial-gradient(circle 12px at 0 0,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 12px at 100% 0,#0000 98%,#000) right/51% 100% no-repeat;
+  mask:radial-gradient(circle 12px at 0 0,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 12px at 100% 0,#0000 98%,#000) right/51% 100% no-repeat}
+.papel .etiqueta{color:#6B665C}
+.boleto .display{font-size:52px;line-height:48px;color:var(--tintaPapel)}
+.boleto .display em{color:#B86E00}
+.campos{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 10px;margin-top:16px}
+.campos div{display:flex;flex-direction:column;gap:3px}
+.campos b{font:600 15px/20px var(--mono);white-space:nowrap}
+.chofer{display:flex;align-items:center;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(27,26,23,.12)}
+.foto{width:36px;height:36px;border-radius:999px;background:#1B1A17;color:var(--papel);display:grid;place-items:center;font:600 12px var(--mono)}
+.codigo-boleto{font:700 26px/30px var(--mono);letter-spacing:.06em}
+.qr{width:104px;height:104px;display:block}
 </style>
 </head>
 <body>
@@ -246,13 +286,113 @@ svg.i{fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;strok
   </div>
 </section>
 
-<!-- pantallas 3 y 4 -->
+<!-- 3 · elegí tu asiento -->
+<section class="marco" id="asientos">
+  <div class="etiqueta">03 / elegí tu asiento · coaster 26</div>
+  <div class="telefono">
+    <div class="estado"><span>2:29</span><span class="ico etiqueta" style="color:var(--tinta)">5G · 82%</span></div>
+    <div class="pantalla">
+      <div class="cabecera">
+        <span class="volver"><svg class="i" width="20" height="20" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></span>
+        <span class="retencion"><svg class="i" width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M10 2h4"/></svg>09:42</span>
+      </div>
+      <h2 class="titulo" style="margin-top:14px">Elegí tu <em>asiento.</em></h2>
+      <span class="etiqueta" style="margin-top:6px">UCA → Granada · 2:40 p. m. · interlocal</span>
+      <div class="leyenda pequeno">
+        <span><i class="muestra"></i>Libre</span>
+        <span><i class="muestra elegido"></i>Tuyo</span>
+        <span><i class="muestra retenido"></i>Apartado</span>
+        <span><i class="muestra vendido"></i>Vendido</span>
+      </div>
+      <div class="bus"><div class="plano" id="plano"></div></div>
+    </div>
+    <div class="pie">
+      <div class="fila">
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <span class="etiqueta">2 asientos · 8 y 9</span>
+          <span class="pequeno">C$ 46 c/u · ventana y pasillo</span>
+        </div>
+        <span class="datoGrande">C$ 92</span>
+      </div>
+      <div class="boton" style="margin-top:14px"><span>Seguir con pasajeros</span><span class="flecha">→</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · tu boleto -->
+<section class="marco" id="boleto">
+  <div class="etiqueta">04 / tu boleto · talón separado</div>
+  <div class="telefono">
+    <div class="estado"><span>2:31</span><span class="ico etiqueta" style="color:var(--tinta)">5G · 82%</span></div>
+    <div class="pantalla">
+      <div class="cabecera">
+        <span class="volver"><svg class="i" width="20" height="20" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></span>
+        <span class="etiqueta" style="color:var(--ambar)">Sale en 9 min · abordando</span>
+      </div>
+      <div class="boleto papel">
+        <div class="cuerpo">
+          <div class="fila"><span class="etiqueta">Boleto · vigente</span><span class="etiqueta">C$ 46</span></div>
+          <h2 class="display" style="margin-top:10px">UCA <em>→</em><br>Granada.</h2>
+          <div class="campos">
+            <div><span class="etiqueta">Fecha</span><b>lun 2 nov</b></div>
+            <div><span class="etiqueta">Salida</span><b>2:40 p. m.</b></div>
+            <div><span class="etiqueta">Andén</span><b>4</b></div>
+            <div><span class="etiqueta">Asiento</span><b>8</b></div>
+            <div><span class="etiqueta">Pasajera</span><b>Ana Ruiz</b></div>
+            <div><span class="etiqueta">Placa</span><b>M 245-118</b></div>
+          </div>
+          <div class="chofer">
+            <span class="foto">EC</span>
+            <div style="display:flex;flex-direction:column;gap:1px;flex:1">
+              <span style="font-weight:600;font-size:15px">Ernesto Calero</span>
+              <span class="etiqueta">11 años · licencia verificada</span>
+            </div>
+            <span style="font:600 16px var(--mono)">4.8</span>
+          </div>
+        </div>
+        <div class="talon">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <span class="etiqueta">Código de abordaje</span>
+            <span class="codigo-boleto">K7RM 4QX9</span>
+            <span class="pequeno" style="color:#5C5A55">Mostralo al subir. Funciona sin internet.</span>
+          </div>
+          <svg class="qr" id="qr" viewBox="0 0 25 25" shape-rendering="crispEdges"></svg>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:22px">
+        <span class="pildora">Seguir el bus<span class="circulo">↗</span></span>
+        <span class="pildora">Calendario<span class="circulo">+</span></span>
+      </div>
+    </div>
+  </div>
+</section>
 
 </main>
 <script>
 // ?pantalla=viajar muestra solo ese teléfono, para las capturas
 const p = new URLSearchParams(location.search).get('pantalla');
 if (p) { document.documentElement.classList.add('solo'); document.getElementById(p)?.classList.add('activo'); }
+
+// plano del coaster 26: fila del chofer, cinco filas de 2 + pasillo + 2, fila trasera de 5
+const vendidos = [2, 3, 5, 10, 11, 14, 19, 22, 23], apartados = [6, 15], tuyos = [8, 9];
+const celda = (n) => {
+  const e = tuyos.includes(n) ? ' elegido' : apartados.includes(n) ? ' retenido' : vendidos.includes(n) ? ' vendido' : '';
+  return `<span class="asiento${n <= 5 ? ' pref' : ''}${e}">${n}</span>`;
+};
+let plano = `<span class="volante"><svg class="i" width="26" height="26" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 14.5V21M9.6 11.2 3.4 9.5M14.4 11.2l6.2-1.7"/></svg></span>${celda(1)}<span></span><span class="puerta etiqueta">Puerta</span>`;
+let n = 2;
+for (let f = 0; f < 5; f++) { plano += celda(n++) + celda(n++) + '<span></span>' + celda(n++) + celda(n++); }
+for (let i = 0; i < 5; i++) plano += celda(n++);
+document.getElementById('plano').innerHTML = plano;
+
+// qr ilustrativo (patrón fijo, no codifica nada): tres buscadores y módulos pseudoaleatorios
+const qr = document.getElementById('qr');
+let semilla = 7, m = '';
+const azar = () => (semilla = (semilla * 9301 + 49297) % 233280) / 233280;
+const enBuscador = (x, y) => [[0, 0], [18, 0], [0, 18]].some(([a, b]) => x >= a && x < a + 7 && y >= b && y < b + 7);
+for (let y = 0; y < 25; y++) for (let x = 0; x < 25; x++) if (!enBuscador(x, y) && azar() > 0.52) m += `M${x} ${y}h1v1h-1z`;
+for (const [a, b] of [[0, 0], [18, 0], [0, 18]]) m += `M${a} ${b}h7v7h-7zM${a + 1} ${b + 1}v5h5v-5zM${a + 2} ${b + 2}h3v3h-3z`;
+qr.innerHTML = `<path fill="#1B1A17" fill-rule="evenodd" d="${m}"/>`;
 </script>
 </body>
 </html>
