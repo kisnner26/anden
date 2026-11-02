@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { Icono, NOMBRES_ICONO } from '@/componentes/Icono';
 import { coloresClaros, coloresOscuros } from '@/tema/colores';
 import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -39,9 +40,40 @@ export function Vitrina() {
         />
       </View>
       <MuestraTipografia colores={colores} />
+      <MuestraIconos colores={colores} />
       <MuestraColores colores={colores} />
       <MuestraEspacios colores={colores} />
     </ScrollView>
+  );
+}
+
+function MuestraIconos({
+  colores,
+}: {
+  colores: typeof coloresOscuros | typeof coloresClaros;
+}) {
+  return (
+    <View style={[estilos.seccion, { borderColor: colores.linea }]}>
+      <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+        {t('vitrina.iconos')}
+      </Text>
+      <View style={estilos.paleta}>
+        {NOMBRES_ICONO.map((nombre) => (
+          <View key={nombre} style={estilos.muestraColor}>
+            <Icono
+              color={colores.tinta}
+              colorDetalle={colores.fondo}
+              etiquetaAccesible={nombre}
+              nombre={nombre}
+              tamano="ilustracion"
+            />
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {nombre}
+            </Text>
+          </View>
+        ))}
+      </View>
+    </View>
   );
 }
 
