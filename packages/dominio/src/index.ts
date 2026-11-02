@@ -1,5 +1,6 @@
 export * from './configuraciones';
 export * from './asientos';
+export * from './busqueda';
 export * from './codigoBoleto';
 export * from './esquemas';
 export * from './horarios';

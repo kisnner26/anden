@@ -180,3 +180,29 @@ export interface PosicionBus {
   coordenadas: Coordenadas;
   registradaEn: string;
 }
+
+export const FRANJAS_HORARIAS = [
+  'madrugada',
+  'manana',
+  'tarde',
+  'noche',
+] as const;
+export type FranjaHoraria = (typeof FRANJAS_HORARIAS)[number];
+
+export interface FiltroBusqueda {
+  origenId: string;
+  destinoId: string;
+  fecha: string;
+  pasajeros: number;
+  tipos?: TipoBus[];
+  franja?: FranjaHoraria;
+}
+
+export interface DatosViajes {
+  terminales: Terminal[];
+  rutas: Ruta[];
+  buses: Bus[];
+  choferes: Chofer[];
+  viajes: Viaje[];
+  ocupaciones: Ocupacion[];
+}
