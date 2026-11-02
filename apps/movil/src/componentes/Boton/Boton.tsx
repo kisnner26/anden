@@ -1,10 +1,11 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { Icono } from '@/componentes/Icono';
 import { espacios, radios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 
-export type VarianteBoton = 'principal' | 'secundario';
+export type VarianteBoton = 'pildora' | 'principal' | 'secundario';
 
 export interface PropiedadesBoton {
   alPresionar: () => void;
@@ -36,12 +37,31 @@ export function Boton({
           backgroundColor: colores.superficie,
           borderColor: colores.linea,
         },
+        variante === 'pildora' && {
+          backgroundColor: colores.superficieAlta,
+          borderColor: colores.linea,
+          borderRadius: radios.pildora,
+          justifyContent: 'space-between',
+        },
         pressed && estilos.presionado,
       ]}
     >
       <Text style={[tipografia.subtitulo, { color: colorTexto }]}>
         {etiqueta}
       </Text>
+      {variante === 'pildora' && (
+        <View
+          style={[estilos.flecha, { backgroundColor: colores.ambar }]}
+          testID="boton-pildora-flecha"
+        >
+          <Icono
+            color={colores.sobreAmbar}
+            colorDetalle={colores.ambar}
+            nombre="siguiente"
+            tamano="mediano"
+          />
+        </View>
+      )}
     </Pressable>
   );
 }
@@ -56,6 +76,13 @@ const estilos = StyleSheet.create({
     height: tamanosControl.altoBoton,
     justifyContent: 'center',
     paddingHorizontal: espacios.dieciseis,
+  },
+  flecha: {
+    alignItems: 'center',
+    borderRadius: radios.pildora,
+    height: tamanosControl.circuloPildora,
+    justifyContent: 'center',
+    width: tamanosControl.circuloPildora,
   },
   presionado: { opacity: 0.82 },
 });
