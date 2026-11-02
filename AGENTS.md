@@ -107,7 +107,7 @@ Una tarea del tablero suele dar de 12 a 25 commits, no 2 o 3. La unidad mínima 
 
 Dos pasos más para llegar a ese nivel sin inflar nada:
 
-- escribí primero el caso de prueba que falla y después el código que lo hace pasar: son dos commits, y el segundo no puede ser el mismo archivo con todo mezclado. Si el caso de prueba nuevo ya pasa con lo existente, es un `test:` solo.
+- escribí primero el caso de prueba y mirá que falle, pero commiteá el código antes que la prueba que lo cubre: son dos commits y ninguno deja el árbol en rojo. Si el caso de prueba nuevo ya pasa con lo existente, es un `test:` solo.
 - cuando una función crece (un caso especial, una validación, un borde), cada ampliación es un `feat:` o `fix:` aparte, con su caso de prueba; no la escribas completa y la commitees de una vez.
 
 Lo que no vale, porque rompe la regla de fondo o inventa actividad:
