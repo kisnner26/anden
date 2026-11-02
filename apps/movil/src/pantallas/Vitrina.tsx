@@ -39,7 +39,47 @@ export function Vitrina() {
         />
       </View>
       <MuestraTipografia colores={colores} />
+      <MuestraColores colores={colores} />
     </ScrollView>
+  );
+}
+
+function MuestraColores({
+  colores,
+}: {
+  colores: typeof coloresOscuros | typeof coloresClaros;
+}) {
+  const muestras = [
+    [t('vitrina.colorFondo'), colores.fondo],
+    [t('vitrina.colorSuperficie'), colores.superficie],
+    [t('vitrina.colorTinta'), colores.tinta],
+    [t('vitrina.colorAmbar'), colores.ambar],
+    [t('vitrina.colorATiempo'), colores.aTiempo],
+    [t('vitrina.colorAtrasado'), colores.atrasado],
+    [t('vitrina.colorCancelado'), colores.cancelado],
+  ] as const;
+  return (
+    <View style={[estilos.seccion, { borderColor: colores.linea }]}>
+      <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+        {t('vitrina.colores')}
+      </Text>
+      <View style={estilos.paleta}>
+        {muestras.map(([nombre, color]) => (
+          <View key={nombre} style={estilos.muestraColor}>
+            <View
+              accessibilityLabel={nombre}
+              style={[
+                estilos.color,
+                { backgroundColor: color, borderColor: colores.linea },
+              ]}
+            />
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {nombre}
+            </Text>
+          </View>
+        ))}
+      </View>
+    </View>
   );
 }
 
@@ -98,6 +138,12 @@ function SelectorTema({
 
 const estilos = StyleSheet.create({
   cabecera: { gap: espacios.veinticuatro },
+  color: {
+    borderRadius: radios.cuadrado,
+    borderWidth: 1,
+    height: espacios.cuarentaYOcho,
+    width: espacios.cuarentaYOcho,
+  },
   contenido: {
     flexGrow: 1,
     gap: espacios.treintaYDos,
@@ -112,6 +158,8 @@ const estilos = StyleSheet.create({
     paddingHorizontal: espacios.dieciseis,
     paddingVertical: espacios.doce,
   },
+  muestraColor: { alignItems: 'center', gap: espacios.ocho },
+  paleta: { flexDirection: 'row', flexWrap: 'wrap', gap: espacios.dieciseis },
   seccion: {
     borderTopWidth: 1,
     gap: espacios.dieciseis,
