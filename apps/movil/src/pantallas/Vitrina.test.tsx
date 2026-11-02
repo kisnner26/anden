@@ -1,6 +1,8 @@
 import { describe, expect, it } from '@jest/globals';
 import { fireEvent, render } from '@testing-library/react-native';
 
+import { NOMBRES_ICONO } from '@/componentes/Icono';
+
 import { Vitrina } from './Vitrina';
 
 describe('Vitrina', () => {
@@ -26,5 +28,12 @@ describe('Vitrina', () => {
       name: 'Cambiar tema de la vitrina',
     });
     expect(selector.props.accessibilityState).toEqual({ checked: false });
+  });
+
+  it('muestra todos los íconos ilustrados', async () => {
+    const pantalla = await render(<Vitrina />);
+    for (const nombre of NOMBRES_ICONO) {
+      expect(pantalla.getByRole('image', { name: nombre })).toBeTruthy();
+    }
   });
 });
