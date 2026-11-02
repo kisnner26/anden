@@ -69,7 +69,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - commits: `feat: tipo resultado` · `feat: tipos del dominio` · `feat: esquemas zod del dominio`
 
 ### T-011 · configuraciones de asientos
-- depende de: T-010 · estado: libre
+- depende de: T-010 · estado: hecha
 - hacer: matrices `micro15`, `coaster26`, `bus45` en `configuraciones.ts` y `asientosDe(config)` que devuelve la lista numerada con tipo (ventana, pasillo, preferencial).
 - hecho cuando: cada configuración tiene exactamente su número de asientos, numeración sin huecos, preferenciales en la primera fila.
 - commits: `feat: configuraciones de asientos por tipo de bus`
