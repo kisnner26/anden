@@ -63,7 +63,7 @@ Cada tarea dice qué hacer, dónde, cuándo está hecha y qué commits se espera
 Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el mismo commit (las reglas están en `01-producto.md`).
 
 ### T-010 · tipos, esquemas y resultado
-- depende de: T-002 · estado: libre
+- depende de: T-002 · estado: hecha
 - hacer: tipos de `03-arquitectura.md` en `tipos.ts`, esquemas Zod en `esquemas.ts`, tipo `Resultado` con helpers `ok()` y `error()`.
 - hecho cuando: pruebas que validan un objeto correcto e incorrecto de cada esquema.
 - commits: `feat: tipo resultado` · `feat: tipos del dominio` · `feat: esquemas zod del dominio`
