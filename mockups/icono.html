@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>Andén · ícono</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1024px;height:1024px;background:#0B0B09}
+.icono{position:relative;width:1024px;height:1024px;overflow:hidden;
+  background:radial-gradient(90% 70% at 50% 100%,#5A3C07 0,#2A2418 38%,#13120F 100%)}
+.icono .barra{position:absolute;left:0;right:0;bottom:0;height:300px;background:linear-gradient(180deg,rgba(255,178,30,0),rgba(255,178,30,.18))}
+.icono svg.b{position:absolute;left:38px;top:196px;width:948px;filter:drop-shadow(0 34px 30px rgba(0,0,0,.55))}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gCarro" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#FFFDF7"/><stop offset=".55" stop-color="#F1E8D2"/><stop offset="1" stop-color="#D8CCB0"/></linearGradient>
+    <linearGradient id="gBanda" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD468"/><stop offset=".5" stop-color="#FFB21E"/><stop offset="1" stop-color="#E08C00"/></linearGradient>
+    <linearGradient id="gVidrio" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3A414B"/><stop offset="1" stop-color="#11141A"/></linearGradient>
+    <linearGradient id="gSombra" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#3A2A08" stop-opacity=".28"/></linearGradient>
+    <radialGradient id="gLuz" cx=".4" cy=".4" r=".7"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".45" stop-color="#FFF1B8"/><stop offset="1" stop-color="#FFC94D"/></radialGradient>
+    <linearGradient id="gLlanta" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#B9B2A0"/></linearGradient>
+    <radialGradient id="gBrillo" cx=".3" cy=".25" r=".6"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <clipPath id="cCarro"><path d="M76,52 H398 C430,52 448,64 460,90 L494,170 C500,184 502,194 502,208 V230 C502,242 494,248 482,248 H54 C40,248 32,240 32,228 V94 C32,70 48,52 76,52 Z"/></clipPath>
+    <filter id="fDifuso" x="-10%" y="-50%" width="120%" height="200%"><feGaussianBlur stdDeviation="7"/></filter>
+    <symbol id="bus" viewBox="0 0 520 300">
+      <ellipse cx="268" cy="272" rx="232" ry="15" fill="#3A2A08" opacity=".3" filter="url(#fDifuso)"/>
+      <g clip-path="url(#cCarro)">
+        <rect x="20" y="40" width="500" height="220" fill="url(#gCarro)"/>
+        <rect x="20" y="172" width="500" height="36" fill="url(#gBanda)"/>
+        <rect x="20" y="172" width="500" height="5" fill="#fff" opacity=".45"/>
+        <rect x="20" y="208" width="500" height="50" fill="url(#gSombra)"/>
+        <ellipse cx="170" cy="76" rx="150" ry="22" fill="url(#gBrillo)"/>
+      </g>
+      <path d="M76,52 H398 C430,52 448,64 460,90 L494,170 C500,184 502,194 502,208 V230 C502,242 494,248 482,248 H54 C40,248 32,240 32,228 V94 C32,70 48,52 76,52 Z" fill="none" stroke="#8A6A22" stroke-opacity=".18" stroke-width="2"/>
+      <g>
+        <rect x="62" y="86" width="74" height="66" rx="16" fill="url(#gVidrio)"/>
+        <rect x="148" y="86" width="74" height="66" rx="16" fill="url(#gVidrio)"/>
+        <rect x="234" y="86" width="74" height="66" rx="16" fill="url(#gVidrio)"/>
+        <rect x="320" y="86" width="74" height="66" rx="16" fill="url(#gVidrio)"/>
+        <path d="M408,86 H438 C450,86 458,94 464,108 L482,152 H408 Z" fill="url(#gVidrio)"/>
+        <path d="M70,92 L104,92 L78,146 L70,146 Z M156,92 L190,92 L164,146 L156,146 Z M242,92 L276,92 L250,146 L242,146 Z M328,92 L362,92 L336,146 L328,146 Z" fill="#fff" opacity=".1"/>
+      </g>
+      <rect x="410" y="60" width="58" height="19" rx="6" fill="#0E0E0C"/>
+      <text x="439" y="74" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="10.5" fill="#FFB21E" letter-spacing="1">GRANADA</text>
+      <circle cx="486" cy="206" r="13" fill="url(#gLuz)" stroke="#E5B84A" stroke-width="2"/>
+      <circle cx="486" cy="206" r="26" fill="#FFD36B" opacity=".22" filter="url(#fDifuso)"/>
+      <rect x="466" y="224" width="40" height="14" rx="7" fill="#262520"/>
+      <g>
+        <circle cx="128" cy="248" r="45" fill="#1B1A16"/>
+        <circle cx="128" cy="248" r="37" fill="#13120F"/>
+        <circle cx="128" cy="248" r="23" fill="url(#gLlanta)"/>
+        <circle cx="128" cy="248" r="9" fill="#6B665A"/>
+        <path d="M107,236 A25,25 0 0 1 130,224" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".7"/>
+        <circle cx="396" cy="248" r="45" fill="#1B1A16"/>
+        <circle cx="396" cy="248" r="37" fill="#13120F"/>
+        <circle cx="396" cy="248" r="23" fill="url(#gLlanta)"/>
+        <circle cx="396" cy="248" r="9" fill="#6B665A"/>
+        <path d="M375,236 A25,25 0 0 1 398,224" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".7"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+<div class="icono"><div class="barra"></div><svg class="b" viewBox="0 0 520 300"><use href="#bus"/></svg></div>
+</body></html>
