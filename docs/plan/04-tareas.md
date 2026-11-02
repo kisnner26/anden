@@ -47,7 +47,7 @@ Cada tarea dice qué hacer, dónde, cuándo está hecha y qué commits se espera
 - commits: `feat: tokens de color oscuro y claro` · `feat: escala tipográfica` · `feat: espacios y duraciones` · `feat: hook usetema con preferencia guardada`
 
 ### T-006a · fuentes y pantalla de carga
-- depende de: T-005 · zona: `apps/movil` · raíz: sí · estado: libre
+- depende de: T-005 · zona: `apps/movil` · raíz: sí · estado: hecha
 - hacer: cargar Archivo, Archivo Narrow y JetBrains Mono con `@expo-google-fonts`; la pantalla de carga espera las fuentes. Titular provisional en Archivo Narrow Bold porque `@expo-google-fonts/archivo` solo trae el ancho normal.
 - hecho cuando: la app empaqueta en iOS y Android (`expo export`), carga las fuentes antes de mostrar la pantalla y la pantalla inicial usa Archivo Narrow y JetBrains Mono.
 - commits: `chore: agregar fuentes archivo y jetbrains mono` · `feat: esperar fuentes antes de mostrar la app`
