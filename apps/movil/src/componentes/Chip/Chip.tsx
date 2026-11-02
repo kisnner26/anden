@@ -1,3 +1,4 @@
+import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { espacios, radios, tamanosControl } from '@/tema/espacios';
@@ -19,13 +20,18 @@ export function Chip({
 }: PropiedadesChip) {
   const { colores } = useTema();
 
+  function cambiar() {
+    void impactAsync(ImpactFeedbackStyle.Light);
+    alCambiar(!seleccionado);
+  }
+
   return (
     <Pressable
       accessibilityLabel={etiqueta}
       accessibilityRole="button"
       accessibilityState={{ disabled: deshabilitado, selected: seleccionado }}
       disabled={deshabilitado}
-      onPress={() => alCambiar(!seleccionado)}
+      onPress={cambiar}
       style={({ pressed }) => [
         estilos.base,
         {
