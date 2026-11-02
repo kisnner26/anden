@@ -138,6 +138,8 @@ Al terminar la tarea, `pnpm verificar` completo antes de integrar.
 - Ningún color, tamaño de fuente ni duración fuera de `src/tema/`. Ningún texto visible fuera de `src/textos/es.ts`.
 - Nada de emojis en código, textos, datos de muestra ni commits.
 - La app no usa la cámara.
+- Las pruebas de la app van en `apps/movil/pruebas/` o junto al código de `src/`; nunca dentro de `apps/movil/app/`, que Expo Router empaqueta como pantallas.
+- Si tocás `apps/movil`, además de `pnpm verificar` corré `pnpm -F movil exec expo export --platform android` y `--platform ios`: Jest no usa Metro y no detecta errores de empaquetado.
 - Dependencia nueva: solo si la tarea lo dice, en su commit `chore:` propio y con el candado `raiz`.
 
 ## cuando algo no está claro
