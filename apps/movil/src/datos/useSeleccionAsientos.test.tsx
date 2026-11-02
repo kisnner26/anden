@@ -61,4 +61,20 @@ describe('useSeleccionAsientos', () => {
     expect(result.current.elegidos).toEqual([]);
     expect(result.current.aviso).toBe('venta-cerrada');
   });
+
+  it('no hay total mientras no se elige ningún asiento', async () => {
+    const { result } = await renderHook(() =>
+      useSeleccionAsientos(VIAJE_GRANADA),
+    );
+    expect(result.current.total).toBeNull();
+  });
+
+  it('calcula el total de la tarifa de muestra por asiento', async () => {
+    const { result } = await renderHook(() =>
+      useSeleccionAsientos(VIAJE_GRANADA),
+    );
+    await act(async () => result.current.alternar(8));
+    await act(async () => result.current.alternar(9));
+    expect(result.current.total).toEqual({ total: 92, unitario: 46 });
+  });
 });
