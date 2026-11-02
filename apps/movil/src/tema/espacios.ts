@@ -15,6 +15,11 @@ export const radios = {
   tarjeta: 20,
 } as const;
 
+export const tamanosControl = {
+  altoBoton: 52,
+  toqueMinimo: 44,
+} as const;
+
 export const tamanosIcono = {
   pequeno: 16,
   mediano: 20,
