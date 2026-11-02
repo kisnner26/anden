@@ -74,7 +74,7 @@ Cualquier agente puede seguir una tarea empezada. Se retoma si el dueño del pro
 
 Regla de fondo: un commit cuenta una sola cosa, y el proyecto compila y pasa sus pruebas en cada commit.
 
-1. Planificá antes de programar: partí la tarea en pasos pequeños con resultado verificable (lógica pura, interfaz, cableado, pruebas, documentación). Los commits sugeridos del tablero son el mínimo, no el máximo.
+1. Planificá antes de programar: partí la tarea en pasos pequeños con resultado verificable (lógica pura, interfaz, cableado, pruebas, documentación). Los commits sugeridos del tablero son el mínimo, no el máximo (ver granularidad más abajo).
 2. Un paso, un commit. Si para describirlo necesitás escribir "y", son dos commits.
 3. La lógica sin dependencias va primero, con sus pruebas. Después, lo que la usa.
 4. Cada commit deja el árbol sano. Antes de commitear, corré tipos y pruebas del área que tocaste. Si fallan, arreglá o separá; no se commitea roto.
