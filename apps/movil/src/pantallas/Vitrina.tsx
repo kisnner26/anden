@@ -38,7 +38,34 @@ export function Vitrina() {
           colores={colores}
         />
       </View>
+      <MuestraTipografia colores={colores} />
     </ScrollView>
+  );
+}
+
+function MuestraTipografia({
+  colores,
+}: {
+  colores: typeof coloresOscuros | typeof coloresClaros;
+}) {
+  return (
+    <View style={[estilos.seccion, { borderColor: colores.linea }]}>
+      <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+        {t('vitrina.tipografia')}
+      </Text>
+      <Text style={[tipografia.display, { color: colores.tinta }]}>
+        {t('vitrina.muestraDisplay')}
+      </Text>
+      <Text style={[tipografia.titulo, { color: colores.tinta }]}>
+        {t('vitrina.muestraTitulo')}
+      </Text>
+      <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
+        {t('vitrina.muestraCuerpo')}
+      </Text>
+      <Text style={[tipografia.datoGrande, { color: colores.ambar }]}>
+        {t('vitrina.muestraDato')}
+      </Text>
+    </View>
   );
 }
 
@@ -84,6 +111,11 @@ const estilos = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: espacios.dieciseis,
     paddingVertical: espacios.doce,
+  },
+  seccion: {
+    borderTopWidth: 1,
+    gap: espacios.dieciseis,
+    paddingTop: espacios.veinticuatro,
   },
   titulos: { gap: espacios.ocho },
 });
