@@ -259,7 +259,7 @@ Requieren T-004 aprobado, T-005, T-006a, T-007. Zona: `apps/movil/src/componente
 - commits: `feat: fila del tablero de salidas` · `feat: animacion split-flap por caracter` · `feat: tablero sin animacion con reducir movimiento`
 
 ### T-036 · MapaAsientos
-- depende de: T-031, T-011 · estado: libre
+- depende de: T-031, T-011 · estado: hecha
 - hacer: dibuja cualquier configuración del dominio con SVG; estados libre, elegido, retenido, vendido según `02-diseno.md`; accesible (cada asiento es un botón con etiqueta "asiento 12, ventana, libre").
 - commits: `feat: plano del bus desde la configuracion` · `feat: estados visuales de asiento` · `feat: seleccion y accesibilidad del mapa de asientos`
 
@@ -281,7 +281,7 @@ Requieren T-004 aprobado, T-005, T-006a, T-007. Zona: `apps/movil/src/componente
 Zona: `apps/movil/app/` y `apps/movil/src/pantallas/`. Raíz: no, salvo que se indique. Cada pantalla: primero la estructura con datos del hook, después estados vacío/error/carga, después detalles de interacción, como commits separados.
 
 ### T-040 · navegación base
-- depende de: T-033, T-024 · estado: libre
+- depende de: T-033, T-024 · estado: hecha
 - hacer: grupo `(pestanas)` con Viajar, Horarios, Rutas, Boletos; acceso a Cuenta arriba a la derecha.
 - commits: `feat: navegacion por pestanas`
 
