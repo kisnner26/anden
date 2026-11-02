@@ -1,10 +1,5 @@
 import { error, ok, type Resultado } from './resultado';
-import type {
-  Pasajero,
-  Tarifario,
-  TipoServicio,
-  Tramo,
-} from './tipos';
+import type { Pasajero, Tarifario, TipoServicio, Tramo } from './tipos';
 
 export function precioOficial(
   tarifario: Tarifario,
