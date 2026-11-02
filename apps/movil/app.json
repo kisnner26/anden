@@ -12,7 +12,11 @@
     },
     "android": {
       "package": "com.kisnner.anden",
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "adaptiveIcon": {
+        "backgroundColor": "#0E0F11",
+        "foregroundImage": "./assets/marca/icono-adaptativo.png"
+      }
     },
     "web": {
       "output": "server"
