@@ -5,5 +5,8 @@
   "scripts": {
     "test": "pnpm --workspace-root exec vitest run packages/dominio",
     "tipos": "pnpm --workspace-root exec tsc --project packages/dominio/tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
   }
 }
