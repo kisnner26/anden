@@ -1,8 +1,13 @@
-import { expect, test } from '@jest/globals';
+import { describe, expect, it, test } from '@jest/globals';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { coloresClaros, coloresOscuros, paletaIconos } from './colores';
+import {
+  coloresClaros,
+  coloresOscuros,
+  paletaIconos,
+  type Colores,
+} from './colores';
 import { contraste } from './contraste';
 
 test('los temas tienen las mismas claves de color', () => {
@@ -42,7 +47,9 @@ test('la paleta de íconos usa hexadecimales válidos', () => {
   }
 });
 
-const PARES_TEXTO = [
+type ParTexto = readonly [keyof Colores, keyof Colores, number];
+
+const PARES_TEXTO: readonly ParTexto[] = [
   ['tinta', 'fondo', 4.5],
   ['tinta', 'barroOscuro', 4.5],
   ['tintaSuave', 'fondo', 4.5],
@@ -59,20 +66,24 @@ const PARES_TEXTO = [
   ['atrasado', 'fondo', 4.5],
   ['cancelado', 'fondo', 4.5],
   ['tintaPapel', 'papel', 4.5],
-] as const;
+];
 
 describe('contraste AA en modo claro', () => {
-  it.each(PARES_TEXTO)('%s sobre %s llega a %s:1', (texto, fondo, minimo) => {
-    expect(
-      contraste(coloresClaros[texto], coloresClaros[fondo]),
-    ).toBeGreaterThanOrEqual(minimo);
-  });
+  for (const [texto, fondo, minimo] of PARES_TEXTO) {
+    it(`${texto} sobre ${fondo} llega a ${minimo}:1`, () => {
+      expect(
+        contraste(coloresClaros[texto], coloresClaros[fondo]),
+      ).toBeGreaterThanOrEqual(minimo);
+    });
+  }
 });
 
 describe('contraste AA en modo oscuro', () => {
-  it.each(PARES_TEXTO)('%s sobre %s llega a %s:1', (texto, fondo, minimo) => {
-    expect(
-      contraste(coloresOscuros[texto], coloresOscuros[fondo]),
-    ).toBeGreaterThanOrEqual(minimo);
-  });
+  for (const [texto, fondo, minimo] of PARES_TEXTO) {
+    it(`${texto} sobre ${fondo} llega a ${minimo}:1`, () => {
+      expect(
+        contraste(coloresOscuros[texto], coloresOscuros[fondo]),
+      ).toBeGreaterThanOrEqual(minimo);
+    });
+  }
 });
