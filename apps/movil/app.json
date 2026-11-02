@@ -2,6 +2,7 @@
   "expo": {
     "name": "Andén",
     "slug": "anden",
+    "icon": "./assets/marca/icono.png",
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "anden",
