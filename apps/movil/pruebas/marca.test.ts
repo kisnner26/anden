@@ -19,6 +19,10 @@ function dimensionesPng(ruta: string) {
   };
 }
 
+function tipoColorPng(ruta: string) {
+  return readFileSync(rutaActivo(ruta)).readUInt8(25);
+}
+
 test('el icono de instalacion usa el activo maestro cuadrado', () => {
   const ruta = configuracion.expo.icon;
 
@@ -36,4 +40,11 @@ test('las variantes adaptativas de android conservan el lienzo seguro', () => {
     alto: 1024,
     ancho: 1024,
   });
+});
+
+test('las capas adaptativas permiten que android aplique su mascara', () => {
+  const adaptativo = configuracion.expo.android.adaptiveIcon;
+
+  expect(tipoColorPng(adaptativo.foregroundImage)).toBe(6);
+  expect(tipoColorPng(adaptativo.monochromeImage)).toBe(6);
 });
