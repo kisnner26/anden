@@ -9,3 +9,4 @@ Registro de decisiones tomadas durante el desarrollo. Una por entrada, la más r
 | 2026-11-02 | T-066 | **abierta**: pasarela de pago real | Stripe no opera en Nicaragua; hay que elegir una que sí |
 | 2026-11-02 | T-010 | `Retencion` lleva `id` y `Boleto` lleva `duenoId` | el contrato usa `liberar(retencionId)`, `comprar(retencionId, ...)` y `misBoletos(duenoId)`, que no se pueden cumplir sin esos campos |
 | 2026-11-02 | T-010 | fechas y horas como texto ISO 8601 con desfase; los esquemas lo exigen | el viaje sale en hora de Managua (-06:00) y el servidor puede devolver UTC; ambas se aceptan |
+| 2026-11-02 | T-011 | preferenciales = asientos de las dos primeras filas con asientos (coaster: 1 a 5); ventana = columnas de los bordes; el resto pasillo | el plano de la coaster del mockup aprobado marca 1 a 5 como preferenciales y "primera fila" daría solo el asiento 1 junto al chofer |
