@@ -68,3 +68,11 @@ describe('contraste AA en modo claro', () => {
     ).toBeGreaterThanOrEqual(minimo);
   });
 });
+
+describe('contraste AA en modo oscuro', () => {
+  it.each(PARES_TEXTO)('%s sobre %s llega a %s:1', (texto, fondo, minimo) => {
+    expect(
+      contraste(coloresOscuros[texto], coloresOscuros[fondo]),
+    ).toBeGreaterThanOrEqual(minimo);
+  });
+});
