@@ -82,6 +82,12 @@ Cada tarea dice qué hacer, dónde, cuándo está hecha y qué commits se espera
 - hecho cuando: pruebas de tarifa exacta de un tramo completo y de uno intermedio, ruta o servicio sin tarifa, tramo inválido, menores en brazos y sin pasajeros; `rg -i multiplicador packages` sin resultados.
 - commits: un `feat:` por tipo, esquema y función, un `refactor:` por cada consumidor migrado y un `docs:` de cierre.
 
+### T-004b · dirección visual v2
+- depende de: T-004 · zona: `mockups/` · raíz: no · estado: **esperando aprobación**
+- hacer: el dueño pidió una interfaz más visual y menos genérica, con la referencia de una app de mascotas (portada con nombre gigante detrás del personaje, bloques blandos, bloque negro con el personaje saliéndose, barra con píldora negra). `mockups/identidad-v2.html` propone un claro cálido con bloques tipo arcilla, un bus de personaje ilustrado y el tablero dentro de un bloque negro; `mockups/icono.html` es el ícono.
+- hecho cuando: el dueño lo aprueba. Si lo aprueba, `02-diseno.md` se reescribe para esta dirección antes de construir nada más de interfaz (T-005 a T-007 y la fase 3 se reajustan). **Hasta entonces nadie construye componentes nuevos ni pantallas.**
+- commits: `feat: mockup v2 con bloques blandos y bus de personaje` · `feat: ícono de la app con el bus de personaje` · `docs: capturas v2`
+
 ## fase 1 · dominio (TypeScript puro)
 
 Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el mismo commit (las reglas están en `01-producto.md`).
