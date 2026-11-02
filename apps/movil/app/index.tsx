@@ -1,28 +1,30 @@
-import { StyleSheet, Text, View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Redirect, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 
-import { tipografia } from '@/tema/tipografia';
-import { useTema } from '@/tema/useTema';
-import { t } from '@/textos/t';
+import { Portada } from '@/pantallas/Portada';
+
+const CLAVE_PORTADA = 'anden.portada';
 
 export default function Inicio() {
-  const { colores } = useTema();
+  const router = useRouter();
+  const [vista, establecerVista] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    AsyncStorage.getItem(CLAVE_PORTADA)
+      .then((valor) => establecerVista(valor === '1'))
+      .catch(() => establecerVista(false));
+  }, []);
+
+  if (vista === null) return null;
+  if (vista) return <Redirect href="/viajar" />;
 
   return (
-    <View style={[estilos.pantalla, { backgroundColor: colores.fondo }]}>
-      <Text style={[tipografia.display, { color: colores.tinta }]}>
-        {t('inicio.marca')}
-      </Text>
-      <Text style={[tipografia.datoGrande, { color: colores.ambarTitular }]}>
-        {t('inicio.horaMuestra')}
-      </Text>
-    </View>
+    <Portada
+      alEmpezar={() => {
+        void AsyncStorage.setItem(CLAVE_PORTADA, '1');
+        router.replace('/viajar');
+      }}
+    />
   );
 }
-
-const estilos = StyleSheet.create({
-  pantalla: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-  },
-});
