@@ -71,6 +71,11 @@ export const textos = {
     sinElegir: 'Elegí al menos un asiento',
     asiento: 'Asiento',
     ocupado: 'ocupado',
+    avisoMaximo: 'Podés elegir hasta 6 asientos.',
+    avisoVentaCerrada: 'La venta de este viaje ya cerró.',
+    avisoOcupado: 'Ese asiento ya no está libre.',
+    avisoPago: 'El pago llega en la próxima versión.',
+    noExiste: 'No encontramos este viaje.',
   },
   boletos: {
     titulo: 'Tus boletos',
