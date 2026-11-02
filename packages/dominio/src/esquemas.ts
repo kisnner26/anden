@@ -20,6 +20,7 @@ import {
   type Retencion,
   type Ruta,
   type Terminal,
+  type Tramo,
   type Viaje,
 } from './tipos';
 
@@ -68,6 +69,15 @@ export const esquemaRuta: z.ZodType<Ruta> = z
   })
   .refine((ruta) => ruta.origenId !== ruta.destinoId, {
     message: 'el origen y el destino deben ser distintos',
+  });
+
+export const esquemaTramo: z.ZodType<Tramo> = z
+  .object({
+    desde: entero.min(0),
+    hasta: entero.min(0),
+  })
+  .refine((tramo) => tramo.desde < tramo.hasta, {
+    message: 'el inicio debe ser anterior al final',
   });
 
 export const esquemaBus: z.ZodType<Bus> = z.object({

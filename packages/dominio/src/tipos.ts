@@ -79,6 +79,12 @@ export interface Ruta {
   tarifaBase: number;
 }
 
+/** índices de las paradas que delimitan el recorrido comprado */
+export interface Tramo {
+  desde: number;
+  hasta: number;
+}
+
 export interface Bus {
   id: string;
   placa: string;
