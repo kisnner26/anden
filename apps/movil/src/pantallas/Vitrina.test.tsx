@@ -36,4 +36,28 @@ describe('Vitrina', () => {
       expect(pantalla.getByRole('image', { name: nombre })).toBeTruthy();
     }
   });
+
+  it('muestra los controles y permite cambiar el filtro', async () => {
+    const pantalla = await render(<Vitrina />);
+    const hoy = pantalla.getByRole('button', { name: 'Hoy' });
+    const manana = pantalla.getByRole('button', { name: 'Mañana' });
+
+    expect(
+      pantalla.getByRole('button', { name: 'Buscar salidas' }),
+    ).toBeOnTheScreen();
+    expect(
+      pantalla.getByRole('button', { name: 'Seguir viaje' }),
+    ).toBeOnTheScreen();
+    expect(hoy.props.accessibilityState).toEqual(
+      expect.objectContaining({
+        selected: true,
+      }),
+    );
+
+    await fireEvent.press(manana);
+
+    expect(
+      pantalla.getByRole('button', { name: 'Mañana' }).props.accessibilityState,
+    ).toEqual(expect.objectContaining({ selected: true }));
+  });
 });
