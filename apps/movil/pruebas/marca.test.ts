@@ -24,3 +24,16 @@ test('el icono de instalacion usa el activo maestro cuadrado', () => {
 
   expect(dimensionesPng(ruta)).toEqual({ alto: 1024, ancho: 1024 });
 });
+
+test('las variantes adaptativas de android conservan el lienzo seguro', () => {
+  const adaptativo = configuracion.expo.android.adaptiveIcon;
+
+  expect(dimensionesPng(adaptativo.foregroundImage)).toEqual({
+    alto: 1024,
+    ancho: 1024,
+  });
+  expect(dimensionesPng(adaptativo.monochromeImage)).toEqual({
+    alto: 1024,
+    ancho: 1024,
+  });
+});
