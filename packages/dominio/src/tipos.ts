@@ -129,6 +129,25 @@ export interface Retencion {
   duenoId: string;
 }
 
+export type EstadoOcupacion = 'retenido' | 'vendido';
+
+/** una plaza ocupada de un viaje; refleja la tabla ocupaciones */
+export type Ocupacion =
+  | {
+      viajeId: string;
+      asiento: number;
+      estado: 'retenido';
+      duenoId: string;
+      expira: string;
+    }
+  | {
+      viajeId: string;
+      asiento: number;
+      estado: 'vendido';
+      duenoId: string;
+      boletoId: string;
+    };
+
 export interface Pasajero {
   nombre: string;
   cedula?: string;

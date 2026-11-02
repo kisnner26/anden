@@ -14,6 +14,7 @@ import {
   type Calificacion,
   type Chofer,
   type Coordenadas,
+  type Ocupacion,
   type Parada,
   type Pasajero,
   type PosicionBus,
@@ -123,6 +124,26 @@ export const esquemaRetencion: z.ZodType<Retencion> = z.object({
   expira: fechaHora,
   duenoId: id,
 });
+
+export const esquemaOcupacion: z.ZodType<Ocupacion> = z.discriminatedUnion(
+  'estado',
+  [
+    z.object({
+      viajeId: id,
+      asiento: entero.min(1),
+      estado: z.literal('retenido'),
+      duenoId: id,
+      expira: fechaHora,
+    }),
+    z.object({
+      viajeId: id,
+      asiento: entero.min(1),
+      estado: z.literal('vendido'),
+      duenoId: id,
+      boletoId: id,
+    }),
+  ],
+);
 
 export const esquemaPasajero: z.ZodType<Pasajero> = z.object({
   nombre: texto,
