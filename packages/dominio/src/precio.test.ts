@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   minutosDelTramo,
   MULTIPLICADORES_BUS,
+  calcularPrecio,
   precioUnitario,
 } from './precio';
 import type { Ruta } from './tipos';
@@ -49,5 +50,33 @@ describe('precioUnitario', () => {
 
   it('prorratea por minutos y redondea una sola vez', () => {
     expect(precioUnitario(ruta, { desde: 0, hasta: 1 }, 'interlocal')).toBe(36);
+  });
+});
+
+describe('calcularPrecio', () => {
+  it('cobra solo a los pasajeros que ocupan asiento', () => {
+    expect(
+      calcularPrecio(ruta, { desde: 0, hasta: 2 }, 'expreso', [
+        { nombre: 'Ana Ruiz', esMenorEnBrazos: false },
+        { nombre: 'Luis Ruiz', esMenorEnBrazos: true },
+        { nombre: 'Marta Ruiz', esMenorEnBrazos: false },
+      ]),
+    ).toEqual({ ok: true, valor: { unitario: 69, total: 138 } });
+  });
+
+  it('rechaza un tramo inválido', () => {
+    expect(
+      calcularPrecio(ruta, { desde: 1, hasta: 3 }, 'ordinario', [
+        { nombre: 'Ana Ruiz', esMenorEnBrazos: false },
+      ]),
+    ).toEqual({ ok: false, error: 'tramo-invalido' });
+  });
+
+  it('rechaza una compra sin pasajeros que pagan', () => {
+    expect(
+      calcularPrecio(ruta, { desde: 0, hasta: 2 }, 'ordinario', [
+        { nombre: 'Luis Ruiz', esMenorEnBrazos: true },
+      ]),
+    ).toEqual({ ok: false, error: 'sin-pasajeros' });
   });
 });
