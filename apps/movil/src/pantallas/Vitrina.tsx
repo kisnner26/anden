@@ -40,7 +40,36 @@ export function Vitrina() {
       </View>
       <MuestraTipografia colores={colores} />
       <MuestraColores colores={colores} />
+      <MuestraEspacios colores={colores} />
     </ScrollView>
+  );
+}
+
+function MuestraEspacios({
+  colores,
+}: {
+  colores: typeof coloresOscuros | typeof coloresClaros;
+}) {
+  const escala = [4, 8, 12, 16, 24, 32, 48] as const;
+  return (
+    <View style={[estilos.seccion, { borderColor: colores.linea }]}>
+      <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+        {t('vitrina.espacios')}
+      </Text>
+      {escala.map((valor) => (
+        <View key={valor} style={estilos.filaEspacio}>
+          <Text style={[tipografia.dato, { color: colores.tintaSuave }]}>
+            {valor}
+          </Text>
+          <View
+            style={[
+              estilos.barraEspacio,
+              { backgroundColor: colores.ambar, width: valor },
+            ]}
+          />
+        </View>
+      ))}
+    </View>
   );
 }
 
@@ -150,6 +179,12 @@ const estilos = StyleSheet.create({
     paddingBottom: espacios.cuarentaYOcho,
     paddingHorizontal: espacios.lateral,
     paddingTop: espacios.veinticuatro,
+  },
+  barraEspacio: { borderRadius: radios.cuadrado, height: espacios.ocho },
+  filaEspacio: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.dieciseis,
   },
   selector: {
     alignSelf: 'flex-start',
