@@ -21,7 +21,7 @@ export function Etiqueta({
       style={[
         tipografia.etiqueta,
         estilos.base,
-        { color: tono === 'acento' ? colores.ambar : colores.tintaSuave },
+        { color: tono === 'acento' ? colores.ambarTexto : colores.tintaSuave },
         enCaja && {
           borderColor: colores.linea,
           borderRadius: radios.cuadrado,
