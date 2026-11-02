@@ -3,14 +3,21 @@ import { z } from 'zod';
 import {
   COMODIDADES,
   CONFIGURACIONES_BUS,
+  ESTADOS_BOLETO,
   ESTADOS_VIAJE,
+  ETIQUETAS_CALIFICACION,
   TIPOS_ASIENTO,
   TIPOS_BUS,
   type Asiento,
+  type Boleto,
   type Bus,
+  type Calificacion,
   type Chofer,
   type Coordenadas,
   type Parada,
+  type Pasajero,
+  type PosicionBus,
+  type Retencion,
   type Ruta,
   type Terminal,
   type Viaje,
@@ -97,4 +104,49 @@ export const esquemaAsiento: z.ZodType<Asiento> = z.object({
   fila: entero.min(0),
   columna: entero.min(0),
   tipo: z.enum(TIPOS_ASIENTO),
+});
+
+export const esquemaRetencion: z.ZodType<Retencion> = z.object({
+  id,
+  viajeId: id,
+  asientos: z.array(entero.min(1)).min(1),
+  expira: fechaHora,
+  duenoId: id,
+});
+
+export const esquemaPasajero: z.ZodType<Pasajero> = z.object({
+  nombre: texto,
+  cedula: texto.optional(),
+  esMenorEnBrazos: z.boolean(),
+});
+
+export const esquemaBoleto: z.ZodType<Boleto> = z.object({
+  id,
+  codigo: z.string().regex(/^[A-Z0-9]{8}$/),
+  viajeId: id,
+  duenoId: id,
+  asiento: entero.min(1),
+  pasajero: esquemaPasajero,
+  precio: entero.min(0),
+  estado: z.enum(ESTADOS_BOLETO),
+  compradoEn: fechaHora,
+});
+
+export const esquemaCalificacion: z.ZodType<Calificacion> = z.object({
+  boletoId: id,
+  choferId: id,
+  estrellas: z.union([
+    z.literal(1),
+    z.literal(2),
+    z.literal(3),
+    z.literal(4),
+    z.literal(5),
+  ]),
+  etiquetas: z.array(z.enum(ETIQUETAS_CALIFICACION)),
+});
+
+export const esquemaPosicionBus: z.ZodType<PosicionBus> = z.object({
+  viajeId: id,
+  coordenadas: esquemaCoordenadas,
+  registradaEn: fechaHora,
 });
