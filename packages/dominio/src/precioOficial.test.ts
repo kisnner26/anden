@@ -69,4 +69,16 @@ describe('precioOficial', () => {
       ),
     ).toEqual({ ok: false, error: 'sin-tarifa-autorizada' });
   });
+
+  it('rechaza un tramo invertido', () => {
+    expect(
+      precioOficial(
+        tarifario,
+        'rut_uca_gra',
+        'ordinario',
+        { desde: 2, hasta: 1 },
+        [pasajero],
+      ),
+    ).toEqual({ ok: false, error: 'tramo-invalido' });
+  });
 });
