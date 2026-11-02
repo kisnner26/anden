@@ -58,7 +58,7 @@ function MuestraControles({
   const [filtro, establecerFiltro] = useState<'hoy' | 'manana'>('hoy');
   return (
     <View style={[estilos.seccion, { borderColor: colores.linea }]}>
-      <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {t('vitrina.botones')}
       </Text>
       <View style={estilos.columnaControles}>
@@ -109,7 +109,7 @@ function MuestraIconos({
 }) {
   return (
     <View style={[estilos.seccion, { borderColor: colores.linea }]}>
-      <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {t('vitrina.iconos')}
       </Text>
       <View style={estilos.paleta}>
@@ -140,7 +140,7 @@ function MuestraEspacios({
   const escala = [4, 8, 12, 16, 24, 32, 48] as const;
   return (
     <View style={[estilos.seccion, { borderColor: colores.linea }]}>
-      <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {t('vitrina.espacios')}
       </Text>
       {escala.map((valor) => (
@@ -176,7 +176,7 @@ function MuestraColores({
   ] as const;
   return (
     <View style={[estilos.seccion, { borderColor: colores.linea }]}>
-      <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {t('vitrina.colores')}
       </Text>
       <View style={estilos.paleta}>
@@ -206,7 +206,7 @@ function MuestraTipografia({
 }) {
   return (
     <View style={[estilos.seccion, { borderColor: colores.linea }]}>
-      <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {t('vitrina.tipografia')}
       </Text>
       <Text style={[tipografia.display, { color: colores.tinta }]}>
@@ -218,7 +218,7 @@ function MuestraTipografia({
       <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
         {t('vitrina.muestraCuerpo')}
       </Text>
-      <Text style={[tipografia.datoGrande, { color: colores.ambar }]}>
+      <Text style={[tipografia.datoGrande, { color: colores.ambarTitular }]}>
         {t('vitrina.muestraDato')}
       </Text>
     </View>
@@ -246,7 +246,7 @@ function SelectorTema({
         { backgroundColor: colores.superficie, borderColor: colores.linea },
       ]}
     >
-      <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {modo === 'oscuro' ? t('vitrina.temaOscuro') : t('vitrina.temaClaro')}
       </Text>
     </Pressable>
