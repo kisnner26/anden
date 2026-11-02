@@ -21,6 +21,7 @@ export const textos = {
     tipografia: 'Tipografía',
     espacios: 'Espacio',
     componentes: 'Componentes',
+    iconos: 'Íconos',
     componenteIcono: 'Icono',
     componenteEtiqueta: 'Etiqueta',
     componenteTarjeta: 'Tarjeta',
