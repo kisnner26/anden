@@ -31,3 +31,23 @@ export const coloresClaros = {
 } as const satisfies Record<keyof typeof coloresOscuros, string>;
 
 export type Colores = typeof coloresOscuros;
+
+/** colores de los íconos ilustrados; son los mismos en claro y oscuro */
+export const paletaIconos = {
+  ambarBorde: '#B86E00',
+  ambarClaro: '#FFE59A',
+  ambar: '#FFB21E',
+  ambarOscuro: '#DE8500',
+  barras: '#2A1A02',
+  brillo: '#FFFFFF',
+  cremaClara: '#FFFFFF',
+  cremaOscura: '#D9D0BA',
+  manecillas: '#E48A00',
+  negroClaro: '#55544A',
+  negroOscuro: '#0F0F0C',
+  negroTrazo: '#2B2A25',
+  perforado: '#8A4F00',
+  rueda: '#17160F',
+  verdeClaro: '#9BE8BE',
+  verdeOscuro: '#2E9E6B',
+} as const;
