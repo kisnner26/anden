@@ -121,14 +121,17 @@ Cada uno vive en `apps/movil/src/componentes/<Nombre>/` con su archivo, su prueb
 
 ## pantallas clave
 
-1. **Viajar (inicio).** Titular "¿Para dónde vas?" en `display`. `CampoLugar` doble, fecha en chips (Hoy, Mañana, elegir), pasajeros con − / +. Debajo, "Tus rutas" con la próxima salida de cada ruta frecuente en mini tablero. Botón principal "Buscar salidas".
-2. **Resultados.** Encabezado compacto con la ruta. Filtros en chips. Cada salida es una fila ancha: hora grande en mono, duración, tipo de bus, asientos libres en barra fina, precio a la derecha, chofer con calificación.
-3. **Elegí tu asiento.** `MapaAsientos` a pantalla completa, leyenda arriba, contador de retención (10:00) en mono, total abajo con botón principal.
-4. **Pasajeros y pago.** Pasos numerados arriba (1 asiento · 2 pasajeros · 3 pago). Formularios en tarjetas, nunca listas de iOS.
-5. **Tu boleto.** `Talon` centrado, cuenta regresiva a la salida, botones "Seguir el bus" y "Agregar al calendario".
-6. **Horarios.** Selector de terminal y `TableroSalidas` a pantalla completa. Es la pantalla insignia: tiene que verse como un tablero real.
-7. **Rutas.** Mapa oscuro (MapLibre) con todas las rutas en ámbar tenue; al tocar una, se ilumina y sube una `Hoja` con `LineaRuta`.
-8. **Chofer.** Foto grande, datos, bus que maneja, últimas calificaciones con etiquetas.
+Las capturas de `mockups/capturas/v2/` son la referencia exacta.
+
+1. **Portada.** "ANDÉN" gigante en gris cálido, detrás del `Autobus` grande; trazo punteado de ruta con paradas arriba, el lema "Tu viaje en bus, sin hacer fila." y un `Boton` blanco "Empezar" con círculo negro. Se muestra la primera vez y al abrir sin sesión.
+2. **Viajar (inicio).** Saludo con avatar y campana. `TarjetaProximoViaje` con el bus cruzando su borde. "Salidas de hoy" con `EtiquetaMuestra` y tres `FilaSalida` (ordinario, expreso, taxi interlocal). Barra de pestañas.
+3. **Buscar y resultados.** `CampoLugar` doble, fecha en chips (Hoy, Mañana, Elegir) y pasajeros con menos y más. Cada salida es una `FilaSalida` ancha: hora en mono, duración, servicio, asientos libres, tarifa oficial y chofer.
+4. **Horarios.** Selector de terminal, chips de servicio y `TableroSalidas` en un bloque negro. Es la pantalla insignia: tiene que verse como un tablero real.
+5. **Elegí tu asiento.** `MapaAsientos` en su carcasa, leyenda arriba, retención de 10 minutos en una píldora de barro y, abajo, un `BloqueNegro` con el total y un único `Boton` ámbar.
+6. **Pasajeros y pago.** Pasos numerados (asiento, pasajeros, pago). Formularios en bloques de barro, nunca listas de iOS.
+7. **Tu boleto.** `Talon` centrado sobre el fondo, cuenta regresiva, "Seguir el bus" y "Agregar al calendario".
+8. **Rutas.** Mapa claro con las rutas autorizadas en ámbar; al tocar una, sube una `Hoja` con `LineaRuta`.
+9. **Chofer.** Foto grande, datos, bus que maneja y últimas calificaciones con etiquetas.
 
 ## texto
 
