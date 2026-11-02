@@ -10,7 +10,12 @@ export const espacios = {
 } as const;
 
 export const radios = {
+  asiento: 12,
+  bloque: 26,
+  bloqueNegro: 30,
+  carcasa: 56,
   cuadrado: 4,
+  loseta: 18,
   pildora: 999,
   tarjeta: 20,
 } as const;
