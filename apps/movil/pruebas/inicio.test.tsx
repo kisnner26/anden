@@ -1,10 +1,14 @@
-import { expect, test } from '@jest/globals';
-import { render } from '@testing-library/react-native';
+import { describe, expect, it } from '@jest/globals';
+
+import { renderPantalla } from '@/pruebas/render';
 
 import Inicio from '../app/index';
 
-test('muestra el titulo de inicio', async () => {
-  const pantalla = await render(<Inicio />);
-
-  expect(pantalla.getByText('Andén')).toBeOnTheScreen();
+describe('Inicio', () => {
+  it('muestra la portada la primera vez', async () => {
+    const pantalla = await renderPantalla(<Inicio />);
+    expect(
+      await pantalla.findByRole('button', { name: 'Empezar' }),
+    ).toBeTruthy();
+  });
 });
