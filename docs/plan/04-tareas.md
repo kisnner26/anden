@@ -46,11 +46,17 @@ Cada tarea dice qué hacer, dónde, cuándo está hecha y qué commits se espera
 - hecho cuando: prueba que verifica que ambos modos tienen las mismas claves; ningún hex fuera de `colores.ts` (regla de lint o prueba que lo busque).
 - commits: `feat: tokens de color oscuro y claro` · `feat: escala tipográfica` · `feat: espacios y duraciones` · `feat: hook usetema con preferencia guardada`
 
-### T-006 · fuentes
+### T-006a · fuentes y pantalla de carga
 - depende de: T-005 · zona: `apps/movil` · raíz: sí · estado: libre
-- hacer: cargar Archivo (normal, Condensed, ExtraCondensed) y JetBrains Mono con `@expo-google-fonts`; la pantalla de carga espera las fuentes.
-- hecho cuando: la pantalla inicial muestra un titular en Archivo ExtraCondensed y una hora en JetBrains Mono en ambos sistemas.
+- hacer: cargar Archivo, Archivo Narrow y JetBrains Mono con `@expo-google-fonts`; la pantalla de carga espera las fuentes. Titular provisional en Archivo Narrow Bold porque `@expo-google-fonts/archivo` solo trae el ancho normal.
+- hecho cuando: la app empaqueta en iOS y Android (`expo export`), carga las fuentes antes de mostrar la pantalla y la pantalla inicial usa Archivo Narrow y JetBrains Mono.
 - commits: `chore: agregar fuentes archivo y jetbrains mono` · `feat: esperar fuentes antes de mostrar la app`
+
+### T-006b · titular en Archivo ExtraCondensed
+- depende de: T-006a · zona: `apps/movil/assets/fuentes/`, `apps/movil/src/tema/` · raíz: sí · estado: libre
+- hacer: el mockup aprobado usa Archivo ExtraCondensed 800 (display) y Condensed 700 (título). Incluir esos dos cortes estáticos con licencia OFL como archivos locales en `apps/movil/assets/fuentes/`, cargarlos con `expo-font` y apuntar `display` y `titulo` de `tipografia.ts` a ellos en lugar de Archivo Narrow.
+- hecho cuando: el titular de la pantalla inicial se ve tan condensado como en `mockups/capturas/viajar.png`, en iOS y Android.
+- commits: `chore: agregar cortes condensados de archivo` · `feat: cargar cortes condensados` · `refactor: titulares con archivo condensado`
 
 ### T-007 · textos
 - depende de: T-000 · zona: `apps/movil/src/textos/` · raíz: no · estado: libre
@@ -170,7 +176,7 @@ Todas en `packages/datos` salvo T-024 y T-025.
 
 ## fase 3 · componentes
 
-Requieren T-004 aprobado, T-005, T-006, T-007. Zona: `apps/movil/src/componentes/`, raíz: no. Cada componente: archivo, prueba de render y entrada en la vitrina, como commits separados.
+Requieren T-004 aprobado, T-005, T-006a, T-007. Zona: `apps/movil/src/componentes/`, raíz: no. Cada componente: archivo, prueba de render y entrada en la vitrina, como commits separados.
 
 ### T-030 · vitrina
 - depende de: T-005 · estado: libre
