@@ -29,7 +29,7 @@ Cada tarea dice qué hacer, dónde, cuándo está hecha y qué commits se espera
 - commits: `chore: configurar vitest en paquetes` · `chore: configurar jest en la app`
 
 ### T-003 · integración continua
-- depende de: T-002 · zona: `.github/` · raíz: sí · estado: libre
+- depende de: T-002 · zona: `.github/` · raíz: sí · estado: hecha
 - hacer: GitHub Actions que corre `pnpm verificar` en cada push y PR, con caché de pnpm.
 - hecho cuando: el flujo es válido (`actionlint` si está disponible) y corre los mismos comandos que local.
 - commits: `chore: agregar ci con verificar`
