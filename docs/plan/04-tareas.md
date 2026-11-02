@@ -87,7 +87,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - commits: `feat: configuraciones de asientos por tipo de bus`
 
 ### T-012 · precio
-- depende de: T-010 · estado: libre
+- depende de: T-010 · estado: hecha
 - hacer: tipo `Tramo = { desde: number; hasta: number }` con su esquema (índices de `ruta.paradas`, `desde < hasta`, dentro de rango), `minutosDelTramo(ruta, tramo)` y `calcularPrecio(ruta, tramo, tipoBus, pasajeros)` que devuelve `Resultado<{ unitario: number; total: number }, 'tramo-invalido' | 'sin-pasajeros'>`. `pasajeros` es `Pasajero[]`: los menores en brazos no pagan y si no queda ninguno que pague es `sin-pasajeros`. La regla de prorrateo está en `01-producto.md`.
 - hecho cuando: pruebas de multiplicadores, redondeo hacia arriba una sola vez, menores en brazos gratis, tramo completo igual a `tarifaBase`, tramo parcial por minutos y los dos errores.
 - commits: `feat: calcular precio por tramo y tipo de bus`
