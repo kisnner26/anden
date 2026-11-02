@@ -195,7 +195,7 @@ Todas en `packages/datos` salvo T-024 y T-025.
 Requieren T-004 aprobado, T-005, T-006a, T-007. Zona: `apps/movil/src/componentes/`, raíz: no. Cada componente: archivo, prueba de render y entrada en la vitrina, como commits separados.
 
 ### T-030 · vitrina
-- depende de: T-005 · estado: libre
+- depende de: T-005 · estado: hecha
 - hacer: ruta `/vitrina` (solo en desarrollo) que lista componentes con sus variantes en ambos temas.
 - commits: `feat: vitrina de componentes en desarrollo`
 
