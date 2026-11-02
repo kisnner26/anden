@@ -71,7 +71,7 @@ Cada tarea dice qué hacer, dónde, cuándo está hecha y qué commits se espera
 - commits: `fix: sacar la prueba del directorio de rutas` · `test: ningún archivo de prueba dentro de app` · `docs: regla de pruebas fuera de app`
 
 ### T-009 · servicios del MTI
-- depende de: T-010 · zona: `packages/dominio`, `apps/movil/src/textos` · raíz: no · estado: libre
+- depende de: T-010 · zona: `packages/dominio`, `apps/movil/src/textos` · raíz: no · estado: hecha
 - hacer: reemplazar `TIPOS_BUS` y el valor `interlocal` por `TIPOS_SERVICIO = ['ordinario', 'expreso', 'taxi-interlocal']` y `TipoServicio`, con su esquema; `Bus.tipo` pasa a `Bus.servicio`; `FiltroBusqueda.tipos` pasa a `servicios`; actualizar T-016 (`servicioActual`/`servicioNuevo`) y los textos visibles ("Interlocal" pasa a "Taxi interlocal"). Marco en `05-marco-mti.md`.
 - hecho cuando: `grep -ri interlocal` solo encuentra `taxi-interlocal` y su texto; pruebas, `pnpm verificar` y `expo export` en verde.
 - commits: un `refactor:` por tipo, esquema y consumidor, y un `docs:` de cierre.
