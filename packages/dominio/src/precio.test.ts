@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { minutosDelTramo } from './precio';
+import { minutosDelTramo, MULTIPLICADORES_BUS } from './precio';
 import type { Ruta } from './tipos';
 
 const ruta: Ruta = {
@@ -25,5 +25,15 @@ describe('minutosDelTramo', () => {
 
   it('devuelve nulo si el tramo queda fuera de la ruta', () => {
     expect(minutosDelTramo(ruta, { desde: 0, hasta: 3 })).toBeNull();
+  });
+});
+
+describe('MULTIPLICADORES_BUS', () => {
+  it('aplica la tarifa esperada a cada tipo de bus', () => {
+    expect(MULTIPLICADORES_BUS).toEqual({
+      ordinario: 1,
+      interlocal: 1.2,
+      expreso: 1.5,
+    });
   });
 });
