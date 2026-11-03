@@ -174,6 +174,8 @@ export const textos = {
     marcadorCedula: '001-010190-0001A',
     continuar: 'Ir al pago',
     faltanNombres: 'Falta el nombre de algún pasajero.',
+    nombreInvalido: 'Escribí un nombre de 2 a 80 letras.',
+    cedulaInvalida: 'Usá el formato 001-010190-0001A o dejala vacía.',
     guardados: 'Tus pasajeros guardados',
   },
   pago: {
