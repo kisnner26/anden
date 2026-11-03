@@ -49,4 +49,16 @@ describe('Viajar', () => {
     );
     expect(alElegirViaje).toHaveBeenCalledWith('via_2');
   });
+
+  it('abre la apariencia desde el avatar', async () => {
+    const alAbrirAjustes = jest.fn();
+    const pantalla = await renderPantalla(
+      <Viajar
+        alAbrirAjustes={alAbrirAjustes}
+        alElegirViaje={() => undefined}
+      />,
+    );
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Apariencia' }));
+    expect(alAbrirAjustes).toHaveBeenCalledTimes(1);
+  });
 });
