@@ -40,3 +40,18 @@ it('elige la terminal y conserva solo el resultado derivado', async () => {
   });
   expect(result.current.estado).not.toHaveProperty('punto');
 });
+
+it('presenta el permiso denegado sin intentar elegir terminal', async () => {
+  jest
+    .mocked(obtenerUbicacionActual)
+    .mockResolvedValue({ estado: 'denegado' });
+  const alSeleccionar = jest.fn();
+  const { result } = await renderHook(() =>
+    useUbicacionCercana(TERMINALES, alSeleccionar),
+  );
+
+  await act(() => result.current.resolver());
+
+  expect(result.current.estado).toEqual({ tipo: 'denegada' });
+  expect(alSeleccionar).not.toHaveBeenCalled();
+});
