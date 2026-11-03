@@ -3,7 +3,10 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Autobus } from '@/componentes/Autobus';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { Icono } from '@/componentes/Icono';
-import type { CorredorInterlocal } from '@/datos/corredores';
+import {
+  OPERACION_MUESTRA_POR_CORREDOR,
+  type CorredorInterlocal,
+} from '@/datos/corredores';
 import {
   espacios,
   radios,
@@ -28,6 +31,7 @@ export function TarjetaCorredor({
     '{{origen}}',
     corredor.origen,
   );
+  const operacion = OPERACION_MUESTRA_POR_CORREDOR[corredor.id];
 
   return (
     <Pressable
@@ -61,6 +65,49 @@ export function TarjetaCorredor({
             {corredor.destino}
           </Text>
         </View>
+        <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+          {t('rutas.operacionMuestra')}
+        </Text>
+        {operacion.estado === 'proxima' ? (
+          <View style={estilos.operacion}>
+            <View style={estilos.datoOperacion}>
+              <Text
+                style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
+              >
+                {t('rutas.proximaUnidad')}
+              </Text>
+              <Text
+                style={[tipografia.datoGrande, { color: colores.sobreNegro }]}
+              >
+                {operacion.proximaSalida}
+              </Text>
+            </View>
+            <View style={estilos.datoOperacionDerecha}>
+              <Text
+                style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
+              >
+                {t('rutas.llegadaEstimada')}
+              </Text>
+              <Text style={[tipografia.datoGrande, { color: colores.ambar }]}>
+                {t('rutas.minutosEstimados').replace(
+                  '{{minutos}}',
+                  String(operacion.etaMinutos),
+                )}
+              </Text>
+            </View>
+          </View>
+        ) : (
+          <View style={estilos.sinServicio}>
+            <Text style={[tipografia.subtitulo, { color: colores.sobreNegro }]}>
+              {t('rutas.sinServicio')}
+            </Text>
+            <Text
+              style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
+            >
+              {t('rutas.sinServicioDetalle')}
+            </Text>
+          </View>
+        )}
         <View style={estilos.estado}>
           <View>
             <Text style={[tipografia.pequeno, { color: colores.sobreNegro }]}>
@@ -90,6 +137,12 @@ const estilos = StyleSheet.create({
     width: tamanosControl.toqueMinimo,
   },
   contenido: { gap: espacios.doce, padding: espacios.veinticuatro },
+  datoOperacion: { flex: 1, gap: espacios.cuatro },
+  datoOperacionDerecha: {
+    alignItems: 'flex-end',
+    flex: 1,
+    gap: espacios.cuatro,
+  },
   estado: {
     alignItems: 'center',
     flexDirection: 'row',
@@ -98,10 +151,17 @@ const estilos = StyleSheet.create({
   },
   ilustracion: { alignItems: 'center', flexDirection: 'row' },
   linea: { flex: 1, height: espacios.cuatro },
+  operacion: {
+    alignItems: 'flex-end',
+    flexDirection: 'row',
+    gap: espacios.doce,
+    justifyContent: 'space-between',
+  },
   punto: {
     borderRadius: radios.pildora,
     height: espacios.dieciseis,
     width: espacios.dieciseis,
   },
+  sinServicio: { gap: espacios.cuatro },
   trayecto: { gap: espacios.cuatro },
 });
