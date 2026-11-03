@@ -320,7 +320,7 @@ Requieren T-004 aprobado, T-005, T-006a, T-007. Zona: `apps/movil/src/componente
 
 ### T-033 · BarraPestanas y Hoja
 - depende de: T-031 · raíz: sí (expo-blur) · estado: **parcial**
-- avance: `BarraPestanas` hecha con relieve y píldora activa; falta la `Hoja` inferior.
+- avance: `BarraPestanas` hecha con relieve y píldora activa; la `Hoja` inferior usa cristal cálido, cierre táctil y por arrastre, y está disponible en la vitrina. las medidas de la barra viven en tema.
 - hacer: barra flotante de cristal con 4 pestañas; hoja inferior con asa y gesto de cierre.
 - commits: `feat: barra de pestanas de cristal` · `feat: hoja inferior arrastrable`
 
