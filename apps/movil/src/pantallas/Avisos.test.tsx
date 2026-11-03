@@ -58,22 +58,14 @@ describe('Avisos', () => {
   it('activar el interruptor pide activar los avisos', async () => {
     const contexto = valor();
     const pantalla = await abrir(contexto);
-    await fireEvent(
-      pantalla.getByLabelText('Avisos en el teléfono'),
-      'valueChange',
-      true,
-    );
+    await fireEvent.press(pantalla.getByLabelText('Avisos en el teléfono'));
     expect(contexto.activar).toHaveBeenCalledTimes(1);
   });
 
   it('apagar el interruptor desactiva los avisos', async () => {
     const contexto = valor({ activadas: true, permiso: 'concedido' });
     const pantalla = await abrir(contexto);
-    await fireEvent(
-      pantalla.getByLabelText('Avisos en el teléfono'),
-      'valueChange',
-      false,
-    );
+    await fireEvent.press(pantalla.getByLabelText('Avisos en el teléfono'));
     expect(contexto.desactivar).toHaveBeenCalledTimes(1);
   });
 

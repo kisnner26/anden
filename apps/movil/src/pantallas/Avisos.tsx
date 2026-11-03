@@ -2,7 +2,6 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Switch,
   Text,
   View,
 } from 'react-native';
@@ -15,7 +14,7 @@ import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { abrirAjustesDelSistema } from '@/datos/notificaciones';
 import { textoAviso } from '@/datos/textoAviso';
 import { useAvisos } from '@/datos/useAvisos';
-import { espacios } from '@/tema/espacios';
+import { espacios, radios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -40,8 +39,10 @@ export function Avisos({ alVolver }: PropiedadesAvisos) {
     permiso,
   } = useAvisos();
 
-  function cambiarInterruptor(valor: boolean) {
-    void (valor ? activar() : desactivar());
+  const activado = activadas && permiso === 'concedido';
+
+  function cambiarInterruptor() {
+    void (activado ? desactivar() : activar());
   }
 
   return (
@@ -57,24 +58,41 @@ export function Avisos({ alVolver }: PropiedadesAvisos) {
         {t('avisos.detalle')}
       </Text>
 
-      <Bloque estiloContenido={estilos.interruptor}>
-        <View style={estilos.textoInterruptor}>
-          <Text style={[estilos.nombre, { color: colores.tinta }]}>
-            {t('avisos.interruptor')}
-          </Text>
-          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {permiso === 'sin-preguntar' && !activadas
-              ? t('avisos.explicacion')
-              : t('avisos.interruptorDetalle')}
-          </Text>
-        </View>
-        <Switch
+      <Pressable
           accessibilityLabel={t('avisos.interruptor')}
-          onValueChange={cambiarInterruptor}
-          trackColor={{ false: colores.linea, true: colores.ambar }}
-          value={activadas && permiso === 'concedido'}
-        />
-      </Bloque>
+          accessibilityRole="switch"
+          accessibilityState={{ checked: activado }}
+          onPress={cambiarInterruptor}
+        >
+        <Bloque estiloContenido={estilos.interruptor}>
+          <View style={estilos.textoInterruptor}>
+            <Text style={[estilos.nombre, { color: colores.tinta }]}>
+              {t('avisos.interruptor')}
+            </Text>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {permiso === 'sin-preguntar' && !activadas
+                ? t('avisos.explicacion')
+                : t('avisos.interruptorDetalle')}
+            </Text>
+          </View>
+          <View
+            style={[
+              estilos.pista,
+              { backgroundColor: activado ? colores.ambar : colores.linea },
+            ]}
+          >
+            <View
+              style={[
+                estilos.perilla,
+                {
+                  alignSelf: activado ? 'flex-end' : 'flex-start',
+                  backgroundColor: activado ? colores.sobreAmbar : colores.fondo,
+                },
+              ]}
+            />
+          </View>
+        </Bloque>
+      </Pressable>
 
       {permiso === 'negado' && (
         <Bloque estiloContenido={estilos.sinPermiso}>
@@ -177,6 +195,18 @@ const estilos = StyleSheet.create({
   },
   nombre: { fontFamily: 'Archivo_600SemiBold', fontSize: 18, lineHeight: 22 },
   punto: { borderRadius: 5, height: 10, marginTop: 6, width: 10 },
+  perilla: {
+    borderRadius: radios.pildora,
+    height: espacios.veinticuatro,
+    width: espacios.veinticuatro,
+  },
+  pista: {
+    borderRadius: radios.pildora,
+    justifyContent: 'center',
+    minHeight: tamanosControl.toqueMinimo,
+    padding: espacios.cuatro,
+    width: espacios.cuarentaYOcho,
+  },
   sinPermiso: { gap: espacios.doce, padding: espacios.veinticuatro },
   textoAviso: { flex: 1, gap: 2 },
   textoInterruptor: { flex: 1, gap: 2 },
