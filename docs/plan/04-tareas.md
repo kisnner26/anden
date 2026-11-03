@@ -154,6 +154,41 @@ Pedidos por el dueño tras probar la app en su iPhone (2 de noviembre de 2026): 
 
 Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el mismo commit (las reglas están en `01-producto.md`).
 
+### T-086 · perfil y configuración del usuario
+- depende de: T-085 · zona: `apps/movil`, `packages/dominio` · raíz: sí (dependencias nativas) · estado: libre
+- hacer: validación del teléfono de Nicaragua en el dominio; perfil con foto de la galería, nombre, apellido, teléfono, correo y cédula opcionales, guardado en el teléfono; pasajeros guardados; el nombre y teléfono precargan Pasajeros.
+- hecho cuando: se edita y guarda el perfil, se ve el avatar y la compra lo reusa.
+
+### T-087 · notificaciones locales y campanita
+- depende de: T-086 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: centro de avisos con leído y no leído, interruptor con permiso pedido al activar, recordatorio 30 minutos antes de la salida, avisos de andén y atraso, punto de la campana.
+- hecho cuando: con permiso se programa el recordatorio y sin permiso la campana lo explica.
+
+### T-088 · buscador de Horarios
+- depende de: T-085 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: la lupa abre un buscador con recientes y rutas frecuentes que filtra por destino, servicio, franja y placa en vivo.
+- hecho cuando: escribir filtra las salidas y no hay resultados con la mascota.
+
+### T-089 · origen por ubicación
+- depende de: T-088 · zona: `apps/movil`, `packages/dominio` · raíz: no · estado: libre
+- hacer: terminal más cercana como función pura del dominio; control en Viajar que pide la ubicación en primer plano, propone el origen y deja elegir a mano; nunca guarda ni envía la ubicación.
+- hecho cuando: con permiso se propone la terminal cercana y sin permiso se elige a mano.
+
+### T-090 · Rutas rediseñada
+- depende de: T-089 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: mapa esquemático con react-native-svg, filas con datos tipográficos y sellos, detalle de ruta con paradas, tiempos, tarifas de muestra y salidas del día.
+- hecho cuando: se toca un destino del mapa y se abre su detalle.
+
+### T-091 · boletos mejorados
+- depende de: T-086 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: próximos y pasados, boleto próximo destacado, Tu boleto con chofer, compartir, cancelar y cambiar con reglas de muestra, estados vacío, vencido, cancelado y usado.
+- hecho cuando: se ve y se opera el ciclo del boleto.
+
+### T-092 · animación al abordar
+- depende de: T-091 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: el talón se separa y un sello ámbar "abordado" se estampa con háptica; sin movimiento con reducir movimiento; validación de prueba rotulada.
+- hecho cuando: validar el boleto de muestra pasa a usado con la animación.
+
 ### T-010 · tipos, esquemas y resultado
 - depende de: T-002 · estado: hecha
 - hacer: tipos de `03-arquitectura.md` en `tipos.ts`, esquemas Zod en `esquemas.ts`, tipo `Resultado` con helpers `ok()` y `error()`.
