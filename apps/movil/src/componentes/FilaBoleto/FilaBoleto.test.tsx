@@ -33,4 +33,15 @@ describe('FilaBoleto', () => {
     await fireEvent.press(pantalla.getByRole('button'));
     expect(alPresionar).toHaveBeenCalledWith('bol_K7RM4QX9');
   });
+
+  it('muestra la cuenta regresiva del boleto vigente', async () => {
+    const pantalla = await render(
+      <FilaBoleto
+        alPresionar={() => undefined}
+        ahora={new Date(2026, 10, 2, 13, 40)}
+        guardado={GUARDADO}
+      />,
+    );
+    expect(pantalla.getByText('Estado: sale en 60 min')).toBeTruthy();
+  });
 });
