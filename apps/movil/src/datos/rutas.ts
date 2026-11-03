@@ -29,37 +29,39 @@ const SERVICIOS_EN_ORDEN: TipoServicio[] = [
 export function armarRutas(datos: DatosMuestra, ahora: Date): RutaVista[] {
   const salidas = armarSalidas(datos, ahora);
 
-  return datos.rutas.map((ruta) => {
-    const destino = datos.terminales.find(
-      (terminal) => terminal.id === ruta.destinoId,
-    );
-    const delRuta = salidas.filter((salida) => salida.rutaId === ruta.id);
-    const pendientes = delRuta.filter(
-      (salida) =>
-        salida.salida.getTime() + salida.minutosAtraso * 60_000 >=
-        ahora.getTime(),
-    );
-    const servicios = SERVICIOS_EN_ORDEN.filter((servicio) =>
-      delRuta.some((salida) => salida.servicio === servicio),
-    ).map<ServicioDeRuta>((servicio) => {
-      const precio = precioOficial(
-        datos.tarifario,
-        ruta.id,
-        servicio,
-        { desde: 0, hasta: ruta.paradas.length - 1 },
-        [{ esMenorEnBrazos: false, nombre: 'pasajero' }],
+  return datos.rutas
+    .filter((ruta) => ruta.origenId === 'ter_uca')
+    .map((ruta) => {
+      const destino = datos.terminales.find(
+        (terminal) => terminal.id === ruta.destinoId,
       );
-      return { servicio, tarifa: precio.ok ? precio.valor.unitario : null };
-    });
+      const delRuta = salidas.filter((salida) => salida.rutaId === ruta.id);
+      const pendientes = delRuta.filter(
+        (salida) =>
+          salida.salida.getTime() + salida.minutosAtraso * 60_000 >=
+          ahora.getTime(),
+      );
+      const servicios = SERVICIOS_EN_ORDEN.filter((servicio) =>
+        delRuta.some((salida) => salida.servicio === servicio),
+      ).map<ServicioDeRuta>((servicio) => {
+        const precio = precioOficial(
+          datos.tarifario,
+          ruta.id,
+          servicio,
+          { desde: 0, hasta: ruta.paradas.length - 1 },
+          [{ esMenorEnBrazos: false, nombre: 'pasajero' }],
+        );
+        return { servicio, tarifa: precio.ok ? precio.valor.unitario : null };
+      });
 
-    return {
-      destino: destino?.ciudad ?? '',
-      distanciaKm: ruta.distanciaKm,
-      duracionMin: ruta.duracionMin,
-      id: ruta.id,
-      proximaSalida: pendientes[0]?.salida ?? null,
-      salidasPendientes: pendientes.length,
-      servicios,
-    };
-  });
+      return {
+        destino: destino?.ciudad ?? '',
+        distanciaKm: ruta.distanciaKm,
+        duracionMin: ruta.duracionMin,
+        id: ruta.id,
+        proximaSalida: pendientes[0]?.salida ?? null,
+        salidasPendientes: pendientes.length,
+        servicios,
+      };
+    });
 }

@@ -35,13 +35,7 @@ export function useSalidas(origenId: string = 'ter_uca') {
   const ahora = useAhora();
   const datos = obtenerMuestra();
   const salidas = useMemo(
-    () =>
-      armarSalidas(datos, ahora).filter((salida) => {
-        const ruta = datos.rutas.find(
-          (candidata) => candidata.id === salida.rutaId,
-        );
-        return ruta?.origenId === origenId;
-      }),
+    () => armarSalidas(datos, ahora, origenId),
     [datos, ahora, origenId],
   );
   const proxima = useMemo(() => proximaSalida(salidas), [salidas]);

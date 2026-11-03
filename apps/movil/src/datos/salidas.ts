@@ -36,7 +36,11 @@ const ESTADOS_PENDIENTES: EstadoViaje[] = [
 ];
 
 /** las salidas de la terminal de origen con su estado, tarifa y asientos libres, ordenadas por hora */
-export function armarSalidas(datos: DatosMuestra, ahora: Date): Salida[] {
+export function armarSalidas(
+  datos: DatosMuestra,
+  ahora: Date,
+  origenId: string = 'ter_uca',
+): Salida[] {
   const salidas: Salida[] = [];
 
   for (const viaje of datos.viajes) {
@@ -45,7 +49,7 @@ export function armarSalidas(datos: DatosMuestra, ahora: Date): Salida[] {
     const destino = datos.terminales.find(
       (terminal) => terminal.id === ruta?.destinoId,
     );
-    if (!ruta || !bus || !destino) continue;
+    if (!ruta || !bus || !destino || ruta.origenId !== origenId) continue;
 
     const precio = precioOficial(
       datos.tarifario,
