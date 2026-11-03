@@ -38,7 +38,7 @@ export function VerBoleto({
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const ahora = useAhora();
-  const { boletos, cancelar } = useBoletos();
+  const { boletos, cancelar, validar } = useBoletos();
   const { activar } = useAvisos();
   const [confirmando, establecerConfirmando] = useState(false);
   const [cambioNoDisponible, establecerCambioNoDisponible] = useState(false);
@@ -121,6 +121,19 @@ export function VerBoleto({
 
       {puedeOperar && (
         <View style={estilos.acciones}>
+          <Pressable
+            accessibilityLabel={t('boleto.validar')}
+            accessibilityRole="button"
+            onPress={() => void validar(boletoId)}
+            style={estilos.accion}
+          >
+            <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+              {t('boleto.modoPrueba')}
+            </Text>
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+              {t('boleto.validar')}
+            </Text>
+          </Pressable>
           <Pressable
             accessibilityLabel={t('boleto.compartir')}
             accessibilityRole="button"

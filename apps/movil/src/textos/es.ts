@@ -217,6 +217,8 @@ export const textos = {
     usado: 'Boleto usado',
     vencido: 'Salida vencida',
     estadoVigente: 'Vigente',
+    modoPrueba: 'Modo de prueba',
+    validar: 'Validar abordaje',
   },
   ajustes: {
     titulo: 'Apariencia',
