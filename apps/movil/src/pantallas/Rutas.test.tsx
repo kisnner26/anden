@@ -20,9 +20,7 @@ describe('Rutas', () => {
     expect(
       pantalla.getAllByText('Horarios y ubicación por confirmar'),
     ).toHaveLength(2);
-    expect(
-      pantalla.queryByLabelText('Mapa esquemático de rutas'),
-    ).toBeNull();
+    expect(pantalla.queryByLabelText('Mapa esquemático de rutas')).toBeNull();
   });
 
   it('abre el corredor elegido', async () => {

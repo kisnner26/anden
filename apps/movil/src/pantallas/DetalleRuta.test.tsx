@@ -14,9 +14,7 @@ describe('DetalleRuta', () => {
       pantalla.getByRole('header', { name: 'Wácwala → Managua' }),
     ).toBeTruthy();
     expect(
-      pantalla.getByText(
-        'Seguimiento en vivo pendiente de datos operativos',
-      ),
+      pantalla.getByText('Seguimiento en vivo pendiente de datos operativos'),
     ).toBeTruthy();
     expect(pantalla.queryByText(/km/)).toBeNull();
     expect(pantalla.queryByText(/min/)).toBeNull();
