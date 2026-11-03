@@ -54,13 +54,15 @@ test('la pantalla de arranque usa la marca en ambos temas', () => {
     'expo-splash-screen',
     expect.objectContaining({
       dark: expect.objectContaining({
-        image: './assets/marca/arranque.png',
+        image: './assets/marca/arranque-oscuro.png',
       }),
-      image: './assets/marca/arranque.png',
+      image: './assets/marca/arranque-claro.png',
     }),
   ]);
-  expect(dimensionesPng('./assets/marca/arranque.png')).toEqual({
-    alto: 600,
-    ancho: 600,
-  });
+  for (const ruta of [
+    './assets/marca/arranque-claro.png',
+    './assets/marca/arranque-oscuro.png',
+  ]) {
+    expect(dimensionesPng(ruta)).toEqual({ alto: 600, ancho: 600 });
+  }
 });

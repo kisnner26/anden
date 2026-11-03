@@ -14,7 +14,7 @@
       "package": "com.kisnner.anden",
       "predictiveBackGestureEnabled": false,
       "adaptiveIcon": {
-        "backgroundColor": "#0E0F11",
+        "backgroundColor": "#0B0B09",
         "foregroundImage": "./assets/marca/icono-adaptativo.png",
         "monochromeImage": "./assets/marca/icono-monocromatico.png"
       }
@@ -27,13 +27,13 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#F4F1EA",
+          "backgroundColor": "#F5F1E8",
           "dark": {
-            "backgroundColor": "#0E0F11",
-            "image": "./assets/marca/arranque.png"
+            "backgroundColor": "#121210",
+            "image": "./assets/marca/arranque-oscuro.png"
           },
-          "image": "./assets/marca/arranque.png",
-          "imageWidth": 220,
+          "image": "./assets/marca/arranque-claro.png",
+          "imageWidth": 300,
           "resizeMode": "contain"
         }
       ]
