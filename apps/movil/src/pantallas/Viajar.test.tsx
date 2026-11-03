@@ -63,6 +63,21 @@ describe('Viajar', () => {
     expect(pantalla.getAllByText('Estelí').length).toBeGreaterThan(0);
   });
 
+  it('permite elegir fecha y cantidad de pasajeros', async () => {
+    const pantalla = await dibujar();
+    const fechas = pantalla.getAllByRole('radio');
+    expect(fechas).toHaveLength(3);
+    await fireEvent.press(fechas[1] as never);
+    expect(
+      (fechas[1] as never as { props: { accessibilityState: unknown } }).props
+        .accessibilityState,
+    ).toEqual(expect.objectContaining({ checked: true }));
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Agregar pasajero' }),
+    );
+    expect(pantalla.getByLabelText('2 Pasajeros')).toBeTruthy();
+  });
+
   it('va directo a los asientos desde el botón del próximo viaje', async () => {
     const alElegirAsiento = jest.fn();
     const pantalla = await dibujar({ alElegirAsiento });
