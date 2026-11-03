@@ -160,7 +160,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - hecho cuando: se edita y guarda el perfil, se ve el avatar y la compra lo reusa.
 
 ### T-087 · notificaciones locales y campanita
-- depende de: T-086 · zona: `apps/movil` · raíz: no · estado: libre
+- depende de: T-086 · zona: `apps/movil` · raíz: no · estado: hecha
 - hacer: centro de avisos con leído y no leído, interruptor con permiso pedido al activar, recordatorio 30 minutos antes de la salida, avisos de andén y atraso, punto de la campana.
 - hecho cuando: con permiso se programa el recordatorio y sin permiso la campana lo explica.
 
