@@ -13,7 +13,10 @@ import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { CampoTexto } from '@/componentes/CampoTexto';
+import { Chip } from '@/componentes/Chip';
+import { nombreCompleto, type PasajeroGuardado } from '@/datos/perfil';
 import type { PasajeroReserva } from '@/datos/reserva';
+import { usePerfil } from '@/datos/usePerfil';
 import { useReserva } from '@/datos/useReserva';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -39,9 +42,29 @@ export function Pasajeros({
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const { establecerBorrador } = useReserva();
-  const [nombres, establecerNombres] = useState<Record<number, string>>({});
-  const [cedulas, establecerCedulas] = useState<Record<number, string>>({});
+  const { perfil } = usePerfil();
+  const propio = nombreCompleto(perfil);
+  // quien reserva viaja en el primer asiento: sus datos del perfil ya vienen escritos
+  const [nombres, establecerNombres] = useState<Record<number, string>>(() =>
+    propio !== '' && asientos[0] !== undefined ? { [asientos[0]]: propio } : {},
+  );
+  const [cedulas, establecerCedulas] = useState<Record<number, string>>(() =>
+    perfil.cedula !== '' && propio !== '' && asientos[0] !== undefined
+      ? { [asientos[0]]: perfil.cedula }
+      : {},
+  );
   const [faltan, establecerFaltan] = useState(false);
+
+  function usarGuardado(guardado: PasajeroGuardado) {
+    const libre = asientos.find(
+      (asiento) => (nombres[asiento] ?? '').trim() === '',
+    );
+    if (libre === undefined) return;
+    establecerNombres({ ...nombres, [libre]: guardado.nombre });
+    if (guardado.cedula) {
+      establecerCedulas({ ...cedulas, [libre]: guardado.cedula });
+    }
+  }
 
   function continuar() {
     const completos = asientos.every(
@@ -76,6 +99,23 @@ export function Pasajeros({
         <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
           {t('pasajeros.detalle')}
         </Text>
+
+        {perfil.pasajeros.length > 0 && (
+          <View style={estilos.guardados}>
+            <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+              {t('pasajeros.guardados')}
+            </Text>
+            <View style={estilos.chips}>
+              {perfil.pasajeros.map((guardado) => (
+                <Chip
+                  alCambiar={() => usarGuardado(guardado)}
+                  etiqueta={guardado.nombre}
+                  key={guardado.id}
+                />
+              ))}
+            </View>
+          </View>
+        )}
 
         {asientos.map((asiento) => (
           <Bloque estiloContenido={estilos.bloque} key={asiento}>
@@ -124,6 +164,8 @@ const estilos = StyleSheet.create({
   asiento: { fontFamily: 'Archivo_600SemiBold', fontSize: 18, lineHeight: 22 },
   bloque: { gap: espacios.dieciseis, padding: espacios.veinticuatro },
   boton: { alignItems: 'flex-end' },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: espacios.ocho },
   contenido: { gap: espacios.dieciseis, paddingHorizontal: espacios.lateral },
+  guardados: { gap: espacios.ocho },
   pantalla: { flex: 1 },
 });

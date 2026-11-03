@@ -133,6 +133,7 @@ export const textos = {
     marcadorCedula: '001-010190-0001A',
     continuar: 'Ir al pago',
     faltanNombres: 'Falta el nombre de algún pasajero.',
+    guardados: 'Tus pasajeros guardados',
   },
   pago: {
     titulo: 'Pago',
