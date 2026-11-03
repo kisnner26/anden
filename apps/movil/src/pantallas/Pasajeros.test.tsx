@@ -82,6 +82,28 @@ describe('Pasajeros', () => {
     ).toBe(true);
   });
 
+  it('no avanza con una cédula de formato incorrecto', async () => {
+    const alContinuar = jest.fn();
+    const pantalla = await dibujar({ alContinuar });
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Nombre completo · Asiento 8'),
+      'Ana Ruiz',
+    );
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Nombre completo · Asiento 9'),
+      'Luis Pérez',
+    );
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Cédula (opcional) · Asiento 9'),
+      '0010101900001A',
+    );
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Ir al pago' }));
+    expect(alContinuar).not.toHaveBeenCalled();
+    expect(
+      pantalla.getByText('Usá el formato 001-010190-0001A o dejala vacía.'),
+    ).toBeTruthy();
+  });
+
   it('guarda el borrador y avanza cuando todos tienen nombre', async () => {
     const alContinuar = jest.fn();
     const pantalla = await dibujar({ alContinuar });
