@@ -29,4 +29,19 @@ describe('CampoTexto', () => {
     );
     expect(alCambiar).toHaveBeenCalledWith('Luis');
   });
+
+  it('anuncia el error y marca la entrada como inválida', async () => {
+    const pantalla = await render(
+      <CampoTexto
+        alCambiar={() => undefined}
+        error="Escribí un nombre válido."
+        etiqueta="Nombre completo"
+        valor="1"
+      />,
+    );
+    const entrada = pantalla.getByLabelText('Nombre completo');
+    expect(entrada.props['aria-invalid']).toBe(true);
+    expect(entrada.props.accessibilityHint).toBe('Escribí un nombre válido.');
+    expect(pantalla.getByText('Escribí un nombre válido.')).toBeTruthy();
+  });
 });
