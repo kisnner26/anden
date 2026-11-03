@@ -8,7 +8,10 @@ import { renderPantalla } from '@/pruebas/render';
 
 import { Viajar } from './Viajar';
 
-afterEach(() => reiniciarMuestra());
+afterEach(() => {
+  jest.restoreAllMocks();
+  reiniciarMuestra();
+});
 
 function dibujar(propiedades: Partial<Parameters<typeof Viajar>[0]> = {}) {
   return renderPantalla(
@@ -164,5 +167,22 @@ describe('Viajar', () => {
       ).toBeTruthy(),
     );
     pedirUbicacion.mockRestore();
+  });
+
+  it('permite reintentar cuando falla el proveedor de ubicación', async () => {
+    const pedirUbicacion = jest
+      .spyOn(ubicacion, 'obtenerUbicacionActual')
+      .mockResolvedValue({ estado: 'error' });
+    const pantalla = await dibujar();
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Usar mi ubicación' }),
+    );
+    const reintentar = await pantalla.findByRole('button', {
+      name: 'Reintentar ubicación',
+    });
+
+    await fireEvent.press(reintentar);
+
+    expect(pedirUbicacion).toHaveBeenCalledTimes(2);
   });
 });
