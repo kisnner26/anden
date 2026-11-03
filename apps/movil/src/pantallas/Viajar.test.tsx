@@ -185,4 +185,23 @@ describe('Viajar', () => {
 
     expect(pedirUbicacion).toHaveBeenCalledTimes(2);
   });
+
+  it('ofrece ajustes cuando el teléfono tiene la ubicación apagada', async () => {
+    jest
+      .spyOn(ubicacion, 'obtenerUbicacionActual')
+      .mockResolvedValue({ estado: 'desactivado' });
+    const pantalla = await dibujar();
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Usar mi ubicación' }),
+    );
+
+    expect(
+      await pantalla.findByText(
+        'La ubicación del teléfono está apagada. Activala o elegí una terminal.',
+      ),
+    ).toBeTruthy();
+    expect(
+      pantalla.getByRole('button', { name: 'Abrir ajustes' }),
+    ).toBeTruthy();
+  });
 });
