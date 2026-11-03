@@ -190,6 +190,36 @@ export const textos = {
     oscuroDetalle: 'Fondo carbón, más cómodo de noche.',
     volver: 'Volver',
   },
+  avisos: {
+    titulo: 'Avisos',
+    detalle: 'Todo lo que pasa con tus viajes, en un solo lugar.',
+    interruptor: 'Avisos en el teléfono',
+    interruptorDetalle:
+      'Un recordatorio 30 minutos antes de que salga tu bus. Se programa en este teléfono, sin enviar tus datos a nadie.',
+    explicacion:
+      'Para avisarte a tiempo, Andén necesita permiso para mandarte notificaciones. Te lo pedimos ahora.',
+    sinPermiso:
+      'Las notificaciones están desactivadas para Andén en el teléfono. Activalas en los ajustes para recibir recordatorios.',
+    abrirAjustes: 'Abrir ajustes del teléfono',
+    marcarTodos: 'Marcar todo como leído',
+    noLeido: 'Sin leer',
+    leido: 'Leído',
+    vacioTitulo: 'Sin avisos por ahora',
+    vacioDetalle:
+      'Cuando reserves un viaje, acá te avisamos si sale pronto, se atrasa o cambia de andén.',
+    pronto: 'Tu bus a {destino} sale en {minutos} min',
+    prontoDetalle: 'Andén {anden}. Llegá con tiempo y llevá la tarifa exacta.',
+    atraso: 'Tu bus a {destino} sale con {minutos} min de atraso',
+    atrasoDetalle: 'Andén {anden}. Te avisamos si vuelve a cambiar.',
+    anden: 'Cambió el andén de tu bus a {destino}',
+    andenDetalle: 'Ahora sale del andén {anden}.',
+    cancelado: 'Se canceló tu viaje a {destino}',
+    canceladoDetalle: 'No tenés que pagar nada. Podés reservar otra salida.',
+    recordatorioTitulo: 'Tu bus a {destino} sale en 30 min',
+    recordatorioCuerpo:
+      'Andén {anden}. Llevá la tarifa exacta para pagar al abordar.',
+    abrir: 'Abrir tus avisos',
+  },
   perfil: {
     titulo: 'Tu perfil',
     detalle: 'Tus datos se guardan solo en este teléfono.',
