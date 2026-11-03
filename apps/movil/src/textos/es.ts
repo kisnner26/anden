@@ -143,6 +143,7 @@ export const textos = {
     iconoConfirmar: 'Confirmar',
     iconoMas: 'Agregar',
     iconoSiguiente: 'Siguiente',
+    iconoEstrella: 'Calificación',
     etiquetaSalida: 'Salida',
     etiquetaAnden: 'Andén 4',
     tarjetaTitulo: 'UCA a Granada',

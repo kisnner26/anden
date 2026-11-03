@@ -6,6 +6,7 @@ import { tamanosIcono } from '@/tema/espacios';
 import { DibujoBoleto } from './dibujos/Boleto';
 import { DibujoCampana } from './dibujos/Campana';
 import { DibujoConfirmar } from './dibujos/Confirmar';
+import { DibujoEstrella } from './dibujos/Estrella';
 import { DibujoLupa } from './dibujos/Lupa';
 import { DibujoMas } from './dibujos/Mas';
 import { DibujoPestanaBoletos } from './dibujos/PestanaBoletos';
@@ -24,6 +25,7 @@ const DIBUJOS = {
   boleto: DibujoBoleto,
   campana: DibujoCampana,
   confirmar: DibujoConfirmar,
+  estrella: DibujoEstrella,
   lupa: DibujoLupa,
   mas: DibujoMas,
   pestanaBoletos: DibujoPestanaBoletos,
