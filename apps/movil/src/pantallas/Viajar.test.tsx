@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent } from '@testing-library/react-native';
 
+import { ContextoAvisos, type ValorAvisos } from '@/datos/useAvisos';
 import { reiniciarMuestra } from '@/datos/useSalidas';
 import { renderPantalla } from '@/pruebas/render';
 
@@ -64,5 +65,40 @@ describe('Viajar', () => {
     const pantalla = await dibujar({ alAbrirAjustes });
     await fireEvent.press(pantalla.getByRole('button', { name: 'Apariencia' }));
     expect(alAbrirAjustes).toHaveBeenCalledTimes(1);
+  });
+
+  it('la campana abre los avisos', async () => {
+    const alAbrirAvisos = jest.fn();
+    const pantalla = await dibujar({ alAbrirAvisos });
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Avisos' }));
+    expect(alAbrirAvisos).toHaveBeenCalledTimes(1);
+  });
+
+  it('la campana muestra un punto cuando hay avisos sin leer', async () => {
+    const sinLeer: ValorAvisos = {
+      activadas: false,
+      activar: async () => false,
+      avisos: [],
+      desactivar: async () => undefined,
+      leidos: [],
+      marcarLeido: async () => undefined,
+      marcarTodos: async () => undefined,
+      noLeidos: 2,
+      permiso: 'sin-preguntar',
+    };
+    const pantalla = await renderPantalla(
+      <ContextoAvisos.Provider value={sinLeer}>
+        <Viajar
+          alAbrirViaje={() => undefined}
+          alElegirAsiento={() => undefined}
+        />
+      </ContextoAvisos.Provider>,
+    );
+    expect(pantalla.getByTestId('campana-sin-leer')).toBeTruthy();
+  });
+
+  it('sin avisos por leer la campana no lleva punto', async () => {
+    const pantalla = await dibujar();
+    expect(pantalla.queryByTestId('campana-sin-leer')).toBeNull();
   });
 });
