@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, it } from '@jest/globals';
+import { afterEach, describe, expect, it, jest } from '@jest/globals';
+import { fireEvent } from '@testing-library/react-native';
 
 import { reiniciarMuestra } from '@/datos/useSalidas';
 import { renderPantalla } from '@/pruebas/render';
@@ -11,8 +12,8 @@ describe('Rutas', () => {
   it('lista las seis rutas de la terminal', async () => {
     const pantalla = await renderPantalla(<Rutas />);
     expect(pantalla.getAllByRole('header')).toHaveLength(6);
-    expect(pantalla.getByText('Granada')).toBeTruthy();
-    expect(pantalla.getByText('Estelí')).toBeTruthy();
+    expect(pantalla.getAllByText('Granada').length).toBeGreaterThan(0);
+    expect(pantalla.getAllByText('Estelí').length).toBeGreaterThan(0);
   });
 
   it('muestra los kilómetros y la duración de cada ruta', async () => {
@@ -28,12 +29,14 @@ describe('Rutas', () => {
     expect(pantalla.getByText('C$ 120')).toBeTruthy();
   });
 
-  it('anuncia que el mapa llega pronto', async () => {
-    const pantalla = await renderPantalla(<Rutas />);
-    expect(
-      pantalla.getByText(
-        'El mapa con el recorrido y el bus en vivo llega pronto.',
-      ),
-    ).toBeTruthy();
+  it('abre el detalle desde un nodo del mapa', async () => {
+    const alAbrirRuta = jest.fn();
+    const pantalla = await renderPantalla(<Rutas alAbrirRuta={alAbrirRuta} />);
+    await fireEvent.press(
+      pantalla.getAllByRole('button', {
+        name: 'Abrir ruta a Granada',
+      })[0] as never,
+    );
+    expect(alAbrirRuta).toHaveBeenCalledWith('rut_uca_gra');
   });
 });
