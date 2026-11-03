@@ -288,8 +288,8 @@ Requieren T-004 aprobado, T-005, T-006a, T-007. Zona: `apps/movil/src/componente
 - commits: `feat: estado vacio` · `feat: estado de error con reintento` · `feat: esqueleto de carga`
 
 ### T-035 · TableroSalidas
-- depende de: T-031 · estado: **parcial**
-- avance: `TableroSalidas` con fichas, andén y estados con forma; falta la animación split-flap y el modo sin animación.
+- depende de: T-031 · estado: hecha
+- avance: `TableroSalidas` con fichas, andén y estados con forma; cada ficha cae en su lugar al cambiar su carácter y no se anima con reducir movimiento; la vitrina tiene un botón que cambia hora y estado. No se vio en un teléfono.
 - hacer: fila de tablero y lista; split-flap por carácter con Reanimated; respeta reducir movimiento.
 - hecho cuando: en la vitrina, un botón cambia la hora y el estado y la fila gira solo en los caracteres que cambian.
 - commits: `feat: fila del tablero de salidas` · `feat: animacion split-flap por caracter` · `feat: tablero sin animacion con reducir movimiento`
