@@ -186,7 +186,10 @@ const estilos = StyleSheet.create({
   },
   fondoPrincipal: { borderRadius: radios.pildora },
   fondoSecundario: { borderRadius: radios.pildora },
-  presionado: { opacity: 0.82 },
+  presionado: {
+    opacity: 0.9,
+    transform: [{ scale: movimiento.escalaPresion }],
+  },
 });
 
 function useMovimientoReducido() {
