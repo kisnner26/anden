@@ -45,4 +45,18 @@ describe('Ajustes', () => {
     await fireEvent.press(pantalla.getByRole('button', { name: 'Volver' }));
     expect(alVolver).toHaveBeenCalledTimes(1);
   });
+
+  it('invita a completar el perfil y lo abre', async () => {
+    const alAbrirPerfil = jest.fn();
+    const pantalla = await renderPantalla(
+      <ProveedorTema>
+        <Ajustes alAbrirPerfil={alAbrirPerfil} alVolver={() => undefined} />
+      </ProveedorTema>,
+    );
+    expect(pantalla.getByText('Completá tu perfil')).toBeTruthy();
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Tu perfil y tus pasajeros' }),
+    );
+    expect(alAbrirPerfil).toHaveBeenCalledTimes(1);
+  });
 });
