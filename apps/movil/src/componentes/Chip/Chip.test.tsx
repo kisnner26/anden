@@ -29,6 +29,7 @@ describe('Chip', () => {
     );
     expect(impactAsync).toHaveBeenCalledWith(ImpactFeedbackStyle.Light);
     expect(alCambiar).toHaveBeenCalledWith(true);
+    expect(pantalla.getByTestId('chip-fondo-barro')).toBeOnTheScreen();
     expect(pantalla.queryByTestId('chip-seleccionado-indicador')).toBeNull();
   });
 
