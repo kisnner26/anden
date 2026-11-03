@@ -1,9 +1,18 @@
+import * as Haptics from 'expo-haptics';
+import { useEffect, useRef } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
+import Animated, {
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
 import type { BoletoGuardado } from '@/datos/reserva';
 import { espacios } from '@/tema/espacios';
+import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -31,6 +40,28 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
   const { colores } = useTema();
   const { boleto, resumen } = guardado;
   const salida = new Date(resumen.salida);
+  const reducirMovimiento = useReducedMotion();
+  const anterior = useRef(boleto.estado);
+  const separacion = useSharedValue(boleto.estado === 'usado' ? 1 : 0);
+  const sello = useSharedValue(boleto.estado === 'usado' ? 1 : 0);
+  const estiloTalon = useAnimatedStyle(() => ({
+    transform: [{ translateX: separacion.value * 10 }],
+  }));
+  const estiloSello = useAnimatedStyle(() => ({ opacity: sello.value }));
+
+  useEffect(() => {
+    if (anterior.current === boleto.estado) return;
+    anterior.current = boleto.estado;
+    if (boleto.estado !== 'usado') return;
+    if (reducirMovimiento) {
+      separacion.value = 1;
+      sello.value = 1;
+      return;
+    }
+    separacion.value = withTiming(1, { duration: movimiento.abordaje });
+    sello.value = withTiming(1, { duration: movimiento.abordaje });
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  }, [boleto.estado, reducirMovimiento, sello, separacion]);
 
   return (
     <View
@@ -87,7 +118,7 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
         />
       </View>
 
-      <View style={[estilos.cuerpo, estilos.talon]}>
+      <Animated.View style={[estilos.cuerpo, estilos.talon, estiloTalon]}>
         <View style={estilos.codigo}>
           <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
             {t('boleto.codigo')}
@@ -110,7 +141,12 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
             value={`ANDEN:${boleto.codigo}`}
           />
         </View>
-      </View>
+      </Animated.View>
+      {boleto.estado === 'usado' && (
+        <Animated.Text style={[estilos.sello, { color: colores.ambarTitular }, estiloSello]}>
+          {t('boleto.usado')}
+        </Animated.Text>
+      )}
     </View>
   );
 }
@@ -158,5 +194,13 @@ const estilos = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     paddingTop: espacios.veinticuatro,
+  },
+  sello: {
+    fontFamily: 'Archivo_600SemiBold',
+    fontSize: 22,
+    letterSpacing: 2,
+    paddingBottom: espacios.dieciseis,
+    textAlign: 'center',
+    textTransform: 'uppercase',
   },
 });
