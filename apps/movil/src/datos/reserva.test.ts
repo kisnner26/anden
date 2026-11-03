@@ -2,7 +2,7 @@ import { codigoValido } from '@anden/dominio';
 import { describe, expect, it } from '@jest/globals';
 
 import { crearMuestra, VIAJE_GRANADA } from './muestra';
-import { crearReserva, ocupacionesDe } from './reserva';
+import { crearReserva, ocupacionesDe, totalReserva } from './reserva';
 
 const AHORA = new Date('2026-11-02T20:00:00.000Z');
 
@@ -134,5 +134,24 @@ describe('ocupacionesDe', () => {
         (o) => o.estado === 'vendido' && o.viajeId === VIAJE_GRANADA,
       ),
     ).toBe(true);
+  });
+});
+
+describe('totalReserva', () => {
+  it('multiplica la tarifa oficial por la cantidad de asientos', () => {
+    const datos = crearMuestra(AHORA);
+    expect(totalReserva(datos, VIAJE_GRANADA, 3)).toEqual({
+      total: 138,
+      unitario: 46,
+    });
+  });
+
+  it('es nulo sin asientos, sin viaje o sin tarifa', () => {
+    const datos = crearMuestra(AHORA);
+    expect(totalReserva(datos, VIAJE_GRANADA, 0)).toBeNull();
+    expect(totalReserva(datos, 'via_x', 2)).toBeNull();
+    expect(
+      totalReserva({ ...datos, tarifario: [] }, VIAJE_GRANADA, 2),
+    ).toBeNull();
   });
 });
