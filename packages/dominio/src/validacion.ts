@@ -9,3 +9,10 @@ export function nombrePersonaValido(texto: string): boolean {
     /^[\p{L}][\p{L}\p{M} .'-]*$/u.test(limpio)
   );
 }
+
+export function correoOpcionalValido(texto: string): boolean {
+  const limpio = texto.trim();
+  if (limpio === '') return true;
+  if (limpio.length > 254 || limpio.includes('..')) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/u.test(limpio);
+}
