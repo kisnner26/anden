@@ -1,72 +1,27 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createContext, useContext } from 'react';
 
-import { coloresClaros, coloresOscuros } from './colores';
-import { modoPorHora } from './modoPorHora';
-
-const clavePreferencia = 'anden.tema';
+import { coloresClaros, type Colores } from './colores';
+import type { ModoAutomatico } from './modoPorHora';
 
 export type PreferenciaTema = 'automatico' | 'claro' | 'oscuro';
 
-function esPreferenciaTema(valor: string | null): valor is PreferenciaTema {
-  return valor === 'automatico' || valor === 'claro' || valor === 'oscuro';
+export interface ValorTema {
+  cargandoTema: boolean;
+  colores: Colores;
+  establecerPreferencia: (preferencia: PreferenciaTema) => Promise<void>;
+  modo: ModoAutomatico;
+  preferencia: PreferenciaTema;
 }
 
-const UN_MINUTO = 60_000;
+/** sin proveedor la app se ve en claro, que es el modo base del diseño */
+export const ContextoTema = createContext<ValorTema>({
+  cargandoTema: false,
+  colores: coloresClaros,
+  establecerPreferencia: async () => undefined,
+  modo: 'claro',
+  preferencia: 'claro',
+});
 
-/** la hora actual, refrescada cada minuto para cambiar de modo al llegar a las 06:00 o las 18:00 */
-function useAhora(): Date {
-  const [ahora, establecerAhora] = useState(() => new Date());
-  useEffect(() => {
-    const intervalo = setInterval(() => establecerAhora(new Date()), UN_MINUTO);
-    return () => clearInterval(intervalo);
-  }, []);
-  return ahora;
-}
-
-export function useTema() {
-  const ahora = useAhora();
-  const [cargandoTema, establecerCargandoTema] = useState(true);
-  const [preferencia, establecerPreferenciaInterna] =
-    useState<PreferenciaTema>('automatico');
-
-  useEffect(() => {
-    let activo = true;
-
-    void AsyncStorage.getItem(clavePreferencia).then((valor) => {
-      if (activo && esPreferenciaTema(valor)) {
-        establecerPreferenciaInterna(valor);
-      }
-
-      if (activo) {
-        establecerCargandoTema(false);
-      }
-    });
-
-    return () => {
-      activo = false;
-    };
-  }, []);
-
-  const modo = preferencia === 'automatico' ? modoPorHora(ahora) : preferencia;
-  const colores = modo === 'claro' ? coloresClaros : coloresOscuros;
-
-  const establecerPreferencia = useCallback(
-    async (nuevaPreferencia: PreferenciaTema) => {
-      establecerPreferenciaInterna(nuevaPreferencia);
-      await AsyncStorage.setItem(clavePreferencia, nuevaPreferencia);
-    },
-    [],
-  );
-
-  return useMemo(
-    () => ({
-      cargandoTema,
-      colores,
-      establecerPreferencia,
-      modo,
-      preferencia,
-    }),
-    [cargandoTema, colores, establecerPreferencia, modo, preferencia],
-  );
+export function useTema(): ValorTema {
+  return useContext(ContextoTema);
 }
