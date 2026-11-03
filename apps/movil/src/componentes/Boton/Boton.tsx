@@ -128,21 +128,14 @@ export function Boton({
           style={[
             estilos.flecha,
             {
-              backgroundColor:
-                variante === 'principal' ? colores.bloqueNegro : colores.ambar,
+              backgroundColor: colores.bloqueNegro,
             },
           ]}
           testID={`boton-${variante}-flecha`}
         >
           <Icono
-            color={
-              variante === 'principal'
-                ? colores.sobreNegro
-                : colores.sobreAmbar
-            }
-            colorDetalle={
-              variante === 'principal' ? colores.bloqueNegro : colores.ambar
-            }
+            color={colores.sobreNegro}
+            colorDetalle={colores.bloqueNegro}
             nombre="siguiente"
             tamano="mediano"
           />
