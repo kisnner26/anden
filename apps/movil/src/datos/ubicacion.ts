@@ -1,5 +1,12 @@
 import * as Location from 'expo-location';
 
+export type EstadoAccesoUbicacion =
+  | { estado: 'pendiente' }
+  | { estado: 'otorgado' }
+  | { estado: 'denegado'; puedePreguntar: boolean }
+  | { estado: 'desactivado' }
+  | { estado: 'error' };
+
 export type ResultadoUbicacion =
   | { estado: 'otorgado'; punto: { lat: number; lng: number } }
   | { estado: 'denegado' }
