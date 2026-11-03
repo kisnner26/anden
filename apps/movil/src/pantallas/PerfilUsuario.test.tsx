@@ -3,7 +3,9 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, waitFor } from '@testing-library/react-native';
 
 import { elegirFotoDeGaleria } from '@/datos/fotos';
+import { PERFIL_VACIO } from '@/datos/perfil';
 import { CLAVE_PERFIL, ProveedorPerfil } from '@/datos/ProveedorPerfil';
+import { ContextoPerfil, type ValorPerfil } from '@/datos/usePerfil';
 import { renderPantalla } from '@/pruebas/render';
 
 import { PerfilUsuario } from './PerfilUsuario';
@@ -30,6 +32,22 @@ beforeEach(async () => {
 });
 
 describe('PerfilUsuario', () => {
+  it('anuncia mientras carga el perfil', async () => {
+    const cargando: ValorPerfil = {
+      agregarPasajero: async () => undefined,
+      cargando: true,
+      guardar: async () => undefined,
+      perfil: PERFIL_VACIO,
+      quitarPasajero: async () => undefined,
+    };
+    const pantalla = await renderPantalla(
+      <ContextoPerfil.Provider value={cargando}>
+        <PerfilUsuario alVolver={() => undefined} />
+      </ContextoPerfil.Provider>,
+    );
+    expect(pantalla.getByText('Cargando tu perfil')).toBeTruthy();
+  });
+
   it('empieza vacío y avisa que los datos quedan en el teléfono', async () => {
     const pantalla = await abrir();
     expect(
