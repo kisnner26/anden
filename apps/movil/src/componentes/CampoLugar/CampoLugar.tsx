@@ -18,6 +18,7 @@ export interface PropiedadesCampoLugar {
   etiqueta: string;
   lugares: readonly LugarCampo[];
   marcador: string;
+  textoSinResultados: string;
   valorId: string | null;
 }
 
@@ -31,6 +32,7 @@ export interface PropiedadesCamposLugares {
   lugares: readonly LugarCampo[];
   marcador: string;
   origenId: string | null;
+  textoSinResultados: string;
 }
 
 /** selector de terminal con autocompletado; la terminal elegida siempre conserva una etiqueta accesible. */
@@ -39,6 +41,7 @@ export function CampoLugar({
   etiqueta,
   lugares,
   marcador,
+  textoSinResultados,
   valorId,
 }: PropiedadesCampoLugar) {
   const { colores } = useTema();
@@ -83,6 +86,14 @@ export function CampoLugar({
       </Bloque>
       {abierto && (
         <View accessibilityLabel={etiqueta} style={estilos.opciones}>
+          {visibles.length === 0 && (
+            <Text
+              accessibilityLiveRegion="polite"
+              style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+            >
+              {textoSinResultados}
+            </Text>
+          )}
           {visibles.map((lugar) => (
             <Pressable
               accessibilityLabel={lugar.nombre}
@@ -117,6 +128,7 @@ export function CamposLugares({
   lugares,
   marcador,
   origenId,
+  textoSinResultados,
 }: PropiedadesCamposLugares) {
   const { colores } = useTema();
   const intercambiar = () => {
@@ -131,6 +143,7 @@ export function CamposLugares({
         etiqueta={etiquetaOrigen}
         lugares={lugares}
         marcador={marcador}
+        textoSinResultados={textoSinResultados}
         valorId={origenId}
       />
       <Pressable
@@ -149,6 +162,7 @@ export function CamposLugares({
         etiqueta={etiquetaDestino}
         lugares={lugares}
         marcador={marcador}
+        textoSinResultados={textoSinResultados}
         valorId={destinoId}
       />
     </View>

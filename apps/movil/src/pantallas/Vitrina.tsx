@@ -81,6 +81,7 @@ function MuestraCampoLugar({
         etiqueta={t('vitrina.campoLugarEtiqueta')}
         lugares={lugares}
         marcador={t('vitrina.campoLugarMarcador')}
+        textoSinResultados={t('viajar.sinTerminales')}
         valorId={valorId}
       />
     </View>

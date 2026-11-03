@@ -185,6 +185,7 @@ export function Viajar({
         lugares={datos.terminales}
         marcador={t('viajar.elegirTerminal')}
         origenId={origenId}
+        textoSinResultados={t('viajar.sinTerminales')}
       />
       {estadoUbicacion && (
         <View>

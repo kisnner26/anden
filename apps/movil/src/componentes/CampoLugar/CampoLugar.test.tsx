@@ -17,12 +17,15 @@ describe('CampoLugar', () => {
         etiqueta="Origen"
         lugares={LUGARES}
         marcador="Elegí terminal"
+        textoSinResultados="No encontramos terminales."
         valorId="ter_uca"
       />,
     );
 
     await fireEvent.changeText(pantalla.getByLabelText('Origen'), 'Granada');
-    expect(pantalla.getByRole('button', { name: 'Terminal Granada' })).toBeTruthy();
+    expect(
+      pantalla.getByRole('button', { name: 'Terminal Granada' }),
+    ).toBeTruthy();
     expect(pantalla.queryByRole('button', { name: 'Terminal UCA' })).toBeNull();
     await fireEvent.press(
       pantalla.getByRole('button', { name: 'Terminal Granada' }),
@@ -44,6 +47,7 @@ describe('CampoLugar', () => {
         lugares={LUGARES}
         marcador="Elegí terminal"
         origenId="ter_uca"
+        textoSinResultados="No encontramos terminales."
       />,
     );
 
