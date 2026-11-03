@@ -23,6 +23,8 @@ describe('Boton', () => {
 
     expect(impactAsync).toHaveBeenCalledWith(ImpactFeedbackStyle.Light);
     expect(alPresionar).toHaveBeenCalledTimes(1);
+    expect(pantalla.getByTestId('boton-principal-fondo')).toBeOnTheScreen();
+    expect(pantalla.getByTestId('boton-principal-flecha')).toBeOnTheScreen();
   });
 
   it('renderiza la variante secundaria sin indicador de avance', async () => {
