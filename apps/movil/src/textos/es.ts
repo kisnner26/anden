@@ -337,6 +337,11 @@ export const textos = {
     verRecorrido: 'Ver recorrido',
     abrirCorredor: 'Abrir corredor de {{origen}} a Managua',
     dosRutas: '2 rutas activas',
+    origenCorredor: 'Origen',
+    destinoCorredor: 'Destino',
+    seguimientoPendiente: 'Seguimiento en vivo pendiente de datos operativos',
+    seguimientoDetalle:
+      'Cuando la cooperativa conecte la unidad, acá vas a ver su posición y llegada estimada.',
     km: 'km',
     proximaSalida: 'Próxima salida',
     sinSalidas: 'Sin salidas por hoy',
