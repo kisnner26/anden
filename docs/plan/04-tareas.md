@@ -211,7 +211,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - hecho cuando: Supabase local levanta desde cero, el contrato pasa contra él, dos cuentas no ven datos ajenos y la sesión persiste tras reiniciar la app.
 
 ### T-097 · gps robusto y privacidad
-- depende de: T-095 · zona: `apps/movil/src/datos`, `apps/movil/src/pantallas`, `packages/dominio` · raíz: no · estado: en curso
+- depende de: T-095 · zona: `apps/movil/src/datos`, `apps/movil/src/pantallas`, `packages/dominio` · raíz: no · estado: hecha
 - hacer: distinguir permiso pendiente, denegado, ubicación desactivada, espera, éxito y error; permitir reintentar y elegir terminal manualmente; nunca guardar ni enviar la ubicación de la persona.
 - hecho cuando: cada estado tiene texto y acción accesible, la terminal cercana se calcula en dominio y las pruebas simulan todos los resultados del proveedor.
 
