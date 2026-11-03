@@ -48,6 +48,11 @@ describe('Vitrina', () => {
     expect(
       pantalla.getByRole('button', { name: 'Seguir viaje' }),
     ).toBeOnTheScreen();
+    expect(
+      pantalla.getAllByTestId('boton-principal-fondo').length,
+    ).toBeGreaterThan(0);
+    expect(pantalla.getByTestId('boton-secundario-fondo')).toBeOnTheScreen();
+    expect(pantalla.getByTestId('chip-fondo-barro')).toBeOnTheScreen();
     expect(hoy.props.accessibilityState).toEqual(
       expect.objectContaining({
         selected: true,
