@@ -46,6 +46,7 @@ export const textos = {
     destino: 'Voy hacia',
     elegirTerminal: 'Elegí una terminal',
     intercambiarLugares: 'Intercambiar origen y destino',
+    sinTerminales: 'No encontramos terminales.',
     usarUbicacion: 'Usar mi ubicación',
     ubicacionCercana: 'Terminal más cercana',
     ubicacionDistancia: 'a {{km}} km de vos',
