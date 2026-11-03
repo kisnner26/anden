@@ -69,6 +69,7 @@ describe('Boton', () => {
       }),
     );
     expect(pantalla.getByTestId('boton-cargando-barra')).toBeOnTheScreen();
+    expect(pantalla.queryByTestId('boton-principal-flecha')).toBeNull();
     expect(alPresionar).not.toHaveBeenCalled();
   });
 
