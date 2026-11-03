@@ -17,6 +17,15 @@ import * as Location from 'expo-location';
 import { consultarAccesoUbicacion, obtenerUbicacionActual } from './ubicacion';
 
 describe('consultarAccesoUbicacion', () => {
+  it('distingue cuando el sistema desactivó los servicios', async () => {
+    jest.mocked(Location.hasServicesEnabledAsync).mockResolvedValue(false);
+
+    await expect(consultarAccesoUbicacion()).resolves.toEqual({
+      estado: 'desactivado',
+    });
+    expect(Location.getCurrentPositionAsync).not.toHaveBeenCalled();
+  });
+
   it('mantiene pendiente un permiso que nunca se preguntó', async () => {
     jest.mocked(Location.hasServicesEnabledAsync).mockResolvedValue(true);
     jest.mocked(Location.getForegroundPermissionsAsync).mockResolvedValue({
