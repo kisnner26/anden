@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -18,6 +17,7 @@ import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
 export interface PropiedadesAsientos {
+  alSeguir: (asientos: number[]) => void;
   alVolver: () => void;
   viajeId: string;
 }
@@ -49,14 +49,13 @@ function Leyenda({
 }
 
 /** elegir asiento: el plano del bus, la retención de diez minutos y el total con la tarifa */
-export function Asientos({ alVolver, viajeId }: PropiedadesAsientos) {
+export function Asientos({ alSeguir, alVolver, viajeId }: PropiedadesAsientos) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const mapa = useMapaAsientos(viajeId);
   const { salidas } = useSalidas();
   const { alternar, aviso, elegidos, total } = useSeleccionAsientos(viajeId);
   const restantes = useCuentaRegresiva(SEGUNDOS_RETENCION);
-  const [pagoPendiente, establecerPagoPendiente] = useState(false);
   const salida = salidas.find((candidata) => candidata.viajeId === viajeId);
 
   if (!mapa || !salida) {
@@ -198,11 +197,11 @@ export function Asientos({ alVolver, viajeId }: PropiedadesAsientos) {
             <Text
               style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
             >
-              {pagoPendiente ? t('asientos.avisoPago') : detalleTarifa}
+              {detalleTarifa}
             </Text>
           </View>
           <BotonAccion
-            alPresionar={() => establecerPagoPendiente(true)}
+            alPresionar={() => alSeguir([...elegidos].sort((a, b) => a - b))}
             deshabilitado={cantidad === 0}
             etiqueta={t('asientos.seguir')}
           />
