@@ -19,3 +19,24 @@ export function formatoDuracion(minutos: number): string {
   if (horas === 0) return `${resto} min`;
   return resto === 0 ? `${horas} h` : `${horas} h ${resto} min`;
 }
+
+const DIAS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'] as const;
+const MESES = [
+  'ene',
+  'feb',
+  'mar',
+  'abr',
+  'may',
+  'jun',
+  'jul',
+  'ago',
+  'sep',
+  'oct',
+  'nov',
+  'dic',
+] as const;
+
+/** día y mes cortos, por ejemplo lun 2 nov */
+export function formatoFechaCorta(fecha: Date): string {
+  return `${DIAS[fecha.getDay()]} ${fecha.getDate()} ${MESES[fecha.getMonth()]}`;
+}
