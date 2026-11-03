@@ -90,6 +90,7 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
               {proximos.map((guardado) => (
                 <FilaBoleto
                   alPresionar={alAbrirBoleto}
+                  ahora={ahora}
                   guardado={guardado}
                   key={guardado.boleto.id}
                 />
@@ -110,6 +111,7 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
               {pasados.map((guardado) => (
                 <FilaBoleto
                   alPresionar={alAbrirBoleto}
+                  ahora={ahora}
                   guardado={guardado}
                   key={guardado.boleto.id}
                 />

@@ -4,6 +4,7 @@ import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
+import { estadoVisibleBoleto, minutosHastaSalida } from '@/datos/estadoBoleto';
 import type { BoletoGuardado } from '@/datos/reserva';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -12,15 +13,23 @@ import { t } from '@/textos/t';
 
 export interface PropiedadesFilaBoleto {
   alPresionar: (boletoId: string) => void;
+  ahora: Date;
   guardado: BoletoGuardado;
 }
 
 /** un boleto guardado en la lista: destino, cuándo sale, asiento y código */
-export function FilaBoleto({ alPresionar, guardado }: PropiedadesFilaBoleto) {
+export function FilaBoleto({ alPresionar, ahora, guardado }: PropiedadesFilaBoleto) {
   const { colores } = useTema();
   const { boleto, resumen } = guardado;
   const salida = new Date(resumen.salida);
   const cuando = `${formatoFechaCorta(salida)}, ${formatoHoraCompleta(salida)}`;
+  const estado = estadoVisibleBoleto(guardado, ahora);
+  const etiquetaEstado = {
+    cancelado: t('boleto.cancelado'),
+    usado: t('boleto.usado'),
+    vencido: t('boleto.vencido'),
+    vigente: `${t('viajar.saleEn')} ${minutosHastaSalida(guardado, ahora)} ${t('viajar.minutos')}`,
+  }[estado];
 
   return (
     <Pressable
@@ -41,6 +50,9 @@ export function FilaBoleto({ alPresionar, guardado }: PropiedadesFilaBoleto) {
           </Text>
           <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
             {`${t('boletos.asientoCorto')} ${boleto.asiento} · ${boleto.codigo}`}
+          </Text>
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {`${t('boletos.estado')}: ${etiquetaEstado}`}
           </Text>
         </View>
         <Icono color={colores.tinta} nombre="siguiente" tamano="grande" />

@@ -10,7 +10,11 @@ const GUARDADO = boletoDePrueba(new Date(2026, 10, 2, 14, 40));
 describe('FilaBoleto', () => {
   it('muestra destino, cuándo sale, asiento y código', async () => {
     const pantalla = await render(
-      <FilaBoleto alPresionar={() => undefined} guardado={GUARDADO} />,
+      <FilaBoleto
+        alPresionar={() => undefined}
+        ahora={new Date(2026, 10, 2, 13, 40)}
+        guardado={GUARDADO}
+      />,
     );
     expect(pantalla.getByText('Granada')).toBeTruthy();
     expect(pantalla.getByText('lun 2 nov, 2:40 p. m.')).toBeTruthy();
@@ -20,7 +24,11 @@ describe('FilaBoleto', () => {
   it('avisa el id del boleto al presionarla', async () => {
     const alPresionar = jest.fn();
     const pantalla = await render(
-      <FilaBoleto alPresionar={alPresionar} guardado={GUARDADO} />,
+      <FilaBoleto
+        alPresionar={alPresionar}
+        ahora={new Date(2026, 10, 2, 13, 40)}
+        guardado={GUARDADO}
+      />,
     );
     await fireEvent.press(pantalla.getByRole('button'));
     expect(alPresionar).toHaveBeenCalledWith('bol_K7RM4QX9');
