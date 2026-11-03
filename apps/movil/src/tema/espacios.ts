@@ -33,3 +33,12 @@ export const tamanosIcono = {
   destacado: 26,
   ilustracion: 34,
 } as const;
+
+export const tamanosBarraPestanas = {
+  alto: 74,
+  altoPestana: 58,
+  margenInferior: 26,
+  margenLateral: 14,
+  rellenoHorizontal: 10,
+  anchoPestana: 74,
+} as const;
