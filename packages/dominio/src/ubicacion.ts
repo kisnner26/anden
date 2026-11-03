@@ -14,9 +14,7 @@ export function distanciaKm(a: Coordenadas, b: Coordenadas): number {
   const senoLongitud = Math.sin(deltaLongitud / 2);
   const h =
     senoLatitud ** 2 +
-    Math.cos(radianes(a.lat)) *
-      Math.cos(radianes(b.lat)) *
-      senoLongitud ** 2;
+    Math.cos(radianes(a.lat)) * Math.cos(radianes(b.lat)) * senoLongitud ** 2;
   return RADIO_TIERRA_KM * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
 }
 

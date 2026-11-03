@@ -48,7 +48,9 @@ describe('crearMuestra', () => {
   });
 
   it('incluye retornos de cada terminal de muestra a Managua', () => {
-    for (const ruta of datos.rutas.filter((ruta) => ruta.destinoId === 'ter_uca')) {
+    for (const ruta of datos.rutas.filter(
+      (ruta) => ruta.destinoId === 'ter_uca',
+    )) {
       expect(datos.viajes.some((viaje) => viaje.rutaId === ruta.id)).toBe(true);
     }
   });

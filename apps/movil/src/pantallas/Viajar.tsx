@@ -1,4 +1,11 @@
-import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Linking,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { useState } from 'react';
 import { terminalMasCercana } from '@anden/dominio';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -36,7 +43,9 @@ export function Viajar({
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const [origenId, establecerOrigenId] = useState('ter_uca');
-  const [mensajeUbicacion, establecerMensajeUbicacion] = useState<string | null>(null);
+  const [mensajeUbicacion, establecerMensajeUbicacion] = useState<
+    string | null
+  >(null);
   const { ahora, datos, proxima, salidas } = useSalidas(origenId);
   const { noLeidos } = useAvisos();
   const pendientes = salidas
@@ -126,20 +135,74 @@ export function Viajar({
       )}
 
       <View style={estilos.seccion}>
-        <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>{t('viajar.origen')}</Text>
-        <Pressable accessibilityLabel={t('viajar.usarUbicacion')} accessibilityRole="button" onPress={usarUbicacion} style={[estilos.ubicacion, { backgroundColor: colores.ambar }]}>
-          <Text style={[tipografia.pequeno, { color: colores.sobreAmbar }]}>{t('viajar.usarUbicacion')}</Text>
+        <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+          {t('viajar.origen')}
+        </Text>
+        <Pressable
+          accessibilityLabel={t('viajar.usarUbicacion')}
+          accessibilityRole="button"
+          onPress={usarUbicacion}
+          style={[estilos.ubicacion, { backgroundColor: colores.ambar }]}
+        >
+          <Text style={[tipografia.pequeno, { color: colores.sobreAmbar }]}>
+            {t('viajar.usarUbicacion')}
+          </Text>
         </Pressable>
       </View>
       <View style={estilos.terminales}>
         {datos.terminales.map((terminal) => (
-          <Pressable accessibilityLabel={terminal.nombre} accessibilityRole="button" key={terminal.id} onPress={() => establecerOrigenId(terminal.id)} style={[estilos.terminal, { backgroundColor: terminal.id === origenId ? colores.bloqueNegro : colores.superficieAlta }]}>
-            <Text style={[tipografia.pequeno, { color: terminal.id === origenId ? colores.sobreNegro : colores.tinta }]}>{terminal.codigo}</Text>
+          <Pressable
+            accessibilityLabel={terminal.nombre}
+            accessibilityRole="button"
+            key={terminal.id}
+            onPress={() => establecerOrigenId(terminal.id)}
+            style={[
+              estilos.terminal,
+              {
+                backgroundColor:
+                  terminal.id === origenId
+                    ? colores.bloqueNegro
+                    : colores.superficieAlta,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                tipografia.pequeno,
+                {
+                  color:
+                    terminal.id === origenId
+                      ? colores.sobreNegro
+                      : colores.tinta,
+                },
+              ]}
+            >
+              {terminal.codigo}
+            </Text>
           </Pressable>
         ))}
       </View>
-      {origen && <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>{origen.nombre}</Text>}
-      {mensajeUbicacion && <View><Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>{mensajeUbicacion}</Text><Pressable accessibilityLabel={t('viajar.abrirAjustes')} accessibilityRole="button" onPress={() => Linking.openSettings()}><Text style={[tipografia.pequeno, { color: colores.ambarTexto }]}>{t('viajar.abrirAjustes')}</Text></Pressable></View>}
+      {origen && (
+        <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
+          {origen.nombre}
+        </Text>
+      )}
+      {mensajeUbicacion && (
+        <View>
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {mensajeUbicacion}
+          </Text>
+          <Pressable
+            accessibilityLabel={t('viajar.abrirAjustes')}
+            accessibilityRole="button"
+            onPress={() => Linking.openSettings()}
+          >
+            <Text style={[tipografia.pequeno, { color: colores.ambarTexto }]}>
+              {t('viajar.abrirAjustes')}
+            </Text>
+          </Pressable>
+        </View>
+      )}
 
       <View style={estilos.seccion}>
         <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
@@ -148,7 +211,17 @@ export function Viajar({
         <EtiquetaMuestra />
       </View>
 
-      {pendientes.length === 0 && <Text style={[tipografia.cuerpo, estilos.vacio, { color: colores.tintaSuave }]}>{t('viajar.sinSalidasOrigen')}</Text>}
+      {pendientes.length === 0 && (
+        <Text
+          style={[
+            tipografia.cuerpo,
+            estilos.vacio,
+            { color: colores.tintaSuave },
+          ]}
+        >
+          {t('viajar.sinSalidasOrigen')}
+        </Text>
+      )}
       {pendientes.map((salida) => (
         <FilaSalida
           alPresionar={alAbrirViaje}
@@ -177,9 +250,26 @@ const estilos = StyleSheet.create({
     width: 44,
   },
   contenido: { paddingHorizontal: espacios.lateral },
-  ubicacion: { borderRadius: 999, minHeight: 44, justifyContent: 'center', paddingHorizontal: espacios.doce },
-  terminal: { alignItems: 'center', borderRadius: 12, justifyContent: 'center', minHeight: 44, minWidth: 44, paddingHorizontal: espacios.ocho },
-  terminales: { flexDirection: 'row', flexWrap: 'wrap', gap: espacios.ocho, marginBottom: espacios.ocho },
+  ubicacion: {
+    borderRadius: 999,
+    minHeight: 44,
+    justifyContent: 'center',
+    paddingHorizontal: espacios.doce,
+  },
+  terminal: {
+    alignItems: 'center',
+    borderRadius: 12,
+    justifyContent: 'center',
+    minHeight: 44,
+    minWidth: 44,
+    paddingHorizontal: espacios.ocho,
+  },
+  terminales: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: espacios.ocho,
+    marginBottom: espacios.ocho,
+  },
   saludo: { flex: 1 },
   seccion: {
     alignItems: 'center',

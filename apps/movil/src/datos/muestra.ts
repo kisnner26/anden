@@ -92,31 +92,42 @@ const RECORRIDOS = [
   { codigo: 'dir', distanciaKm: 42, duracionMin: 60 },
 ] as const;
 
-export const RUTAS: Ruta[] = RECORRIDOS.flatMap((recorrido) => [({
-  destinoId: `ter_${recorrido.codigo}`,
-  distanciaKm: recorrido.distanciaKm,
-  duracionMin: recorrido.duracionMin,
-  id: `rut_uca_${recorrido.codigo}`,
-  origenId: 'ter_uca',
-  paradas: [
-    { minutosDesdeOrigen: 0, terminalId: 'ter_uca', tipo: 'terminal' },
-    {
-      minutosDesdeOrigen: recorrido.duracionMin,
-      terminalId: `ter_${recorrido.codigo}`,
-      tipo: 'terminal',
-    },
-  ],
-}), ({
-  destinoId: 'ter_uca',
-  distanciaKm: recorrido.distanciaKm,
-  duracionMin: recorrido.duracionMin,
-  id: `rut_${recorrido.codigo}_uca`,
-  origenId: `ter_${recorrido.codigo}`,
-  paradas: [
-    { minutosDesdeOrigen: 0, terminalId: `ter_${recorrido.codigo}`, tipo: 'terminal' },
-    { minutosDesdeOrigen: recorrido.duracionMin, terminalId: 'ter_uca', tipo: 'terminal' },
-  ],
-})]);
+export const RUTAS: Ruta[] = RECORRIDOS.flatMap((recorrido) => [
+  {
+    destinoId: `ter_${recorrido.codigo}`,
+    distanciaKm: recorrido.distanciaKm,
+    duracionMin: recorrido.duracionMin,
+    id: `rut_uca_${recorrido.codigo}`,
+    origenId: 'ter_uca',
+    paradas: [
+      { minutosDesdeOrigen: 0, terminalId: 'ter_uca', tipo: 'terminal' },
+      {
+        minutosDesdeOrigen: recorrido.duracionMin,
+        terminalId: `ter_${recorrido.codigo}`,
+        tipo: 'terminal',
+      },
+    ],
+  },
+  {
+    destinoId: 'ter_uca',
+    distanciaKm: recorrido.distanciaKm,
+    duracionMin: recorrido.duracionMin,
+    id: `rut_${recorrido.codigo}_uca`,
+    origenId: `ter_${recorrido.codigo}`,
+    paradas: [
+      {
+        minutosDesdeOrigen: 0,
+        terminalId: `ter_${recorrido.codigo}`,
+        tipo: 'terminal',
+      },
+      {
+        minutosDesdeOrigen: recorrido.duracionMin,
+        terminalId: 'ter_uca',
+        tipo: 'terminal',
+      },
+    ],
+  },
+]);
 
 /** tarifa de muestra en córdobas por ruta y servicio */
 const TARIFAS: Record<string, Partial<Record<TipoServicio, number>>> = {
@@ -129,19 +140,19 @@ const TARIFAS: Record<string, Partial<Record<TipoServicio, number>>> = {
 };
 
 export const TARIFARIO: Tarifario = RECORRIDOS.flatMap((recorrido) =>
-  Object.entries(TARIFAS[recorrido.codigo] ?? {}).map(
-    ([servicio, cordobas]) => ({
+  Object.entries(TARIFAS[recorrido.codigo] ?? {})
+    .map(([servicio, cordobas]) => ({
       cordobas,
       desdeParada: 0,
       hastaParada: 1,
       resolucion: 'muestra',
       rutaId: `rut_uca_${recorrido.codigo}`,
       servicio: servicio as TipoServicio,
-    }),
-  ).flatMap((tarifa) => [
-    tarifa,
-    { ...tarifa, rutaId: `rut_${recorrido.codigo}_uca` },
-  ]),
+    }))
+    .flatMap((tarifa) => [
+      tarifa,
+      { ...tarifa, rutaId: `rut_${recorrido.codigo}_uca` },
+    ]),
 );
 
 const CONFIGURACION_POR_SERVICIO: Record<TipoServicio, ConfiguracionBus> = {
@@ -180,12 +191,54 @@ const SALIDAS: Array<{
   { anden: 5, atraso: 0, desde: 55, destino: 'dir', servicio: 'ordinario' },
   { anden: 2, atraso: 0, desde: 65, destino: 'mas', servicio: 'expreso' },
   { anden: 1, atraso: 0, desde: 80, destino: 'est', servicio: 'expreso' },
-  { anden: 1, atraso: 0, desde: 18, destino: 'uca', origen: 'gra', servicio: 'ordinario' },
-  { anden: 2, atraso: 0, desde: 26, destino: 'uca', origen: 'mas', servicio: 'ordinario' },
-  { anden: 1, atraso: 0, desde: 34, destino: 'uca', origen: 'jin', servicio: 'ordinario' },
-  { anden: 2, atraso: 0, desde: 42, destino: 'uca', origen: 'leo', servicio: 'expreso' },
-  { anden: 1, atraso: 0, desde: 50, destino: 'uca', origen: 'est', servicio: 'expreso' },
-  { anden: 2, atraso: 0, desde: 58, destino: 'uca', origen: 'dir', servicio: 'ordinario' },
+  {
+    anden: 1,
+    atraso: 0,
+    desde: 18,
+    destino: 'uca',
+    origen: 'gra',
+    servicio: 'ordinario',
+  },
+  {
+    anden: 2,
+    atraso: 0,
+    desde: 26,
+    destino: 'uca',
+    origen: 'mas',
+    servicio: 'ordinario',
+  },
+  {
+    anden: 1,
+    atraso: 0,
+    desde: 34,
+    destino: 'uca',
+    origen: 'jin',
+    servicio: 'ordinario',
+  },
+  {
+    anden: 2,
+    atraso: 0,
+    desde: 42,
+    destino: 'uca',
+    origen: 'leo',
+    servicio: 'expreso',
+  },
+  {
+    anden: 1,
+    atraso: 0,
+    desde: 50,
+    destino: 'uca',
+    origen: 'est',
+    servicio: 'expreso',
+  },
+  {
+    anden: 2,
+    atraso: 0,
+    desde: 58,
+    destino: 'uca',
+    origen: 'dir',
+    servicio: 'ordinario',
+  },
 ] as const;
 
 /** notas de muestra de cada chofer, de la más vieja a la más nueva */
