@@ -19,7 +19,7 @@ Hoy el viaje interlocal se resuelve llegando a la terminal y preguntando: no se 
 
 ## corredor inicial
 
-La primera operación pública se limita a taxis interlocales entre **Wácwala y Managua** y entre **Chagüilpa y Managua**, en ambos sentidos. No se muestran otros destinos como si estuvieran disponibles. La terminal exacta en Managua, los horarios, las coordenadas, las unidades y las tarifas quedan como datos de muestra hasta verificarlos con la cooperativa y el MTI.
+La primera operación pública se limita a taxis interlocales entre **Boaco y Managua** y entre **Juigalpa y Managua**, en ambos sentidos. No se muestran otros destinos como si estuvieran disponibles. La terminal exacta en Managua, los horarios, las coordenadas, las unidades y las tarifas quedan como datos de muestra hasta verificarlos con la cooperativa y el MTI.
 
 ## funciones de la v1
 
