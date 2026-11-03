@@ -91,4 +91,19 @@ describe('puedeRetener', () => {
       ),
     ).toEqual({ ok: false, error: 'venta-cerrada' });
   });
+
+  it('no deja retener un asiento vendido aunque sea del mismo dueño', () => {
+    const vendido: Ocupacion[] = [
+      {
+        viajeId: viaje.id,
+        asiento: 4,
+        estado: 'vendido',
+        duenoId: 'usu_a',
+        boletoId: 'bol_01',
+      },
+    ];
+    expect(
+      puedeRetener(viaje, 'micro15', vendido, [4], 'usu_a', ahora),
+    ).toEqual({ ok: false, error: 'asiento-ocupado' });
+  });
 });
