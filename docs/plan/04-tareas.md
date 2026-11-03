@@ -121,32 +121,32 @@ La v2 está aprobada y escrita en `02-diseno.md`. Estas tareas llevan lo ya cons
 Pedidos por el dueño tras probar la app en su iPhone (2 de noviembre de 2026): pagar en efectivo, ver horarios, choferes con su información, unidades con su placa y una interfaz más pulida. Se hacen sobre datos de muestra, detrás de los mismos hooks que usará T-024.
 
 ### T-080 · apariencia y arreglos visuales
-- depende de: T-031b · zona: `apps/movil/src/tema`, `apps/movil/src/componentes` · raíz: no · estado: libre
+- depende de: T-031b · zona: `apps/movil/src/tema`, `apps/movil/src/componentes` · raíz: no · estado: hecha
 - hacer: tema claro por defecto con selector automático, claro y oscuro persistente y compartido por toda la app (proveedor de tema); arreglar lo visto en el teléfono: bloques hundidos en oscuro, la palabra PUERTA partida, el botón de acción con el círculo sobre el texto y las muestras de la leyenda.
 - hecho cuando: `pnpm verificar` en verde y las capturas de la v2 coinciden en claro y en oscuro.
 
 ### T-081 · choferes, placas y calificaciones
-- depende de: T-010 · zona: `packages/dominio`, `apps/movil/src/datos` · raíz: no · estado: libre
+- depende de: T-010 · zona: `packages/dominio`, `apps/movil/src/datos` · raíz: no · estado: hecha
 - hacer: `promedioChofer(calificaciones)` y `puedeCalificar` del dominio (T-019), datos de muestra con una placa por unidad, choferes con su cooperativa y calificaciones, y hooks para leerlos.
 - hecho cuando: pruebas del promedio con el mínimo de 5 calificaciones y las últimas 200.
 
 ### T-082 · detalle del viaje y perfil del chofer
-- depende de: T-081 · zona: `apps/movil/src/pantallas`, `apps/movil/app` · raíz: no · estado: libre
+- depende de: T-081 · zona: `apps/movil/src/pantallas`, `apps/movil/app` · raíz: no · estado: hecha
 - hacer: detalle del viaje (hora, duración, servicio, unidad con su placa y cooperativa, chofer, paradas, tarifa de muestra y "Elegir asiento") y perfil del chofer (iniciales en un avatar propio, años manejando, viajes, licencia verificada, unidad, calificación y etiquetas).
 - hecho cuando: se llega desde la fila de salida y desde el tablero, y ambas pantallas tienen sus pruebas.
 
 ### T-083 · reservar con pago en efectivo
-- depende de: T-082, T-017 · zona: `apps/movil/src/pantallas`, `apps/movil/src/datos`, `apps/movil/app` · raíz: sí (agrega un generador de QR) · estado: libre
+- depende de: T-082, T-017 · zona: `apps/movil/src/pantallas`, `apps/movil/src/datos`, `apps/movil/app` · raíz: sí (agrega un generador de QR) · estado: hecha
 - hacer: pasajeros por asiento (nombre y si es menor en brazos), elección de pago con "Efectivo al abordar" activo y "Tarjeta o transferencia" marcado como próximamente, confirmación con el código del boleto y el QR, y el boleto guardado en el teléfono. El efectivo se paga al subir y por el monto exacto de la tarifa oficial (`05-marco-mti.md`). La reserva no cobra nada ni calcula precios en pantalla.
 - hecho cuando: de elegir asiento a ver el boleto con código y QR sin conexión, con pruebas del flujo.
 
 ### T-084 · Mis boletos y Tu boleto
-- depende de: T-083 · zona: `apps/movil/src/pantallas`, `apps/movil/app` · raíz: no · estado: libre
+- depende de: T-083 · zona: `apps/movil/src/pantallas`, `apps/movil/app` · raíz: no · estado: hecha
 - hacer: lista de boletos guardados (próximos y pasados), boleto con talón, cuenta regresiva a la salida y cancelar la reserva.
 - hecho cuando: un boleto reservado aparece en la pestaña Boletos al reabrir la app.
 
 ### T-085 · Rutas y buscar destino
-- depende de: T-082 · zona: `apps/movil/src/pantallas`, `apps/movil/app` · raíz: no · estado: libre
+- depende de: T-082 · zona: `apps/movil/src/pantallas`, `apps/movil/app` · raíz: no · estado: hecha
 - hacer: pestaña Rutas con las rutas de la terminal (kilómetros, duración, servicios y tarifa de muestra), detalle de ruta con sus paradas y salidas, y buscar destino desde el inicio con resultados.
 - hecho cuando: se puede ir del inicio a un destino y a sus salidas.
 
@@ -186,7 +186,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - commits: `feat: estado del viaje segun la hora` · `feat: llegada estimada por parada` · `feat: cierre de venta`
 
 ### T-015 · búsqueda
-- depende de: T-012b, T-014 · estado: libre
+- depende de: T-012b, T-014 · estado: hecha
 - aviso: un expreso solo coincide entre su primera y su última parada (terminal de salida y de destino), nunca por una parada intermedia; el ordinario sí. El precio sale de `precioOficial`, no de `calcularPrecio`.
 - hacer: tipos con su esquema `FranjaHoraria` (`madrugada`, `manana`, `tarde`, `noche`), `FiltroBusqueda` `{ origenId, destinoId, fecha (AAAA-MM-DD), pasajeros, tipos?: TipoBus[], franja?: FranjaHoraria }`, `DatosViajes` `{ terminales, rutas, buses, choferes, viajes, ocupaciones }` (listas simples, sin red) y `ResultadoViaje` `{ viaje, ruta, bus, chofer, tramo, salidaOrigen (ISO), llegadaDestino (ISO), precioUnitario, asientosLibres, ventaAbierta, estado }`; y `buscarViajes(filtro, datos, ahora): ResultadoViaje[]`.
 - reglas: un viaje coincide si su ruta tiene paradas de terminal con `origenId` antes de `destinoId`; el `tramo` son los índices de esas paradas. `salidaOrigen` y `llegadaDestino` se calculan con los `minutosDesdeOrigen` de esas paradas sobre la salida programada del viaje. La fecha y la franja se toman de `salidaOrigen` en hora de Managua. Se excluyen los viajes cancelados, los que ya salieron del origen (salida programada más atraso anterior a `ahora`) y los que no tienen `asientosLibres` para los pasajeros pedidos (usa `estadoAsientos` con las ocupaciones de ese viaje). Un viaje con la venta cerrada sí aparece, con `ventaAbierta: false`. El precio sale de `calcularPrecio` para un pasajero que paga. Orden: por `salidaOrigen`, y a igual hora por precio. La calificación del chofer se suma en T-022 cuando exista T-019.
@@ -194,7 +194,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - commits: `feat: buscar viajes por origen y destino` · `feat: filtros de tipo y franja horaria`
 
 ### T-016 · cancelación y cambio
-- depende de: T-014 · estado: libre
+- depende de: T-014 · estado: hecha
 - hacer: campo `cambioUsado: boolean` en `Boleto` (tipo, esquema y pruebas que lo construyen); `politicaCancelacion(boleto, viaje, ahora)` que devuelve `Resultado<{ porcentaje: 0 | 50 | 100; monto: number }, 'boleto-no-vigente'>`; y `puedeCambiar({ boleto, viajeActual, viajeNuevo, tipoBusActual, tipoBusNuevo, ahora })` que devuelve `Resultado<void, 'boleto-no-vigente' | 'cambio-ya-usado' | 'mismo-viaje' | 'otra-ruta' | 'distinto-tipo-de-bus' | 'muy-cerca-de-la-salida' | 'viaje-nuevo-no-disponible'>`. Las reglas exactas están en `01-producto.md`; `viaje-nuevo-no-disponible` cubre el viaje cancelado y la venta cerrada (usa `ventaAbierta` de T-014).
 - hecho cuando: pruebas en 24 h y 2 h exactas, justo bajo 2 h, redondeo hacia abajo del monto, boleto no vigente, y cada error de `puedeCambiar` más el caso feliz.
 - commits: `feat: reembolso segun anticipacion` · `feat: regla de cambio de salida`
@@ -206,13 +206,13 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - commits: `feat: codigo de boleto con digito de control`
 
 ### T-018 · formato es-NI
-- depende de: T-010 · estado: libre
+- depende de: T-010 · estado: hecha
 - hacer: `formatoCordobas(n)`, `formatoHora(fecha)` (12 h, "a. m."), `formatoDuracion(min)`, `formatoFechaCorta`, `enmascararCedula`.
 - hecho cuando: pruebas con zona horaria `America/Managua` fija.
 - commits: `feat: formato de moneda y horas` · `feat: enmascarar cedula`
 
 ### T-019 · calificaciones
-- depende de: T-010 · estado: libre
+- depende de: T-010 · estado: hecha
 - hacer: `promedioChofer(calificaciones)` (últimas 200, un decimal, nulo con menos de 5) y `puedeCalificar(boleto, existentes)`.
 - hecho cuando: pruebas de límites.
 - commits: `feat: promedio de calificaciones del chofer`
@@ -222,38 +222,38 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 Todas en `packages/datos` salvo T-024 y T-025.
 
 ### T-020 · contrato
-- depende de: T-010 · raíz: no · estado: libre
+- depende de: T-010 · raíz: no · estado: hecha
 - hacer: interfaces de `03-arquitectura.md` en `contrato.ts` y suite de pruebas de contrato reutilizable `probarContrato(crear)`.
 - hecho cuando: la suite compila y se puede llamar con cualquier implementación.
 - commits: `feat: contrato de repositorios` · `test: suite de contrato reutilizable`
 
 ### T-021 · semilla de Nicaragua
-- depende de: T-009, T-012b · raíz: no · estado: libre
+- depende de: T-009, T-012b · raíz: no · estado: hecha
 - aviso: las tarifas de la semilla son de muestra y tienen que cargarse como un `Tarifario` (`Tarifa[]`), con `resolucion: 'muestra'`; los expresos solo de terminal a terminal; ningún precio se presenta como oficial hasta cumplir T-077.
 - hacer: terminales, rutas con paradas, buses, choferes (nombres inventados, sin fotos reales), viajes generados para 14 días desde una fecha base. Validados con los esquemas Zod. Rotular `// datos de muestra`.
 - hecho cuando: prueba que toda la semilla pasa los esquemas y que cada ruta tiene al menos 6 salidas diarias.
 - commits: `feat: terminales y rutas de muestra` · `feat: buses y choferes de muestra` · `feat: generador de salidas de muestra`
 
 ### T-022 · repositorio en memoria
-- depende de: T-020, T-021, T-013, T-015, T-016, T-017 · raíz: no · estado: libre
+- depende de: T-020, T-021, T-013, T-015, T-016, T-017 · raíz: no · estado: hecha
 - hacer: implementación en memoria de todos los repositorios usando las reglas del dominio; latencia simulada configurable (por defecto 250 ms); simulador de posición del bus.
 - hecho cuando: pasa la suite de contrato completa.
 - commits: un `feat:` por repositorio (terminales, rutas, viajes, asientos, boletos, choferes, calificaciones, posiciones) · `feat: simulador de posicion del bus`
 
 ### T-023 · pago simulado
-- depende de: T-020 · raíz: no · estado: libre
+- depende de: T-020 · raíz: no · estado: hecha
 - hacer: `PagoSimulado` según `03-arquitectura.md`.
 - hecho cuando: pruebas de aprobado, rechazado con la tarjeta de prueba y referencia duplicada.
 - commits: `feat: proveedor de pago simulado`
 
 ### T-024 · proveedor y hooks en la app
-- depende de: T-022, T-023, T-000 · zona: `apps/movil/src/datos/` · raíz: sí (agrega TanStack Query) · estado: libre
+- depende de: T-022, T-023, T-000 · zona: `apps/movil/src/datos/` · raíz: sí (agrega TanStack Query) · estado: hecha
 - hacer: `proveedor.ts` que elige implementación por `EXPO_PUBLIC_DATOS`; `QueryClient` con persistencia; hooks `useBuscarViajes`, `useViaje`, `useSalidas`, `useMapaAsientos`, `useRetener`, `useComprar`, `useMisBoletos`, `useChofer`, `useRutas`, `usePosicionBus`.
 - hecho cuando: prueba de cada hook contra el repositorio en memoria.
 - commits: `chore: agregar tanstack query` · `feat: proveedor de datos por entorno` · un `feat:` por grupo de hooks
 
 ### T-025 · almacenamiento offline
-- depende de: T-024 · zona: `apps/movil/src/estado/` · raíz: sí (agrega MMKV y Zustand) · estado: libre
+- depende de: T-024 · zona: `apps/movil/src/estado/` · raíz: sí (agrega MMKV y Zustand) · estado: hecha
 - hacer: store de boletos persistido en MMKV, store de rutas frecuentes y recientes, store del flujo de compra (viaje, asientos, retención, pasajeros) que se limpia al terminar o vencer.
 - hecho cuando: pruebas de persistencia y de limpieza al vencer la retención.
 - commits: `chore: agregar mmkv y zustand` · `feat: boletos guardados sin conexion` · `feat: rutas frecuentes y recientes` · `feat: estado del flujo de compra`
@@ -284,7 +284,7 @@ Requieren T-004 aprobado, T-005, T-006a, T-007. Zona: `apps/movil/src/componente
 - commits: `feat: barra de pestanas de cristal` · `feat: hoja inferior arrastrable`
 
 ### T-034 · estados vacíos, error y carga
-- depende de: T-032 · estado: libre
+- depende de: T-032 · estado: hecha
 - commits: `feat: estado vacio` · `feat: estado de error con reintento` · `feat: esqueleto de carga`
 
 ### T-035 · TableroSalidas
@@ -300,16 +300,16 @@ Requieren T-004 aprobado, T-005, T-006a, T-007. Zona: `apps/movil/src/componente
 - commits: `feat: plano del bus desde la configuracion` · `feat: estados visuales de asiento` · `feat: seleccion y accesibilidad del mapa de asientos`
 
 ### T-037 · Talon
-- depende de: T-031 · raíz: sí (QR, expo-brightness) · estado: libre
+- depende de: T-031 · raíz: sí (QR, expo-brightness) · estado: hecha
 - hacer: boleto con muescas y perforación en SVG; talón que se arrastra para mostrar código y QR; brillo al máximo mientras se ve.
 - commits: `feat: forma del boleto con muescas` · `feat: contenido del boleto` · `feat: talon arrastrable con codigo y qr` · `feat: subir brillo al mostrar el codigo`
 
 ### T-038 · LineaRuta
-- depende de: T-031 · estado: libre
+- depende de: T-031 · estado: hecha
 - commits: `feat: linea de ruta con paradas` · `feat: bus en vivo sobre la linea`
 
 ### T-039 · CampoLugar, TarjetaChofer, Estrellas
-- depende de: T-032 · estado: libre
+- depende de: T-032 · estado: hecha
 - commits: `feat: campo de lugar con autocompletado` · `feat: intercambiar origen y destino` · `feat: tarjeta del chofer` · `feat: control de estrellas accesible`
 
 ## fase 4 · pantallas
@@ -327,11 +327,11 @@ Zona: `apps/movil/app/` y `apps/movil/src/pantallas/`. Raíz: no, salvo que se i
 - commits: `feat: titular y buscador de inicio` · `feat: selector de fecha y pasajeros` · `feat: tus rutas con proxima salida`
 
 ### T-042 · resultados
-- depende de: T-041, T-034 · estado: libre
+- depende de: T-041, T-034 · estado: hecha
 - commits: `feat: lista de salidas` · `feat: filtros de resultados` · `feat: estados de resultados vacios y error`
 
 ### T-043 · detalle del viaje
-- depende de: T-042, T-038, T-039 · estado: libre
+- depende de: T-042, T-038, T-039 · estado: hecha
 - hacer: hora, duración, bus y comodidades, chofer, línea de ruta, precio, botón "Elegí tu asiento".
 - commits: `feat: detalle del viaje` · `feat: chofer y bus en el detalle`
 
@@ -342,22 +342,22 @@ Zona: `apps/movil/app/` y `apps/movil/src/pantallas/`. Raíz: no, salvo que se i
 - commits: `feat: pantalla de seleccion de asientos` · `feat: retener asientos elegidos` · `feat: cuenta regresiva y vencimiento de retencion`
 
 ### T-045 · pasajeros
-- depende de: T-044 · estado: libre
+- depende de: T-044 · estado: hecha
 - hacer: formulario por asiento con Zod, pasajeros guardados, menor en brazos.
 - commits: `feat: formulario de pasajeros` · `feat: reusar pasajeros guardados`
 
 ### T-046 · pago y confirmación
-- depende de: T-045 · estado: libre
+- depende de: T-045 · estado: hecha
 - hacer: resumen, pago simulado, error de rechazo con causa, éxito con háptica y paso a "Tu boleto".
 - commits: `feat: resumen de compra` · `feat: pago con proveedor simulado` · `feat: pantalla de compra lista`
 
 ### T-047 · Boletos y Tu boleto
-- depende de: T-046, T-037 · estado: libre
+- depende de: T-046, T-037 · estado: hecha
 - hacer: lista de próximos y pasados desde el store offline; detalle con `Talon`, cuenta regresiva, agregar al calendario.
 - commits: `feat: lista de mis boletos` · `feat: detalle del boleto con talon` · `feat: agregar viaje al calendario`
 
 ### T-048 · cancelar y cambiar
-- depende de: T-047, T-016 · estado: libre
+- depende de: T-047, T-016 · estado: hecha
 - commits: `feat: cancelar boleto con reembolso` · `feat: cambiar a otra salida`
 
 ### T-049 · Horarios (tablero)
@@ -367,29 +367,29 @@ Zona: `apps/movil/app/` y `apps/movil/src/pantallas/`. Raíz: no, salvo que se i
 - commits: `feat: tablero de salidas por terminal` · `feat: refresco del tablero` · `feat: horario del dia por ruta` · `feat: terminal mas cercana con permiso de ubicacion`
 
 ### T-050 · Rutas (mapa)
-- depende de: T-040, T-038 · raíz: sí (MapLibre) · estado: libre
+- depende de: T-040, T-038 · raíz: sí (MapLibre) · estado: hecha
 - hacer: mapa con estilo oscuro propio, rutas y terminales; tocar ruta abre `Hoja` con `LineaRuta`; pantalla `ruta/[id]`.
 - commits: `chore: agregar maplibre` · `feat: estilo oscuro del mapa` · `feat: rutas y terminales en el mapa` · `feat: detalle de ruta`
 
 ### T-051 · seguir el bus
-- depende de: T-050, T-047 · estado: libre
+- depende de: T-050, T-047 · estado: hecha
 - commits: `feat: bus en vivo en el mapa` · `feat: llegada estimada por parada`
 
 ### T-052 · chofer y calificación
-- depende de: T-043, T-019 · estado: libre
+- depende de: T-043, T-019 · estado: hecha
 - commits: `feat: perfil del chofer` · `feat: calificar el viaje`
 
 ### T-053 · cuenta
-- depende de: T-040 · estado: libre
+- depende de: T-040 · estado: hecha
 - hacer: acceso por teléfono (en memoria: código fijo `000000`), perfil, pasajeros guardados, tema, cerrar sesión. Compra requiere cuenta; buscar y ver horarios no.
 - commits: `feat: acceso por telefono` · `feat: perfil y pasajeros guardados` · `feat: preferencia de tema`
 
 ### T-054 · ayuda y avisos
-- depende de: T-040 · estado: libre
+- depende de: T-040 · estado: hecha
 - commits: `feat: preguntas frecuentes y equipaje` · `feat: reportar un problema del viaje` · `feat: lista de avisos`
 
 ### T-055 · bienvenida
-- depende de: T-041 · estado: libre
+- depende de: T-041 · estado: hecha
 - hacer: 3 pantallas cortas la primera vez (buscar, asiento, boleto offline), saltables.
 - commits: `feat: bienvenida de primera vez`
 
@@ -398,31 +398,31 @@ Zona: `apps/movil/app/` y `apps/movil/src/pantallas/`. Raíz: no, salvo que se i
 Zona: `supabase/` y `packages/datos/src/supabase/`.
 
 ### T-060 · esquema
-- depende de: T-010 · raíz: no · estado: libre
+- depende de: T-010 · raíz: no · estado: hecha
 - commits: un `feat:` por migración (terminales y rutas, buses y choferes, viajes, ocupaciones, boletos, calificaciones, posiciones)
 
 ### T-061 · seguridad por filas
-- depende de: T-060 · estado: libre
+- depende de: T-060 · estado: hecha
 - hecho cuando: pruebas SQL (pgTAP o script) que demuestran que un usuario no ve boletos ajenos ni escribe en `ocupaciones`.
 - commits: `feat: politicas rls de lectura publica` · `feat: politicas rls de boletos propios` · `test: pruebas de rls`
 
 ### T-062 · funciones de asientos y compra
-- depende de: T-061 · estado: libre
+- depende de: T-061 · estado: hecha
 - hecho cuando: prueba de concurrencia: 20 retenciones simultáneas del mismo asiento, una sola gana.
 - commits: `feat: funcion retener asientos` · `feat: funcion comprar boletos` · `feat: funciones cancelar y cambiar` · `test: concurrencia de retenciones`
 
 ### T-063 · semilla SQL
-- depende de: T-060, T-021 · estado: libre
+- depende de: T-060, T-021 · estado: hecha
 - hacer: generar `seed.sql` desde la semilla de `packages/datos` con un script, para no mantener dos semillas.
 - commits: `chore: script que genera seed sql` · `feat: semilla sql generada`
 
 ### T-064 · repositorio Supabase
-- depende de: T-062, T-020 · raíz: sí (supabase-js) · estado: libre
+- depende de: T-062, T-020 · raíz: sí (supabase-js) · estado: hecha
 - hecho cuando: la suite de contrato pasa contra Supabase local.
 - commits: un `feat:` por repositorio
 
 ### T-065 · auth y realtime
-- depende de: T-064 · estado: libre
+- depende de: T-064 · estado: hecha
 - commits: `feat: acceso por sms con supabase` · `feat: estado del viaje en tiempo real` · `feat: posicion del bus en tiempo real`
 
 ### T-066 · pasarela de pago real
@@ -432,21 +432,21 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 ## fase 6 · calidad y publicación
 
 ### T-070 · notificaciones
-- depende de: T-047 · raíz: sí (expo-notifications) · estado: libre
+- depende de: T-047 · raíz: sí (expo-notifications) · estado: hecha
 - commits: `chore: agregar notificaciones` · `feat: recordatorio antes de la salida` · `feat: avisos de cambio de anden y atraso`
 
 ### T-071 · accesibilidad
-- depende de: fase 4 · estado: libre
+- depende de: fase 4 · estado: hecha
 - hacer: script que verifica contraste AA de todos los pares de `colores.ts`; etiquetas de accesibilidad en todas las pantallas; texto dinámico hasta 200 % sin cortes en pantallas clave.
 - commits: `test: contraste de pares de color` · un `fix:` por problema encontrado, con la causa
 
 ### T-072 · flujos e2e
-- depende de: T-046, T-049 · estado: libre
+- depende de: T-046, T-049 · estado: hecha
 - hacer: Maestro: buscar y comprar, ver boleto en modo avión, cancelar, tablero de salidas.
 - commits: un `test:` por flujo
 
 ### T-073 · rendimiento
-- depende de: fase 4 · estado: libre
+- depende de: fase 4 · estado: hecha
 - hecho cuando: tablero y mapa de asientos a 60 fps en un Android de gama media (o perfilado documentado), inicio en frío medido y anotado.
 - commits: un `fix:` o `refactor:` por mejora, con medición antes y después en el mensaje del cuerpo
 
@@ -455,12 +455,12 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - commits: `feat: icono de la app` · `feat: pantalla de arranque`
 
 ### T-075 · compilaciones
-- depende de: T-074, T-072 · raíz: sí · estado: libre
+- depende de: T-074, T-072 · raíz: sí · estado: hecha
 - hacer: configuración de EAS (o compilación local) para iOS y Android; instrucciones en el README.
 - commits: `chore: configurar compilaciones de ios y android`
 
 ### T-076 · README con capturas reales
-- depende de: T-075 · estado: libre
+- depende de: T-075 · estado: hecha
 - hacer: README breve con capturas reales de la app en iOS y Android (no del mockup), cómo correrla, estructura.
 - commits: `docs: capturas de la app` · `docs: readme del proyecto`
 
@@ -471,7 +471,7 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - hacer: conseguir el anexo vigente de la resolución de tarifas del MTI (la última confirmada es la RM 051-2017; el anexo es aparte, de 19 folios) y convertirlo en `Tarifa[]`. Cargarlo en la semilla y en `supabase/seed`, marcar `TARIFARIO_OFICIAL = true` y quitar el aviso de T-078. No empezar sin el anexo.
 
 ### T-078 · aviso de tarifas de muestra
-- depende de: T-041 · estado: libre
+- depende de: T-041 · estado: hecha
 - hacer: mientras `TARIFARIO_OFICIAL` sea `false`, mostrar "tarifas de muestra, no oficiales" en el buscador, en los resultados, en el pago y en el boleto.
 - hecho cuando: el aviso aparece en las cuatro pantallas y desaparece con la constante en `true`.
 - commits: `feat: constante del tarifario oficial` · un `feat:` por pantalla · `test:` de visibilidad
