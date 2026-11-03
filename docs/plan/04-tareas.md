@@ -170,7 +170,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - hecho cuando: escribir filtra las salidas y no hay resultados con la mascota.
 
 ### T-089 · origen por ubicación
-- depende de: T-088 · zona: `apps/movil`, `packages/dominio` · raíz: no · estado: libre
+- depende de: T-088 · zona: `apps/movil`, `packages/dominio` · raíz: no · estado: hecha
 - hacer: terminal más cercana como función pura del dominio; control en Viajar que pide la ubicación en primer plano, propone el origen y deja elegir a mano; nunca guarda ni envía la ubicación.
 - hecho cuando: con permiso se propone la terminal cercana y sin permiso se elige a mano.
 
