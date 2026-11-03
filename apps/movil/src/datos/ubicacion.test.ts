@@ -89,6 +89,17 @@ describe('obtenerUbicacionActual', () => {
     expect(Location.getCurrentPositionAsync).not.toHaveBeenCalled();
   });
 
+  it('convierte un fallo al pedir permiso en error recuperable', async () => {
+    jest.mocked(Location.hasServicesEnabledAsync).mockResolvedValue(true);
+    jest
+      .mocked(Location.requestForegroundPermissionsAsync)
+      .mockRejectedValue(new Error('proveedor no disponible'));
+
+    await expect(obtenerUbicacionActual()).resolves.toEqual({
+      estado: 'error',
+    });
+  });
+
   it('pide precisión baja y devuelve el punto actual', async () => {
     jest
       .mocked(Location.requestForegroundPermissionsAsync)
