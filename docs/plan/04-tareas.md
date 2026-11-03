@@ -566,3 +566,8 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - depende de: T-099 · zona: `docs/plan`, `apps/movil/src/datos` · raíz: no · estado: hecha
 - hacer: reemplazar Wácwala y Chagüilpa por Boaco y Juigalpa, ambos con Managua y en los dos sentidos.
 - hecho cuando: ningún texto, id ni prueba nombra los destinos erróneos y `pnpm verificar` pasa.
+
+### T-104 · todo el sistema solo con boaco y juigalpa
+- depende de: T-103 · zona: `apps/movil/src/datos`, `apps/movil/src/pantallas`, `docs/plan` · raíz: no · estado: hecha
+- hacer: dejar en los datos de muestra únicamente las terminales Boaco, Juigalpa y la de Managua, con sus rutas en ambos sentidos, salidas, tarifas y boletos; que Viajar, Horarios, Rutas, Boletos y Buscador solo muestren esos destinos.
+- hecho cuando: ninguna pantalla ni dato de muestra nombra otro destino y `pnpm verificar` pasa.
