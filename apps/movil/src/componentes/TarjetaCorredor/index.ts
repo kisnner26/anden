@@ -1,0 +1,1 @@
+export { TarjetaCorredor } from './TarjetaCorredor';
