@@ -82,8 +82,9 @@ export function Boton({
           justifyContent: 'space-between',
         },
         variante === 'secundario' && {
-          backgroundColor: colores.superficie,
+          backgroundColor: colores.barroClaro,
           borderColor: colores.linea,
+          borderRadius: radios.pildora,
         },
         variante === 'pildora' && {
           backgroundColor: colores.superficieAlta,
@@ -107,6 +108,16 @@ export function Boton({
           start={{ x: 0, y: 0 }}
           style={[StyleSheet.absoluteFill, estilos.fondoPrincipal]}
           testID="boton-principal-fondo"
+        />
+      )}
+      {variante === 'secundario' && !cargando && (
+        <LinearGradient
+          colors={[colores.barroClaro, colores.barroOscuro]}
+          end={{ x: 1, y: 1 }}
+          pointerEvents="none"
+          start={{ x: 0, y: 0 }}
+          style={[StyleSheet.absoluteFill, estilos.fondoSecundario]}
+          testID="boton-secundario-fondo"
         />
       )}
       <Text style={[tipografia.subtitulo, { color: colorTexto }]}>
@@ -181,6 +192,7 @@ const estilos = StyleSheet.create({
     width: tamanosControl.circuloPildora,
   },
   fondoPrincipal: { borderRadius: radios.pildora },
+  fondoSecundario: { borderRadius: radios.pildora },
   presionado: { opacity: 0.82 },
 });
 
