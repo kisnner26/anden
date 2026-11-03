@@ -21,6 +21,18 @@ export interface PropiedadesCampoLugar {
   valorId: string | null;
 }
 
+export interface PropiedadesCamposLugares {
+  alCambiarDestino: (id: string) => void;
+  alCambiarOrigen: (id: string) => void;
+  destinoId: string | null;
+  etiquetaDestino: string;
+  etiquetaIntercambiar: string;
+  etiquetaOrigen: string;
+  lugares: readonly LugarCampo[];
+  marcador: string;
+  origenId: string | null;
+}
+
 /** selector de terminal con autocompletado; la terminal elegida siempre conserva una etiqueta accesible. */
 export function CampoLugar({
   alCambiar,
@@ -94,6 +106,55 @@ export function CampoLugar({
   );
 }
 
+/** par de campos para buscar un viaje; el control central intercambia el recorrido sin perder selección. */
+export function CamposLugares({
+  alCambiarDestino,
+  alCambiarOrigen,
+  destinoId,
+  etiquetaDestino,
+  etiquetaIntercambiar,
+  etiquetaOrigen,
+  lugares,
+  marcador,
+  origenId,
+}: PropiedadesCamposLugares) {
+  const { colores } = useTema();
+  const intercambiar = () => {
+    if (origenId === null || destinoId === null) return;
+    alCambiarOrigen(destinoId);
+    alCambiarDestino(origenId);
+  };
+  return (
+    <View style={estilos.pareja}>
+      <CampoLugar
+        alCambiar={alCambiarOrigen}
+        etiqueta={etiquetaOrigen}
+        lugares={lugares}
+        marcador={marcador}
+        valorId={origenId}
+      />
+      <Pressable
+        accessibilityLabel={etiquetaIntercambiar}
+        accessibilityRole="button"
+        disabled={origenId === null || destinoId === null}
+        onPress={intercambiar}
+        style={estilos.intercambiar}
+      >
+        <Bloque estiloContenido={estilos.botonIntercambiar} radio="pildora">
+          <Icono color={colores.tinta} nombre="siguiente" tamano="mediano" />
+        </Bloque>
+      </Pressable>
+      <CampoLugar
+        alCambiar={alCambiarDestino}
+        etiqueta={etiquetaDestino}
+        lugares={lugares}
+        marcador={marcador}
+        valorId={destinoId}
+      />
+    </View>
+  );
+}
+
 const estilos = StyleSheet.create({
   campo: {
     alignItems: 'center',
@@ -101,6 +162,13 @@ const estilos = StyleSheet.create({
     gap: espacios.ocho,
     minHeight: tamanosControl.toqueMinimo,
     paddingHorizontal: espacios.doce,
+  },
+  botonIntercambiar: {
+    alignItems: 'center',
+    height: tamanosControl.toqueMinimo,
+    justifyContent: 'center',
+    transform: [{ rotate: '90deg' }],
+    width: tamanosControl.toqueMinimo,
   },
   contenedor: { gap: espacios.ocho },
   entrada: { flex: 1, minHeight: tamanosControl.toqueMinimo },
@@ -112,4 +180,6 @@ const estilos = StyleSheet.create({
     paddingHorizontal: espacios.dieciseis,
   },
   opciones: { gap: espacios.ocho },
+  pareja: { gap: espacios.ocho },
+  intercambiar: { alignSelf: 'center' },
 });
