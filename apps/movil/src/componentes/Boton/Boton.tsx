@@ -123,7 +123,7 @@ export function Boton({
       <Text style={[tipografia.subtitulo, { color: colorTexto }]}>
         {etiqueta}
       </Text>
-      {(variante === 'principal' || variante === 'pildora') && (
+      {!cargando && (variante === 'principal' || variante === 'pildora') && (
         <View
           style={[
             estilos.flecha,
