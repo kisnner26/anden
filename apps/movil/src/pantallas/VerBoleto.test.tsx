@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, waitFor } from '@testing-library/react-native';
+import { Share } from 'react-native';
 
 import { CLAVE_BOLETOS, ProveedorBoletos } from '@/datos/ProveedorBoletos';
 import { reiniciarMuestra } from '@/datos/useSalidas';
@@ -54,6 +55,20 @@ describe('VerBoleto', () => {
       await pantalla.findByRole('button', { name: /Ver chofer/ }),
     );
     expect(alVerChofer).toHaveBeenCalledWith('cho_2');
+  });
+
+  it('comparte datos del viaje sin exponer el código de abordaje', async () => {
+    const compartir = jest.spyOn(Share, 'share').mockResolvedValue({
+      action: 'dismissedAction',
+    });
+    const pantalla = await dibujar();
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Compartir datos del viaje' }),
+    );
+    expect(compartir).toHaveBeenCalledWith(
+      expect.objectContaining({ message: expect.not.stringContaining('K7RM4QX9') }),
+    );
+    compartir.mockRestore();
   });
 
   it('pide confirmación antes de cancelar y permite mantener la reserva', async () => {
