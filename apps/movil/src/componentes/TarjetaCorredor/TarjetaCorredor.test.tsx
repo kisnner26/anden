@@ -26,6 +26,27 @@ it('explica el corredor y abre su detalle', async () => {
   );
   expect(pantalla.getByText('Wácwala')).toBeTruthy();
   expect(pantalla.getByText('Managua')).toBeTruthy();
+  expect(pantalla.getByText('6:30 a. m.')).toBeTruthy();
+  expect(pantalla.getByText('18 min')).toBeTruthy();
+  expect(pantalla.getByText('Operación de muestra')).toBeTruthy();
   await fireEvent.press(tarjeta);
   expect(alPresionar).toHaveBeenCalledWith('cor_wac_man');
+});
+
+it('explica cuando un corredor no tiene servicio anunciado', async () => {
+  const pantalla = await renderPantalla(
+    <TarjetaCorredor
+      alPresionar={() => undefined}
+      corredor={{
+        destino: 'Managua',
+        id: 'cor_cha_man',
+        origen: 'Chagüilpa',
+      }}
+    />,
+  );
+
+  expect(pantalla.getByText('Sin servicio anunciado')).toBeTruthy();
+  expect(
+    pantalla.getByText('Revisá más tarde para ver la próxima unidad.'),
+  ).toBeTruthy();
 });
