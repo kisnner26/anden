@@ -52,7 +52,9 @@ export function FilaSalida({
             {salida.destino}
           </Text>
           <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {`${servicio} · ${anden}`}
+            {salida.servicio === 'taxi-interlocal'
+              ? `${servicio} · ${anden} · ${salida.placa}`
+              : `${servicio} · ${anden}`}
           </Text>
         </View>
         <Text style={[tipografia.dato, { color: colores.ambarTexto }]}>
