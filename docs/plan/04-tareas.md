@@ -111,7 +111,7 @@ La v2 está aprobada y escrita en `02-diseno.md`. Estas tareas llevan lo ya cons
 - commits: un `refactor:` por componente y variante.
 
 ### T-074b · ícono y arranque v2
-- depende de: T-031b · zona: `apps/movil/assets`, `apps/movil/app.json` · raíz: sí · estado: libre
+- depende de: T-031b · zona: `apps/movil/assets`, `apps/movil/app.json` · raíz: sí · estado: hecha
 - hacer: reemplazar el ícono "boleto-bus" de T-074 por `mockups/capturas/v2/icono.png` (bus de personaje sobre fondo oscuro con brillo ámbar) y regenerar el adaptativo, el monocromo y el de la pantalla de arranque; la pantalla de arranque pasa a ser la portada ("ANDÉN" y el bus). Mantener las pruebas de dimensiones y transparencia.
 - hecho cuando: `expo prebuild` y las exportaciones de Android e iOS pasan, y el ícono nuevo se ve en el teléfono.
 - commits: un `feat:` por activo y un `test:` por validación.
