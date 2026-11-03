@@ -11,11 +11,15 @@ import type { DatosMuestra } from './muestra';
 
 export interface Salida {
   anden: number;
+  choferId: string;
   asientosLibres: number;
   codigoDestino: string;
   destino: string;
   estado: EstadoViaje;
   minutosAtraso: number;
+  /** placa de la unidad, que en el taxi interlocal es lo que identifica el carro */
+  placa: string;
+  rutaId: string;
   salida: Date;
   servicio: TipoServicio;
   /** córdobas por pasajero; nulo si la ruta no tiene tarifa cargada */
@@ -62,10 +66,13 @@ export function armarSalidas(datos: DatosMuestra, ahora: Date): Salida[] {
     salidas.push({
       anden: viaje.anden,
       asientosLibres,
+      choferId: viaje.choferId,
       codigoDestino: destino.codigo,
       destino: destino.ciudad,
       estado: estadoViaje(viaje, ruta, ahora),
       minutosAtraso: viaje.minutosAtraso,
+      placa: bus.placa,
+      rutaId: ruta.id,
       salida: new Date(viaje.salida),
       servicio: bus.servicio,
       tarifa: precio.ok ? precio.valor.unitario : null,
