@@ -36,7 +36,14 @@ export function PerfilUsuario({ alVolver }: PropiedadesPerfilUsuario) {
   // el formulario toma sus valores iniciales del perfil, así que espera a que termine de cargar
   if (cargando) {
     return (
-      <View style={[estilos.pantalla, { backgroundColor: colores.fondo }]} />
+      <View
+        accessibilityRole="progressbar"
+        style={[estilos.carga, { backgroundColor: colores.fondo }]}
+      >
+        <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
+          {t('perfil.cargando')}
+        </Text>
+      </View>
     );
   }
   return <FormularioPerfil alVolver={alVolver} />;
@@ -251,6 +258,12 @@ function FormularioPerfil({ alVolver }: PropiedadesPerfilUsuario) {
 const estilos = StyleSheet.create({
   accionesFoto: { flex: 1, gap: espacios.ocho },
   bloque: { gap: espacios.dieciseis, padding: espacios.veinticuatro },
+  carga: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+    padding: espacios.lateral,
+  },
   contenido: { gap: espacios.dieciseis, paddingHorizontal: espacios.lateral },
   filaPasajero: {
     alignItems: 'center',
