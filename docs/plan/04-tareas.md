@@ -200,6 +200,26 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - hacer: implementar el componente `CampoLugar` que t-039 declara hecha pero no existe en el código, con selección accesible de terminal, prueba y vitrina.
 - hecho cuando: Viajar puede usarlo sin valores visibles fuera del catálogo ni medidas fuera de tema.
 
+### T-095 · validaciones y errores de formularios
+- depende de: T-086 · zona: `packages/dominio`, `apps/movil/src/componentes`, `apps/movil/src/pantallas` · raíz: no · estado: en curso
+- hacer: auditar acceso, perfil y pasajeros; validar en dominio nombre, teléfono nicaragüense, correo y cédula opcionales; mostrar errores junto al campo, conservar los datos al fallar y anunciar el primer error.
+- hecho cuando: ningún formulario acepta valores inválidos ni falla en silencio y las pruebas cubren vacío, formato, límites, corrección y envío válido.
+
+### T-096 · recuperar backend y cuenta real
+- depende de: T-095 · zona: `supabase/`, `packages/datos/src/supabase`, `apps/movil/src/datos` · raíz: sí · estado: libre
+- hacer: implementar realmente T-060 a T-065: migraciones, RLS, funciones transaccionales, repositorio Supabase y sesión por teléfono; el modo local queda como adaptador de desarrollo explícito, no como falsa cuenta.
+- hecho cuando: Supabase local levanta desde cero, el contrato pasa contra él, dos cuentas no ven datos ajenos y la sesión persiste tras reiniciar la app.
+
+### T-097 · gps robusto y privacidad
+- depende de: T-095 · zona: `apps/movil/src/datos`, `apps/movil/src/pantallas`, `packages/dominio` · raíz: no · estado: libre
+- hacer: distinguir permiso pendiente, denegado, ubicación desactivada, espera, éxito y error; permitir reintentar y elegir terminal manualmente; nunca guardar ni enviar la ubicación de la persona.
+- hecho cuando: cada estado tiene texto y acción accesible, la terminal cercana se calcula en dominio y las pruebas simulan todos los resultados del proveedor.
+
+### T-098 · seguimiento operativo y eta
+- depende de: T-096, T-097 · zona: `packages/dominio`, `packages/datos`, `apps/movil` · raíz: no · estado: libre
+- hacer: consumir posiciones autorizadas de cada unidad por viaje, mostrar última actualización, rumbo y estado de señal, dibujar el avance por la ruta y calcular eta por parada en dominio; nunca inventar movimiento cuando la señal esté vieja.
+- hecho cuando: actualizaciones realtime mueven la unidad sin recargar, el eta se corrige con atraso y progreso, y existen estados sin señal, señal vieja, viaje finalizado y reconexión.
+
 ### T-010 · tipos, esquemas y resultado
 - depende de: T-002 · estado: hecha
 - hacer: tipos de `03-arquitectura.md` en `tipos.ts`, esquemas Zod en `esquemas.ts`, tipo `Resultado` con helpers `ok()` y `error()`.
