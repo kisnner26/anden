@@ -222,7 +222,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 
 ### T-099 · corredor interlocal y Rutas rediseñada
 - depende de: T-090 · zona: `packages/datos`, `apps/movil/src/pantallas`, `apps/movil/src/componentes` · raíz: no · estado: hecha
-- hacer: limitar la muestra visible al corredor Wácwala/Chagüilpa–Managua y rehacer Rutas sin el gráfico radial: dos recorridos claros, dirección, próxima unidad, estado y eta de muestra; detalle accesible y estados sin servicio.
+- hacer: limitar la muestra visible al corredor Boaco/Juigalpa–Managua y rehacer Rutas sin el gráfico radial: dos recorridos claros, dirección, próxima unidad, estado y eta de muestra; detalle accesible y estados sin servicio.
 - hecho cuando: no aparecen destinos fuera del corredor, cada elemento visual tiene significado rotulado y las capturas en iphone coinciden con la dirección v2.
 
 ### T-100 · ubicación automática en configuración
