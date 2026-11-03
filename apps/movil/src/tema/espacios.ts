@@ -42,3 +42,7 @@ export const tamanosBarraPestanas = {
   rellenoHorizontal: 10,
   anchoPestana: 74,
 } as const;
+
+export const tamanosIlustracion = {
+  autobusCorredor: 116,
+} as const;
