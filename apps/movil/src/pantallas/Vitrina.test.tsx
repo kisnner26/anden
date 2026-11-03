@@ -72,4 +72,10 @@ describe('Vitrina', () => {
     await fireEvent.press(pantalla.getByText('Cambiar hora y estado'));
     expect(pantalla.getByText('+10 min')).toBeTruthy();
   });
+
+  it('abre la hoja inferior para revisar su detalle', async () => {
+    const pantalla = await render(<Vitrina />);
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Abrir hoja' }));
+    expect(pantalla.getByText('Detalle de muestra')).toBeTruthy();
+  });
 });
