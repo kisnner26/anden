@@ -97,7 +97,13 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
         (ocupacion) =>
           !(ocupacion.estado === 'vendido' && ocupacion.boletoId === boletoId),
       );
-      await guardar(boletos.filter(({ boleto }) => boleto.id !== boletoId));
+      await guardar(
+        boletos.map((guardado) =>
+          guardado.boleto.id === boletoId
+            ? { ...guardado, boleto: { ...guardado.boleto, estado: 'cancelado' } }
+            : guardado,
+        ),
+      );
     },
     [boletos, guardar],
   );
