@@ -1,6 +1,11 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { formatoDuracion, formatoHora, formatoHoraCompleta } from './formato';
+import {
+  formatoDuracion,
+  formatoFechaCorta,
+  formatoHora,
+  formatoHoraCompleta,
+} from './formato';
 
 function a(hora: number, minuto: number): Date {
   return new Date(2026, 10, 2, hora, minuto);
@@ -42,5 +47,15 @@ describe('formatoDuracion', () => {
 
   it('muestra solo horas si no sobran minutos', () => {
     expect(formatoDuracion(120)).toBe('2 h');
+  });
+});
+
+describe('formatoFechaCorta', () => {
+  it('muestra el lunes 2 de noviembre de 2026', () => {
+    expect(formatoFechaCorta(new Date(2026, 10, 2))).toBe('lun 2 nov');
+  });
+
+  it('muestra el sábado 31 de enero', () => {
+    expect(formatoFechaCorta(new Date(2026, 0, 31))).toBe('sáb 31 ene');
   });
 });
