@@ -1,0 +1,114 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { fireEvent, waitFor } from '@testing-library/react-native';
+
+import { elegirFotoDeGaleria } from '@/datos/fotos';
+import { CLAVE_PERFIL, ProveedorPerfil } from '@/datos/ProveedorPerfil';
+import { renderPantalla } from '@/pruebas/render';
+
+import { PerfilUsuario } from './PerfilUsuario';
+
+jest.mock('@/datos/fotos', () => ({ elegirFotoDeGaleria: jest.fn() }));
+
+const galeria = elegirFotoDeGaleria as unknown as {
+  mockResolvedValue: (valor: unknown) => void;
+};
+
+async function abrir() {
+  const pantalla = await renderPantalla(
+    <ProveedorPerfil>
+      <PerfilUsuario alVolver={() => undefined} />
+    </ProveedorPerfil>,
+  );
+  await waitFor(() => expect(pantalla.getByLabelText('Nombre')).toBeTruthy());
+  return pantalla;
+}
+
+beforeEach(async () => {
+  jest.clearAllMocks();
+  await AsyncStorage.clear();
+});
+
+describe('PerfilUsuario', () => {
+  it('empieza vacío y avisa que los datos quedan en el teléfono', async () => {
+    const pantalla = await abrir();
+    expect(
+      pantalla.getByText('Tus datos se guardan solo en este teléfono.'),
+    ).toBeTruthy();
+    expect(pantalla.getByText('Todavía no guardaste a nadie.')).toBeTruthy();
+  });
+
+  it('guarda nombre y teléfono con formato', async () => {
+    const pantalla = await abrir();
+    await fireEvent.changeText(pantalla.getByLabelText('Nombre'), 'Ana');
+    await fireEvent.changeText(pantalla.getByLabelText('Teléfono'), '88881234');
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Guardar' }));
+    await waitFor(async () => {
+      const guardado = JSON.parse(
+        (await AsyncStorage.getItem(CLAVE_PERFIL)) ?? '{}',
+      ) as { nombre: string; telefono: string };
+      expect(guardado.nombre).toBe('Ana');
+      expect(guardado.telefono).toBe('+505 8888 1234');
+    });
+    expect(pantalla.getByText('Guardado · Ana')).toBeTruthy();
+  });
+
+  it('avisa de un teléfono inválido y no deja guardar', async () => {
+    const pantalla = await abrir();
+    await fireEvent.changeText(pantalla.getByLabelText('Teléfono'), '123');
+    expect(
+      pantalla.getByText('Escribí un teléfono de Nicaragua de 8 dígitos.'),
+    ).toBeTruthy();
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Guardar' }));
+    expect(await AsyncStorage.getItem(CLAVE_PERFIL)).toBeNull();
+  });
+
+  it('avisa de un correo inválido', async () => {
+    const pantalla = await abrir();
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Correo (opcional)'),
+      'ana',
+    );
+    expect(pantalla.getByText('Ese correo no parece válido.')).toBeTruthy();
+  });
+
+  it('muestra la foto elegida de la galería', async () => {
+    galeria.mockResolvedValue({ tipo: 'elegida', uri: 'file:///foto.jpg' });
+    const pantalla = await abrir();
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Elegir foto' }),
+    );
+    await waitFor(() =>
+      expect(pantalla.getByTestId('avatar-foto')).toBeTruthy(),
+    );
+  });
+
+  it('explica cuando no hay permiso para la galería', async () => {
+    galeria.mockResolvedValue({ tipo: 'sin-permiso' });
+    const pantalla = await abrir();
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Elegir foto' }),
+    );
+    await waitFor(() =>
+      expect(
+        pantalla.getByText(/no tiene permiso para abrir tu galería/),
+      ).toBeTruthy(),
+    );
+  });
+
+  it('agrega y quita un pasajero guardado', async () => {
+    const pantalla = await abrir();
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Nombre del pasajero'),
+      'Sofía Mora',
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Agregar pasajero' }),
+    );
+    await waitFor(() => expect(pantalla.getByText('Sofía Mora')).toBeTruthy());
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Quitar Sofía Mora' }),
+    );
+    await waitFor(() => expect(pantalla.queryByText('Sofía Mora')).toBeNull());
+  });
+});
