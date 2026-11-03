@@ -189,6 +189,11 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - hacer: el talón se separa y un sello ámbar "abordado" se estampa con háptica; sin movimiento con reducir movimiento; validación de prueba rotulada.
 - hecho cuando: validar el boleto de muestra pasa a usado con la animación.
 
+### T-093 · pulido de ubicación, rutas, boletos y abordaje
+- depende de: T-089, T-090, T-091, T-092 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: auditar y pulir los flujos de ubicación, rutas, boletos y abordaje contra el diseño v2, incluyendo estados, accesibilidad, movimiento y vitrina.
+- hecho cuando: los flujos son coherentes con el diseño v2, respetan reducir movimiento y pasan pruebas, verificación y exportaciones móviles.
+
 ### T-010 · tipos, esquemas y resultado
 - depende de: T-002 · estado: hecha
 - hacer: tipos de `03-arquitectura.md` en `tipos.ts`, esquemas Zod en `esquemas.ts`, tipo `Resultado` con helpers `ok()` y `error()`.
