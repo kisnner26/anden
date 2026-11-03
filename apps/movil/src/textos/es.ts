@@ -207,6 +207,15 @@ export const textos = {
     noExiste: 'No encontramos este boleto.',
     totalAbordar: 'Pagás al abordar',
     exacto: 'Llevá el monto exacto.',
+    muestra: 'Reglas de muestra',
+    compartir: 'Compartir datos del viaje',
+    cambiar: 'Cambiar salida',
+    cambioNoDisponible: 'No hay otra salida disponible para cambiar este boleto.',
+    recordatorio: 'Agregar recordatorio',
+    cancelado: 'Boleto cancelado',
+    usado: 'Boleto usado',
+    vencido: 'Salida vencida',
+    estadoVigente: 'Vigente',
   },
   ajustes: {
     titulo: 'Apariencia',
@@ -291,6 +300,9 @@ export const textos = {
     vacioDetalle:
       'Cuando compres un viaje, tu boleto aparece acá y funciona sin internet.',
     buscar: 'Buscar salidas',
+    proximo: 'Tu próximo viaje',
+    saleEn: 'Sale en {{minutos}} min',
+    estado: 'Estado',
   },
   rutas: {
     titulo: 'Rutas',
