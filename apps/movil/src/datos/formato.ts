@@ -11,3 +11,11 @@ export function formatoHora(fecha: Date): string {
 export function formatoHoraCompleta(fecha: Date): string {
   return `${formatoHora(fecha)} ${fecha.getHours() < 12 ? 'a. m.' : 'p. m.'}`;
 }
+
+/** duración en horas y minutos, por ejemplo 1 h 35 min */
+export function formatoDuracion(minutos: number): string {
+  const horas = Math.floor(minutos / 60);
+  const resto = minutos % 60;
+  if (horas === 0) return `${resto} min`;
+  return resto === 0 ? `${horas} h` : `${horas} h ${resto} min`;
+}
