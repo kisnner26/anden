@@ -53,7 +53,11 @@ export function SelectorFecha({
               <Text
                 style={[
                   tipografia.pequeno,
-                  { color: activo ? colores.sobreNegroSuave : colores.tintaSuave },
+                  {
+                    color: activo
+                      ? colores.sobreNegroSuave
+                      : colores.tintaSuave,
+                  },
                 ]}
               >
                 {dia.etiqueta}
