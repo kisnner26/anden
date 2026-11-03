@@ -4,5 +4,12 @@ import { Boletos } from '@/pantallas/Boletos';
 
 export default function RutaBoletos() {
   const router = useRouter();
-  return <Boletos alBuscar={() => router.navigate('/viajar')} />;
+  return (
+    <Boletos
+      alAbrirBoleto={(id) =>
+        router.push({ params: { id }, pathname: '/boleto/[id]' })
+      }
+      alBuscar={() => router.navigate('/viajar')}
+    />
+  );
 }
