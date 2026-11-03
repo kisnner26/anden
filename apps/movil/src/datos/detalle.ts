@@ -2,6 +2,7 @@ import {
   asientosDe,
   llegadaEstimada,
   promedioChofer,
+  type Comodidad,
   type EtiquetaCalificacion,
 } from '@anden/dominio';
 
@@ -35,7 +36,7 @@ export interface DetalleViaje {
   paradas: ParadaVista[];
   salida: Salida;
   unidad: {
-    comodidades: string[];
+    comodidades: Comodidad[];
     cooperativa: string;
     placa: string;
     plazas: number;
