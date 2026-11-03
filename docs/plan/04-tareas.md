@@ -165,7 +165,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - hecho cuando: con permiso se programa el recordatorio y sin permiso la campana lo explica.
 
 ### T-088 · buscador de Horarios
-- depende de: T-085 · zona: `apps/movil` · raíz: no · estado: libre
+- depende de: T-085 · zona: `apps/movil` · raíz: no · estado: hecha
 - hacer: la lupa abre un buscador con recientes y rutas frecuentes que filtra por destino, servicio, franja y placa en vivo.
 - hecho cuando: escribir filtra las salidas y no hay resultados con la mascota.
 
