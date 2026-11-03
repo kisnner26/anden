@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Boton } from '@/componentes/Boton';
 import { Chip } from '@/componentes/Chip';
+import { CampoLugar } from '@/componentes/CampoLugar';
 import { Hoja } from '@/componentes/Hoja';
 import { Icono, NOMBRES_ICONO } from '@/componentes/Icono';
 import { TableroSalidas } from '@/componentes/TableroSalidas';
@@ -48,11 +49,41 @@ export function Vitrina() {
       <MuestraTipografia colores={colores} />
       <MuestraIconos colores={colores} />
       <MuestraControles colores={colores} />
+      <MuestraCampoLugar colores={colores} />
       <MuestraHoja colores={colores} />
       <MuestraTablero colores={colores} />
       <MuestraColores colores={colores} />
       <MuestraEspacios colores={colores} />
     </ScrollView>
+  );
+}
+
+function MuestraCampoLugar({
+  colores,
+}: {
+  colores: typeof coloresOscuros | typeof coloresClaros;
+}) {
+  const [valorId, establecerValorId] = useState<string | null>('ter_uca');
+  const [lugares] = useState(() =>
+    crearMuestra(new Date()).terminales.map(({ codigo, id, nombre }) => ({
+      codigo,
+      id,
+      nombre,
+    })),
+  );
+  return (
+    <View style={[estilos.seccion, { borderColor: colores.linea }]}>
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+        {t('vitrina.campoLugar')}
+      </Text>
+      <CampoLugar
+        alCambiar={establecerValorId}
+        etiqueta={t('vitrina.campoLugarEtiqueta')}
+        lugares={lugares}
+        marcador={t('vitrina.campoLugarMarcador')}
+        valorId={valorId}
+      />
+    </View>
   );
 }
 
