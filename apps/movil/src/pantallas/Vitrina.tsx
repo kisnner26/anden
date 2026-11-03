@@ -4,6 +4,9 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Boton } from '@/componentes/Boton';
 import { Chip } from '@/componentes/Chip';
 import { Icono, NOMBRES_ICONO } from '@/componentes/Icono';
+import { TableroSalidas } from '@/componentes/TableroSalidas';
+import { armarSalidas } from '@/datos/salidas';
+import { crearMuestra } from '@/datos/muestra';
 import { coloresClaros, coloresOscuros } from '@/tema/colores';
 import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -44,6 +47,7 @@ export function Vitrina() {
       <MuestraTipografia colores={colores} />
       <MuestraIconos colores={colores} />
       <MuestraControles colores={colores} />
+      <MuestraTablero colores={colores} />
       <MuestraColores colores={colores} />
       <MuestraEspacios colores={colores} />
     </ScrollView>
@@ -96,6 +100,40 @@ function MuestraControles({
           seleccionado={filtro === 'manana'}
         />
       </View>
+    </View>
+  );
+}
+
+function MuestraTablero({
+  colores,
+}: {
+  colores: typeof coloresOscuros | typeof coloresClaros;
+}) {
+  const [cambiada, establecerCambiada] = useState(false);
+  const [base] = useState(() => {
+    const ahora = new Date();
+    return armarSalidas(crearMuestra(ahora), ahora)[0];
+  });
+  if (!base) return null;
+  // solo cambian los minutos y el estado: giran únicamente las fichas que difieren
+  const salida = cambiada
+    ? {
+        ...base,
+        estado: 'atrasado' as const,
+        minutosAtraso: 10,
+        salida: new Date(base.salida.getTime() + 10 * 60000),
+      }
+    : base;
+  return (
+    <View style={[estilos.seccion, { borderColor: colores.linea }]}>
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+        {t('vitrina.tablero')}
+      </Text>
+      <TableroSalidas salidas={[salida]} />
+      <Boton
+        alPresionar={() => establecerCambiada((valor) => !valor)}
+        etiqueta={t('vitrina.tableroCambiar')}
+      />
     </View>
   );
 }

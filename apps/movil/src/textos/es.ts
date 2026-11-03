@@ -228,6 +228,8 @@ export const textos = {
     espacios: 'Espacio',
     componentes: 'Componentes',
     botones: 'Botones y filtros',
+    tablero: 'Tablero de salidas',
+    tableroCambiar: 'Cambiar hora y estado',
     botonPrincipal: 'Buscar salidas',
     botonSecundario: 'Ver detalles',
     botonPildora: 'Seguir viaje',
