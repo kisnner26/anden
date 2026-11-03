@@ -12,25 +12,25 @@ it('explica el corredor y abre su detalle', async () => {
       alPresionar={alPresionar}
       corredor={{
         destino: 'Managua',
-        id: 'cor_wac_man',
-        origen: 'Wácwala',
+        id: 'cor_boa_man',
+        origen: 'Boaco',
       }}
     />,
   );
 
   const tarjeta = pantalla.getByRole('button', {
-    name: 'Abrir corredor de Wácwala a Managua',
+    name: 'Abrir corredor de Boaco a Managua',
   });
   expect(tarjeta.props.accessibilityHint).toBe(
     'Horarios y ubicación por confirmar',
   );
-  expect(pantalla.getByText('Wácwala')).toBeTruthy();
+  expect(pantalla.getByText('Boaco')).toBeTruthy();
   expect(pantalla.getByText('Managua')).toBeTruthy();
   expect(pantalla.getByText('6:30 a. m.')).toBeTruthy();
   expect(pantalla.getByText('18 min')).toBeTruthy();
   expect(pantalla.getByText('Operación de muestra')).toBeTruthy();
   await fireEvent.press(tarjeta);
-  expect(alPresionar).toHaveBeenCalledWith('cor_wac_man');
+  expect(alPresionar).toHaveBeenCalledWith('cor_boa_man');
 });
 
 it('explica cuando un corredor no tiene servicio anunciado', async () => {
@@ -39,8 +39,8 @@ it('explica cuando un corredor no tiene servicio anunciado', async () => {
       alPresionar={() => undefined}
       corredor={{
         destino: 'Managua',
-        id: 'cor_cha_man',
-        origen: 'Chagüilpa',
+        id: 'cor_jui_man',
+        origen: 'Juigalpa',
       }}
     />,
   );
