@@ -1,5 +1,6 @@
 export const movimiento = {
   cambioEstado: 240,
+  escalaPresion: 0.98,
   entradaPantalla: 320,
   reducir: 120,
   toque: 180,
