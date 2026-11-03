@@ -91,7 +91,9 @@ describe('ProveedorBoletos', () => {
         (o) => o.estado === 'vendido' && o.boletoId === id,
       ),
     ).toBe(false);
-    expect(await AsyncStorage.getItem(CLAVE_BOLETOS)).toContain('"estado":"cancelado"');
+    expect(await AsyncStorage.getItem(CLAVE_BOLETOS)).toContain(
+      '"estado":"cancelado"',
+    );
   });
 
   it('recupera los boletos guardados al abrir la app', async () => {

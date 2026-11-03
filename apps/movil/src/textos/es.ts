@@ -210,7 +210,8 @@ export const textos = {
     muestra: 'Reglas de muestra',
     compartir: 'Compartir datos del viaje',
     cambiar: 'Cambiar salida',
-    cambioNoDisponible: 'No hay otra salida disponible para cambiar este boleto.',
+    cambioNoDisponible:
+      'No hay otra salida disponible para cambiar este boleto.',
     recordatorio: 'Agregar recordatorio',
     cancelado: 'Boleto cancelado',
     usado: 'Boleto usado',

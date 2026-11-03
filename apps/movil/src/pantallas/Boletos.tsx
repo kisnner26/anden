@@ -98,10 +98,12 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
                   <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
                     {`${t('boletos.saleEn')} ${minutosHastaSalida(proximos[0]!, ahora)} ${t('viajar.minutos')}`}
                   </Text>
-                  <Text style={[estilos.destinoProximo, { color: colores.fondo }]}>
+                  <Text
+                    style={[estilos.destinoProximo, { color: colores.fondo }]}
+                  >
                     {proximos[0]?.resumen.destino}
                   </Text>
-                  <Text style={[tipografia.dato, { color: colores.fondo }]}> 
+                  <Text style={[tipografia.dato, { color: colores.fondo }]}>
                     {`${t('boleto.anden')} ${proximos[0]?.resumen.anden} · ${t('boletos.asientoCorto')} ${proximos[0]?.boleto.asiento}`}
                   </Text>
                 </BloqueNegro>
@@ -159,7 +161,10 @@ const estilos = StyleSheet.create({
   detalle: { textAlign: 'center' },
   seccion: { marginTop: espacios.veinticuatro },
   proximo: { gap: espacios.ocho, padding: espacios.veinticuatro },
-  proximoEtiqueta: { marginTop: espacios.veinticuatro, marginBottom: espacios.ocho },
+  proximoEtiqueta: {
+    marginTop: espacios.veinticuatro,
+    marginBottom: espacios.ocho,
+  },
   destinoProximo: {
     fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
     fontSize: 42,

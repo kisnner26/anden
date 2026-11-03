@@ -64,10 +64,14 @@ describe('VerBoleto', () => {
     });
     const pantalla = await dibujar();
     await fireEvent.press(
-      await pantalla.findByRole('button', { name: 'Compartir datos del viaje' }),
+      await pantalla.findByRole('button', {
+        name: 'Compartir datos del viaje',
+      }),
     );
     expect(compartir).toHaveBeenCalledWith(
-      expect.objectContaining({ message: expect.not.stringContaining('K7RM4QX9') }),
+      expect.objectContaining({
+        message: expect.not.stringContaining('K7RM4QX9'),
+      }),
     );
     compartir.mockRestore();
   });
@@ -96,7 +100,9 @@ describe('VerBoleto', () => {
       pantalla.getByRole('button', { name: 'Sí, cancelar' }),
     );
     await waitFor(() => expect(alCancelado).toHaveBeenCalledTimes(1));
-    expect(await AsyncStorage.getItem(CLAVE_BOLETOS)).toContain('"estado":"cancelado"');
+    expect(await AsyncStorage.getItem(CLAVE_BOLETOS)).toContain(
+      '"estado":"cancelado"',
+    );
   });
 
   it('dice que no encontró un boleto inexistente', async () => {
@@ -121,6 +127,8 @@ describe('VerBoleto', () => {
     );
     const pantalla = await dibujar();
     expect(await pantalla.findByText('Estado: Boleto cancelado')).toBeTruthy();
-    expect(pantalla.queryByRole('button', { name: 'Cancelar reserva' })).toBeNull();
+    expect(
+      pantalla.queryByRole('button', { name: 'Cancelar reserva' }),
+    ).toBeNull();
   });
 });

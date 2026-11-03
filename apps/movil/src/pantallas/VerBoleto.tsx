@@ -1,5 +1,12 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
+import {
+  Pressable,
+  ScrollView,
+  Share,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
@@ -200,7 +207,11 @@ export function VerBoleto({
 
 const estilos = StyleSheet.create({
   acciones: { gap: espacios.ocho },
-  accion: { minHeight: 44, justifyContent: 'center', paddingHorizontal: espacios.doce },
+  accion: {
+    minHeight: 44,
+    justifyContent: 'center',
+    paddingHorizontal: espacios.doce,
+  },
   boton: {
     alignItems: 'center',
     justifyContent: 'center',

@@ -100,7 +100,10 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
       await guardar(
         boletos.map((guardado) =>
           guardado.boleto.id === boletoId
-            ? { ...guardado, boleto: { ...guardado.boleto, estado: 'cancelado' } }
+            ? {
+                ...guardado,
+                boleto: { ...guardado.boleto, estado: 'cancelado' },
+              }
             : guardado,
         ),
       );

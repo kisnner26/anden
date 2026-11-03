@@ -12,9 +12,14 @@ export function estadoVisibleBoleto(
   return new Date(guardado.resumen.salida) < ahora ? 'vencido' : 'vigente';
 }
 
-export function minutosHastaSalida(guardado: BoletoGuardado, ahora: Date): number {
+export function minutosHastaSalida(
+  guardado: BoletoGuardado,
+  ahora: Date,
+): number {
   return Math.max(
     0,
-    Math.ceil((new Date(guardado.resumen.salida).getTime() - ahora.getTime()) / 60_000),
+    Math.ceil(
+      (new Date(guardado.resumen.salida).getTime() - ahora.getTime()) / 60_000,
+    ),
   );
 }

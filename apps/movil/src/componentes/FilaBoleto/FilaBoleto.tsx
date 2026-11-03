@@ -18,7 +18,11 @@ export interface PropiedadesFilaBoleto {
 }
 
 /** un boleto guardado en la lista: destino, cuándo sale, asiento y código */
-export function FilaBoleto({ alPresionar, ahora, guardado }: PropiedadesFilaBoleto) {
+export function FilaBoleto({
+  alPresionar,
+  ahora,
+  guardado,
+}: PropiedadesFilaBoleto) {
   const { colores } = useTema();
   const { boleto, resumen } = guardado;
   const salida = new Date(resumen.salida);
