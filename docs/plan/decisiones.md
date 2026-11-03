@@ -31,3 +31,5 @@ Registro de decisiones tomadas durante el desarrollo. Una por entrada, la más r
 | 2026-11-02 | T-085 | la placa se muestra en el taxi interlocal y en el detalle del viaje; las rutas se arman desde los datos de muestra (`armarRutas`) | el MTI identifica cada unidad por su placa; el mapa de rutas queda para después |
 | 2026-11-03 | permisos | la app puede pedir la ubicación en primer plano solo cuando la persona la activa, sin guardarla ni enviarla, y puede elegir fotos de la galería; la cámara y el micrófono siguen prohibidos | decisión del dueño del proyecto; sustituye la regla anterior de no usar ubicación |
 | 2026-11-03 | notificaciones | las notificaciones son locales (recordatorios y avisos del viaje); no hay push remotas | la cuenta gratuita de Apple no firma esa capacidad |
+
+| 2026-11-03 | T-103 | el corredor inicial son Boaco–Managua y Juigalpa–Managua (departamentos reales), no Wácwala ni Chagüilpa; coordenadas de muestra: Boaco 12.4719, -85.6590; Juigalpa 12.1064, -85.3647 | el dueño corrigió los nombres que Codex había tomado del plan |
