@@ -11,7 +11,6 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
-import { conAlfa } from '@/tema/alfa';
 import { radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -81,28 +80,26 @@ export function MapaAsientos({
               );
             }
             if (celda === 'puerta') {
-              const primera = celdas[columna - 1] !== 'puerta';
+              if (celdas[columna - 1] === 'puerta') return null;
+              let ancho = 1;
+              while (celdas[columna + ancho] === 'puerta') ancho += 1;
               return (
                 <View
                   key={clave}
                   style={[
-                    estilos.celda,
-                    primera && {
+                    estilos.puerta,
+                    {
                       borderLeftColor: colores.linea,
-                      borderLeftWidth: 2,
+                      width: ancho * LADO + (ancho - 1) * SEPARACION,
                     },
                   ]}
                 >
-                  {primera && (
-                    <Text
-                      style={[
-                        tipografia.etiqueta,
-                        { color: colores.tintaSuave },
-                      ]}
-                    >
-                      {t('asientos.puerta')}
-                    </Text>
-                  )}
+                  <Text
+                    numberOfLines={1}
+                    style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
+                  >
+                    {t('asientos.puerta')}
+                  </Text>
                 </View>
               );
             }
@@ -151,10 +148,7 @@ export function MapaAsientos({
                             borderWidth: 1.5,
                           }
                         : {
-                            backgroundColor: conAlfa(
-                              colores.sombraRelieve,
-                              0.12,
-                            ),
+                            backgroundColor: colores.barroOscuro,
                           },
                     ]}
                   >
@@ -196,6 +190,12 @@ const estilos = StyleSheet.create({
     width: LADO,
   },
   fila: { flexDirection: 'row', gap: SEPARACION },
+  puerta: {
+    alignItems: 'center',
+    borderLeftWidth: 2,
+    height: LADO,
+    justifyContent: 'center',
+  },
   plano: {
     gap: SEPARACION,
     paddingBottom: 18,

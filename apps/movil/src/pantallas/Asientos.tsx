@@ -12,7 +12,6 @@ import { formatoCuenta, useCuentaRegresiva } from '@/datos/useCuentaRegresiva';
 import { useMapaAsientos } from '@/datos/useMapaAsientos';
 import { useSalidas } from '@/datos/useSalidas';
 import { useSeleccionAsientos } from '@/datos/useSeleccionAsientos';
-import { conAlfa } from '@/tema/alfa';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -151,7 +150,7 @@ export function Asientos({ alVolver, viajeId }: PropiedadesAsientos) {
               <View
                 style={[
                   estilos.muestra,
-                  { backgroundColor: conAlfa(colores.sombraRelieve, 0.12) },
+                  { backgroundColor: colores.barroOscuro },
                 ]}
               />
             }
