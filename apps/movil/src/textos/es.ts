@@ -201,9 +201,13 @@ export const textos = {
   },
   rutas: {
     titulo: 'Rutas',
-    proximamente: 'El mapa de rutas autorizadas llega pronto.',
     detalle:
-      'Vas a ver cada ruta con sus paradas, su tarifa oficial y el bus en vivo.',
+      'Rutas desde la terminal UCA, con su tarifa de muestra por servicio.',
+    km: 'km',
+    proximaSalida: 'Próxima salida',
+    sinSalidas: 'Sin salidas por hoy',
+    sinTarifa: 'sin tarifa',
+    mapaPronto: 'El mapa con el recorrido y el bus en vivo llega pronto.',
   },
   vitrina: {
     marca: 'Andén',

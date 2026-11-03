@@ -2,17 +2,21 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
-import { Icono } from '@/componentes/Icono';
-import { Loseta } from '@/componentes/Loseta';
+import { formatoDuracion, formatoHoraCompleta } from '@/datos/formato';
+import { armarRutas } from '@/datos/rutas';
+import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
+import { useMemo } from 'react';
 
-/** el mapa de rutas autorizadas; todavía no existe, así que lo anuncia con honestidad */
+/** las rutas de la terminal: kilómetros, duración, servicios con su tarifa de muestra y la próxima salida */
 export function Rutas() {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
+  const ahora = useAhora();
+  const rutas = useMemo(() => armarRutas(obtenerMuestra(), ahora), [ahora]);
 
   return (
     <ScrollView
@@ -26,54 +30,80 @@ export function Rutas() {
         {t('rutas.titulo')}
         <Text style={{ color: colores.ambarTitular }}>.</Text>
       </Text>
+      <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
+        {t('rutas.detalle')}
+      </Text>
 
-      <Bloque estilo={estilos.bloque} estiloContenido={estilos.vacio}>
-        <Loseta tamano={72}>
-          <Icono
-            nombre="pestanaRutas"
-            tamano="ilustracion"
-            color={colores.tinta}
-            colorDetalle={colores.barroClaro}
-          />
-        </Loseta>
-        <View style={estilos.textos}>
-          <Text style={[estilos.vacioTitulo, { color: colores.tinta }]}>
-            {t('rutas.proximamente')}
+      {rutas.map((ruta) => (
+        <Bloque estiloContenido={estilos.ruta} key={ruta.id}>
+          <View style={estilos.cabecera}>
+            <Text
+              accessibilityRole="header"
+              style={[estilos.destino, { color: colores.tinta }]}
+            >
+              {ruta.destino}
+            </Text>
+            <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+              {`${ruta.distanciaKm} ${t('rutas.km')} · ${formatoDuracion(ruta.duracionMin)}`}
+            </Text>
+          </View>
+
+          <View style={estilos.servicios}>
+            {ruta.servicios.map(({ servicio, tarifa }) => (
+              <Bloque
+                estiloContenido={estilos.servicio}
+                hundido
+                key={servicio}
+                radio="pildora"
+              >
+                <Text style={[tipografia.pequeno, { color: colores.tinta }]}>
+                  {t(`servicios.${servicio}`)}
+                </Text>
+                <Text style={[tipografia.dato, { color: colores.ambarTexto }]}>
+                  {tarifa === null ? t('rutas.sinTarifa') : `C$ ${tarifa}`}
+                </Text>
+              </Bloque>
+            ))}
+          </View>
+
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {ruta.proximaSalida
+              ? `${t('rutas.proximaSalida')} ${formatoHoraCompleta(ruta.proximaSalida)}`
+              : t('rutas.sinSalidas')}
           </Text>
-          <Text
-            style={[
-              tipografia.cuerpo,
-              estilos.detalle,
-              { color: colores.tintaSuave },
-            ]}
-          >
-            {t('rutas.detalle')}
-          </Text>
-        </View>
-      </Bloque>
+        </Bloque>
+      ))}
+      <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+        {t('rutas.mapaPronto')}
+      </Text>
     </ScrollView>
   );
 }
 
 const estilos = StyleSheet.create({
-  bloque: { marginTop: espacios.veinticuatro },
-  contenido: { paddingHorizontal: espacios.lateral },
-  detalle: { textAlign: 'center' },
-  textos: { alignItems: 'center', gap: espacios.ocho },
+  cabecera: {
+    alignItems: 'flex-end',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  contenido: { gap: espacios.dieciseis, paddingHorizontal: espacios.lateral },
+  destino: {
+    fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
+    fontSize: 34,
+    lineHeight: 36,
+  },
+  ruta: { gap: espacios.doce, padding: espacios.veinticuatro },
+  servicio: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.ocho,
+    paddingHorizontal: espacios.doce,
+    paddingVertical: espacios.ocho,
+  },
+  servicios: { flexDirection: 'row', flexWrap: 'wrap', gap: espacios.ocho },
   titulo: {
     fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
     fontSize: 46,
     lineHeight: 48,
-  },
-  vacio: {
-    alignItems: 'center',
-    gap: espacios.veinticuatro,
-    padding: espacios.veinticuatro,
-  },
-  vacioTitulo: {
-    fontFamily: 'Archivo_600SemiBold',
-    fontSize: 20,
-    lineHeight: 26,
-    textAlign: 'center',
   },
 });
