@@ -328,8 +328,15 @@ export const textos = {
   },
   rutas: {
     titulo: 'Rutas',
-    detalle:
-      'Rutas desde la terminal UCA, con su tarifa de muestra por servicio.',
+    detalle: 'Interlocales hacia Managua, sin vueltas.',
+    corredor: 'Corredor interlocal',
+    hacia: 'hacia',
+    datosPendientes: 'Horarios y ubicación por confirmar',
+    datosPendientesDetalle:
+      'La cooperativa todavía no publicó la próxima unidad.',
+    verRecorrido: 'Ver recorrido',
+    abrirCorredor: 'Abrir corredor de {{origen}} a Managua',
+    dosRutas: '2 rutas activas',
     km: 'km',
     proximaSalida: 'Próxima salida',
     sinSalidas: 'Sin salidas por hoy',
