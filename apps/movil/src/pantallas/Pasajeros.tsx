@@ -1,3 +1,4 @@
+import { cedulaOpcionalValida, nombrePersonaValido } from '@anden/dominio';
 import { useState } from 'react';
 import {
   KeyboardAvoidingView,
@@ -30,8 +31,6 @@ export interface PropiedadesPasajeros {
   viajeId: string;
 }
 
-const LARGO_MINIMO = 2;
-
 /** el nombre de quien viaja en cada asiento elegido */
 export function Pasajeros({
   alContinuar,
@@ -54,6 +53,7 @@ export function Pasajeros({
       : {},
   );
   const [faltan, establecerFaltan] = useState(false);
+  const [validar, establecerValidar] = useState(false);
 
   function usarGuardado(guardado: PasajeroGuardado) {
     const libre = asientos.find(
@@ -67,8 +67,11 @@ export function Pasajeros({
   }
 
   function continuar() {
+    establecerValidar(true);
     const completos = asientos.every(
-      (asiento) => (nombres[asiento] ?? '').trim().length >= LARGO_MINIMO,
+      (asiento) =>
+        nombrePersonaValido(nombres[asiento] ?? '') &&
+        cedulaOpcionalValida(cedulas[asiento] ?? ''),
     );
     if (!completos) {
       establecerFaltan(true);
@@ -127,6 +130,11 @@ export function Pasajeros({
                 establecerNombres({ ...nombres, [asiento]: valor })
               }
               etiqueta={`${t('pasajeros.nombre')} · ${t('pasajeros.asiento')} ${asiento}`}
+              error={
+                validar && !nombrePersonaValido(nombres[asiento] ?? '')
+                  ? t('pasajeros.nombreInvalido')
+                  : undefined
+              }
               marcador={t('pasajeros.marcadorNombre')}
               valor={nombres[asiento] ?? ''}
             />
@@ -135,6 +143,11 @@ export function Pasajeros({
                 establecerCedulas({ ...cedulas, [asiento]: valor })
               }
               etiqueta={`${t('pasajeros.cedula')} · ${t('pasajeros.asiento')} ${asiento}`}
+              error={
+                validar && !cedulaOpcionalValida(cedulas[asiento] ?? '')
+                  ? t('pasajeros.cedulaInvalida')
+                  : undefined
+              }
               marcador={t('pasajeros.marcadorCedula')}
               valor={cedulas[asiento] ?? ''}
             />
