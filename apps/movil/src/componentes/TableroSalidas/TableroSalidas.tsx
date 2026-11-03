@@ -7,6 +7,8 @@ import { coloresOscuros as negro } from '@/tema/colores';
 import { tipografia } from '@/tema/tipografia';
 import { t } from '@/textos/t';
 
+import { FichaFlap } from './FichaFlap';
+
 export interface PropiedadesTableroSalidas {
   salidas: readonly Salida[];
 }
@@ -89,20 +91,11 @@ function Hora({ salida, pasada }: { pasada: boolean; salida: Salida }) {
   return (
     <View style={estilos.fichas}>
       {[...formatoHora(salida.salida)].map((caracter, indice) => (
-        <View
+        <FichaFlap
+          caracter={caracter}
+          color={pasada ? negro.tintaSuave : negro.ambar}
           key={`${caracter}${indice}`}
-          style={[estilos.ficha, caracter === ':' && estilos.separador]}
-        >
-          <Text
-            style={[
-              estilos.letraFicha,
-              { color: pasada ? negro.tintaSuave : negro.ambar },
-            ]}
-          >
-            {caracter}
-          </Text>
-          {caracter !== ':' && <View style={estilos.bisagra} />}
-        </View>
+        />
       ))}
     </View>
   );
@@ -185,14 +178,6 @@ const estilos = StyleSheet.create({
     borderRadius: 999,
     borderWidth: 1.5,
   },
-  bisagra: {
-    backgroundColor: negro.bloqueNegro,
-    height: 1,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: 14,
-  },
   caja: {
     alignItems: 'center',
     borderColor: negro.linea,
@@ -214,24 +199,10 @@ const estilos = StyleSheet.create({
   },
   encabezado: { height: 34 },
   estado: { alignItems: 'center', flexDirection: 'row', gap: 6 },
-  ficha: {
-    alignItems: 'center',
-    backgroundColor: negro.barroOscuro,
-    borderRadius: 3,
-    height: 28,
-    justifyContent: 'center',
-    width: 15,
-  },
   fichas: { flexDirection: 'row', gap: 2 },
   fila: { alignItems: 'center', flexDirection: 'row', gap: 8 },
-  letraFicha: {
-    fontFamily: 'JetBrainsMono_600SemiBold',
-    fontSize: 17,
-    lineHeight: 20,
-  },
   marca: { height: 7, width: 7 },
   punto: { borderRadius: 999 },
   raya: { height: 1.5, width: 8 },
   separacion: { borderTopColor: negro.linea, borderTopWidth: 1, height: 56 },
-  separador: { backgroundColor: 'transparent', width: 6 },
 });
