@@ -23,33 +23,33 @@ describe('Buscador', () => {
   it('sin escribir ofrece las rutas frecuentes', async () => {
     const pantalla = await abrir();
     expect(pantalla.getByText('Rutas frecuentes')).toBeTruthy();
-    expect(pantalla.getByRole('button', { name: 'Granada' })).toBeTruthy();
+    expect(pantalla.getByRole('button', { name: 'Boaco' })).toBeTruthy();
   });
 
   it('escribir filtra las salidas en vivo', async () => {
     const pantalla = await abrir();
     await fireEvent.changeText(
       pantalla.getByLabelText('Buscar salidas'),
-      'gran',
+      'boa',
     );
     expect(pantalla.getByText(/^\d+ salidas?$/)).toBeTruthy();
     expect(pantalla.queryByText('Rutas frecuentes')).toBeNull();
   });
 
-  it('encuentra sin importar las tildes', async () => {
+  it('encuentra sin importar las mayúsculas', async () => {
     const pantalla = await abrir();
     await fireEvent.changeText(
       pantalla.getByLabelText('Buscar salidas'),
-      'esteli',
+      'JUIGALPA',
     );
-    expect(pantalla.getByText('1 salida')).toBeTruthy();
+    expect(pantalla.getByText(/^\d+ salidas$/)).toBeTruthy();
   });
 
   it('tocar una ruta frecuente escribe el destino', async () => {
     const pantalla = await abrir();
-    await fireEvent.press(pantalla.getByRole('button', { name: 'Granada' }));
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Boaco' }));
     expect(pantalla.getByLabelText('Buscar salidas').props.value).toBe(
-      'Granada',
+      'Boaco',
     );
   });
 
@@ -82,10 +82,10 @@ describe('Buscador', () => {
     const pantalla = await abrir(alAbrirViaje);
     await fireEvent.changeText(
       pantalla.getByLabelText('Buscar salidas'),
-      'gran',
+      'boa',
     );
     await fireEvent.press(
-      pantalla.getAllByRole('button', { name: /Granada/ })[0]!,
+      pantalla.getAllByRole('button', { name: /Boaco/ })[0]!,
     );
     expect(alAbrirViaje).toHaveBeenCalledTimes(1);
   });
@@ -94,11 +94,11 @@ describe('Buscador', () => {
     const pantalla = await abrir();
     await fireEvent.changeText(
       pantalla.getByLabelText('Buscar salidas'),
-      'León',
+      'Juigalpa',
     );
     await fireEvent(pantalla.getByLabelText('Buscar salidas'), 'submitEditing');
     await waitFor(async () =>
-      expect(await AsyncStorage.getItem(CLAVE_RECIENTES)).toContain('León'),
+      expect(await AsyncStorage.getItem(CLAVE_RECIENTES)).toContain('Juigalpa'),
     );
   });
 

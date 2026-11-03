@@ -22,7 +22,7 @@ describe('DetalleRuta', () => {
 
   it('presenta paradas, tarifa de muestra y siguiente salida', async () => {
     const pantalla = await renderPantalla(
-      <DetalleRuta alVolver={() => undefined} rutaId="rut_uca_gra" />,
+      <DetalleRuta alVolver={() => undefined} rutaId="rut_uca_boa" />,
     );
 
     expect(pantalla.getByText('Paradas del recorrido')).toBeTruthy();

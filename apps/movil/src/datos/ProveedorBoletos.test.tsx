@@ -4,7 +4,7 @@ import { act, renderHook, waitFor } from '@testing-library/react-native';
 import type { ReactNode } from 'react';
 
 import { CLAVE_BOLETOS, ProveedorBoletos } from './ProveedorBoletos';
-import { VIAJE_GRANADA } from './muestra';
+import { VIAJE_BOACO } from './muestra';
 import { obtenerMuestra, reiniciarMuestra } from './useSalidas';
 import { useBoletos } from './useBoletos';
 
@@ -35,7 +35,7 @@ describe('ProveedorBoletos', () => {
     await waitFor(() => expect(result.current.cargando).toBe(false));
     let resultado;
     await act(async () => {
-      resultado = await result.current.reservar(VIAJE_GRANADA, PASAJEROS);
+      resultado = await result.current.reservar(VIAJE_BOACO, PASAJEROS);
     });
     expect(resultado).toMatchObject({ ok: true });
     expect(result.current.boletos).toHaveLength(1);
@@ -49,10 +49,10 @@ describe('ProveedorBoletos', () => {
     });
     await waitFor(() => expect(result.current.cargando).toBe(false));
     await act(async () => {
-      await result.current.reservar(VIAJE_GRANADA, PASAJEROS);
+      await result.current.reservar(VIAJE_BOACO, PASAJEROS);
     });
     const ocupacion = obtenerMuestra().ocupaciones.find(
-      (o) => o.viajeId === VIAJE_GRANADA && o.asiento === 8,
+      (o) => o.viajeId === VIAJE_BOACO && o.asiento === 8,
     );
     expect(ocupacion?.estado).toBe('vendido');
   });
@@ -63,11 +63,11 @@ describe('ProveedorBoletos', () => {
     });
     await waitFor(() => expect(result.current.cargando).toBe(false));
     await act(async () => {
-      await result.current.reservar(VIAJE_GRANADA, PASAJEROS);
+      await result.current.reservar(VIAJE_BOACO, PASAJEROS);
     });
     let segundo;
     await act(async () => {
-      segundo = await result.current.reservar(VIAJE_GRANADA, PASAJEROS);
+      segundo = await result.current.reservar(VIAJE_BOACO, PASAJEROS);
     });
     expect(segundo).toEqual({ error: 'asiento-ocupado', ok: false });
     expect(result.current.boletos).toHaveLength(1);
@@ -79,7 +79,7 @@ describe('ProveedorBoletos', () => {
     });
     await waitFor(() => expect(result.current.cargando).toBe(false));
     await act(async () => {
-      await result.current.reservar(VIAJE_GRANADA, PASAJEROS);
+      await result.current.reservar(VIAJE_BOACO, PASAJEROS);
     });
     const id = result.current.boletos[0]?.boleto.id ?? '';
     await act(async () => {
@@ -102,7 +102,7 @@ describe('ProveedorBoletos', () => {
     });
     await waitFor(() => expect(primero.result.current.cargando).toBe(false));
     await act(async () => {
-      await primero.result.current.reservar(VIAJE_GRANADA, PASAJEROS);
+      await primero.result.current.reservar(VIAJE_BOACO, PASAJEROS);
     });
     reiniciarMuestra();
     const segundo = await renderHook(() => useBoletos(), {

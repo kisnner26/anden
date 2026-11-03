@@ -415,7 +415,7 @@ export const textos = {
     iconoEstrella: 'Calificación',
     etiquetaSalida: 'Salida',
     etiquetaAnden: 'Andén 4',
-    tarjetaTitulo: 'UCA a Granada',
+    tarjetaTitulo: 'UCA a Boaco',
     tarjetaDetalle: 'Próxima salida · 2:40 p. m.',
     muestraDisplay: '¿Para dónde vas?',
     muestraTitulo: 'Próxima salida',

@@ -15,7 +15,7 @@ jest.mock('@/datos/notificaciones', () => ({
 const PRONTO: Aviso = {
   anden: 4,
   boletoId: 'bol_1',
-  destino: 'Granada',
+  destino: 'Boaco',
   id: 'bol_1:pronto',
   minutos: 25,
   tipo: 'pronto',
@@ -80,7 +80,7 @@ describe('Avisos', () => {
 
   it('lista los avisos y marca el que está sin leer', async () => {
     const pantalla = await abrir(valor({ avisos: [PRONTO], noLeidos: 1 }));
-    expect(pantalla.getByText('Tu bus a Granada sale en 25 min')).toBeTruthy();
+    expect(pantalla.getByText('Tu bus a Boaco sale en 25 min')).toBeTruthy();
     expect(pantalla.getByTestId('aviso-sin-leer')).toBeTruthy();
   });
 
@@ -88,7 +88,7 @@ describe('Avisos', () => {
     const contexto = valor({ avisos: [PRONTO], noLeidos: 1 });
     const pantalla = await abrir(contexto);
     await fireEvent.press(
-      pantalla.getByText('Tu bus a Granada sale en 25 min'),
+      pantalla.getByText('Tu bus a Boaco sale en 25 min'),
     );
     expect(contexto.marcarLeido).toHaveBeenCalledWith('bol_1:pronto');
   });

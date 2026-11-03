@@ -6,10 +6,10 @@ describe('rellenar', () => {
   it('reemplaza cada hueco por su valor', () => {
     expect(
       rellenar('Bus a {destino} en {minutos} min', {
-        destino: 'León',
+        destino: 'Juigalpa',
         minutos: 20,
       }),
-    ).toBe('Bus a León en 20 min');
+    ).toBe('Bus a Juigalpa en 20 min');
   });
 
   it('repite un hueco que aparece dos veces', () => {

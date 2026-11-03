@@ -13,34 +13,40 @@ beforeAll(() => {
   salidas = armarSalidas(crearMuestra(AHORA), AHORA);
 });
 
-function de(destino: string): Salida {
-  return salidas.find((salida) => salida.destino === destino) as Salida;
+function de(destino: string, servicio: string, atraso = 0): Salida {
+  return salidas.find(
+    (salida) =>
+      salida.destino === destino &&
+      salida.servicio === servicio &&
+      salida.minutosAtraso === atraso &&
+      salida.estado !== 'en-ruta',
+  ) as Salida;
 }
 
 describe('estadoTablero', () => {
   it('dice "Salió" y usa una raya si ya partió', () => {
-    expect(estadoTablero(de('Masaya'))).toMatchObject({
+    expect(estadoTablero(salidas[0] as Salida)).toMatchObject({
       forma: 'raya',
       texto: 'Salió',
     });
   });
 
   it('dice "Abordando" con un punto desde 20 minutos antes', () => {
-    expect(estadoTablero(de('Granada'))).toMatchObject({
+    expect(estadoTablero(de('Boaco', 'ordinario'))).toMatchObject({
       forma: 'punto',
       texto: 'Abordando',
     });
   });
 
   it('dice "A tiempo" con un anillo si está programada', () => {
-    expect(estadoTablero(de('Diriamba'))).toMatchObject({
+    expect(estadoTablero(de('Juigalpa', 'ordinario'))).toMatchObject({
       forma: 'anillo',
       texto: 'A tiempo',
     });
   });
 
   it('muestra los minutos de atraso con un rombo', () => {
-    expect(estadoTablero(de('León'))).toMatchObject({
+    expect(estadoTablero(de('Juigalpa', 'expreso', 10))).toMatchObject({
       forma: 'rombo',
       texto: '+10 min',
     });
@@ -50,8 +56,8 @@ describe('estadoTablero', () => {
 describe('TableroSalidas', () => {
   it('muestra una fila por salida con su resumen accesible', async () => {
     const pantalla = await render(<TableroSalidas salidas={salidas} />);
-    expect(pantalla.getByLabelText('Granada, 2:40, Abordando')).toBeTruthy();
-    expect(pantalla.getByLabelText('León, 2:52, +10 min')).toBeTruthy();
+    expect(pantalla.getByLabelText('Boaco, 2:40, Abordando')).toBeTruthy();
+    expect(pantalla.getByLabelText('Juigalpa, 2:52, +10 min')).toBeTruthy();
   });
 
   it('muestra los encabezados de las columnas', async () => {

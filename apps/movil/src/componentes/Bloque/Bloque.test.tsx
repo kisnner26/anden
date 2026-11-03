@@ -8,10 +8,10 @@ describe('Bloque', () => {
   it('muestra su contenido con relieve', async () => {
     const pantalla = await render(
       <Bloque testID="bloque">
-        <Text>Granada</Text>
+        <Text>Boaco</Text>
       </Bloque>,
     );
-    expect(pantalla.getByText('Granada')).toBeTruthy();
+    expect(pantalla.getByText('Boaco')).toBeTruthy();
     expect(pantalla.getByTestId('bloque')).toBeTruthy();
   });
 

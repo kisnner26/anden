@@ -23,7 +23,7 @@ export function boletoDePrueba(
       choferId: 'cho_2',
       choferNombre: 'Marvin Lanzas',
       cooperativa: 'Cooperativa de muestra',
-      destino: 'Granada',
+      destino: 'Boaco',
       metodoPago: 'efectivo-al-abordar',
       placa: 'M 222-114',
       salida: salida.toISOString(),

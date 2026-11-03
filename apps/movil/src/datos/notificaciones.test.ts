@@ -68,12 +68,12 @@ describe('programarRecordatorio', () => {
     const id = await programarRecordatorio({
       anden: 4,
       cuando,
-      destino: 'Granada',
-      texto: { cuerpo: 'Andén 4', titulo: 'Tu bus a Granada' },
+      destino: 'Boaco',
+      texto: { cuerpo: 'Andén 4', titulo: 'Tu bus a Boaco' },
     });
     expect(id).toBe('id-1');
     expect(scheduleNotificationAsync).toHaveBeenCalledWith({
-      content: { body: 'Andén 4', title: 'Tu bus a Granada' },
+      content: { body: 'Andén 4', title: 'Tu bus a Boaco' },
       trigger: { date: cuando, type: SchedulableTriggerInputTypes.DATE },
     });
   });

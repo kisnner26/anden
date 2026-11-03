@@ -72,7 +72,7 @@ export function Viajar({
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const [origenId, establecerOrigenId] = useState('ter_uca');
-  const [destinoId, establecerDestinoId] = useState('ter_gra');
+  const [destinoId, establecerDestinoId] = useState('ter_boa');
   const [estadoUbicacion, establecerEstadoUbicacion] = useState<
     | { tipo: 'confirmada'; mensaje: string }
     | { tipo: 'denegada'; mensaje: string }

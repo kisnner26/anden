@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, waitFor } from '@testing-library/react-native';
 import { useEffect, type ReactNode } from 'react';
 
-import { VIAJE_GRANADA } from '@/datos/muestra';
+import { VIAJE_BOACO } from '@/datos/muestra';
 import { ProveedorBoletos } from '@/datos/ProveedorBoletos';
 import { ProveedorReserva } from '@/datos/ProveedorReserva';
 import type { PasajeroReserva } from '@/datos/reserva';
@@ -22,7 +22,7 @@ function Preparar({
 }) {
   const { borrador, establecerBorrador } = useReserva();
   useEffect(() => {
-    if (pasajeros) establecerBorrador(VIAJE_GRANADA, pasajeros);
+    if (pasajeros) establecerBorrador(VIAJE_BOACO, pasajeros);
   }, [establecerBorrador, pasajeros]);
   return pasajeros && !borrador ? null : <>{children}</>;
 }
@@ -43,7 +43,7 @@ function dibujar(
           <Pago
             alReservado={alReservado}
             alVolver={() => undefined}
-            viajeId={VIAJE_GRANADA}
+            viajeId={VIAJE_BOACO}
           />
         </Preparar>
       </ProveedorReserva>
@@ -66,7 +66,7 @@ describe('Pago', () => {
 
   it('muestra el resumen de la reserva con sus pasajeros y la placa', async () => {
     const pantalla = await dibujar(DOS);
-    expect(await pantalla.findByText('UCA → Granada')).toBeTruthy();
+    expect(await pantalla.findByText('UCA → Boaco')).toBeTruthy();
     expect(pantalla.getByText('Asiento 8 · Ana Ruiz')).toBeTruthy();
     expect(pantalla.getByText('Asiento 9 · Luis Pérez')).toBeTruthy();
     expect(pantalla.getByText(/M 222-114/)).toBeTruthy();
@@ -74,8 +74,8 @@ describe('Pago', () => {
 
   it('muestra el total de la tarifa de muestra a pagar al abordar', async () => {
     const pantalla = await dibujar(DOS);
-    expect(await pantalla.findByText('C$ 92')).toBeTruthy();
-    expect(pantalla.getByText(/tarifa de muestra · C\$ 46/)).toBeTruthy();
+    expect(await pantalla.findByText('C$ 140')).toBeTruthy();
+    expect(pantalla.getByText(/tarifa de muestra · C\$ 70/)).toBeTruthy();
   });
 
   it('deja elegido el efectivo y la tarjeta como próximamente', async () => {

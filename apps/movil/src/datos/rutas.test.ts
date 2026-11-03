@@ -11,32 +11,34 @@ function de(destino: string) {
 }
 
 describe('armarRutas', () => {
-  it('trae las seis rutas de la terminal UCA', () => {
-    expect(rutas).toHaveLength(6);
+  it('trae las dos rutas de la terminal UCA', () => {
+    expect(rutas).toHaveLength(2);
   });
 
   it('trae kilómetros y duración de cada ruta', () => {
-    expect(de('Granada')).toMatchObject({ distanciaKm: 45, duracionMin: 55 });
+    expect(de('Boaco')).toMatchObject({ distanciaKm: 90, duracionMin: 100 });
   });
 
   it('lista los servicios que la recorren con su tarifa de muestra', () => {
-    expect(de('Jinotepe')?.servicios).toEqual([
-      { servicio: 'ordinario', tarifa: 44 },
-      { servicio: 'taxi-interlocal', tarifa: 58 },
+    expect(de('Boaco')?.servicios).toEqual([
+      { servicio: 'ordinario', tarifa: 70 },
+      { servicio: 'expreso', tarifa: 85 },
+      { servicio: 'taxi-interlocal', tarifa: 95 },
     ]);
   });
 
-  it('deja el expreso de León con su tarifa', () => {
-    expect(de('León')?.servicios).toEqual([
-      { servicio: 'expreso', tarifa: 95 },
+  it('lista los servicios de Juigalpa con su tarifa', () => {
+    expect(de('Juigalpa')?.servicios).toEqual([
+      { servicio: 'ordinario', tarifa: 110 },
+      { servicio: 'expreso', tarifa: 130 },
     ]);
   });
 
   it('cuenta las salidas pendientes y da la próxima', () => {
-    const masaya = de('Masaya');
-    expect(masaya?.salidasPendientes).toBe(1);
-    expect(masaya?.proximaSalida?.getTime()).toBe(
-      AHORA.getTime() + 65 * 60_000,
+    const boaco = de('Boaco');
+    expect(boaco?.salidasPendientes).toBe(3);
+    expect(boaco?.proximaSalida?.getTime()).toBe(
+      AHORA.getTime() + 20 * 60_000,
     );
   });
 

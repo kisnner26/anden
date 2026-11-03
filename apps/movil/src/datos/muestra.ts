@@ -33,63 +33,27 @@ export const TERMINALES: Terminal[] = [
     nombre: 'Terminal UCA',
   },
   {
-    andenes: 4,
-    ciudad: 'Granada',
-    codigo: 'GRA',
-    coordenadas: { lat: 11.93, lng: -85.956 },
-    id: 'ter_gra',
-    nombre: 'Terminal Granada',
+    andenes: 3,
+    ciudad: 'Boaco',
+    codigo: 'BOA',
+    coordenadas: { lat: 12.4719, lng: -85.659 },
+    id: 'ter_boa',
+    nombre: 'Terminal Boaco',
   },
   {
     andenes: 3,
-    ciudad: 'Masaya',
-    codigo: 'MAS',
-    coordenadas: { lat: 11.974, lng: -86.094 },
-    id: 'ter_mas',
-    nombre: 'Terminal Masaya',
-  },
-  {
-    andenes: 3,
-    ciudad: 'Jinotepe',
-    codigo: 'JIN',
-    coordenadas: { lat: 11.85, lng: -86.2 },
-    id: 'ter_jin',
-    nombre: 'Terminal Jinotepe',
-  },
-  {
-    andenes: 4,
-    ciudad: 'León',
-    codigo: 'LEO',
-    coordenadas: { lat: 12.4379, lng: -86.878 },
-    id: 'ter_leo',
-    nombre: 'Terminal León',
-  },
-  {
-    andenes: 3,
-    ciudad: 'Estelí',
-    codigo: 'EST',
-    coordenadas: { lat: 13.09, lng: -86.354 },
-    id: 'ter_est',
-    nombre: 'Terminal Estelí',
-  },
-  {
-    andenes: 3,
-    ciudad: 'Diriamba',
-    codigo: 'DIR',
-    coordenadas: { lat: 11.857, lng: -86.24 },
-    id: 'ter_dir',
-    nombre: 'Terminal Diriamba',
+    ciudad: 'Juigalpa',
+    codigo: 'JUI',
+    coordenadas: { lat: 12.1064, lng: -85.3647 },
+    id: 'ter_jui',
+    nombre: 'Terminal Juigalpa',
   },
 ];
 
 /** destino, kilómetros y minutos de cada ruta que sale de la terminal UCA */
 const RECORRIDOS = [
-  { codigo: 'gra', distanciaKm: 45, duracionMin: 55 },
-  { codigo: 'mas', distanciaKm: 30, duracionMin: 40 },
-  { codigo: 'jin', distanciaKm: 45, duracionMin: 70 },
-  { codigo: 'leo', distanciaKm: 90, duracionMin: 95 },
-  { codigo: 'est', distanciaKm: 148, duracionMin: 150 },
-  { codigo: 'dir', distanciaKm: 42, duracionMin: 60 },
+  { codigo: 'boa', distanciaKm: 90, duracionMin: 100 },
+  { codigo: 'jui', distanciaKm: 139, duracionMin: 150 },
 ] as const;
 
 export const RUTAS: Ruta[] = RECORRIDOS.flatMap((recorrido) => [
@@ -131,12 +95,8 @@ export const RUTAS: Ruta[] = RECORRIDOS.flatMap((recorrido) => [
 
 /** tarifa de muestra en córdobas por ruta y servicio */
 const TARIFAS: Record<string, Partial<Record<TipoServicio, number>>> = {
-  dir: { ordinario: 40 },
-  est: { expreso: 120 },
-  gra: { ordinario: 46 },
-  jin: { 'taxi-interlocal': 58, ordinario: 44 },
-  leo: { expreso: 95 },
-  mas: { expreso: 38, ordinario: 32 },
+  boa: { 'taxi-interlocal': 95, expreso: 85, ordinario: 70 },
+  jui: { expreso: 130, ordinario: 110 },
 };
 
 export const TARIFARIO: Tarifario = RECORRIDOS.flatMap((recorrido) =>
@@ -177,26 +137,26 @@ const SALIDAS: Array<{
   origen?: string;
   servicio: TipoServicio;
 }> = [
-  { anden: 3, atraso: 0, desde: -10, destino: 'mas', servicio: 'ordinario' },
-  { anden: 4, atraso: 0, desde: 20, destino: 'gra', servicio: 'ordinario' },
-  { anden: 6, atraso: 0, desde: 28, destino: 'jin', servicio: 'ordinario' },
-  { anden: 1, atraso: 10, desde: 32, destino: 'leo', servicio: 'expreso' },
+  { anden: 3, atraso: 0, desde: -10, destino: 'boa', servicio: 'ordinario' },
+  { anden: 3, atraso: 0, desde: 20, destino: 'boa', servicio: 'ordinario' },
+  { anden: 4, atraso: 0, desde: 28, destino: 'jui', servicio: 'ordinario' },
+  { anden: 1, atraso: 10, desde: 32, destino: 'jui', servicio: 'expreso' },
   {
     anden: 6,
     atraso: 0,
     desde: 40,
-    destino: 'jin',
+    destino: 'boa',
     servicio: 'taxi-interlocal',
   },
-  { anden: 5, atraso: 0, desde: 55, destino: 'dir', servicio: 'ordinario' },
-  { anden: 2, atraso: 0, desde: 65, destino: 'mas', servicio: 'expreso' },
-  { anden: 1, atraso: 0, desde: 80, destino: 'est', servicio: 'expreso' },
+  { anden: 4, atraso: 0, desde: 55, destino: 'jui', servicio: 'ordinario' },
+  { anden: 2, atraso: 0, desde: 65, destino: 'boa', servicio: 'expreso' },
+  { anden: 1, atraso: 0, desde: 80, destino: 'jui', servicio: 'expreso' },
   {
     anden: 1,
     atraso: 0,
     desde: 18,
     destino: 'uca',
-    origen: 'gra',
+    origen: 'boa',
     servicio: 'ordinario',
   },
   {
@@ -204,7 +164,7 @@ const SALIDAS: Array<{
     atraso: 0,
     desde: 26,
     destino: 'uca',
-    origen: 'mas',
+    origen: 'jui',
     servicio: 'ordinario',
   },
   {
@@ -212,15 +172,15 @@ const SALIDAS: Array<{
     atraso: 0,
     desde: 34,
     destino: 'uca',
-    origen: 'jin',
-    servicio: 'ordinario',
+    origen: 'boa',
+    servicio: 'taxi-interlocal',
   },
   {
     anden: 2,
     atraso: 0,
     desde: 42,
     destino: 'uca',
-    origen: 'leo',
+    origen: 'jui',
     servicio: 'expreso',
   },
   {
@@ -228,15 +188,15 @@ const SALIDAS: Array<{
     atraso: 0,
     desde: 50,
     destino: 'uca',
-    origen: 'est',
-    servicio: 'expreso',
+    origen: 'boa',
+    servicio: 'ordinario',
   },
   {
     anden: 2,
     atraso: 0,
     desde: 58,
     destino: 'uca',
-    origen: 'dir',
+    origen: 'jui',
     servicio: 'ordinario',
   },
 ] as const;
@@ -266,8 +226,8 @@ function crearCalificaciones(): Calificacion[] {
   );
 }
 
-/** id del viaje de la salida de Granada, el que tiene el plano de asientos con ocupaciones */
-export const VIAJE_GRANADA = 'via_2';
+/** id del viaje de la salida de Boaco, el que tiene el plano de asientos con ocupaciones */
+export const VIAJE_BOACO = 'via_2';
 
 export function crearMuestra(ahora: Date): DatosMuestra {
   const viajes: Viaje[] = [];
@@ -315,7 +275,7 @@ export function crearMuestra(ahora: Date): DatosMuestra {
       boletoId: `bol_${asiento}`,
       duenoId: 'usu_otro',
       estado: 'vendido',
-      viajeId: VIAJE_GRANADA,
+      viajeId: VIAJE_BOACO,
     }),
   );
   const apartados = [6, 15].map<Ocupacion>((asiento) => ({
@@ -323,7 +283,7 @@ export function crearMuestra(ahora: Date): DatosMuestra {
     duenoId: 'usu_otro',
     estado: 'retenido',
     expira: vence,
-    viajeId: VIAJE_GRANADA,
+    viajeId: VIAJE_BOACO,
   }));
 
   return {

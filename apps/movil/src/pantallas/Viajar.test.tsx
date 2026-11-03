@@ -27,10 +27,10 @@ describe('Viajar', () => {
     expect(pantalla.getByText('¿A dónde vas hoy?')).toBeTruthy();
   });
 
-  it('muestra el próximo viaje a Granada', async () => {
+  it('muestra el próximo viaje a Boaco', async () => {
     const pantalla = await dibujar();
     expect(pantalla.getByTestId('proximo-viaje')).toBeTruthy();
-    expect(pantalla.getAllByText('Granada').length).toBeGreaterThan(0);
+    expect(pantalla.getAllByText('Boaco').length).toBeGreaterThan(0);
   });
 
   it('avisa que las tarifas son de muestra', async () => {
@@ -42,25 +42,25 @@ describe('Viajar', () => {
     const pantalla = await dibujar();
     await fireEvent(pantalla.getByLabelText('Salgo desde'), 'focus');
     await fireEvent.press(
-      pantalla.getByRole('button', { name: 'Terminal Granada' }),
+      pantalla.getByRole('button', { name: 'Terminal Juigalpa' }),
     );
-    expect(pantalla.getByDisplayValue('Terminal Granada')).toBeTruthy();
+    expect(pantalla.getByDisplayValue('Terminal Juigalpa')).toBeTruthy();
     expect(pantalla.getByDisplayValue('Terminal UCA')).toBeTruthy();
   });
 
   it('lista las salidas pendientes del destino elegido', async () => {
     const pantalla = await dibujar();
-    expect(pantalla.getAllByRole('button', { name: /andén/ })).toHaveLength(1);
+    expect(pantalla.getAllByRole('button', { name: /andén/ })).toHaveLength(3);
   });
 
   it('actualiza la próxima salida al elegir otro destino', async () => {
     const pantalla = await dibujar();
-    await fireEvent.changeText(pantalla.getByLabelText('Voy hacia'), 'Estelí');
+    await fireEvent.changeText(pantalla.getByLabelText('Voy hacia'), 'Juigalpa');
     await fireEvent.press(
-      pantalla.getByRole('button', { name: 'Terminal Estelí' }),
+      pantalla.getByRole('button', { name: 'Terminal Juigalpa' }),
     );
-    expect(pantalla.getByDisplayValue('Terminal Estelí')).toBeTruthy();
-    expect(pantalla.getAllByText('Estelí').length).toBeGreaterThan(0);
+    expect(pantalla.getByDisplayValue('Terminal Juigalpa')).toBeTruthy();
+    expect(pantalla.getAllByText('Juigalpa').length).toBeGreaterThan(0);
   });
 
   it('permite elegir fecha y cantidad de pasajeros', async () => {
@@ -81,10 +81,10 @@ describe('Viajar', () => {
   it('recupera un destino desde tus rutas', async () => {
     const pantalla = await dibujar();
     await fireEvent.press(
-      pantalla.getByRole('button', { name: 'Usar ruta a Masaya' }),
+      pantalla.getByRole('button', { name: 'Usar ruta a Juigalpa' }),
     );
-    expect(pantalla.getByDisplayValue('Terminal Masaya')).toBeTruthy();
-    expect(pantalla.getAllByText('Masaya').length).toBeGreaterThan(0);
+    expect(pantalla.getByDisplayValue('Terminal Juigalpa')).toBeTruthy();
+    expect(pantalla.getAllByText('Juigalpa').length).toBeGreaterThan(0);
   });
 
   it('va directo a los asientos desde el botón del próximo viaje', async () => {

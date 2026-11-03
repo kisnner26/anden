@@ -15,13 +15,13 @@ afterEach(async () => {
 
 describe('agregarReciente', () => {
   it('pone la búsqueda nueva al principio', () => {
-    expect(agregarReciente(['Granada'], 'León')).toEqual(['León', 'Granada']);
+    expect(agregarReciente(['Boaco'], 'Juigalpa')).toEqual(['Juigalpa', 'Boaco']);
   });
 
   it('no repite una búsqueda, aunque cambien tildes o mayúsculas', () => {
-    expect(agregarReciente(['León', 'Granada'], 'leon')).toEqual([
-      'leon',
-      'Granada',
+    expect(agregarReciente(['Juigalpa', 'Boaco'], 'juigalpa')).toEqual([
+      'juigalpa',
+      'Boaco',
     ]);
   });
 
@@ -33,7 +33,7 @@ describe('agregarReciente', () => {
   });
 
   it('ignora los textos de menos de dos letras', () => {
-    expect(agregarReciente(['Granada'], ' a ')).toEqual(['Granada']);
+    expect(agregarReciente(['Boaco'], ' a ')).toEqual(['Boaco']);
   });
 });
 
@@ -43,9 +43,9 @@ describe('guardado en el teléfono', () => {
   });
 
   it('guarda y lee las búsquedas', async () => {
-    await guardarReciente('Granada');
-    await guardarReciente('León');
-    expect(await leerRecientes()).toEqual(['León', 'Granada']);
+    await guardarReciente('Boaco');
+    await guardarReciente('Juigalpa');
+    expect(await leerRecientes()).toEqual(['Juigalpa', 'Boaco']);
   });
 
   it('se recupera de un guardado dañado', async () => {
@@ -54,7 +54,7 @@ describe('guardado en el teléfono', () => {
   });
 
   it('borra todo', async () => {
-    await guardarReciente('Granada');
+    await guardarReciente('Boaco');
     await borrarRecientes();
     expect(await leerRecientes()).toEqual([]);
   });

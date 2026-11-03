@@ -12,7 +12,7 @@ describe('useSalidas', () => {
   it('devuelve las ocho salidas y una próxima salida', async () => {
     const { result } = await renderHook(() => useSalidas());
     expect(result.current.salidas).toHaveLength(8);
-    expect(result.current.proxima?.destino).toBe('Granada');
+    expect(result.current.proxima?.destino).toBe('Boaco');
   });
 
   it('comparte la misma muestra entre llamadas', async () => {

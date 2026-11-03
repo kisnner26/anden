@@ -13,8 +13,8 @@ function salida(cambios: Partial<Salida>): Salida {
     anden: 1,
     asientosLibres: 10,
     choferId: 'cho_1',
-    codigoDestino: 'GRA',
-    destino: 'Granada',
+    codigoDestino: 'BOA',
+    destino: 'Boaco',
     estado: 'programado',
     minutosAtraso: 0,
     placa: 'M 123456',
@@ -28,20 +28,20 @@ function salida(cambios: Partial<Salida>): Salida {
   };
 }
 
-const GRANADA = salida({});
-const LEON = salida({
-  codigoDestino: 'LEO',
-  destino: 'León',
+const BOACO = salida({});
+const JUIGALPA = salida({
+  codigoDestino: 'JUI',
+  destino: 'Juigalpa',
   placa: 'M 654321',
   salida: new Date('2026-11-03T14:30:00-06:00'),
   servicio: 'expreso',
   viajeId: 'via_2',
 });
-const SALIDAS = [GRANADA, LEON];
+const SALIDAS = [BOACO, JUIGALPA];
 
 describe('normalizar', () => {
   it('quita tildes y pasa a minúsculas', () => {
-    expect(normalizar(' León ')).toBe('leon');
+    expect(normalizar(' Juigalpa ')).toBe('juigalpa');
   });
 });
 
@@ -53,41 +53,41 @@ describe('buscarSalidas', () => {
   it('encuentra por destino sin importar tildes ni mayúsculas', () => {
     const encontradas = buscarSalidas(SALIDAS, {
       ...SIN_FILTROS,
-      texto: 'LEON',
+      texto: 'JUIGALPA',
     });
-    expect(encontradas).toEqual([LEON]);
+    expect(encontradas).toEqual([JUIGALPA]);
   });
 
   it('encuentra por una parte del destino', () => {
-    expect(buscarSalidas(SALIDAS, { ...SIN_FILTROS, texto: 'gran' })).toEqual([
-      GRANADA,
+    expect(buscarSalidas(SALIDAS, { ...SIN_FILTROS, texto: 'boa' })).toEqual([
+      BOACO,
     ]);
   });
 
   it('encuentra por el código del destino', () => {
-    expect(buscarSalidas(SALIDAS, { ...SIN_FILTROS, texto: 'leo' })).toEqual([
-      LEON,
+    expect(buscarSalidas(SALIDAS, { ...SIN_FILTROS, texto: 'jui' })).toEqual([
+      JUIGALPA,
     ]);
   });
 
   it('encuentra por la placa', () => {
     expect(buscarSalidas(SALIDAS, { ...SIN_FILTROS, texto: '654321' })).toEqual(
-      [LEON],
+      [JUIGALPA],
     );
   });
 
   it('filtra por servicio', () => {
     expect(
       buscarSalidas(SALIDAS, { ...SIN_FILTROS, servicio: 'expreso' }),
-    ).toEqual([LEON]);
+    ).toEqual([JUIGALPA]);
   });
 
   it('filtra por franja horaria de Managua', () => {
     expect(
       buscarSalidas(SALIDAS, { ...SIN_FILTROS, franja: 'manana' }),
-    ).toEqual([GRANADA]);
+    ).toEqual([BOACO]);
     expect(buscarSalidas(SALIDAS, { ...SIN_FILTROS, franja: 'tarde' })).toEqual(
-      [LEON],
+      [JUIGALPA],
     );
   });
 
@@ -95,9 +95,9 @@ describe('buscarSalidas', () => {
     const encontradas = buscarSalidas(SALIDAS, {
       franja: 'tarde',
       servicio: 'expreso',
-      texto: 'leon',
+      texto: 'juigalpa',
     });
-    expect(encontradas).toEqual([LEON]);
+    expect(encontradas).toEqual([JUIGALPA]);
     expect(
       buscarSalidas(SALIDAS, {
         franja: 'manana',

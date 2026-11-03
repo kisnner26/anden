@@ -5,7 +5,7 @@ import { CampoLugar, CamposLugares } from './CampoLugar';
 
 const LUGARES = [
   { codigo: 'UCA', id: 'ter_uca', nombre: 'Terminal UCA' },
-  { codigo: 'GRA', id: 'ter_granada', nombre: 'Terminal Granada' },
+  { codigo: 'GRA', id: 'ter_boanada', nombre: 'Terminal Boaco' },
 ] as const;
 
 describe('CampoLugar', () => {
@@ -22,15 +22,15 @@ describe('CampoLugar', () => {
       />,
     );
 
-    await fireEvent.changeText(pantalla.getByLabelText('Origen'), 'Granada');
+    await fireEvent.changeText(pantalla.getByLabelText('Origen'), 'Boaco');
     expect(
-      pantalla.getByRole('button', { name: 'Terminal Granada' }),
+      pantalla.getByRole('button', { name: 'Terminal Boaco' }),
     ).toBeTruthy();
     expect(pantalla.queryByRole('button', { name: 'Terminal UCA' })).toBeNull();
     await fireEvent.press(
-      pantalla.getByRole('button', { name: 'Terminal Granada' }),
+      pantalla.getByRole('button', { name: 'Terminal Boaco' }),
     );
-    expect(alCambiar).toHaveBeenCalledWith('ter_granada');
+    expect(alCambiar).toHaveBeenCalledWith('ter_boanada');
   });
 
   it('intercambia el origen y destino seleccionados', async () => {
@@ -40,7 +40,7 @@ describe('CampoLugar', () => {
       <CamposLugares
         alCambiarDestino={cambiarDestino}
         alCambiarOrigen={cambiarOrigen}
-        destinoId="ter_granada"
+        destinoId="ter_boanada"
         etiquetaDestino="Destino"
         etiquetaIntercambiar="Intercambiar lugares"
         etiquetaOrigen="Origen"
@@ -54,7 +54,7 @@ describe('CampoLugar', () => {
     await fireEvent.press(
       pantalla.getByRole('button', { name: 'Intercambiar lugares' }),
     );
-    expect(cambiarOrigen).toHaveBeenCalledWith('ter_granada');
+    expect(cambiarOrigen).toHaveBeenCalledWith('ter_boanada');
     expect(cambiarDestino).toHaveBeenCalledWith('ter_uca');
   });
 

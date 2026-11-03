@@ -1,17 +1,17 @@
 import { beforeAll, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, render } from '@testing-library/react-native';
 
-import { crearMuestra } from '@/datos/muestra';
+import { crearMuestra, VIAJE_BOACO } from '@/datos/muestra';
 import { armarSalidas, type Salida } from '@/datos/salidas';
 
 import { TarjetaProximoViaje } from './TarjetaProximoViaje';
 
 const AHORA = new Date(2026, 10, 2, 14, 20);
-let granada: Salida;
+let boaco: Salida;
 
 beforeAll(() => {
   const salidas = armarSalidas(crearMuestra(AHORA), AHORA);
-  granada = salidas.find((salida) => salida.destino === 'Granada') as Salida;
+  boaco = salidas.find((salida) => salida.viajeId === VIAJE_BOACO) as Salida;
 });
 
 describe('TarjetaProximoViaje', () => {
@@ -20,11 +20,11 @@ describe('TarjetaProximoViaje', () => {
       <TarjetaProximoViaje
         ahora={AHORA}
         alVerBoleto={() => undefined}
-        salida={granada}
+        salida={boaco}
       />,
     );
-    expect(pantalla.getByText('Granada')).toBeTruthy();
-    expect(pantalla.getByText('Andén 4 · Ordinario')).toBeTruthy();
+    expect(pantalla.getByText('Boaco')).toBeTruthy();
+    expect(pantalla.getByText('Andén 3 · Ordinario')).toBeTruthy();
     expect(pantalla.getByText('2:40 p. m.')).toBeTruthy();
   });
 
@@ -33,7 +33,7 @@ describe('TarjetaProximoViaje', () => {
       <TarjetaProximoViaje
         ahora={AHORA}
         alVerBoleto={() => undefined}
-        salida={granada}
+        salida={boaco}
       />,
     );
     expect(pantalla.getByText('sale en 20 min')).toBeTruthy();
@@ -45,7 +45,7 @@ describe('TarjetaProximoViaje', () => {
       <TarjetaProximoViaje
         ahora={AHORA}
         alVerBoleto={alVerBoleto}
-        salida={granada}
+        salida={boaco}
       />,
     );
     await fireEvent.press(

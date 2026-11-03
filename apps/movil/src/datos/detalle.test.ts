@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 
 import { armarDetalle, armarPerfilChofer } from './detalle';
-import { crearMuestra, VIAJE_GRANADA } from './muestra';
+import { crearMuestra, VIAJE_BOACO } from './muestra';
 
 const AHORA = new Date('2026-11-02T20:00:00.000Z');
 const datos = crearMuestra(AHORA);
@@ -34,7 +34,7 @@ describe('armarPerfilChofer', () => {
 });
 
 describe('armarDetalle', () => {
-  const detalle = armarDetalle(datos, VIAJE_GRANADA, AHORA);
+  const detalle = armarDetalle(datos, VIAJE_BOACO, AHORA);
 
   it('trae la unidad con su placa, su cooperativa y sus plazas', () => {
     expect(detalle?.unidad.placa).toBe('M 222-114');
@@ -48,17 +48,17 @@ describe('armarDetalle', () => {
 
   it('calcula la llegada con la duración de la ruta', () => {
     const salida = detalle?.salida.salida.getTime() ?? 0;
-    expect(detalle?.llegada.getTime()).toBe(salida + 55 * 60_000);
+    expect(detalle?.llegada.getTime()).toBe(salida + 100 * 60_000);
   });
 
   it('lista las dos paradas con su hora', () => {
     expect(detalle?.paradas.map((parada) => parada.nombre)).toEqual([
       'Terminal UCA',
-      'Terminal Granada',
+      'Terminal Boaco',
     ]);
     const primera = detalle?.paradas[0]?.hora.getTime() ?? 0;
     const ultima = detalle?.paradas[1]?.hora.getTime() ?? 0;
-    expect(ultima - primera).toBe(55 * 60_000);
+    expect(ultima - primera).toBe(100 * 60_000);
   });
 
   it('devuelve nulo si el viaje no existe', () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { crearMuestra } from './muestra';
+import { crearMuestra, VIAJE_BOACO } from './muestra';
 import { armarSalidas, proximaSalida } from './salidas';
 
 const AHORA = new Date('2026-11-02T20:00:00.000Z');
@@ -19,15 +19,17 @@ describe('armarSalidas', () => {
     expect(salidas[0]?.estado).toBe('en-ruta');
   });
 
-  it('marca como atrasada la de León con sus diez minutos', () => {
-    const leon = salidas.find((salida) => salida.destino === 'León');
-    expect(leon?.estado).toBe('atrasado');
-    expect(leon?.minutosAtraso).toBe(10);
+  it('marca como atrasada la de Juigalpa con sus diez minutos', () => {
+    const juigalpa = salidas.find(
+      (salida) => salida.destino === 'Juigalpa' && salida.minutosAtraso > 0,
+    );
+    expect(juigalpa?.estado).toBe('atrasado');
+    expect(juigalpa?.minutosAtraso).toBe(10);
   });
 
-  it('trae la tarifa de muestra de Granada', () => {
-    const granada = salidas.find((salida) => salida.destino === 'Granada');
-    expect(granada?.tarifa).toBe(46);
+  it('trae la tarifa de muestra de Boaco', () => {
+    const boaco = salidas.find((salida) => salida.viajeId === VIAJE_BOACO);
+    expect(boaco?.tarifa).toBe(70);
   });
 
   it('deja la tarifa en nulo si no hay tarifario', () => {
@@ -35,20 +37,20 @@ describe('armarSalidas', () => {
     expect(sinTarifas.every((salida) => salida.tarifa === null)).toBe(true);
   });
 
-  it('cuenta los asientos libres de la coaster de Granada', () => {
-    const granada = salidas.find((salida) => salida.destino === 'Granada');
-    expect(granada?.asientosLibres).toBe(26 - 9 - 2);
+  it('cuenta los asientos libres de la coaster de Boaco', () => {
+    const boaco = salidas.find((salida) => salida.viajeId === VIAJE_BOACO);
+    expect(boaco?.asientosLibres).toBe(26 - 9 - 2);
   });
 
   it('mantiene la venta abierta veinte minutos antes de salir', () => {
-    const granada = salidas.find((salida) => salida.destino === 'Granada');
-    expect(granada?.ventaAbierta).toBe(true);
+    const boaco = salidas.find((salida) => salida.viajeId === VIAJE_BOACO);
+    expect(boaco?.ventaAbierta).toBe(true);
   });
 
   it('trae la placa y el chofer de cada unidad', () => {
-    const granada = salidas.find((salida) => salida.destino === 'Granada');
-    expect(granada?.placa).toBe('M 222-114');
-    expect(granada?.choferId).toBe('cho_2');
+    const boaco = salidas.find((salida) => salida.viajeId === VIAJE_BOACO);
+    expect(boaco?.placa).toBe('M 222-114');
+    expect(boaco?.choferId).toBe('cho_2');
   });
 
   it('identifica el taxi interlocal con su placa', () => {
@@ -62,7 +64,7 @@ describe('armarSalidas', () => {
 describe('proximaSalida', () => {
   it('elige la primera que todavía no partió', () => {
     const salidas = armarSalidas(crearMuestra(AHORA), AHORA);
-    expect(proximaSalida(salidas)?.destino).toBe('Granada');
+    expect(proximaSalida(salidas)?.destino).toBe('Boaco');
   });
 
   it('devuelve nulo si no queda ninguna pendiente', () => {

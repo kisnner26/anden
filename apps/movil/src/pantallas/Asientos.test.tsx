@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent } from '@testing-library/react-native';
 
-import { VIAJE_GRANADA } from '@/datos/muestra';
+import { VIAJE_BOACO } from '@/datos/muestra';
 import { reiniciarMuestra } from '@/datos/useSalidas';
 import { renderPantalla } from '@/pruebas/render';
 
@@ -15,11 +15,11 @@ describe('Asientos', () => {
       <Asientos
         alSeguir={() => undefined}
         alVolver={() => undefined}
-        viajeId={VIAJE_GRANADA}
+        viajeId={VIAJE_BOACO}
       />,
     );
     expect(pantalla.getByText(/Elegí tu/)).toBeTruthy();
-    expect(pantalla.getByText(/UCA → Granada/)).toBeTruthy();
+    expect(pantalla.getByText(/UCA → Boaco/)).toBeTruthy();
     expect(pantalla.getByText('10:00')).toBeTruthy();
   });
 
@@ -28,7 +28,7 @@ describe('Asientos', () => {
       <Asientos
         alSeguir={() => undefined}
         alVolver={() => undefined}
-        viajeId={VIAJE_GRANADA}
+        viajeId={VIAJE_BOACO}
       />,
     );
     expect(
@@ -42,13 +42,13 @@ describe('Asientos', () => {
       <Asientos
         alSeguir={() => undefined}
         alVolver={() => undefined}
-        viajeId={VIAJE_GRANADA}
+        viajeId={VIAJE_BOACO}
       />,
     );
     await fireEvent.press(pantalla.getByLabelText('Asiento 8, pasillo, libre'));
-    expect(pantalla.getByText('C$ 46')).toBeTruthy();
+    expect(pantalla.getByText('C$ 70')).toBeTruthy();
     await fireEvent.press(pantalla.getByLabelText('Asiento 9, ventana, libre'));
-    expect(pantalla.getByText('C$ 92')).toBeTruthy();
+    expect(pantalla.getByText('C$ 140')).toBeTruthy();
   });
 
   it('lleva a los pasajeros con los asientos elegidos en orden', async () => {
@@ -57,7 +57,7 @@ describe('Asientos', () => {
       <Asientos
         alSeguir={alSeguir}
         alVolver={() => undefined}
-        viajeId={VIAJE_GRANADA}
+        viajeId={VIAJE_BOACO}
       />,
     );
     await fireEvent.press(pantalla.getByLabelText('Asiento 9, ventana, libre'));
@@ -72,7 +72,7 @@ describe('Asientos', () => {
       <Asientos
         alSeguir={() => undefined}
         alVolver={alVolver}
-        viajeId={VIAJE_GRANADA}
+        viajeId={VIAJE_BOACO}
       />,
     );
     await fireEvent.press(pantalla.getByRole('button', { name: 'Volver' }));

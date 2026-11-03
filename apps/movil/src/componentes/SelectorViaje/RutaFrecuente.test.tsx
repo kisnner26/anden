@@ -10,15 +10,15 @@ it('comunica el trayecto y permite recuperarlo', async () => {
   const pantalla = await renderPantalla(
     <RutaFrecuente
       alPresionar={alPresionar}
-      destino="Granada"
-      etiqueta="Usar ruta a Granada"
+      destino="Boaco"
+      etiqueta="Usar ruta a Boaco"
       origen="Managua"
       proximaHora="06:30"
     />,
   );
 
-  const ruta = pantalla.getByRole('button', { name: 'Usar ruta a Granada' });
-  expect(ruta.props.accessibilityHint).toBe('Managua, Granada, 06:30');
+  const ruta = pantalla.getByRole('button', { name: 'Usar ruta a Boaco' });
+  expect(ruta.props.accessibilityHint).toBe('Managua, Boaco, 06:30');
   await fireEvent.press(ruta);
   expect(alPresionar).toHaveBeenCalledTimes(1);
 });

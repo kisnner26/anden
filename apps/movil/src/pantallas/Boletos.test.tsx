@@ -65,7 +65,7 @@ describe('Boletos', () => {
     );
     const pantalla = await dibujar();
     expect(await pantalla.findByText('Tu próximo viaje')).toBeTruthy();
-    expect(pantalla.getByLabelText('Tu próximo viaje Granada')).toBeTruthy();
+    expect(pantalla.getByLabelText('Tu próximo viaje Boaco')).toBeTruthy();
   });
 
   it('separa los boletos pasados', async () => {
@@ -89,7 +89,7 @@ describe('Boletos', () => {
     const alAbrirBoleto = jest.fn();
     const pantalla = await dibujar({ alAbrirBoleto });
     await fireEvent.press(
-      await pantalla.findByRole('button', { name: /Granada/ }),
+      await pantalla.findByRole('button', { name: /Boaco/ }),
     );
     expect(alAbrirBoleto).toHaveBeenCalledWith('bol_K7RM4QX9');
   });

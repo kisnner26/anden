@@ -1,7 +1,7 @@
 import { codigoValido } from '@anden/dominio';
 import { describe, expect, it } from '@jest/globals';
 
-import { crearMuestra, VIAJE_GRANADA } from './muestra';
+import { crearMuestra, VIAJE_BOACO } from './muestra';
 import { crearReserva, ocupacionesDe, totalReserva } from './reserva';
 
 const AHORA = new Date('2026-11-02T20:00:00.000Z');
@@ -13,7 +13,7 @@ function generador() {
 
 function reservar(
   asientos: number[],
-  viajeId = VIAJE_GRANADA,
+  viajeId = VIAJE_BOACO,
   datos = crearMuestra(AHORA),
 ) {
   return crearReserva(
@@ -36,7 +36,7 @@ describe('crearReserva', () => {
     expect(resultado.valor).toHaveLength(2);
     for (const { boleto } of resultado.valor) {
       expect(boleto.estado).toBe('vigente');
-      expect(boleto.precio).toBe(46);
+      expect(boleto.precio).toBe(70);
     }
   });
 
@@ -53,7 +53,7 @@ describe('crearReserva', () => {
     if (!resultado.ok) throw new Error('la reserva debía salir bien');
     expect(resultado.valor[0]?.resumen).toMatchObject({
       choferNombre: 'Marvin Lanzas',
-      destino: 'Granada',
+      destino: 'Boaco',
       metodoPago: 'efectivo-al-abordar',
       placa: 'M 222-114',
       servicio: 'ordinario',
@@ -63,7 +63,7 @@ describe('crearReserva', () => {
   it('recorta el nombre y omite la cédula vacía', () => {
     const resultado = crearReserva(
       crearMuestra(AHORA),
-      VIAJE_GRANADA,
+      VIAJE_BOACO,
       [{ asiento: 8, cedula: '  ', nombre: '  Ana Ruiz ' }],
       AHORA,
       generador(),
@@ -79,13 +79,13 @@ describe('crearReserva', () => {
     const datos = crearMuestra(AHORA);
     const sinNombre = crearReserva(
       datos,
-      VIAJE_GRANADA,
+      VIAJE_BOACO,
       [{ asiento: 8, nombre: ' ' }],
       AHORA,
       generador(),
     );
     expect(sinNombre).toEqual({ error: 'faltan-nombres', ok: false });
-    const vacia = crearReserva(datos, VIAJE_GRANADA, [], AHORA, generador());
+    const vacia = crearReserva(datos, VIAJE_BOACO, [], AHORA, generador());
     expect(vacia).toEqual({ error: 'faltan-nombres', ok: false });
   });
 
@@ -116,7 +116,7 @@ describe('crearReserva', () => {
 
   it('avisa que no hay tarifa si el tarifario está vacío', () => {
     const datos = { ...crearMuestra(AHORA), tarifario: [] };
-    expect(reservar([8], VIAJE_GRANADA, datos)).toEqual({
+    expect(reservar([8], VIAJE_BOACO, datos)).toEqual({
       error: 'sin-tarifa',
       ok: false,
     });
@@ -131,7 +131,7 @@ describe('ocupacionesDe', () => {
     expect(ocupaciones.map((o) => o.asiento)).toEqual([8, 9]);
     expect(
       ocupaciones.every(
-        (o) => o.estado === 'vendido' && o.viajeId === VIAJE_GRANADA,
+        (o) => o.estado === 'vendido' && o.viajeId === VIAJE_BOACO,
       ),
     ).toBe(true);
   });
@@ -140,18 +140,18 @@ describe('ocupacionesDe', () => {
 describe('totalReserva', () => {
   it('multiplica la tarifa oficial por la cantidad de asientos', () => {
     const datos = crearMuestra(AHORA);
-    expect(totalReserva(datos, VIAJE_GRANADA, 3)).toEqual({
-      total: 138,
-      unitario: 46,
+    expect(totalReserva(datos, VIAJE_BOACO, 3)).toEqual({
+      total: 210,
+      unitario: 70,
     });
   });
 
   it('es nulo sin asientos, sin viaje o sin tarifa', () => {
     const datos = crearMuestra(AHORA);
-    expect(totalReserva(datos, VIAJE_GRANADA, 0)).toBeNull();
+    expect(totalReserva(datos, VIAJE_BOACO, 0)).toBeNull();
     expect(totalReserva(datos, 'via_x', 2)).toBeNull();
     expect(
-      totalReserva({ ...datos, tarifario: [] }, VIAJE_GRANADA, 2),
+      totalReserva({ ...datos, tarifario: [] }, VIAJE_BOACO, 2),
     ).toBeNull();
   });
 });

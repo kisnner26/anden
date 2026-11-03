@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent } from '@testing-library/react-native';
 
-import { VIAJE_GRANADA } from '@/datos/muestra';
+import { VIAJE_BOACO } from '@/datos/muestra';
 import { reiniciarMuestra } from '@/datos/useSalidas';
 import { renderPantalla } from '@/pruebas/render';
 
@@ -17,7 +17,7 @@ function dibujar(
       alElegirAsiento={() => undefined}
       alVerChofer={() => undefined}
       alVolver={() => undefined}
-      viajeId={VIAJE_GRANADA}
+      viajeId={VIAJE_BOACO}
       {...propiedades}
     />,
   );
@@ -26,7 +26,7 @@ function dibujar(
 describe('DetalleViaje', () => {
   it('muestra el destino y la ruta con el servicio', async () => {
     const pantalla = await dibujar();
-    expect(pantalla.getByText(/UCA → Granada · Ordinario/)).toBeTruthy();
+    expect(pantalla.getByText(/UCA → Boaco · Ordinario/)).toBeTruthy();
   });
 
   it('muestra la placa de la unidad', async () => {
@@ -47,12 +47,12 @@ describe('DetalleViaje', () => {
   it('muestra el recorrido con las dos terminales', async () => {
     const pantalla = await dibujar();
     expect(pantalla.getByText('Terminal UCA')).toBeTruthy();
-    expect(pantalla.getByText('Terminal Granada')).toBeTruthy();
+    expect(pantalla.getByText('Terminal Boaco')).toBeTruthy();
   });
 
   it('muestra la tarifa de muestra', async () => {
     const pantalla = await dibujar();
-    expect(pantalla.getByText('C$ 46')).toBeTruthy();
+    expect(pantalla.getByText('C$ 70')).toBeTruthy();
     expect(pantalla.getByText('Tarifa de muestra')).toBeTruthy();
   });
 
@@ -71,7 +71,7 @@ describe('DetalleViaje', () => {
     await fireEvent.press(
       pantalla.getByRole('button', { name: 'Elegir asiento' }),
     );
-    expect(alElegirAsiento).toHaveBeenCalledWith(VIAJE_GRANADA);
+    expect(alElegirAsiento).toHaveBeenCalledWith(VIAJE_BOACO);
   });
 
   it('dice la venta cerrada en un viaje que ya salió', async () => {

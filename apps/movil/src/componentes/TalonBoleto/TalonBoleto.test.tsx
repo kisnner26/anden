@@ -23,7 +23,7 @@ const GUARDADO: BoletoGuardado = {
     choferId: 'cho_2',
     choferNombre: 'Marvin Lanzas',
     cooperativa: 'Cooperativa de muestra',
-    destino: 'Granada',
+    destino: 'Boaco',
     metodoPago: 'efectivo-al-abordar',
     placa: 'M 222-114',
     salida: new Date(2026, 10, 2, 14, 40).toISOString(),
@@ -40,7 +40,7 @@ describe('TalonBoleto', () => {
   });
   it('muestra el destino y el precio', async () => {
     const pantalla = await render(<TalonBoleto guardado={GUARDADO} />);
-    expect(pantalla.getByText('Terminal UCA → Granada.')).toBeTruthy();
+    expect(pantalla.getByText('Terminal UCA → Boaco.')).toBeTruthy();
     expect(pantalla.getByText('C$ 46')).toBeTruthy();
   });
 
@@ -63,7 +63,7 @@ describe('TalonBoleto', () => {
   it('se anuncia completo con el código', async () => {
     const pantalla = await render(<TalonBoleto guardado={GUARDADO} />);
     expect(
-      pantalla.getByLabelText('Tu boleto Granada, Código de abordaje K7RM4QX9'),
+      pantalla.getByLabelText('Tu boleto Boaco, Código de abordaje K7RM4QX9'),
     ).toBeTruthy();
   });
 

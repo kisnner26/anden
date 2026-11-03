@@ -16,7 +16,7 @@ describe('FilaBoleto', () => {
         guardado={GUARDADO}
       />,
     );
-    expect(pantalla.getByText('Granada')).toBeTruthy();
+    expect(pantalla.getByText('Boaco')).toBeTruthy();
     expect(pantalla.getByText('lun 2 nov, 2:40 p. m.')).toBeTruthy();
     expect(pantalla.getByText('Asiento 8 · K7RM4QX9')).toBeTruthy();
   });
