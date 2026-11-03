@@ -101,14 +101,26 @@ export function Boton({
       <Text style={[tipografia.subtitulo, { color: colorTexto }]}>
         {etiqueta}
       </Text>
-      {variante === 'pildora' && (
+      {(variante === 'principal' || variante === 'pildora') && (
         <View
-          style={[estilos.flecha, { backgroundColor: colores.ambar }]}
-          testID="boton-pildora-flecha"
+          style={[
+            estilos.flecha,
+            {
+              backgroundColor:
+                variante === 'principal' ? colores.bloqueNegro : colores.ambar,
+            },
+          ]}
+          testID={`boton-${variante}-flecha`}
         >
           <Icono
-            color={colores.sobreAmbar}
-            colorDetalle={colores.ambar}
+            color={
+              variante === 'principal'
+                ? colores.sobreNegro
+                : colores.sobreAmbar
+            }
+            colorDetalle={
+              variante === 'principal' ? colores.bloqueNegro : colores.ambar
+            }
             nombre="siguiente"
             tamano="mediano"
           />
