@@ -105,4 +105,22 @@ describe('VerBoleto', () => {
       await pantalla.findByText('No encontramos este boleto.'),
     ).toBeTruthy();
   });
+
+  it('muestra el estado cancelado sin acciones operables', async () => {
+    await AsyncStorage.setItem(
+      CLAVE_BOLETOS,
+      JSON.stringify([
+        {
+          ...boletoDePrueba(new Date(Date.now() + 60 * 60_000)),
+          boleto: {
+            ...boletoDePrueba(new Date(Date.now() + 60 * 60_000)).boleto,
+            estado: 'cancelado',
+          },
+        },
+      ]),
+    );
+    const pantalla = await dibujar();
+    expect(await pantalla.findByText('Estado: Boleto cancelado')).toBeTruthy();
+    expect(pantalla.queryByRole('button', { name: 'Cancelar reserva' })).toBeNull();
+  });
 });
