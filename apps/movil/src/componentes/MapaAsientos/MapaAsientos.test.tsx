@@ -69,4 +69,16 @@ describe('MapaAsientos', () => {
         .accessibilityState,
     ).toMatchObject({ selected: true });
   });
+
+  it('dibuja la puerta una sola vez aunque ocupe dos celdas', async () => {
+    const pantalla = await render(
+      <MapaAsientos
+        alElegir={() => undefined}
+        configuracion="coaster26"
+        elegidos={[]}
+        estados={ESTADOS}
+      />,
+    );
+    expect(pantalla.getAllByText('Puerta')).toHaveLength(1);
+  });
 });
