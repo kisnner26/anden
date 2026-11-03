@@ -1,8 +1,12 @@
-import { describe, expect, it, jest } from '@jest/globals';
-import { fireEvent } from '@testing-library/react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { afterEach, describe, expect, it, jest } from '@jest/globals';
+import { fireEvent, waitFor } from '@testing-library/react-native';
+import type { ReactNode } from 'react';
 import { Text } from 'react-native';
 
+import { CLAVE_PERFIL, ProveedorPerfil } from '@/datos/ProveedorPerfil';
 import { ProveedorReserva } from '@/datos/ProveedorReserva';
+import { usePerfil } from '@/datos/usePerfil';
 import { useReserva } from '@/datos/useReserva';
 import { renderPantalla } from '@/pruebas/render';
 
@@ -27,6 +31,16 @@ function dibujar(propiedades: Partial<Parameters<typeof Pasajeros>[0]> = {}) {
     </ProveedorReserva>,
   );
 }
+
+/** la pantalla se abre con el perfil ya cargado, como pasa en la app */
+function TrasCargar({ children }: { children: ReactNode }) {
+  const { cargando } = usePerfil();
+  return cargando ? null : children;
+}
+
+afterEach(async () => {
+  await AsyncStorage.clear();
+});
 
 describe('Pasajeros', () => {
   it('pide un nombre y una cédula opcional por cada asiento', async () => {
@@ -83,5 +97,70 @@ describe('Pasajeros', () => {
     const pantalla = await dibujar({ alVolver });
     await fireEvent.press(pantalla.getByRole('button', { name: 'Volver' }));
     expect(alVolver).toHaveBeenCalledTimes(1);
+  });
+
+  it('trae el nombre y la cédula del perfil en el primer asiento', async () => {
+    await AsyncStorage.setItem(
+      CLAVE_PERFIL,
+      JSON.stringify({
+        apellido: 'Mora',
+        cedula: '001-010190-0001A',
+        nombre: 'Ana',
+      }),
+    );
+    const pantalla = await renderPantalla(
+      <ProveedorPerfil>
+        <ProveedorReserva>
+          <TrasCargar>
+            <Pasajeros
+              alContinuar={() => undefined}
+              alVolver={() => undefined}
+              asientos={[8, 9]}
+              viajeId="via_2"
+            />
+          </TrasCargar>
+        </ProveedorReserva>
+      </ProveedorPerfil>,
+    );
+    await waitFor(() =>
+      expect(
+        pantalla.getByLabelText('Nombre completo · Asiento 8').props.value,
+      ).toBe('Ana Mora'),
+    );
+    expect(
+      pantalla.getByLabelText('Cédula (opcional) · Asiento 8').props.value,
+    ).toBe('001-010190-0001A');
+    expect(
+      pantalla.getByLabelText('Nombre completo · Asiento 9').props.value,
+    ).toBe('');
+  });
+
+  it('un pasajero guardado llena el siguiente asiento libre', async () => {
+    await AsyncStorage.setItem(
+      CLAVE_PERFIL,
+      JSON.stringify({
+        nombre: 'Ana',
+        pasajeros: [{ id: 'p1', nombre: 'Luis Rocha' }],
+      }),
+    );
+    const pantalla = await renderPantalla(
+      <ProveedorPerfil>
+        <ProveedorReserva>
+          <TrasCargar>
+            <Pasajeros
+              alContinuar={() => undefined}
+              alVolver={() => undefined}
+              asientos={[8, 9]}
+              viajeId="via_2"
+            />
+          </TrasCargar>
+        </ProveedorReserva>
+      </ProveedorPerfil>,
+    );
+    await waitFor(() => expect(pantalla.getByText('Luis Rocha')).toBeTruthy());
+    await fireEvent.press(pantalla.getByText('Luis Rocha'));
+    expect(
+      pantalla.getByLabelText('Nombre completo · Asiento 9').props.value,
+    ).toBe('Luis Rocha');
   });
 });
