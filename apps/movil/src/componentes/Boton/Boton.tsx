@@ -77,6 +77,8 @@ export function Boton({
         variante === 'principal' && {
           backgroundColor: colores.ambar,
           borderColor: colores.ambar,
+          borderRadius: radios.pildora,
+          justifyContent: 'space-between',
         },
         variante === 'secundario' && {
           backgroundColor: colores.superficie,
