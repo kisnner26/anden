@@ -40,7 +40,7 @@ describe('TalonBoleto', () => {
   });
   it('muestra el destino y el precio', async () => {
     const pantalla = await render(<TalonBoleto guardado={GUARDADO} />);
-    expect(pantalla.getByText('UCA → Granada.')).toBeTruthy();
+    expect(pantalla.getByText('Terminal UCA → Granada.')).toBeTruthy();
     expect(pantalla.getByText('C$ 46')).toBeTruthy();
   });
 
