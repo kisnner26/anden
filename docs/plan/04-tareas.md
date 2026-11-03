@@ -105,7 +105,7 @@ La v2 está aprobada y escrita en `02-diseno.md`. Estas tareas llevan lo ya cons
 - commits: un `feat:` por componente y por estado, un `test:` por caso.
 
 ### T-032b · botones y chips v2
-- depende de: T-031b · zona: `apps/movil/src/componentes/Boton`, `Chip` · raíz: no · estado: libre
+- depende de: T-031b · zona: `apps/movil/src/componentes/Boton`, `Chip` · raíz: no · estado: hecha
 - hacer: llevar `Boton` y `Chip` a la v2: principal ámbar en píldora con círculo negro y flecha, secundario de barro, chip activo negro; conservar estados, háptica y pruebas.
 - hecho cuando: `pnpm verificar` en verde y la vitrina muestra los controles como en las capturas v2.
 - commits: un `refactor:` por componente y variante.
