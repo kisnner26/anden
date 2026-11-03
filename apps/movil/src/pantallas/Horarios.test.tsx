@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from '@jest/globals';
+import { afterEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent } from '@testing-library/react-native';
 
 import { reiniciarMuestra } from '@/datos/useSalidas';
@@ -41,5 +41,14 @@ describe('Horarios', () => {
     expect(
       pantalla.getAllByLabelText(/, (Salió|Abordando|A tiempo|\+\d+ min)$/),
     ).toHaveLength(8);
+  });
+
+  it('la lupa abre el buscador', async () => {
+    const alAbrirBuscador = jest.fn();
+    const pantalla = await renderPantalla(
+      <Horarios alAbrirBuscador={alAbrirBuscador} />,
+    );
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Buscar' }));
+    expect(alAbrirBuscador).toHaveBeenCalledTimes(1);
   });
 });
