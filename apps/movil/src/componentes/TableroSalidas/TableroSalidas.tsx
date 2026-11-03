@@ -94,7 +94,7 @@ function Hora({ salida, pasada }: { pasada: boolean; salida: Salida }) {
         <FichaFlap
           caracter={caracter}
           color={pasada ? negro.tintaSuave : negro.ambar}
-          key={`${caracter}${indice}`}
+          key={indice}
         />
       ))}
     </View>
