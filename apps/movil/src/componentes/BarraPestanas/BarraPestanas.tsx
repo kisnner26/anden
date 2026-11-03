@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Bloque } from '@/componentes/Bloque';
 import { Icono, type NombreIcono } from '@/componentes/Icono';
-import { radios } from '@/tema/espacios';
+import { espacios, radios, tamanosBarraPestanas } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 
@@ -95,25 +95,30 @@ const estilos = StyleSheet.create({
   activa: {
     alignItems: 'center',
     borderRadius: radios.pildora,
-    gap: 3,
-    height: 58,
+    gap: espacios.cuatro,
+    height: tamanosBarraPestanas.altoPestana,
     justifyContent: 'center',
-    width: 74,
+    width: tamanosBarraPestanas.anchoPestana,
   },
   fila: {
     alignItems: 'center',
     flexDirection: 'row',
-    height: 74,
+    height: tamanosBarraPestanas.alto,
     justifyContent: 'space-between',
-    paddingHorizontal: 10,
+    paddingHorizontal: tamanosBarraPestanas.rellenoHorizontal,
   },
-  flotante: { bottom: 26, left: 14, position: 'absolute', right: 14 },
+  flotante: {
+    bottom: tamanosBarraPestanas.margenInferior,
+    left: tamanosBarraPestanas.margenLateral,
+    position: 'absolute',
+    right: tamanosBarraPestanas.margenLateral,
+  },
   inactiva: {
     alignItems: 'center',
-    gap: 3,
-    height: 58,
+    gap: espacios.cuatro,
+    height: tamanosBarraPestanas.altoPestana,
     justifyContent: 'center',
-    width: 74,
+    width: tamanosBarraPestanas.anchoPestana,
   },
   nombre: { fontFamily: 'Archivo_600SemiBold', fontSize: 11, lineHeight: 14 },
   pestana: { alignItems: 'center' },
