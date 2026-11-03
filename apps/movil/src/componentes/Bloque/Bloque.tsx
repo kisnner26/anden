@@ -4,7 +4,7 @@ import { View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { conAlfa } from '@/tema/alfa';
 import { radios } from '@/tema/espacios';
-import { estilosRelieve } from '@/tema/relieve';
+import { estilosRelieve, relieve } from '@/tema/relieve';
 import { useTema } from '@/tema/useTema';
 
 export interface PropiedadesBloque {
@@ -32,8 +32,11 @@ export function Bloque({
   const borde = radios[radio];
 
   if (hundido) {
-    const sombraInterior = conAlfa(colores.sombraRelieve, 0.22);
-    const luzInterior = conAlfa(colores.luzRelieve, 0.85);
+    const sombraInterior = conAlfa(
+      colores.sombraRelieve,
+      relieve[modo].sombra.opacidad,
+    );
+    const luzInterior = conAlfa(colores.luzRelieve, relieve[modo].luz.opacidad);
     return (
       <View style={estilo} testID={testID}>
         <LinearGradient
