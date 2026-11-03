@@ -316,6 +316,13 @@ export const textos = {
     sinSalidas: 'Sin salidas por hoy',
     sinTarifa: 'sin tarifa',
     mapaPronto: 'El mapa con el recorrido y el bus en vivo llega pronto.',
+    volver: 'Volver a rutas',
+    detalleTitulo: 'Ruta a',
+    paradas: 'Paradas del recorrido',
+    tarifaMuestra: 'Tarifas de muestra',
+    minutos: 'min',
+    sinRuta: 'No encontramos esta ruta.',
+    siguienteSalida: 'Siguiente salida',
   },
   vitrina: {
     marca: 'Andén',
