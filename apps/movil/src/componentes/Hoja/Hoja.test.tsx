@@ -29,4 +29,16 @@ describe('Hoja', () => {
     );
     expect(alCerrar).toHaveBeenCalledTimes(1);
   });
+
+  it('etiqueta el asa que cierra la hoja', async () => {
+    const pantalla = await render(
+      <Hoja abierta alCerrar={() => undefined} etiquetaCerrar="Cerrar detalle">
+        <Text>Detalle del viaje</Text>
+      </Hoja>,
+    );
+
+    expect(
+      pantalla.getByRole('button', { name: 'Cerrar detalle' }),
+    ).toBeTruthy();
+  });
 });
