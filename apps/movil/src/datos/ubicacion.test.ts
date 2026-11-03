@@ -68,7 +68,18 @@ describe('consultarAccesoUbicacion', () => {
 });
 
 describe('obtenerUbicacionActual', () => {
+  it('no solicita permiso si la ubicación del sistema está desactivada', async () => {
+    jest.mocked(Location.hasServicesEnabledAsync).mockResolvedValue(false);
+
+    await expect(obtenerUbicacionActual()).resolves.toEqual({
+      estado: 'desactivado',
+    });
+    expect(Location.requestForegroundPermissionsAsync).not.toHaveBeenCalled();
+    expect(Location.getCurrentPositionAsync).not.toHaveBeenCalled();
+  });
+
   it('no lee la posición si se deniega el permiso', async () => {
+    jest.mocked(Location.hasServicesEnabledAsync).mockResolvedValue(true);
     jest
       .mocked(Location.requestForegroundPermissionsAsync)
       .mockResolvedValue({ status: 'denied' } as never);
