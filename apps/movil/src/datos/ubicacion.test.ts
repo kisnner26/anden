@@ -100,6 +100,20 @@ describe('obtenerUbicacionActual', () => {
     });
   });
 
+  it('convierte un fallo al leer posición en error recuperable', async () => {
+    jest.mocked(Location.hasServicesEnabledAsync).mockResolvedValue(true);
+    jest
+      .mocked(Location.requestForegroundPermissionsAsync)
+      .mockResolvedValue({ status: 'granted' } as never);
+    jest
+      .mocked(Location.getCurrentPositionAsync)
+      .mockRejectedValue(new Error('sin señal'));
+
+    await expect(obtenerUbicacionActual()).resolves.toEqual({
+      estado: 'error',
+    });
+  });
+
   it('pide precisión baja y devuelve el punto actual', async () => {
     jest
       .mocked(Location.requestForegroundPermissionsAsync)
