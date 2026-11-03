@@ -51,7 +51,9 @@ export function puedeRetener(
       (candidato) => candidato.numero === numero,
     );
     if (!asiento) return error('asiento-inexistente');
-    if (asiento.estado !== 'libre' && asiento.duenoId !== duenoId)
+    const esRetencionPropia =
+      asiento.estado === 'retenido' && asiento.duenoId === duenoId;
+    if (asiento.estado !== 'libre' && !esRetencionPropia)
       return error('asiento-ocupado');
   }
   return ok(undefined);
