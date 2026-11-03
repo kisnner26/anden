@@ -5,6 +5,16 @@ import { Text } from 'react-native';
 import { Hoja } from './Hoja';
 
 describe('Hoja', () => {
+  it('no expone el contenido cuando está cerrada', async () => {
+    const pantalla = await render(
+      <Hoja abierta={false} alCerrar={() => undefined} etiquetaCerrar="Cerrar detalle">
+        <Text>Detalle del viaje</Text>
+      </Hoja>,
+    );
+
+    expect(pantalla.queryByText('Detalle del viaje')).toBeNull();
+  });
+
   it('muestra el contenido y se puede cerrar desde el fondo', async () => {
     const alCerrar = jest.fn();
     const pantalla = await render(
