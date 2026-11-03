@@ -190,7 +190,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - hecho cuando: validar el boleto de muestra pasa a usado con la animación.
 
 ### T-093 · pulido de ubicación, rutas, boletos y abordaje
-- depende de: T-089, T-090, T-091, T-092 · zona: `apps/movil` · raíz: no · estado: libre
+- depende de: T-089, T-090, T-091, T-092 · zona: `apps/movil` · raíz: no · estado: hecha
 - hacer: auditar y pulir los flujos de ubicación, rutas, boletos y abordaje contra el diseño v2, incluyendo estados, accesibilidad, movimiento y vitrina.
 - hecho cuando: los flujos son coherentes con el diseño v2, respetan reducir movimiento y pasan pruebas, verificación y exportaciones móviles.
 - auditoría 2026-11-03: el detalle de ruta es una pantalla plana, tiene textos y medidas fuera de sus catálogos; el mapa no expresa una ruta seleccionada ni garantiza áreas táctiles; los controles de origen no diferencian permiso denegado de origen confirmado; el boleto separa sus acciones sin jerarquía visual, sus estados no se integran al talón y varias zonas táctiles, tamaños y espaciados quedan fuera de tema; Perfil, Avisos, Buscador y Horarios repiten esas medidas y carecen de estados de carga o foco anunciados de forma consistente.
