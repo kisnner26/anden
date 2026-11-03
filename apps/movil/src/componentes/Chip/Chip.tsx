@@ -3,6 +3,7 @@ import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { espacios, radios, tamanosControl } from '@/tema/espacios';
+import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 
@@ -93,5 +94,8 @@ const estilos = StyleSheet.create({
     height: espacios.doce,
     width: espacios.cuatro,
   },
-  presionado: { opacity: 0.82 },
+  presionado: {
+    opacity: 0.9,
+    transform: [{ scale: movimiento.escalaPresion }],
+  },
 });
