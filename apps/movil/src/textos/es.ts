@@ -77,6 +77,17 @@ export const textos = {
     avisoPago: 'El pago llega en la próxima versión.',
     noExiste: 'No encontramos este viaje.',
   },
+  ajustes: {
+    titulo: 'Apariencia',
+    detalle: 'Elegí cómo se ve Andén. Podés cambiarlo cuando quieras.',
+    automatico: 'Automático',
+    automaticoDetalle: 'Claro de día y oscuro de 6 p. m. a 6 a. m.',
+    claro: 'Claro',
+    claroDetalle: 'Fondo crema, el diseño base de Andén.',
+    oscuro: 'Oscuro',
+    oscuroDetalle: 'Fondo carbón, más cómodo de noche.',
+    volver: 'Volver',
+  },
   boletos: {
     titulo: 'Tus boletos',
     vacioTitulo: 'Todavía no tenés boletos',
