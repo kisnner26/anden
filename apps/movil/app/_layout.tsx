@@ -14,6 +14,8 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 
+import { ProveedorTema } from '@/tema/ProveedorTema';
+
 void SplashScreen.preventAutoHideAsync();
 
 export default function DisenoRaiz() {
@@ -37,5 +39,9 @@ export default function DisenoRaiz() {
     return null;
   }
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <ProveedorTema>
+      <Stack screenOptions={{ headerShown: false }} />
+    </ProveedorTema>
+  );
 }
