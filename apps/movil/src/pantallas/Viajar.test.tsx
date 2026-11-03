@@ -1,8 +1,9 @@
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
-import { fireEvent } from '@testing-library/react-native';
+import { fireEvent, waitFor } from '@testing-library/react-native';
 
 import { ContextoAvisos, type ValorAvisos } from '@/datos/useAvisos';
 import { reiniciarMuestra } from '@/datos/useSalidas';
+import * as ubicacion from '@/datos/ubicacion';
 import { renderPantalla } from '@/pruebas/render';
 
 import { Viajar } from './Viajar';
@@ -109,5 +110,21 @@ describe('Viajar', () => {
   it('sin avisos por leer la campana no lleva punto', async () => {
     const pantalla = await dibujar();
     expect(pantalla.queryByTestId('campana-sin-leer')).toBeNull();
+  });
+
+  it('ofrece ajustes solo cuando se deniega la ubicación', async () => {
+    const pedirUbicacion = jest
+      .spyOn(ubicacion, 'obtenerUbicacionActual')
+      .mockResolvedValue({ estado: 'denegado' });
+    const pantalla = await dibujar();
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Usar mi ubicación' }),
+    );
+    await waitFor(() =>
+      expect(
+        pantalla.getByRole('button', { name: 'Abrir ajustes' }),
+      ).toBeTruthy(),
+    );
+    pedirUbicacion.mockRestore();
   });
 });
