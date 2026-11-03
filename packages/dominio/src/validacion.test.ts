@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { correoOpcionalValido, nombrePersonaValido } from './validacion';
+import {
+  cedulaOpcionalValida,
+  correoOpcionalValido,
+  nombrePersonaValido,
+} from './validacion';
 
 describe('nombrePersonaValido', () => {
   it('acepta nombres reales con tildes y espacios', () => {
@@ -26,5 +30,18 @@ describe('correoOpcionalValido', () => {
     expect(correoOpcionalValido('kisnner@correo')).toBe(false);
     expect(correoOpcionalValido('kis nner@correo.com')).toBe(false);
     expect(correoOpcionalValido('kisnner..obando@correo.com')).toBe(false);
+  });
+});
+
+describe('cedulaOpcionalValida', () => {
+  it('acepta vacío y la estructura nicaragüense', () => {
+    expect(cedulaOpcionalValida('')).toBe(true);
+    expect(cedulaOpcionalValida('001-010190-0001a')).toBe(true);
+  });
+
+  it('rechaza longitudes, separadores y sufijos incorrectos', () => {
+    expect(cedulaOpcionalValida('0010101900001A')).toBe(false);
+    expect(cedulaOpcionalValida('001-010190-001A')).toBe(false);
+    expect(cedulaOpcionalValida('001-010190-00011')).toBe(false);
   });
 });
