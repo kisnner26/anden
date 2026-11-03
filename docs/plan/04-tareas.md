@@ -180,7 +180,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - hecho cuando: se toca un destino del mapa y se abre su detalle.
 
 ### T-091 · boletos mejorados
-- depende de: T-086 · zona: `apps/movil` · raíz: no · estado: libre
+- depende de: T-086 · zona: `apps/movil` · raíz: no · estado: hecha
 - hacer: próximos y pasados, boleto próximo destacado, Tu boleto con chofer, compartir, cancelar y cambiar con reglas de muestra, estados vacío, vencido, cancelado y usado.
 - hecho cuando: se ve y se opera el ciclo del boleto.
 
