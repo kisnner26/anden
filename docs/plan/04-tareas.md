@@ -201,7 +201,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - hecho cuando: Viajar puede usarlo sin valores visibles fuera del catálogo ni medidas fuera de tema.
 
 ### T-095 · validaciones y errores de formularios
-- depende de: T-086 · zona: `packages/dominio`, `apps/movil/src/componentes`, `apps/movil/src/pantallas` · raíz: no · estado: en curso
+- depende de: T-086 · zona: `packages/dominio`, `apps/movil/src/componentes`, `apps/movil/src/pantallas` · raíz: no · estado: hecha
 - hacer: auditar acceso, perfil y pasajeros; validar en dominio nombre, teléfono nicaragüense, correo y cédula opcionales; mostrar errores junto al campo, conservar los datos al fallar y anunciar el primer error.
 - hecho cuando: ningún formulario acepta valores inválidos ni falla en silencio y las pruebas cubren vacío, formato, límites, corrección y envío válido.
 
