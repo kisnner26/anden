@@ -57,4 +57,20 @@ describe('CampoLugar', () => {
     expect(cambiarOrigen).toHaveBeenCalledWith('ter_granada');
     expect(cambiarDestino).toHaveBeenCalledWith('ter_uca');
   });
+
+  it('explica cuando no encuentra terminales', async () => {
+    const pantalla = await render(
+      <CampoLugar
+        alCambiar={() => undefined}
+        etiqueta="Origen"
+        lugares={LUGARES}
+        marcador="Elegí terminal"
+        textoSinResultados="No encontramos terminales."
+        valorId="ter_uca"
+      />,
+    );
+
+    await fireEvent.changeText(pantalla.getByLabelText('Origen'), 'Bluefields');
+    expect(pantalla.getByText('No encontramos terminales.')).toBeTruthy();
+  });
 });
