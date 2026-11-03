@@ -11,6 +11,7 @@ import { terminalMasCercana } from '@anden/dominio';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
+import { CamposLugares } from '@/componentes/CampoLugar';
 import { EtiquetaMuestra } from '@/componentes/EtiquetaMuestra';
 import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
@@ -19,6 +20,7 @@ import { TarjetaProximoViaje } from '@/componentes/TarjetaProximoViaje';
 import { useAvisos } from '@/datos/useAvisos';
 import { useSalidas } from '@/datos/useSalidas';
 import { obtenerUbicacionActual } from '@/datos/ubicacion';
+import { proximaSalida } from '@/datos/salidas';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -43,17 +45,35 @@ export function Viajar({
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const [origenId, establecerOrigenId] = useState('ter_uca');
+  const [destinoId, establecerDestinoId] = useState('ter_gra');
   const [estadoUbicacion, establecerEstadoUbicacion] = useState<
     | { tipo: 'confirmada'; mensaje: string }
     | { tipo: 'denegada'; mensaje: string }
     | null
   >(null);
-  const { ahora, datos, proxima, salidas } = useSalidas(origenId);
+  const { ahora, datos, salidas } = useSalidas(origenId);
   const { noLeidos } = useAvisos();
-  const pendientes = salidas
+  const salidasDestino = salidas.filter(
+    (salida) =>
+      datos.rutas.find((ruta) => ruta.id === salida.rutaId)?.destinoId ===
+      destinoId,
+  );
+  const proxima = proximaSalida(salidasDestino);
+  const pendientes = salidasDestino
     .filter((salida) => ESTADOS_PENDIENTES.includes(salida.estado))
     .slice(0, 3);
-  const origen = datos.terminales.find((terminal) => terminal.id === origenId);
+  const cambiarOrigen = (nuevoOrigenId: string) => {
+    establecerOrigenId(nuevoOrigenId);
+    const destinoDisponible = datos.rutas.some(
+      (ruta) => ruta.origenId === nuevoOrigenId && ruta.destinoId === destinoId,
+    );
+    if (!destinoDisponible) {
+      const primeraRuta = datos.rutas.find(
+        (ruta) => ruta.origenId === nuevoOrigenId,
+      );
+      if (primeraRuta) establecerDestinoId(primeraRuta.destinoId);
+    }
+  };
   const usarUbicacion = async () => {
     const resultado = await obtenerUbicacionActual();
     if (resultado.estado !== 'otorgado') {
@@ -65,7 +85,7 @@ export function Viajar({
     }
     const cercana = terminalMasCercana(datos.terminales, resultado.punto);
     if (cercana) {
-      establecerOrigenId(cercana.terminal.id);
+      cambiarOrigen(cercana.terminal.id);
       establecerEstadoUbicacion({
         mensaje: `${t('viajar.ubicacionCercana')}: ${cercana.terminal.nombre}, ${t('viajar.ubicacionDistancia').replace('{{km}}', cercana.distanciaKm.toFixed(1))}`,
         tipo: 'confirmada',
@@ -155,44 +175,17 @@ export function Viajar({
           </Text>
         </Pressable>
       </View>
-      <View style={estilos.terminales}>
-        {datos.terminales.map((terminal) => (
-          <Pressable
-            accessibilityLabel={terminal.nombre}
-            accessibilityRole="button"
-            key={terminal.id}
-            onPress={() => establecerOrigenId(terminal.id)}
-            style={[
-              estilos.terminal,
-              {
-                backgroundColor:
-                  terminal.id === origenId
-                    ? colores.bloqueNegro
-                    : colores.superficieAlta,
-              },
-            ]}
-          >
-            <Text
-              style={[
-                tipografia.pequeno,
-                {
-                  color:
-                    terminal.id === origenId
-                      ? colores.sobreNegro
-                      : colores.tinta,
-                },
-              ]}
-            >
-              {terminal.codigo}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
-      {origen && (
-        <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
-          {origen.nombre}
-        </Text>
-      )}
+      <CamposLugares
+        alCambiarDestino={establecerDestinoId}
+        alCambiarOrigen={cambiarOrigen}
+        destinoId={destinoId}
+        etiquetaDestino={t('viajar.destino')}
+        etiquetaIntercambiar={t('viajar.intercambiarLugares')}
+        etiquetaOrigen={t('viajar.origen')}
+        lugares={datos.terminales}
+        marcador={t('viajar.elegirTerminal')}
+        origenId={origenId}
+      />
       {estadoUbicacion && (
         <View>
           <Text
@@ -274,20 +267,6 @@ const estilos = StyleSheet.create({
     minHeight: 44,
     justifyContent: 'center',
     paddingHorizontal: espacios.doce,
-  },
-  terminal: {
-    alignItems: 'center',
-    borderRadius: 12,
-    justifyContent: 'center',
-    minHeight: 44,
-    minWidth: 44,
-    paddingHorizontal: espacios.ocho,
-  },
-  terminales: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: espacios.ocho,
-    marginBottom: espacios.ocho,
   },
   saludo: { flex: 1 },
   seccion: {

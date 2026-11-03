@@ -40,16 +40,17 @@ describe('Viajar', () => {
 
   it('deja cambiar el origen manualmente', async () => {
     const pantalla = await dibujar();
+    await fireEvent(pantalla.getByLabelText('Salgo desde'), 'focus');
     await fireEvent.press(
       pantalla.getByRole('button', { name: 'Terminal Granada' }),
     );
-    expect(pantalla.getByText('Terminal Granada')).toBeTruthy();
-    expect(pantalla.getAllByText('Managua').length).toBeGreaterThan(0);
+    expect(pantalla.getByDisplayValue('Terminal Granada')).toBeTruthy();
+    expect(pantalla.getByDisplayValue('Terminal UCA')).toBeTruthy();
   });
 
-  it('lista tres salidas pendientes', async () => {
+  it('lista las salidas pendientes del destino elegido', async () => {
     const pantalla = await dibujar();
-    expect(pantalla.getAllByRole('button', { name: /andén/ })).toHaveLength(3);
+    expect(pantalla.getAllByRole('button', { name: /andén/ })).toHaveLength(1);
   });
 
   it('va directo a los asientos desde el botón del próximo viaje', async () => {
