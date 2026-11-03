@@ -2,12 +2,34 @@ import { describe, expect, it, jest } from '@jest/globals';
 
 jest.mock('expo-location', () => ({
   Accuracy: { Low: 1 },
+  PermissionStatus: {
+    DENIED: 'denied',
+    GRANTED: 'granted',
+    UNDETERMINED: 'undetermined',
+  },
+  getForegroundPermissionsAsync: jest.fn(),
   getCurrentPositionAsync: jest.fn(),
+  hasServicesEnabledAsync: jest.fn(),
   requestForegroundPermissionsAsync: jest.fn(),
 }));
 
 import * as Location from 'expo-location';
-import { obtenerUbicacionActual } from './ubicacion';
+import { consultarAccesoUbicacion, obtenerUbicacionActual } from './ubicacion';
+
+describe('consultarAccesoUbicacion', () => {
+  it('mantiene pendiente un permiso que nunca se preguntó', async () => {
+    jest.mocked(Location.hasServicesEnabledAsync).mockResolvedValue(true);
+    jest.mocked(Location.getForegroundPermissionsAsync).mockResolvedValue({
+      canAskAgain: true,
+      status: Location.PermissionStatus.UNDETERMINED,
+    } as never);
+
+    await expect(consultarAccesoUbicacion()).resolves.toEqual({
+      estado: 'pendiente',
+    });
+    expect(Location.getCurrentPositionAsync).not.toHaveBeenCalled();
+  });
+});
 
 describe('obtenerUbicacionActual', () => {
   it('no lee la posición si se deniega el permiso', async () => {
