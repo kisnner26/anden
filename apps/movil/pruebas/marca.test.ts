@@ -79,3 +79,10 @@ test('los arranques dejan ver el fondo nativo de cada tema', () => {
   expect(tipoColorPng('./assets/marca/arranque-claro.png')).toBe(6);
   expect(tipoColorPng('./assets/marca/arranque-oscuro.png')).toBe(6);
 });
+
+test('cada tema usa su propia version del titular', () => {
+  const claro = readFileSync(rutaActivo('./assets/marca/arranque-claro.png'));
+  const oscuro = readFileSync(rutaActivo('./assets/marca/arranque-oscuro.png'));
+
+  expect(claro.equals(oscuro)).toBe(false);
+});
