@@ -60,6 +60,12 @@ export const textos = {
     ubicacionDistancia: 'a {{km}} km de vos',
     ubicacionDenegada:
       'No permitiste la ubicación. Elegí una terminal o abrí Ajustes.',
+    ubicacionDesactivada:
+      'La ubicación del teléfono está apagada. Activala o elegí una terminal.',
+    ubicacionEsperando: 'Buscando la terminal más cercana',
+    ubicacionError:
+      'No pudimos leer tu ubicación. Podés reintentar o elegir una terminal.',
+    reintentarUbicacion: 'Reintentar ubicación',
     abrirAjustes: 'Abrir ajustes',
     sinSalidasOrigen: 'Sin salidas de muestra desde esta terminal.',
   },
