@@ -1,3 +1,4 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -37,13 +38,23 @@ export function Chip({
         {
           backgroundColor: seleccionado
             ? colores.bloqueNegro
-            : colores.superficieAlta,
+            : colores.barroClaro,
           borderColor: seleccionado ? colores.bloqueNegro : colores.linea,
         },
         deshabilitado && estilos.deshabilitado,
         pressed && estilos.presionado,
       ]}
     >
+      {!seleccionado && (
+        <LinearGradient
+          colors={[colores.barroClaro, colores.barroOscuro]}
+          end={{ x: 1, y: 1 }}
+          pointerEvents="none"
+          start={{ x: 0, y: 0 }}
+          style={[StyleSheet.absoluteFill, estilos.fondoBarro]}
+          testID="chip-fondo-barro"
+        />
+      )}
       {seleccionado && (
         <View
           style={[estilos.indicador, { backgroundColor: colores.ambar }]}
@@ -72,9 +83,11 @@ const estilos = StyleSheet.create({
     gap: espacios.ocho,
     justifyContent: 'center',
     minHeight: tamanosControl.toqueMinimo,
+    overflow: 'hidden',
     paddingHorizontal: espacios.dieciseis,
   },
   deshabilitado: { opacity: 0.45 },
+  fondoBarro: { borderRadius: radios.pildora },
   indicador: {
     borderRadius: radios.pildora,
     height: espacios.doce,
