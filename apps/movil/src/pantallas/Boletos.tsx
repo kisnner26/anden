@@ -1,11 +1,13 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
+import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { FilaBoleto } from '@/componentes/FilaBoleto';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
+import { minutosHastaSalida } from '@/datos/estadoBoleto';
 import type { BoletoGuardado } from '@/datos/reserva';
 import { useBoletos } from '@/datos/useBoletos';
 import { useAhora } from '@/datos/useSalidas';
@@ -80,6 +82,32 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
             <View>
               <Text
                 style={[
+                  tipografia.etiqueta,
+                  estilos.proximoEtiqueta,
+                  { color: colores.ambarTexto },
+                ]}
+              >
+                {t('boletos.proximo')}
+              </Text>
+              <Pressable
+                accessibilityLabel={`${t('boletos.proximo')} ${proximos[0]?.resumen.destino ?? ''}`}
+                accessibilityRole="button"
+                onPress={() => alAbrirBoleto(proximos[0]?.boleto.id ?? '')}
+              >
+                <BloqueNegro estiloContenido={estilos.proximo}>
+                  <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+                    {`${t('boletos.saleEn')} ${minutosHastaSalida(proximos[0]!, ahora)} ${t('viajar.minutos')}`}
+                  </Text>
+                  <Text style={[estilos.destinoProximo, { color: colores.fondo }]}>
+                    {proximos[0]?.resumen.destino}
+                  </Text>
+                  <Text style={[tipografia.dato, { color: colores.fondo }]}> 
+                    {`${t('boleto.anden')} ${proximos[0]?.resumen.anden} · ${t('boletos.asientoCorto')} ${proximos[0]?.boleto.asiento}`}
+                  </Text>
+                </BloqueNegro>
+              </Pressable>
+              <Text
+                style={[
                   tipografia.subtitulo,
                   estilos.seccion,
                   { color: colores.tinta },
@@ -87,7 +115,7 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
               >
                 {t('boletos.proximos')}
               </Text>
-              {proximos.map((guardado) => (
+              {proximos.slice(1).map((guardado) => (
                 <FilaBoleto
                   alPresionar={alAbrirBoleto}
                   ahora={ahora}
@@ -130,6 +158,13 @@ const estilos = StyleSheet.create({
   contenido: { paddingHorizontal: espacios.lateral },
   detalle: { textAlign: 'center' },
   seccion: { marginTop: espacios.veinticuatro },
+  proximo: { gap: espacios.ocho, padding: espacios.veinticuatro },
+  proximoEtiqueta: { marginTop: espacios.veinticuatro, marginBottom: espacios.ocho },
+  destinoProximo: {
+    fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
+    fontSize: 42,
+    lineHeight: 44,
+  },
   textos: { alignItems: 'center', gap: espacios.ocho },
   titulo: {
     fontFamily: 'ArchivoExtraCondensed_800ExtraBold',

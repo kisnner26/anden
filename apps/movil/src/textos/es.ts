@@ -301,7 +301,7 @@ export const textos = {
       'Cuando compres un viaje, tu boleto aparece acá y funciona sin internet.',
     buscar: 'Buscar salidas',
     proximo: 'Tu próximo viaje',
-    saleEn: 'Sale en {{minutos}} min',
+    saleEn: 'Sale en',
     estado: 'Estado',
   },
   rutas: {
