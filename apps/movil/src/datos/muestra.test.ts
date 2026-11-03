@@ -1,5 +1,6 @@
 import {
   esquemaBus,
+  esquemaCalificacion,
   esquemaChofer,
   esquemaRuta,
   esquemaTerminal,
@@ -44,5 +45,18 @@ describe('crearMuestra', () => {
     expect(primera && new Date(primera.salida).getTime()).toBe(
       AHORA.getTime() - 10 * 60_000,
     );
+  });
+
+  it('trae calificaciones válidas para cada chofer', () => {
+    expect(datos.calificaciones.length).toBeGreaterThan(40);
+    for (const calificacion of datos.calificaciones) {
+      expect(esquemaCalificacion.safeParse(calificacion).success).toBe(true);
+    }
+    for (const chofer of datos.choferes) {
+      const propias = datos.calificaciones.filter(
+        (c) => c.choferId === chofer.id,
+      );
+      expect(propias.length).toBeGreaterThanOrEqual(5);
+    }
   });
 });
