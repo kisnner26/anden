@@ -51,8 +51,21 @@ describe('Boletos', () => {
     );
     const pantalla = await dibujar();
     expect(await pantalla.findByText('Próximos')).toBeTruthy();
-    expect(pantalla.getByText(/Asiento 8 · K7RM4QX9/)).toBeTruthy();
+    expect(pantalla.getByText('Andén 4 · Asiento 8')).toBeTruthy();
     expect(pantalla.queryByText('Pasados')).toBeNull();
+  });
+
+  it('destaca el boleto con la salida más cercana', async () => {
+    await AsyncStorage.setItem(
+      CLAVE_BOLETOS,
+      JSON.stringify([
+        boletoDePrueba(new Date(Date.now() + 2 * 60 * 60_000), 8, 'P3NS6TW4'),
+        boletoDePrueba(new Date(Date.now() + 60 * 60_000), 9, 'K7RM4QX9'),
+      ]),
+    );
+    const pantalla = await dibujar();
+    expect(await pantalla.findByText('Tu próximo viaje')).toBeTruthy();
+    expect(pantalla.getByLabelText('Tu próximo viaje Granada')).toBeTruthy();
   });
 
   it('separa los boletos pasados', async () => {

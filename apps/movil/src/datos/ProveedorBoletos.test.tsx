@@ -73,7 +73,7 @@ describe('ProveedorBoletos', () => {
     expect(result.current.boletos).toHaveLength(1);
   });
 
-  it('cancela un boleto, libera el asiento y lo borra de lo guardado', async () => {
+  it('cancela un boleto, libera el asiento y conserva su estado', async () => {
     const { result } = await renderHook(() => useBoletos(), {
       wrapper: Envoltorio,
     });
@@ -85,13 +85,13 @@ describe('ProveedorBoletos', () => {
     await act(async () => {
       await result.current.cancelar(id);
     });
-    expect(result.current.boletos).toEqual([]);
+    expect(result.current.boletos[0]?.boleto.estado).toBe('cancelado');
     expect(
       obtenerMuestra().ocupaciones.some(
         (o) => o.estado === 'vendido' && o.boletoId === id,
       ),
     ).toBe(false);
-    expect(await AsyncStorage.getItem(CLAVE_BOLETOS)).toBe('[]');
+    expect(await AsyncStorage.getItem(CLAVE_BOLETOS)).toContain('"estado":"cancelado"');
   });
 
   it('recupera los boletos guardados al abrir la app', async () => {
