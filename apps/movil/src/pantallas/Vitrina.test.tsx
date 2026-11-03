@@ -65,4 +65,11 @@ describe('Vitrina', () => {
       pantalla.getByRole('button', { name: 'Mañana' }).props.accessibilityState,
     ).toEqual(expect.objectContaining({ selected: true }));
   });
+
+  it('el botón del tablero cambia la hora y el estado de la fila', async () => {
+    const pantalla = await render(<Vitrina />);
+    expect(pantalla.queryByText('+10 min')).toBeNull();
+    await fireEvent.press(pantalla.getByText('Cambiar hora y estado'));
+    expect(pantalla.getByText('+10 min')).toBeTruthy();
+  });
 });
