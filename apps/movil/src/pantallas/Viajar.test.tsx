@@ -78,6 +78,15 @@ describe('Viajar', () => {
     expect(pantalla.getByLabelText('2 Pasajeros')).toBeTruthy();
   });
 
+  it('recupera un destino desde tus rutas', async () => {
+    const pantalla = await dibujar();
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Usar ruta a Masaya' }),
+    );
+    expect(pantalla.getByDisplayValue('Terminal Masaya')).toBeTruthy();
+    expect(pantalla.getAllByText('Masaya').length).toBeGreaterThan(0);
+  });
+
   it('va directo a los asientos desde el botón del próximo viaje', async () => {
     const alElegirAsiento = jest.fn();
     const pantalla = await dibujar({ alElegirAsiento });
