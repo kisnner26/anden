@@ -38,4 +38,17 @@ describe('FilaSalida', () => {
     expect(pantalla.getByText('Granada')).toBeTruthy();
     expect(pantalla.getByText('2:40')).toBeTruthy();
   });
+
+  it('muestra la placa en el taxi interlocal y no en el ordinario', async () => {
+    const todas = armarSalidas(crearMuestra(AHORA), AHORA);
+    const taxi = todas.find(
+      (salida) => salida.servicio === 'taxi-interlocal',
+    ) as Salida;
+    const pantalla = await render(<FilaSalida salida={taxi} />);
+    expect(
+      pantalla.getByText(`Taxi interlocal · andén 6 · ${taxi.placa}`),
+    ).toBeTruthy();
+    const ordinario = await render(<FilaSalida salida={granada} />);
+    expect(ordinario.queryByText(new RegExp(granada.placa))).toBeNull();
+  });
 });
