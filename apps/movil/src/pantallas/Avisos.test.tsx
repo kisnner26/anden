@@ -87,9 +87,7 @@ describe('Avisos', () => {
   it('tocar un aviso lo marca como leído', async () => {
     const contexto = valor({ avisos: [PRONTO], noLeidos: 1 });
     const pantalla = await abrir(contexto);
-    await fireEvent.press(
-      pantalla.getByText('Tu bus a Boaco sale en 25 min'),
-    );
+    await fireEvent.press(pantalla.getByText('Tu bus a Boaco sale en 25 min'));
     expect(contexto.marcarLeido).toHaveBeenCalledWith('bol_1:pronto');
   });
 

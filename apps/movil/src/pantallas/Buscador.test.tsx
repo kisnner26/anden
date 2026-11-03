@@ -48,9 +48,7 @@ describe('Buscador', () => {
   it('tocar una ruta frecuente escribe el destino', async () => {
     const pantalla = await abrir();
     await fireEvent.press(pantalla.getByRole('button', { name: 'Boaco' }));
-    expect(pantalla.getByLabelText('Buscar salidas').props.value).toBe(
-      'Boaco',
-    );
+    expect(pantalla.getByLabelText('Buscar salidas').props.value).toBe('Boaco');
   });
 
   it('filtra por servicio', async () => {

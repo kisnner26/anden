@@ -15,7 +15,10 @@ afterEach(async () => {
 
 describe('agregarReciente', () => {
   it('pone la búsqueda nueva al principio', () => {
-    expect(agregarReciente(['Boaco'], 'Juigalpa')).toEqual(['Juigalpa', 'Boaco']);
+    expect(agregarReciente(['Boaco'], 'Juigalpa')).toEqual([
+      'Juigalpa',
+      'Boaco',
+    ]);
   });
 
   it('no repite una búsqueda, aunque cambien tildes o mayúsculas', () => {

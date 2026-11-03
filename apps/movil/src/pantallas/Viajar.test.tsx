@@ -55,7 +55,10 @@ describe('Viajar', () => {
 
   it('actualiza la próxima salida al elegir otro destino', async () => {
     const pantalla = await dibujar();
-    await fireEvent.changeText(pantalla.getByLabelText('Voy hacia'), 'Juigalpa');
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Voy hacia'),
+      'Juigalpa',
+    );
     await fireEvent.press(
       pantalla.getByRole('button', { name: 'Terminal Juigalpa' }),
     );

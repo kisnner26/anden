@@ -37,9 +37,7 @@ describe('armarRutas', () => {
   it('cuenta las salidas pendientes y da la próxima', () => {
     const boaco = de('Boaco');
     expect(boaco?.salidasPendientes).toBe(3);
-    expect(boaco?.proximaSalida?.getTime()).toBe(
-      AHORA.getTime() + 20 * 60_000,
-    );
+    expect(boaco?.proximaSalida?.getTime()).toBe(AHORA.getTime() + 20 * 60_000);
   });
 
   it('deja la tarifa en nulo si no hay tarifario', () => {
