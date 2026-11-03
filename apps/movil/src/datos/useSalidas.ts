@@ -31,10 +31,16 @@ export function useAhora(intervalo: number = MEDIO_MINUTO): Date {
   return ahora;
 }
 
-export function useSalidas() {
+export function useSalidas(origenId: string = 'ter_uca') {
   const ahora = useAhora();
   const datos = obtenerMuestra();
-  const salidas = useMemo(() => armarSalidas(datos, ahora), [datos, ahora]);
+  const salidas = useMemo(
+    () => armarSalidas(datos, ahora).filter((salida) => {
+      const ruta = datos.rutas.find((candidata) => candidata.id === salida.rutaId);
+      return ruta?.origenId === origenId;
+    }),
+    [datos, ahora, origenId],
+  );
   const proxima = useMemo(() => proximaSalida(salidas), [salidas]);
   return { ahora, datos, proxima, salidas };
 }

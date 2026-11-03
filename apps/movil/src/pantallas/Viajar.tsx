@@ -1,4 +1,6 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { terminalMasCercana } from '@anden/dominio';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
@@ -9,6 +11,7 @@ import { Loseta } from '@/componentes/Loseta';
 import { TarjetaProximoViaje } from '@/componentes/TarjetaProximoViaje';
 import { useAvisos } from '@/datos/useAvisos';
 import { useSalidas } from '@/datos/useSalidas';
+import { obtenerUbicacionActual } from '@/datos/ubicacion';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -32,11 +35,28 @@ export function Viajar({
 }: PropiedadesViajar) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
-  const { ahora, proxima, salidas } = useSalidas();
+  const [origenId, establecerOrigenId] = useState('ter_uca');
+  const [mensajeUbicacion, establecerMensajeUbicacion] = useState<string | null>(null);
+  const { ahora, datos, proxima, salidas } = useSalidas(origenId);
   const { noLeidos } = useAvisos();
   const pendientes = salidas
     .filter((salida) => ESTADOS_PENDIENTES.includes(salida.estado))
     .slice(0, 3);
+  const origen = datos.terminales.find((terminal) => terminal.id === origenId);
+  const usarUbicacion = async () => {
+    const resultado = await obtenerUbicacionActual();
+    if (resultado.estado !== 'otorgado') {
+      establecerMensajeUbicacion(t('viajar.ubicacionDenegada'));
+      return;
+    }
+    const cercana = terminalMasCercana(datos.terminales, resultado.punto);
+    if (cercana) {
+      establecerOrigenId(cercana.terminal.id);
+      establecerMensajeUbicacion(
+        `${t('viajar.ubicacionCercana')}: ${cercana.terminal.nombre}, ${t('viajar.ubicacionDistancia').replace('{{km}}', cercana.distanciaKm.toFixed(1))}`,
+      );
+    }
+  };
 
   return (
     <ScrollView
@@ -106,12 +126,29 @@ export function Viajar({
       )}
 
       <View style={estilos.seccion}>
+        <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>{t('viajar.origen')}</Text>
+        <Pressable accessibilityLabel={t('viajar.usarUbicacion')} accessibilityRole="button" onPress={usarUbicacion} style={[estilos.ubicacion, { backgroundColor: colores.ambar }]}>
+          <Text style={[tipografia.pequeno, { color: colores.sobreAmbar }]}>{t('viajar.usarUbicacion')}</Text>
+        </Pressable>
+      </View>
+      <View style={estilos.terminales}>
+        {datos.terminales.map((terminal) => (
+          <Pressable accessibilityLabel={terminal.nombre} accessibilityRole="button" key={terminal.id} onPress={() => establecerOrigenId(terminal.id)} style={[estilos.terminal, { backgroundColor: terminal.id === origenId ? colores.bloqueNegro : colores.superficieAlta }]}>
+            <Text style={[tipografia.pequeno, { color: terminal.id === origenId ? colores.sobreNegro : colores.tinta }]}>{terminal.codigo}</Text>
+          </Pressable>
+        ))}
+      </View>
+      {origen && <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>{origen.nombre}</Text>}
+      {mensajeUbicacion && <View><Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>{mensajeUbicacion}</Text><Pressable accessibilityLabel={t('viajar.abrirAjustes')} accessibilityRole="button" onPress={() => Linking.openSettings()}><Text style={[tipografia.pequeno, { color: colores.ambarTexto }]}>{t('viajar.abrirAjustes')}</Text></Pressable></View>}
+
+      <View style={estilos.seccion}>
         <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
           {t('viajar.salidasDeHoy')}
         </Text>
         <EtiquetaMuestra />
       </View>
 
+      {pendientes.length === 0 && <Text style={[tipografia.cuerpo, estilos.vacio, { color: colores.tintaSuave }]}>{t('viajar.sinSalidasOrigen')}</Text>}
       {pendientes.map((salida) => (
         <FilaSalida
           alPresionar={alAbrirViaje}
@@ -140,6 +177,9 @@ const estilos = StyleSheet.create({
     width: 44,
   },
   contenido: { paddingHorizontal: espacios.lateral },
+  ubicacion: { borderRadius: 999, minHeight: 44, justifyContent: 'center', paddingHorizontal: espacios.doce },
+  terminal: { alignItems: 'center', borderRadius: 12, justifyContent: 'center', minHeight: 44, minWidth: 44, paddingHorizontal: espacios.ocho },
+  terminales: { flexDirection: 'row', flexWrap: 'wrap', gap: espacios.ocho, marginBottom: espacios.ocho },
   saludo: { flex: 1 },
   seccion: {
     alignItems: 'center',

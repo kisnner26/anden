@@ -42,6 +42,13 @@ export const textos = {
     sinSalidas: 'No quedan salidas por hoy.',
     tarifasMuestra: 'Tarifas de muestra',
     asientosLibres: 'libres',
+    origen: 'Salgo desde',
+    usarUbicacion: 'Usar mi ubicación',
+    ubicacionCercana: 'Terminal más cercana',
+    ubicacionDistancia: 'a {{km}} km de vos',
+    ubicacionDenegada: 'No permitiste la ubicación. Elegí una terminal o abrí Ajustes.',
+    abrirAjustes: 'Abrir ajustes',
+    sinSalidasOrigen: 'Sin salidas de muestra desde esta terminal.',
   },
   horarios: {
     titulo: 'Salidas',
