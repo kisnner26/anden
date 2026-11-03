@@ -74,3 +74,8 @@ test('la pantalla de arranque usa la marca en ambos temas', () => {
     expect(dimensionesPng(ruta)).toEqual({ alto: 600, ancho: 600 });
   }
 });
+
+test('los arranques dejan ver el fondo nativo de cada tema', () => {
+  expect(tipoColorPng('./assets/marca/arranque-claro.png')).toBe(6);
+  expect(tipoColorPng('./assets/marca/arranque-oscuro.png')).toBe(6);
+});
