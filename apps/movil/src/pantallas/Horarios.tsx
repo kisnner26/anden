@@ -1,6 +1,6 @@
 import type { TipoServicio } from '@anden/dominio';
 import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
@@ -23,8 +23,12 @@ const FILTROS: readonly { clave: Filtro; etiqueta: () => string }[] = [
   { clave: 'taxi-interlocal', etiqueta: () => t('servicios.taxi') },
 ];
 
+export interface PropiedadesHorarios {
+  alAbrirBuscador?: () => void;
+}
+
 /** el tablero de salidas de la terminal, con filtro por servicio */
-export function Horarios() {
+export function Horarios({ alAbrirBuscador }: PropiedadesHorarios) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const { salidas } = useSalidas();
@@ -47,13 +51,15 @@ export function Horarios() {
           {t('horarios.titulo')}
           <Text style={{ color: colores.ambarTitular }}>.</Text>
         </Text>
-        <Bloque estiloContenido={estilos.buscar} radio="pildora">
-          <Icono
-            etiquetaAccesible={t('horarios.buscar')}
-            nombre="lupa"
-            tamano="ilustracion"
-          />
-        </Bloque>
+        <Pressable
+          accessibilityLabel={t('horarios.buscar')}
+          accessibilityRole="button"
+          onPress={alAbrirBuscador}
+        >
+          <Bloque estiloContenido={estilos.buscar} radio="pildora">
+            <Icono nombre="lupa" tamano="ilustracion" />
+          </Bloque>
+        </Pressable>
       </View>
 
       <Bloque estilo={estilos.terminal} estiloContenido={estilos.filaTerminal}>
