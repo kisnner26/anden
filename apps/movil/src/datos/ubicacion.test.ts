@@ -38,6 +38,19 @@ describe('consultarAccesoUbicacion', () => {
     });
     expect(Location.getCurrentPositionAsync).not.toHaveBeenCalled();
   });
+
+  it('reconoce un permiso ya otorgado sin leer la posición', async () => {
+    jest.mocked(Location.hasServicesEnabledAsync).mockResolvedValue(true);
+    jest.mocked(Location.getForegroundPermissionsAsync).mockResolvedValue({
+      canAskAgain: true,
+      status: Location.PermissionStatus.GRANTED,
+    } as never);
+
+    await expect(consultarAccesoUbicacion()).resolves.toEqual({
+      estado: 'otorgado',
+    });
+    expect(Location.getCurrentPositionAsync).not.toHaveBeenCalled();
+  });
 });
 
 describe('obtenerUbicacionActual', () => {
