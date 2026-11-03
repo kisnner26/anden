@@ -30,8 +30,12 @@ describe('FichaFlap', () => {
   });
 
   it('cae en su lugar cuando cambia el carácter', async () => {
-    const pantalla = await render(<FichaFlap caracter="4" color="#fff" />);
-    await pantalla.rerender(<FichaFlap caracter="5" color="#fff" />);
+    const pantalla = await render(
+      <FichaFlap caracter="4" color={coloresOscuros.ambar} />,
+    );
+    await pantalla.rerender(
+      <FichaFlap caracter="5" color={coloresOscuros.ambar} />,
+    );
 
     expect(caida).toHaveBeenCalledWith(1, {
       duration: movimiento.cambioEstado,
@@ -40,24 +44,36 @@ describe('FichaFlap', () => {
   });
 
   it('no cae si el carácter sigue igual', async () => {
-    const pantalla = await render(<FichaFlap caracter="4" color="#fff" />);
-    await pantalla.rerender(<FichaFlap caracter="4" color="#000" />);
+    const pantalla = await render(
+      <FichaFlap caracter="4" color={coloresOscuros.ambar} />,
+    );
+    await pantalla.rerender(
+      <FichaFlap caracter="4" color={coloresOscuros.tinta} />,
+    );
 
     expect(caida).not.toHaveBeenCalled();
   });
 
   it('cambia sin animación cuando el sistema pide reducir movimiento', async () => {
     reducir.mockReturnValue(true);
-    const pantalla = await render(<FichaFlap caracter="4" color="#fff" />);
-    await pantalla.rerender(<FichaFlap caracter="5" color="#fff" />);
+    const pantalla = await render(
+      <FichaFlap caracter="4" color={coloresOscuros.ambar} />,
+    );
+    await pantalla.rerender(
+      <FichaFlap caracter="5" color={coloresOscuros.ambar} />,
+    );
 
     expect(caida).not.toHaveBeenCalled();
     expect(pantalla.getByText('5')).toBeOnTheScreen();
   });
 
   it('el separador nunca gira', async () => {
-    const pantalla = await render(<FichaFlap caracter=":" color="#fff" />);
-    await pantalla.rerender(<FichaFlap caracter=":" color="#000" />);
+    const pantalla = await render(
+      <FichaFlap caracter=":" color={coloresOscuros.ambar} />,
+    );
+    await pantalla.rerender(
+      <FichaFlap caracter=":" color={coloresOscuros.tinta} />,
+    );
 
     expect(caida).not.toHaveBeenCalled();
   });
