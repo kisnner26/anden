@@ -156,4 +156,19 @@ describe('PerfilUsuario', () => {
     );
     await waitFor(() => expect(pantalla.queryByText('Sofía Mora')).toBeNull());
   });
+
+  it('no agrega un pasajero con nombre inválido', async () => {
+    const pantalla = await abrir();
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Nombre del pasajero'),
+      '7',
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Agregar pasajero' }),
+    );
+    expect(
+      pantalla.getByText('Escribí un nombre válido antes de agregarlo.'),
+    ).toBeTruthy();
+    expect(pantalla.getByDisplayValue('7')).toBeTruthy();
+  });
 });
