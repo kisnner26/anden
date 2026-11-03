@@ -57,6 +57,17 @@ describe('VerBoleto', () => {
     expect(alVerChofer).toHaveBeenCalledWith('cho_2');
   });
 
+  it('mantiene las acciones secundarias del boleto disponibles', async () => {
+    const pantalla = await dibujar();
+    expect(
+      await pantalla.findByRole('button', { name: 'Compartir datos del viaje' }),
+    ).toBeTruthy();
+    expect(
+      pantalla.getByRole('button', { name: 'Agregar recordatorio' }),
+    ).toBeTruthy();
+    expect(pantalla.getByRole('button', { name: 'Cambiar salida' })).toBeTruthy();
+  });
+
   it('comparte datos del viaje sin exponer el código de abordaje', async () => {
     const compartir = jest.spyOn(Share, 'share').mockResolvedValue({
       action: 'dismissedAction',
