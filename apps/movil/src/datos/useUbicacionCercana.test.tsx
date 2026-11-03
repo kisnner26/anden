@@ -6,10 +6,7 @@ jest.mock('./ubicacion', () => ({
   obtenerUbicacionActual: jest.fn(),
 }));
 
-import {
-  obtenerUbicacionActual,
-  type ResultadoUbicacion,
-} from './ubicacion';
+import { obtenerUbicacionActual, type ResultadoUbicacion } from './ubicacion';
 import { useUbicacionCercana } from './useUbicacionCercana';
 
 const TERMINALES: Terminal[] = [
@@ -69,9 +66,7 @@ it('elige la terminal y conserva solo el resultado derivado', async () => {
 });
 
 it('presenta el permiso denegado sin intentar elegir terminal', async () => {
-  jest
-    .mocked(obtenerUbicacionActual)
-    .mockResolvedValue({ estado: 'denegado' });
+  jest.mocked(obtenerUbicacionActual).mockResolvedValue({ estado: 'denegado' });
   const alSeleccionar = jest.fn();
   const { result } = await renderHook(() =>
     useUbicacionCercana(TERMINALES, alSeleccionar),
