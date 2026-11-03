@@ -51,6 +51,20 @@ describe('consultarAccesoUbicacion', () => {
     });
     expect(Location.getCurrentPositionAsync).not.toHaveBeenCalled();
   });
+
+  it('expone si un permiso denegado requiere abrir ajustes', async () => {
+    jest.mocked(Location.hasServicesEnabledAsync).mockResolvedValue(true);
+    jest.mocked(Location.getForegroundPermissionsAsync).mockResolvedValue({
+      canAskAgain: false,
+      status: Location.PermissionStatus.DENIED,
+    } as never);
+
+    await expect(consultarAccesoUbicacion()).resolves.toEqual({
+      estado: 'denegado',
+      puedePreguntar: false,
+    });
+    expect(Location.getCurrentPositionAsync).not.toHaveBeenCalled();
+  });
 });
 
 describe('obtenerUbicacionActual', () => {
