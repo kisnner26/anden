@@ -12,8 +12,8 @@ Hoy el viaje interlocal se resuelve llegando a la terminal y preguntando: no se 
 
 | persona | qué necesita |
 |---|---|
-| pasajero frecuente (trabaja en Managua, vive en Masaya, Granada, Jinotepe) | ver la próxima salida en segundos, comprar sin hacer fila, boleto offline |
-| viajero ocasional (León, Estelí, Matagalpa, Rivas, San Carlos) | comparar horarios y tipos de bus, elegir asiento, saber duración y paradas |
+| pasajero frecuente (trabaja en Managua, vive en Boaco o Juigalpa) | ver la próxima salida en segundos, comprar sin hacer fila, boleto offline |
+| viajero ocasional (Boaco, Juigalpa) | comparar horarios y tipos de bus, elegir asiento, saber duración y paradas |
 | quien manda a un familiar | comprar el boleto para otra persona y seguir el bus en vivo |
 | chofer y cooperativa (fase posterior) | ver su viaje asignado, validar boletos por código, reportar atrasos |
 
@@ -67,7 +67,7 @@ Estas reglas viven en `packages/dominio` y tienen pruebas. Si una tarea necesita
 
 ## datos de muestra
 
-Mientras no exista backend, la app corre con datos semilla realistas de Nicaragua: terminales (UCA, Mercado Roberto Huembes, Mercado Mayoreo, Mercado Israel Lewites, y las de Masaya, Granada, León, Estelí, Matagalpa, Jinotepe, Rivas, Chinandega, Juigalpa, San Carlos), rutas entre ellas, buses, choferes con nombres inventados y horarios. Los precios son de muestra y así se rotulan en el código (`// datos de muestra`). Las fotos de choferes son ilustraciones o retratos generados neutrales; nunca fotos de personas reales sin permiso.
+Mientras no exista backend, la app corre con datos semilla realistas de Nicaragua: terminales (UCA en Managua, Boaco y Juigalpa), rutas entre ellas, buses, choferes con nombres inventados y horarios. Los precios son de muestra y así se rotulan en el código (`// datos de muestra`). Las fotos de choferes son ilustraciones o retratos generados neutrales; nunca fotos de personas reales sin permiso.
 
 ## métricas de éxito de la v1
 
