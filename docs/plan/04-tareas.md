@@ -221,7 +221,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - hecho cuando: actualizaciones realtime mueven la unidad sin recargar, el eta se corrige con atraso y progreso, y existen estados sin señal, señal vieja, viaje finalizado y reconexión.
 
 ### T-099 · corredor interlocal y Rutas rediseñada
-- depende de: T-090 · zona: `packages/datos`, `apps/movil/src/pantallas`, `apps/movil/src/componentes` · raíz: no · estado: en curso
+- depende de: T-090 · zona: `packages/datos`, `apps/movil/src/pantallas`, `apps/movil/src/componentes` · raíz: no · estado: hecha
 - hacer: limitar la muestra visible al corredor Wácwala/Chagüilpa–Managua y rehacer Rutas sin el gráfico radial: dos recorridos claros, dirección, próxima unidad, estado y eta de muestra; detalle accesible y estados sin servicio.
 - hecho cuando: no aparecen destinos fuera del corredor, cada elemento visual tiene significado rotulado y las capturas en iphone coinciden con la dirección v2.
 
