@@ -1,5 +1,6 @@
-import { describe, expect, it } from '@jest/globals';
+import { beforeEach, describe, expect, it } from '@jest/globals';
 import { render } from '@testing-library/react-native';
+import { useReducedMotion, withTiming } from 'react-native-reanimated';
 
 import type { BoletoGuardado } from '@/datos/reserva';
 
@@ -31,6 +32,12 @@ const GUARDADO: BoletoGuardado = {
 };
 
 describe('TalonBoleto', () => {
+  beforeEach(() => {
+    (withTiming as unknown as { mockClear: () => void }).mockClear();
+    (
+      useReducedMotion as unknown as { mockReturnValue: (v: boolean) => void }
+    ).mockReturnValue(false);
+  });
   it('muestra el destino y el precio', async () => {
     const pantalla = await render(<TalonBoleto guardado={GUARDADO} />);
     expect(pantalla.getByText('UCA → Granada.')).toBeTruthy();
@@ -58,5 +65,34 @@ describe('TalonBoleto', () => {
     expect(
       pantalla.getByLabelText('Tu boleto Granada, Código de abordaje K7RM4QX9'),
     ).toBeTruthy();
+  });
+
+  it('muestra el sello cuando el boleto ya fue usado', async () => {
+    const pantalla = await render(
+      <TalonBoleto
+        guardado={{
+          ...GUARDADO,
+          boleto: { ...GUARDADO.boleto, estado: 'usado' },
+        }}
+      />,
+    );
+    expect(pantalla.getByText('Boleto usado')).toBeTruthy();
+  });
+
+  it('pasa a usado sin animación con reducir movimiento', async () => {
+    (
+      useReducedMotion as unknown as { mockReturnValue: (v: boolean) => void }
+    ).mockReturnValue(true);
+    const pantalla = await render(<TalonBoleto guardado={GUARDADO} />);
+    await pantalla.rerender(
+      <TalonBoleto
+        guardado={{
+          ...GUARDADO,
+          boleto: { ...GUARDADO.boleto, estado: 'usado' },
+        }}
+      />,
+    );
+    expect(withTiming).not.toHaveBeenCalled();
+    expect(pantalla.getByText('Boleto usado')).toBeTruthy();
   });
 });

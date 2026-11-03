@@ -143,7 +143,9 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
         </View>
       </Animated.View>
       {boleto.estado === 'usado' && (
-        <Animated.Text style={[estilos.sello, { color: colores.ambarTitular }, estiloSello]}>
+        <Animated.Text
+          style={[estilos.sello, { color: colores.ambarTitular }, estiloSello]}
+        >
           {t('boleto.usado')}
         </Animated.Text>
       )}
