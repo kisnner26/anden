@@ -90,6 +90,19 @@ describe('PerfilUsuario', () => {
     expect(pantalla.getByText('Ese correo no parece válido.')).toBeTruthy();
   });
 
+  it('rechaza nombres con números sin borrar lo escrito', async () => {
+    const pantalla = await abrir();
+    await fireEvent.changeText(pantalla.getByLabelText('Nombre'), 'Ana 2');
+    expect(
+      pantalla.getByText('Escribí un nombre de 2 a 80 letras.'),
+    ).toBeTruthy();
+    expect(pantalla.getByDisplayValue('Ana 2')).toBeTruthy();
+    expect(
+      pantalla.getByRole('button', { name: 'Guardar' }).props
+        .accessibilityState,
+    ).toMatchObject({ disabled: true });
+  });
+
   it('muestra la foto elegida de la galería', async () => {
     galeria.mockResolvedValue({ tipo: 'elegida', uri: 'file:///foto.jpg' });
     const pantalla = await abrir();
