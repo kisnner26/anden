@@ -44,6 +44,19 @@ describe('armarSalidas', () => {
     const granada = salidas.find((salida) => salida.destino === 'Granada');
     expect(granada?.ventaAbierta).toBe(true);
   });
+
+  it('trae la placa y el chofer de cada unidad', () => {
+    const granada = salidas.find((salida) => salida.destino === 'Granada');
+    expect(granada?.placa).toBe('M 222-114');
+    expect(granada?.choferId).toBe('cho_2');
+  });
+
+  it('identifica el taxi interlocal con su placa', () => {
+    const taxi = salidas.find(
+      (salida) => salida.servicio === 'taxi-interlocal',
+    );
+    expect(taxi?.placa).toMatch(/^M \d{3}-\d{3}$/);
+  });
 });
 
 describe('proximaSalida', () => {
