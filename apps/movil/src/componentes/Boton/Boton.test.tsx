@@ -38,6 +38,7 @@ describe('Boton', () => {
     );
 
     expect(pantalla.getByRole('button', { name: etiqueta })).toBeOnTheScreen();
+    expect(pantalla.getByTestId('boton-secundario-fondo')).toBeOnTheScreen();
     expect(pantalla.queryByTestId('boton-pildora-flecha')).toBeNull();
   });
 
