@@ -1,6 +1,7 @@
 // datos de muestra: no son oficiales. Las tarifas reales las fija el MTI (ver docs/plan/05-marco-mti.md).
 import type {
   Bus,
+  Calificacion,
   Chofer,
   ConfiguracionBus,
   Ocupacion,
@@ -13,6 +14,7 @@ import type {
 
 export interface DatosMuestra {
   buses: Bus[];
+  calificaciones: Calificacion[];
   choferes: Chofer[];
   ocupaciones: Ocupacion[];
   rutas: Ruta[];
@@ -160,6 +162,31 @@ const SALIDAS = [
   { anden: 1, atraso: 0, desde: 80, destino: 'est', servicio: 'expreso' },
 ] as const;
 
+/** notas de muestra de cada chofer, de la más vieja a la más nueva */
+const NOTAS_POR_CHOFER = [
+  [5, 5, 4, 5, 5, 4, 5, 5, 5, 4, 5, 5, 4, 5, 5],
+  [4, 5, 4, 4, 5, 4, 3, 5, 4, 4, 5, 4],
+  [5, 4, 5, 5, 4, 5, 5, 4, 5, 5, 5, 4, 5, 5, 4, 5, 4],
+  [4, 4, 5, 3, 4, 5, 4, 4, 5, 4, 4, 5],
+] as const;
+
+const ETIQUETAS_POR_NOTA = {
+  3: [],
+  4: ['amable'],
+  5: ['puntual', 'manejo-seguro'],
+} as const;
+
+function crearCalificaciones(): Calificacion[] {
+  return NOTAS_POR_CHOFER.flatMap((notas, indice) =>
+    notas.map<Calificacion>((estrellas, orden) => ({
+      boletoId: `bol_hist_${indice + 1}_${orden + 1}`,
+      choferId: `cho_${indice + 1}`,
+      estrellas,
+      etiquetas: [...ETIQUETAS_POR_NOTA[estrellas]],
+    })),
+  );
+}
+
 /** id del viaje de la salida de Granada, el que tiene el plano de asientos con ocupaciones */
 export const VIAJE_GRANADA = 'via_2';
 
@@ -220,6 +247,7 @@ export function crearMuestra(ahora: Date): DatosMuestra {
 
   return {
     buses,
+    calificaciones: crearCalificaciones(),
     choferes,
     ocupaciones: [...vendidos, ...apartados],
     rutas: RUTAS,
