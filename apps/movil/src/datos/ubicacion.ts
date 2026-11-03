@@ -12,6 +12,28 @@ export type ResultadoUbicacion =
   | { estado: 'denegado' }
   | { estado: 'error' };
 
+/** consulta el acceso sin abrir diálogos ni leer coordenadas. */
+export async function consultarAccesoUbicacion(): Promise<EstadoAccesoUbicacion> {
+  try {
+    const serviciosActivos = await Location.hasServicesEnabledAsync();
+    if (!serviciosActivos) return { estado: 'desactivado' };
+
+    const permiso = await Location.getForegroundPermissionsAsync();
+    if (permiso.status === Location.PermissionStatus.UNDETERMINED) {
+      return { estado: 'pendiente' };
+    }
+    if (permiso.status === Location.PermissionStatus.GRANTED) {
+      return { estado: 'otorgado' };
+    }
+    return {
+      estado: 'denegado',
+      puedePreguntar: permiso.canAskAgain,
+    };
+  } catch {
+    return { estado: 'error' };
+  }
+}
+
 /** solicita ubicación solo después de una acción explícita de la persona. */
 export async function obtenerUbicacionActual(): Promise<ResultadoUbicacion> {
   const permiso = await Location.requestForegroundPermissionsAsync();
