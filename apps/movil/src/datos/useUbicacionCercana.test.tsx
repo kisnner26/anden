@@ -6,7 +6,10 @@ jest.mock('./ubicacion', () => ({
   obtenerUbicacionActual: jest.fn(),
 }));
 
-import { obtenerUbicacionActual } from './ubicacion';
+import {
+  obtenerUbicacionActual,
+  type ResultadoUbicacion,
+} from './ubicacion';
 import { useUbicacionCercana } from './useUbicacionCercana';
 
 const TERMINALES: Terminal[] = [
@@ -19,6 +22,30 @@ const TERMINALES: Terminal[] = [
     nombre: 'Terminal Managua',
   },
 ];
+
+it('expone la espera mientras el proveedor busca la posición', async () => {
+  let completar: (resultado: ResultadoUbicacion) => void = () => undefined;
+  jest.mocked(obtenerUbicacionActual).mockImplementation(
+    () =>
+      new Promise<ResultadoUbicacion>((resolver) => {
+        completar = resolver;
+      }),
+  );
+  const { result } = await renderHook(() =>
+    useUbicacionCercana(TERMINALES, () => undefined),
+  );
+
+  let solicitud: Promise<void> | undefined;
+  await act(async () => {
+    solicitud = result.current.resolver();
+    await Promise.resolve();
+  });
+  expect(result.current.estado).toEqual({ tipo: 'esperando' });
+  await act(async () => {
+    completar({ estado: 'denegado' });
+    await solicitud;
+  });
+});
 
 it('elige la terminal y conserva solo el resultado derivado', async () => {
   jest.mocked(obtenerUbicacionActual).mockResolvedValue({
