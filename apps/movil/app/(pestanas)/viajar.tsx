@@ -7,8 +7,11 @@ export default function RutaViajar() {
   return (
     <Viajar
       alAbrirAjustes={() => router.push('/ajustes')}
-      alElegirViaje={(id) =>
+      alAbrirViaje={(id) =>
         router.push({ params: { id }, pathname: '/viaje/[id]' })
+      }
+      alElegirAsiento={(id) =>
+        router.push({ params: { id }, pathname: '/viaje/[id]/asientos' })
       }
     />
   );

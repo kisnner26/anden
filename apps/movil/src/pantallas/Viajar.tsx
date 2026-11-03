@@ -15,13 +15,18 @@ import { t } from '@/textos/t';
 
 export interface PropiedadesViajar {
   alAbrirAjustes?: () => void;
-  alElegirViaje: (viajeId: string) => void;
+  alAbrirViaje: (viajeId: string) => void;
+  alElegirAsiento: (viajeId: string) => void;
 }
 
 const ESTADOS_PENDIENTES = ['abordando', 'atrasado', 'programado'];
 
 /** inicio: el próximo viaje con el bus y las salidas de hoy */
-export function Viajar({ alAbrirAjustes, alElegirViaje }: PropiedadesViajar) {
+export function Viajar({
+  alAbrirAjustes,
+  alAbrirViaje,
+  alElegirAsiento,
+}: PropiedadesViajar) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const { ahora, proxima, salidas } = useSalidas();
@@ -69,7 +74,7 @@ export function Viajar({ alAbrirAjustes, alElegirViaje }: PropiedadesViajar) {
       {proxima ? (
         <TarjetaProximoViaje
           ahora={ahora}
-          alVerBoleto={() => alElegirViaje(proxima.viajeId)}
+          alVerBoleto={() => alElegirAsiento(proxima.viajeId)}
           salida={proxima}
         />
       ) : (
@@ -93,7 +98,7 @@ export function Viajar({ alAbrirAjustes, alElegirViaje }: PropiedadesViajar) {
 
       {pendientes.map((salida) => (
         <FilaSalida
-          alPresionar={alElegirViaje}
+          alPresionar={alAbrirViaje}
           key={salida.viajeId}
           salida={salida}
         />
