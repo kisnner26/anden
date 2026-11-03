@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { terminalMasCercana } from '@anden/dominio';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -16,6 +16,11 @@ import { EtiquetaMuestra } from '@/componentes/EtiquetaMuestra';
 import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
+import {
+  SelectorFecha,
+  SelectorPasajeros,
+  type DiaViaje,
+} from '@/componentes/SelectorViaje';
 import { TarjetaProximoViaje } from '@/componentes/TarjetaProximoViaje';
 import { useAvisos } from '@/datos/useAvisos';
 import { useSalidas } from '@/datos/useSalidas';
@@ -34,6 +39,27 @@ export interface PropiedadesViajar {
 }
 
 const ESTADOS_PENDIENTES = ['abordando', 'atrasado', 'programado'];
+const CANTIDAD_DIAS = 3;
+
+function diasDesde(fecha: Date): DiaViaje[] {
+  return Array.from({ length: CANTIDAD_DIAS }, (_, indice) => {
+    const dia = new Date(fecha);
+    dia.setDate(fecha.getDate() + indice);
+    const id = [dia.getFullYear(), dia.getMonth() + 1, dia.getDate()]
+      .map((parte) => parte.toString().padStart(2, '0'))
+      .join('-');
+    return {
+      etiqueta:
+        indice === 0
+          ? t('viajar.hoy')
+          : new Intl.DateTimeFormat('es-NI', { weekday: 'short' })
+              .format(dia)
+              .replace('.', ''),
+      id,
+      numero: dia.getDate().toString().padStart(2, '0'),
+    };
+  });
+}
 
 /** inicio: el próximo viaje con el bus y las salidas de hoy */
 export function Viajar({
@@ -52,6 +78,9 @@ export function Viajar({
     | null
   >(null);
   const { ahora, datos, salidas } = useSalidas(origenId);
+  const dias = useMemo(() => diasDesde(ahora), [ahora]);
+  const [fechaId, establecerFechaId] = useState(() => dias[0]?.id ?? '');
+  const [pasajeros, establecerPasajeros] = useState(1);
   const { noLeidos } = useAvisos();
   const salidasDestino = salidas.filter(
     (salida) =>
@@ -217,6 +246,22 @@ export function Viajar({
         </View>
       )}
 
+      <View style={estilos.planificacion}>
+        <SelectorFecha
+          alElegir={establecerFechaId}
+          dias={dias}
+          etiqueta={t('viajar.cuando')}
+          seleccionado={fechaId}
+        />
+        <SelectorPasajeros
+          alCambiar={establecerPasajeros}
+          cantidad={pasajeros}
+          etiqueta={t('viajar.pasajeros')}
+          etiquetaAumentar={t('viajar.agregarPasajero')}
+          etiquetaDisminuir={t('viajar.quitarPasajero')}
+        />
+      </View>
+
       <View style={estilos.seccion}>
         <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
           {t('viajar.salidasDeHoy')}
@@ -270,6 +315,10 @@ const estilos = StyleSheet.create({
     paddingHorizontal: espacios.doce,
   },
   saludo: { flex: 1 },
+  planificacion: {
+    gap: espacios.dieciseis,
+    marginTop: espacios.veinticuatro,
+  },
   seccion: {
     alignItems: 'center',
     flexDirection: 'row',
