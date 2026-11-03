@@ -196,7 +196,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - auditoría 2026-11-03: el detalle de ruta es una pantalla plana, tiene textos y medidas fuera de sus catálogos; el mapa no expresa una ruta seleccionada ni garantiza áreas táctiles; los controles de origen no diferencian permiso denegado de origen confirmado; el boleto separa sus acciones sin jerarquía visual, sus estados no se integran al talón y varias zonas táctiles, tamaños y espaciados quedan fuera de tema; Perfil, Avisos, Buscador y Horarios repiten esas medidas y carecen de estados de carga o foco anunciados de forma consistente.
 
 ### T-094 · restaurar CampoLugar
-- depende de: T-032 · zona: `apps/movil/src/componentes/` · raíz: no · estado: libre
+- depende de: T-032 · zona: `apps/movil/src/componentes/` · raíz: no · estado: hecha
 - hacer: implementar el componente `CampoLugar` que t-039 declara hecha pero no existe en el código, con selección accesible de terminal, prueba y vitrina.
 - hecho cuando: Viajar puede usarlo sin valores visibles fuera del catálogo ni medidas fuera de tema.
 
