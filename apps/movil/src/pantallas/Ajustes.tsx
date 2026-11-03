@@ -1,15 +1,19 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
+import { iniciales, nombreCompleto } from '@/datos/perfil';
+import { usePerfil } from '@/datos/usePerfil';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema, type PreferenciaTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
 export interface PropiedadesAjustes {
+  alAbrirPerfil?: () => void;
   alVolver: () => void;
 }
 
@@ -36,8 +40,10 @@ const OPCIONES: readonly {
 ];
 
 /** apariencia: claro, oscuro o automático según la hora */
-export function Ajustes({ alVolver }: PropiedadesAjustes) {
+export function Ajustes({ alAbrirPerfil, alVolver }: PropiedadesAjustes) {
   const { colores, establecerPreferencia, preferencia } = useTema();
+  const { perfil } = usePerfil();
+  const nombre = nombreCompleto(perfil);
   const margenes = useSafeAreaInsets();
 
   return (
@@ -66,6 +72,33 @@ export function Ajustes({ alVolver }: PropiedadesAjustes) {
         {t('ajustes.detalle')}
       </Text>
 
+      <Pressable
+        accessibilityLabel={t('perfil.entrada')}
+        accessibilityRole="button"
+        onPress={alAbrirPerfil}
+      >
+        <Bloque estiloContenido={estilos.filaOpcion}>
+          <Avatar
+            descripcion={t('perfil.fotoDescripcion')}
+            iniciales={iniciales(perfil)}
+            tamano={56}
+            uri={perfil.fotoUri}
+          />
+          <View style={estilos.texto}>
+            <Text style={[estilos.nombre, { color: colores.tinta }]}>
+              {nombre === '' ? t('perfil.sinNombre') : nombre}
+            </Text>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {t('perfil.entrada')}
+            </Text>
+          </View>
+          <Icono nombre="siguiente" tamano="mediano" />
+        </Bloque>
+      </Pressable>
+
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+        {t('perfil.apariencia')}
+      </Text>
       {OPCIONES.map(({ clave, detalle, nombre }) => {
         const elegida = preferencia === clave;
         return (
