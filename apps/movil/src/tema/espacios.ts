@@ -21,8 +21,8 @@ export const radios = {
 } as const;
 
 export const tamanosControl = {
-  altoBoton: 52,
-  circuloPildora: 36,
+  altoBoton: 56,
+  circuloPildora: 44,
   toqueMinimo: 44,
 } as const;
 
