@@ -29,6 +29,14 @@ test('el icono de instalacion usa el activo maestro cuadrado', () => {
   expect(dimensionesPng(ruta)).toEqual({ alto: 1024, ancho: 1024 });
 });
 
+test('el icono de instalacion coincide con la captura v2 aprobada', () => {
+  expect(readFileSync(rutaActivo(configuracion.expo.icon))).toEqual(
+    readFileSync(
+      join(RAIZ_MOVIL, '..', '..', 'mockups', 'capturas', 'v2', 'icono.png'),
+    ),
+  );
+});
+
 test('las variantes adaptativas de android conservan el lienzo seguro', () => {
   const adaptativo = configuracion.expo.android.adaptiveIcon;
 
