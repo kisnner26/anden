@@ -116,6 +116,40 @@ La v2 está aprobada y escrita en `02-diseno.md`. Estas tareas llevan lo ya cons
 - hecho cuando: `expo prebuild` y las exportaciones de Android e iOS pasan, y el ícono nuevo se ve en el teléfono.
 - commits: un `feat:` por activo y un `test:` por validación.
 
+## flujos de reserva y consulta
+
+Pedidos por el dueño tras probar la app en su iPhone (2 de noviembre de 2026): pagar en efectivo, ver horarios, choferes con su información, unidades con su placa y una interfaz más pulida. Se hacen sobre datos de muestra, detrás de los mismos hooks que usará T-024.
+
+### T-080 · apariencia y arreglos visuales
+- depende de: T-031b · zona: `apps/movil/src/tema`, `apps/movil/src/componentes` · raíz: no · estado: libre
+- hacer: tema claro por defecto con selector automático, claro y oscuro persistente y compartido por toda la app (proveedor de tema); arreglar lo visto en el teléfono: bloques hundidos en oscuro, la palabra PUERTA partida, el botón de acción con el círculo sobre el texto y las muestras de la leyenda.
+- hecho cuando: `pnpm verificar` en verde y las capturas de la v2 coinciden en claro y en oscuro.
+
+### T-081 · choferes, placas y calificaciones
+- depende de: T-010 · zona: `packages/dominio`, `apps/movil/src/datos` · raíz: no · estado: libre
+- hacer: `promedioChofer(calificaciones)` y `puedeCalificar` del dominio (T-019), datos de muestra con una placa por unidad, choferes con su cooperativa y calificaciones, y hooks para leerlos.
+- hecho cuando: pruebas del promedio con el mínimo de 5 calificaciones y las últimas 200.
+
+### T-082 · detalle del viaje y perfil del chofer
+- depende de: T-081 · zona: `apps/movil/src/pantallas`, `apps/movil/app` · raíz: no · estado: libre
+- hacer: detalle del viaje (hora, duración, servicio, unidad con su placa y cooperativa, chofer, paradas, tarifa de muestra y "Elegir asiento") y perfil del chofer (iniciales en un avatar propio, años manejando, viajes, licencia verificada, unidad, calificación y etiquetas).
+- hecho cuando: se llega desde la fila de salida y desde el tablero, y ambas pantallas tienen sus pruebas.
+
+### T-083 · reservar con pago en efectivo
+- depende de: T-082, T-017 · zona: `apps/movil/src/pantallas`, `apps/movil/src/datos`, `apps/movil/app` · raíz: sí (agrega un generador de QR) · estado: libre
+- hacer: pasajeros por asiento (nombre y si es menor en brazos), elección de pago con "Efectivo al abordar" activo y "Tarjeta o transferencia" marcado como próximamente, confirmación con el código del boleto y el QR, y el boleto guardado en el teléfono. El efectivo se paga al subir y por el monto exacto de la tarifa oficial (`05-marco-mti.md`). La reserva no cobra nada ni calcula precios en pantalla.
+- hecho cuando: de elegir asiento a ver el boleto con código y QR sin conexión, con pruebas del flujo.
+
+### T-084 · Mis boletos y Tu boleto
+- depende de: T-083 · zona: `apps/movil/src/pantallas`, `apps/movil/app` · raíz: no · estado: libre
+- hacer: lista de boletos guardados (próximos y pasados), boleto con talón, cuenta regresiva a la salida y cancelar la reserva.
+- hecho cuando: un boleto reservado aparece en la pestaña Boletos al reabrir la app.
+
+### T-085 · Rutas y buscar destino
+- depende de: T-082 · zona: `apps/movil/src/pantallas`, `apps/movil/app` · raíz: no · estado: libre
+- hacer: pestaña Rutas con las rutas de la terminal (kilómetros, duración, servicios y tarifa de muestra), detalle de ruta con sus paradas y salidas, y buscar destino desde el inicio con resultados.
+- hecho cuando: se puede ir del inicio a un destino y a sus salidas.
+
 ## fase 1 · dominio (TypeScript puro)
 
 Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el mismo commit (las reglas están en `01-producto.md`).
