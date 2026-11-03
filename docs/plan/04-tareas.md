@@ -368,8 +368,8 @@ Zona: `apps/movil/app/` y `apps/movil/src/pantallas/`. Raíz: no, salvo que se i
 - commits: `feat: navegacion por pestanas`
 
 ### T-041 · Viajar (inicio)
-- depende de: T-040, T-039, T-025 · estado: **parcial**
-- avance: portada y pantalla Viajar con el próximo viaje y las salidas de hoy sobre datos de muestra; faltan `CampoLugar`, fecha, pasajeros y rutas frecuentes.
+- depende de: T-040, T-039, T-025 · estado: hecha
+- avance: portada y pantalla Viajar con próximo viaje, `CampoLugar`, fecha, pasajeros, rutas frecuentes y salidas de hoy sobre datos de muestra.
 - commits: `feat: titular y buscador de inicio` · `feat: selector de fecha y pasajeros` · `feat: tus rutas con proxima salida`
 
 ### T-042 · resultados
