@@ -65,6 +65,23 @@ describe('Pasajeros', () => {
     ).toBeTruthy();
   });
 
+  it('marca el nombre inválido junto a su asiento', async () => {
+    const pantalla = await dibujar();
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Nombre completo · Asiento 8'),
+      'A1',
+    );
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Ir al pago' }));
+    expect(
+      pantalla.getAllByText('Escribí un nombre de 2 a 80 letras.').length,
+    ).toBeGreaterThan(0);
+    expect(
+      pantalla.getByLabelText('Nombre completo · Asiento 8').props[
+        'aria-invalid'
+      ],
+    ).toBe(true);
+  });
+
   it('guarda el borrador y avanza cuando todos tienen nombre', async () => {
     const alContinuar = jest.fn();
     const pantalla = await dibujar({ alContinuar });
