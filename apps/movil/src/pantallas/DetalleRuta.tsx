@@ -3,12 +3,17 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
+import { Autobus } from '@/componentes/Autobus';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { EtiquetaMuestra } from '@/componentes/EtiquetaMuestra';
 import { formatoDuracion, formatoHoraCompleta } from '@/datos/formato';
+import {
+  CORREDORES_INICIALES,
+  type CorredorInterlocal,
+} from '@/datos/corredores';
 import { armarRutas } from '@/datos/rutas';
 import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
-import { espacios } from '@/tema/espacios';
+import { espacios, tamanosIlustracion } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -18,8 +23,94 @@ export interface PropiedadesDetalleRuta {
   rutaId: string;
 }
 
+function DetalleCorredor({
+  alVolver,
+  corredor,
+}: {
+  alVolver: () => void;
+  corredor: CorredorInterlocal;
+}) {
+  const { colores } = useTema();
+  const margenes = useSafeAreaInsets();
+  return (
+    <ScrollView
+      contentContainerStyle={[
+        estilos.contenido,
+        {
+          paddingBottom: espacios.cuarentaYOcho,
+          paddingTop: margenes.top + espacios.ocho,
+        },
+      ]}
+      style={{ backgroundColor: colores.fondo }}
+    >
+      <CabeceraPantalla alVolver={alVolver} titulo={t('rutas.titulo')} />
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+        {t('rutas.corredor')}
+      </Text>
+      <Text
+        accessibilityRole="header"
+        style={[tipografia.display, { color: colores.tinta }]}
+      >
+        {`${corredor.origen} → ${corredor.destino}`}
+      </Text>
+
+      <BloqueNegro estiloContenido={estilos.seguimiento}>
+        <View style={estilos.busCorredor}>
+          <View
+            style={[estilos.lineaCorredor, { backgroundColor: colores.ambar }]}
+          />
+          <Autobus
+            ancho={tamanosIlustracion.autobusCorredor}
+            letrero={corredor.destino.toUpperCase()}
+          />
+        </View>
+        <Text style={[tipografia.subtitulo, { color: colores.sobreNegro }]}>
+          {t('rutas.seguimientoPendiente')}
+        </Text>
+        <Text style={[tipografia.cuerpo, { color: colores.sobreNegroSuave }]}>
+          {t('rutas.seguimientoDetalle')}
+        </Text>
+      </BloqueNegro>
+
+      <Bloque estiloContenido={estilos.extremos}>
+        <View style={estilos.extremo}>
+          <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+            {t('rutas.origenCorredor')}
+          </Text>
+          <Text style={[tipografia.titulo, { color: colores.tinta }]}>
+            {corredor.origen}
+          </Text>
+        </View>
+        <View
+          style={[estilos.lineaVertical, { backgroundColor: colores.ambar }]}
+        />
+        <View style={estilos.extremo}>
+          <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+            {t('rutas.destinoCorredor')}
+          </Text>
+          <Text style={[tipografia.titulo, { color: colores.tinta }]}>
+            {corredor.destino}
+          </Text>
+        </View>
+      </Bloque>
+    </ScrollView>
+  );
+}
+
 /** recorrido y tarifas de una ruta de muestra, con sus paradas como una línea de andén. */
-export function DetalleRuta({ alVolver, rutaId }: PropiedadesDetalleRuta) {
+export function DetalleRuta(propiedades: PropiedadesDetalleRuta) {
+  const corredor = CORREDORES_INICIALES.find(
+    (candidato) => candidato.id === propiedades.rutaId,
+  );
+  if (corredor) {
+    return (
+      <DetalleCorredor alVolver={propiedades.alVolver} corredor={corredor} />
+    );
+  }
+  return <DetalleRutaSemilla {...propiedades} />;
+}
+
+function DetalleRutaSemilla({ alVolver, rutaId }: PropiedadesDetalleRuta) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const ahora = useAhora();
@@ -146,12 +237,17 @@ export function DetalleRuta({ alVolver, rutaId }: PropiedadesDetalleRuta) {
 }
 
 const estilos = StyleSheet.create({
+  busCorredor: { alignItems: 'center', flexDirection: 'row' },
   cabeceraSeccion: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   contenido: { gap: espacios.dieciseis, paddingHorizontal: espacios.lateral },
+  extremo: { gap: espacios.cuatro },
+  extremos: { gap: espacios.dieciseis, padding: espacios.veinticuatro },
+  lineaCorredor: { flex: 1, height: espacios.cuatro },
+  lineaVertical: { height: espacios.treintaYDos, width: espacios.cuatro },
   nombreParada: { flex: 1, gap: espacios.cuatro },
   parada: { alignItems: 'center', flexDirection: 'row', gap: espacios.doce },
   paradas: { gap: espacios.dieciseis, padding: espacios.veinticuatro },
@@ -161,6 +257,7 @@ const estilos = StyleSheet.create({
     width: espacios.dieciseis,
   },
   resumen: { gap: espacios.ocho, padding: espacios.veinticuatro },
+  seguimiento: { gap: espacios.doce, padding: espacios.veinticuatro },
   tarifa: { gap: espacios.cuatro, padding: espacios.dieciseis },
   tarifas: { flexDirection: 'row', flexWrap: 'wrap', gap: espacios.ocho },
   vacio: { flex: 1, gap: espacios.dieciseis, padding: espacios.lateral },
