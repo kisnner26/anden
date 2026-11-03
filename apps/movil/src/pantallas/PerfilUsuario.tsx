@@ -1,4 +1,10 @@
-import { digitosTelefonoNi, formatearTelefonoNi } from '@anden/dominio';
+import {
+  cedulaOpcionalValida,
+  correoOpcionalValido,
+  digitosTelefonoNi,
+  formatearTelefonoNi,
+  nombrePersonaValido,
+} from '@anden/dominio';
 import { useState } from 'react';
 import {
   KeyboardAvoidingView,
@@ -18,7 +24,7 @@ import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { CampoTexto } from '@/componentes/CampoTexto';
 import { elegirFotoDeGaleria } from '@/datos/fotos';
-import { correoValido, iniciales, nombreCompleto } from '@/datos/perfil';
+import { iniciales, nombreCompleto } from '@/datos/perfil';
 import { usePerfil } from '@/datos/usePerfil';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -61,9 +67,15 @@ function FormularioPerfil({ alVolver }: PropiedadesPerfilUsuario) {
   const [nuevoPasajero, establecerNuevoPasajero] = useState('');
   const [sinPermiso, establecerSinPermiso] = useState(false);
   const [guardado, establecerGuardado] = useState(false);
+  const [mostrarErrores, establecerMostrarErrores] = useState(false);
 
+  const nombreMalo = nombre.trim() !== '' && !nombrePersonaValido(nombre);
+  const apellidoMalo = apellido.trim() !== '' && !nombrePersonaValido(apellido);
   const telefonoMalo = telefono.trim() !== '' && !digitosTelefonoNi(telefono);
-  const correoMalo = !correoValido(correo);
+  const correoMalo = !correoOpcionalValido(correo);
+  const cedulaMala = !cedulaOpcionalValida(cedula);
+  const formularioMalo =
+    nombreMalo || apellidoMalo || telefonoMalo || correoMalo || cedulaMala;
 
   function editar(cambiar: (valor: string) => void) {
     return (valor: string) => {
@@ -81,7 +93,8 @@ function FormularioPerfil({ alVolver }: PropiedadesPerfilUsuario) {
   }
 
   async function guardarCambios() {
-    if (telefonoMalo || correoMalo) return;
+    establecerMostrarErrores(true);
+    if (formularioMalo) return;
     await guardar({
       apellido: apellido.trim(),
       cedula: cedula.trim(),
@@ -93,7 +106,8 @@ function FormularioPerfil({ alVolver }: PropiedadesPerfilUsuario) {
   }
 
   async function sumarPasajero() {
-    if (nuevoPasajero.trim().length < 2) return;
+    establecerMostrarErrores(true);
+    if (!nombrePersonaValido(nuevoPasajero)) return;
     await agregarPasajero({ nombre: nuevoPasajero.trim() });
     establecerNuevoPasajero('');
   }
@@ -148,40 +162,35 @@ function FormularioPerfil({ alVolver }: PropiedadesPerfilUsuario) {
         <Bloque estiloContenido={estilos.bloque}>
           <CampoTexto
             alCambiar={editar(establecerNombre)}
+            error={nombreMalo ? t('perfil.nombreInvalido') : undefined}
             etiqueta={t('perfil.nombre')}
             valor={nombre}
           />
           <CampoTexto
             alCambiar={editar(establecerApellido)}
+            error={apellidoMalo ? t('perfil.apellidoInvalido') : undefined}
             etiqueta={t('perfil.apellido')}
             valor={apellido}
           />
           <CampoTexto
             alCambiar={editar(establecerTelefono)}
+            error={telefonoMalo ? t('perfil.telefonoInvalido') : undefined}
             etiqueta={t('perfil.telefono')}
             marcador={t('perfil.marcadorTelefono')}
             teclado="phone-pad"
             valor={telefono}
           />
-          {telefonoMalo && (
-            <Text style={[tipografia.pequeno, { color: colores.cancelado }]}>
-              {t('perfil.telefonoInvalido')}
-            </Text>
-          )}
           <CampoTexto
             alCambiar={editar(establecerCorreo)}
+            error={correoMalo ? t('perfil.correoInvalido') : undefined}
             etiqueta={t('perfil.correo')}
             marcador={t('perfil.marcadorCorreo')}
             teclado="email-address"
             valor={correo}
           />
-          {correoMalo && (
-            <Text style={[tipografia.pequeno, { color: colores.cancelado }]}>
-              {t('perfil.correoInvalido')}
-            </Text>
-          )}
           <CampoTexto
             alCambiar={editar(establecerCedula)}
+            error={cedulaMala ? t('perfil.cedulaInvalida') : undefined}
             etiqueta={t('perfil.cedula')}
             marcador={t('pasajeros.marcadorCedula')}
             valor={cedula}
@@ -224,6 +233,13 @@ function FormularioPerfil({ alVolver }: PropiedadesPerfilUsuario) {
           ))}
           <CampoTexto
             alCambiar={establecerNuevoPasajero}
+            error={
+              mostrarErrores &&
+              nuevoPasajero !== '' &&
+              !nombrePersonaValido(nuevoPasajero)
+                ? t('perfil.nombrePasajeroInvalido')
+                : undefined
+            }
             etiqueta={t('perfil.nombrePasajero')}
             valor={nuevoPasajero}
           />
@@ -245,7 +261,7 @@ function FormularioPerfil({ alVolver }: PropiedadesPerfilUsuario) {
         <View style={estilos.guardar}>
           <BotonAccion
             alPresionar={() => void guardarCambios()}
-            deshabilitado={telefonoMalo || correoMalo}
+            deshabilitado={formularioMalo}
             etiqueta={t('perfil.guardar')}
             icono="confirmar"
           />
