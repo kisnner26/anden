@@ -150,3 +150,26 @@ export function ocupacionesDe(boletos: readonly BoletoGuardado[]): Ocupacion[] {
     viajeId: boleto.viajeId,
   }));
 }
+
+/** tarifa oficial por pasajero y total de una reserva de varios asientos; nulo si no hay tarifa */
+export function totalReserva(
+  datos: DatosMuestra,
+  viajeId: string,
+  cantidad: number,
+): { total: number; unitario: number } | null {
+  const viaje = datos.viajes.find((candidato) => candidato.id === viajeId);
+  const ruta = datos.rutas.find((candidata) => candidata.id === viaje?.rutaId);
+  const bus = datos.buses.find((candidato) => candidato.id === viaje?.busId);
+  if (!ruta || !bus || cantidad < 1) return null;
+  const precio = precioOficial(
+    datos.tarifario,
+    ruta.id,
+    bus.servicio,
+    { desde: 0, hasta: ruta.paradas.length - 1 },
+    Array.from({ length: cantidad }, () => ({
+      esMenorEnBrazos: false,
+      nombre: 'pasajero',
+    })),
+  );
+  return precio.ok ? precio.valor : null;
+}
