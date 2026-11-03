@@ -155,7 +155,7 @@ Pedidos por el dueño tras probar la app en su iPhone (2 de noviembre de 2026): 
 Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el mismo commit (las reglas están en `01-producto.md`).
 
 ### T-086 · perfil y configuración del usuario
-- depende de: T-085 · zona: `apps/movil`, `packages/dominio` · raíz: sí (dependencias nativas) · estado: libre
+- depende de: T-085 · zona: `apps/movil`, `packages/dominio` · raíz: sí (dependencias nativas) · estado: hecha
 - hacer: validación del teléfono de Nicaragua en el dominio; perfil con foto de la galería, nombre, apellido, teléfono, correo y cédula opcionales, guardado en el teléfono; pasajeros guardados; el nombre y teléfono precargan Pasajeros.
 - hecho cuando: se edita y guarda el perfil, se ve el avatar y la compra lo reusa.
 
