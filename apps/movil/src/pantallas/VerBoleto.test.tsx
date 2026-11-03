@@ -60,6 +60,7 @@ describe('VerBoleto', () => {
   it('comparte datos del viaje sin exponer el código de abordaje', async () => {
     const compartir = jest.spyOn(Share, 'share').mockResolvedValue({
       action: 'dismissedAction',
+      activityType: undefined,
     });
     const pantalla = await dibujar();
     await fireEvent.press(

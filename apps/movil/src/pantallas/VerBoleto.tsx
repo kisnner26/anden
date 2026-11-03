@@ -52,6 +52,12 @@ export function VerBoleto({
   );
   const estado = estadoVisibleBoleto(guardado, ahora);
   const puedeOperar = estado === 'vigente';
+  const etiquetaEstado = {
+    cancelado: t('boleto.cancelado'),
+    usado: t('boleto.usado'),
+    vencido: t('boleto.vencido'),
+    vigente: t('boleto.estadoVigente'),
+  }[estado];
   const compartir = () =>
     Share.share({
       message: `${t('boleto.titulo')} a ${guardado.resumen.destino}. ${t('boleto.sale')} ${new Date(guardado.resumen.salida).toLocaleString('es-NI')}. ${t('boleto.anden')} ${guardado.resumen.anden}. ${t('boleto.placa')} ${guardado.resumen.placa}.`,
@@ -77,6 +83,9 @@ export function VerBoleto({
 
       <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
         {t('boleto.muestra')}
+      </Text>
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+        {`${t('boletos.estado')}: ${etiquetaEstado}`}
       </Text>
 
       <Bloque estiloContenido={estilos.pago} hundido radio="loseta">
@@ -144,7 +153,7 @@ export function VerBoleto({
         </Text>
       )}
 
-      {confirmando ? (
+      {puedeOperar && confirmando ? (
         <Bloque estiloContenido={estilos.confirmar} hundido radio="loseta">
           <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
             {t('boleto.confirmarCancelar')}
@@ -174,7 +183,7 @@ export function VerBoleto({
             </Pressable>
           </View>
         </Bloque>
-      ) : (
+      ) : puedeOperar ? (
         <Pressable
           accessibilityRole="button"
           onPress={() => establecerConfirmando(true)}
@@ -184,7 +193,7 @@ export function VerBoleto({
             {t('boleto.cancelar')}
           </Text>
         </Pressable>
-      )}
+      ) : null}
     </ScrollView>
   );
 }
