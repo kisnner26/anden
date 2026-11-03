@@ -185,7 +185,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - hecho cuando: se ve y se opera el ciclo del boleto.
 
 ### T-092 · animación al abordar
-- depende de: T-091 · zona: `apps/movil` · raíz: no · estado: libre
+- depende de: T-091 · zona: `apps/movil` · raíz: no · estado: hecha
 - hacer: el talón se separa y un sello ámbar "abordado" se estampa con háptica; sin movimiento con reducir movimiento; validación de prueba rotulada.
 - hecho cuando: validar el boleto de muestra pasa a usado con la animación.
 
