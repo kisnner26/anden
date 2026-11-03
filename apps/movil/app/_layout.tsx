@@ -14,6 +14,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 
+import { ProveedorAvisos } from '@/datos/ProveedorAvisos';
 import { ProveedorBoletos } from '@/datos/ProveedorBoletos';
 import { ProveedorPerfil } from '@/datos/ProveedorPerfil';
 import { ProveedorReserva } from '@/datos/ProveedorReserva';
@@ -46,9 +47,11 @@ export default function DisenoRaiz() {
     <ProveedorTema>
       <ProveedorPerfil>
         <ProveedorBoletos>
-          <ProveedorReserva>
-            <Stack screenOptions={{ headerShown: false }} />
-          </ProveedorReserva>
+          <ProveedorAvisos>
+            <ProveedorReserva>
+              <Stack screenOptions={{ headerShown: false }} />
+            </ProveedorReserva>
+          </ProveedorAvisos>
         </ProveedorBoletos>
       </ProveedorPerfil>
     </ProveedorTema>
