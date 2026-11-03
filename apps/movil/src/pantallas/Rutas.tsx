@@ -1,4 +1,5 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Svg, { Line, Circle } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
@@ -11,8 +12,12 @@ import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 import { useMemo } from 'react';
 
-/** las rutas de la terminal: kilómetros, duración, servicios con su tarifa de muestra y la próxima salida */
-export function Rutas() {
+export interface PropiedadesRutas {
+  alAbrirRuta?: (id: string) => void;
+}
+
+/** mapa esquemático de las rutas y sus salidas desde la terminal elegida. */
+export function Rutas({ alAbrirRuta }: PropiedadesRutas) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const ahora = useAhora();
@@ -33,49 +38,98 @@ export function Rutas() {
       <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
         {t('rutas.detalle')}
       </Text>
-
-      {rutas.map((ruta) => (
-        <Bloque estiloContenido={estilos.ruta} key={ruta.id}>
-          <View style={estilos.cabecera}>
-            <Text
-              accessibilityRole="header"
-              style={[estilos.destino, { color: colores.tinta }]}
-            >
+      <View accessibilityLabel="Mapa esquemático de rutas" style={estilos.mapa}>
+        <Svg height={190} width="100%" viewBox="0 0 320 190">
+          {rutas.map((ruta, indice) => {
+            const x = 55 + (indice % 3) * 105;
+            const y = 40 + Math.floor(indice / 3) * 100;
+            return (
+              <Line
+                key={ruta.id}
+                stroke={colores.ambar}
+                strokeWidth={5}
+                x1={160}
+                x2={x}
+                y1={95}
+                y2={y}
+              />
+            );
+          })}
+          <Circle cx={160} cy={95} fill={colores.bloqueNegro} r={16} />
+          {rutas.map((ruta, indice) => (
+            <Circle
+              fill={colores.ambar}
+              key={`nodo-${ruta.id}`}
+              cx={55 + (indice % 3) * 105}
+              cy={40 + Math.floor(indice / 3) * 100}
+              r={11}
+            />
+          ))}
+        </Svg>
+        {rutas.map((ruta) => (
+          <Pressable
+            accessibilityLabel={`Abrir ruta a ${ruta.destino}`}
+            accessibilityRole="button"
+            key={`boton-${ruta.id}`}
+            onPress={() => alAbrirRuta?.(ruta.id)}
+          >
+            <Text style={[tipografia.pequeno, { color: colores.tinta }]}>
               {ruta.destino}
             </Text>
-            <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
-              {`${ruta.distanciaKm} ${t('rutas.km')} · ${formatoDuracion(ruta.duracionMin)}`}
-            </Text>
-          </View>
+          </Pressable>
+        ))}
+      </View>
 
-          <View style={estilos.servicios}>
-            {ruta.servicios.map(({ servicio, tarifa }) => (
-              <Bloque
-                estiloContenido={estilos.servicio}
-                hundido
-                key={servicio}
-                radio="pildora"
+      {rutas.map((ruta) => (
+        <Pressable
+          accessibilityLabel={`Abrir ruta a ${ruta.destino}`}
+          accessibilityRole="button"
+          key={ruta.id}
+          onPress={() => alAbrirRuta?.(ruta.id)}
+        >
+          <Bloque estiloContenido={estilos.ruta}>
+            <View style={estilos.cabecera}>
+              <Text
+                accessibilityRole="header"
+                style={[estilos.destino, { color: colores.tinta }]}
               >
-                <Text style={[tipografia.pequeno, { color: colores.tinta }]}>
-                  {t(`servicios.${servicio}`)}
-                </Text>
-                <Text style={[tipografia.dato, { color: colores.ambarTexto }]}>
-                  {tarifa === null ? t('rutas.sinTarifa') : `C$ ${tarifa}`}
-                </Text>
-              </Bloque>
-            ))}
-          </View>
+                {ruta.destino}
+              </Text>
+              <Text
+                style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
+              >
+                {`${ruta.distanciaKm} ${t('rutas.km')} · ${formatoDuracion(ruta.duracionMin)}`}
+              </Text>
+            </View>
 
-          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {ruta.proximaSalida
-              ? `${t('rutas.proximaSalida')} ${formatoHoraCompleta(ruta.proximaSalida)}`
-              : t('rutas.sinSalidas')}
-          </Text>
-        </Bloque>
+            <View style={estilos.servicios}>
+              {ruta.servicios.map(({ servicio, tarifa }) => (
+                <Bloque
+                  estiloContenido={estilos.servicio}
+                  hundido
+                  key={servicio}
+                  radio="pildora"
+                >
+                  <Text style={[tipografia.pequeno, { color: colores.tinta }]}>
+                    {t(`servicios.${servicio}`)}
+                  </Text>
+                  <Text
+                    style={[tipografia.dato, { color: colores.ambarTexto }]}
+                  >
+                    {tarifa === null ? t('rutas.sinTarifa') : `C$ ${tarifa}`}
+                  </Text>
+                </Bloque>
+              ))}
+            </View>
+
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {ruta.proximaSalida
+                ? `${t('rutas.proximaSalida')} ${formatoHoraCompleta(ruta.proximaSalida)}`
+                : t('rutas.sinSalidas')}
+            </Text>
+          </Bloque>
+        </Pressable>
       ))}
-      <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-        {t('rutas.mapaPronto')}
-      </Text>
     </ScrollView>
   );
 }
@@ -93,6 +147,7 @@ const estilos = StyleSheet.create({
     lineHeight: 36,
   },
   ruta: { gap: espacios.doce, padding: espacios.veinticuatro },
+  mapa: { alignItems: 'center', gap: espacios.ocho },
   servicio: {
     alignItems: 'center',
     flexDirection: 'row',
