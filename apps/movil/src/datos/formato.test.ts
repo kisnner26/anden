@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { formatoHora, formatoHoraCompleta } from './formato';
+import { formatoDuracion, formatoHora, formatoHoraCompleta } from './formato';
 
 function a(hora: number, minuto: number): Date {
   return new Date(2026, 10, 2, hora, minuto);
@@ -28,5 +28,19 @@ describe('formatoHoraCompleta', () => {
   it('agrega a. m. por la mañana y a las 12:00 es p. m.', () => {
     expect(formatoHoraCompleta(a(9, 3))).toBe('9:03 a. m.');
     expect(formatoHoraCompleta(a(12, 0))).toBe('12:00 p. m.');
+  });
+});
+
+describe('formatoDuracion', () => {
+  it('muestra solo minutos si dura menos de una hora', () => {
+    expect(formatoDuracion(40)).toBe('40 min');
+  });
+
+  it('muestra horas y minutos', () => {
+    expect(formatoDuracion(95)).toBe('1 h 35 min');
+  });
+
+  it('muestra solo horas si no sobran minutos', () => {
+    expect(formatoDuracion(120)).toBe('2 h');
   });
 });
