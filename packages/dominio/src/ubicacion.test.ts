@@ -21,4 +21,8 @@ describe('distanciaKm', () => {
     );
     expect(terminal?.terminal.id).toBe('b');
   });
+
+  it('no inventa una terminal cuando la lista está vacía', () => {
+    expect(terminalMasCercana([], { lat: 12, lng: -86 })).toBeNull();
+  });
 });
