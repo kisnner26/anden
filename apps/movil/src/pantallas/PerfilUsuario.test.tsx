@@ -109,9 +109,7 @@ describe('PerfilUsuario', () => {
       pantalla.getByLabelText('Cédula (opcional)'),
       '0010101900001A',
     );
-    expect(
-      pantalla.getByText('Usá el formato 001-010190-0001A.'),
-    ).toBeTruthy();
+    expect(pantalla.getByText('Usá el formato 001-010190-0001A.')).toBeTruthy();
     expect(
       pantalla.getByLabelText('Cédula (opcional)').props['aria-invalid'],
     ).toBe(true);
