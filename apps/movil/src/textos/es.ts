@@ -263,6 +263,7 @@ export const textos = {
   },
   perfil: {
     titulo: 'Tu perfil',
+    cargando: 'Cargando tu perfil',
     detalle: 'Tus datos se guardan solo en este teléfono.',
     entrada: 'Tu perfil y tus pasajeros',
     sinNombre: 'Completá tu perfil',
