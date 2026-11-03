@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Boton } from '@/componentes/Boton';
 import { Chip } from '@/componentes/Chip';
+import { Hoja } from '@/componentes/Hoja';
 import { Icono, NOMBRES_ICONO } from '@/componentes/Icono';
 import { TableroSalidas } from '@/componentes/TableroSalidas';
 import { armarSalidas } from '@/datos/salidas';
@@ -47,10 +48,39 @@ export function Vitrina() {
       <MuestraTipografia colores={colores} />
       <MuestraIconos colores={colores} />
       <MuestraControles colores={colores} />
+      <MuestraHoja colores={colores} />
       <MuestraTablero colores={colores} />
       <MuestraColores colores={colores} />
       <MuestraEspacios colores={colores} />
     </ScrollView>
+  );
+}
+
+function MuestraHoja({
+  colores,
+}: {
+  colores: typeof coloresOscuros | typeof coloresClaros;
+}) {
+  const [abierta, establecerAbierta] = useState(false);
+  return (
+    <View style={[estilos.seccion, { borderColor: colores.linea }]}>
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+        {t('vitrina.hoja')}
+      </Text>
+      <Boton
+        alPresionar={() => establecerAbierta(true)}
+        etiqueta={t('vitrina.hojaAbrir')}
+      />
+      <Hoja
+        abierta={abierta}
+        alCerrar={() => establecerAbierta(false)}
+        etiquetaCerrar={t('vitrina.hojaCerrar')}
+      >
+        <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+          {t('vitrina.hojaDetalle')}
+        </Text>
+      </Hoja>
+    </View>
   );
 }
 
