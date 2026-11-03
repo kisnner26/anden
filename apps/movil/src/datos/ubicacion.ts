@@ -10,6 +10,7 @@ export type EstadoAccesoUbicacion =
 export type ResultadoUbicacion =
   | { estado: 'otorgado'; punto: { lat: number; lng: number } }
   | { estado: 'denegado' }
+  | { estado: 'desactivado' }
   | { estado: 'error' };
 
 /** consulta el acceso sin abrir diálogos ni leer coordenadas. */
@@ -36,9 +37,13 @@ export async function consultarAccesoUbicacion(): Promise<EstadoAccesoUbicacion>
 
 /** solicita ubicación solo después de una acción explícita de la persona. */
 export async function obtenerUbicacionActual(): Promise<ResultadoUbicacion> {
-  const permiso = await Location.requestForegroundPermissionsAsync();
-  if (permiso.status !== 'granted') return { estado: 'denegado' };
   try {
+    const serviciosActivos = await Location.hasServicesEnabledAsync();
+    if (serviciosActivos === false) return { estado: 'desactivado' };
+
+    const permiso = await Location.requestForegroundPermissionsAsync();
+    if (permiso.status !== 'granted') return { estado: 'denegado' };
+
     const ubicacion = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Low,
     });
