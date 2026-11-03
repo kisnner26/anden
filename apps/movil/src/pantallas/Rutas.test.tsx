@@ -8,8 +8,8 @@ import { Rutas } from './Rutas';
 describe('Rutas', () => {
   it('muestra únicamente los dos corredores iniciales', async () => {
     const pantalla = await renderPantalla(<Rutas />);
-    expect(pantalla.getByText('Wácwala')).toBeTruthy();
-    expect(pantalla.getByText('Chagüilpa')).toBeTruthy();
+    expect(pantalla.getByText('Boaco')).toBeTruthy();
+    expect(pantalla.getByText('Juigalpa')).toBeTruthy();
     expect(pantalla.getAllByText('Managua')).toHaveLength(2);
     expect(pantalla.queryByText('Granada')).toBeNull();
     expect(pantalla.queryByText('Estelí')).toBeNull();
@@ -28,9 +28,9 @@ describe('Rutas', () => {
     const pantalla = await renderPantalla(<Rutas alAbrirRuta={alAbrirRuta} />);
     await fireEvent.press(
       pantalla.getByRole('button', {
-        name: 'Abrir corredor de Wácwala a Managua',
+        name: 'Abrir corredor de Boaco a Managua',
       }),
     );
-    expect(alAbrirRuta).toHaveBeenCalledWith('cor_wac_man');
+    expect(alAbrirRuta).toHaveBeenCalledWith('cor_boa_man');
   });
 });

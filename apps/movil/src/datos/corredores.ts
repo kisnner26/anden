@@ -1,7 +1,7 @@
 export interface CorredorInterlocal {
   destino: 'Managua';
-  id: 'cor_wac_man' | 'cor_cha_man';
-  origen: 'Wácwala' | 'Chagüilpa';
+  id: 'cor_boa_man' | 'cor_jui_man';
+  origen: 'Boaco' | 'Juigalpa';
 }
 
 export interface OperacionCorredorMuestra {
@@ -13,25 +13,25 @@ export interface OperacionCorredorMuestra {
 export const CORREDORES_INICIALES: readonly CorredorInterlocal[] = [
   {
     destino: 'Managua',
-    id: 'cor_wac_man',
-    origen: 'Wácwala',
+    id: 'cor_boa_man',
+    origen: 'Boaco',
   },
   {
     destino: 'Managua',
-    id: 'cor_cha_man',
-    origen: 'Chagüilpa',
+    id: 'cor_jui_man',
+    origen: 'Juigalpa',
   },
 ];
 
 export const OPERACION_MUESTRA_POR_CORREDOR: Readonly<
   Record<CorredorInterlocal['id'], OperacionCorredorMuestra>
 > = {
-  cor_wac_man: {
+  cor_boa_man: {
     estado: 'proxima',
     etaMinutos: 18,
     proximaSalida: '6:30 a. m.',
   },
-  cor_cha_man: {
+  cor_jui_man: {
     estado: 'sin_servicio',
     etaMinutos: null,
     proximaSalida: null,

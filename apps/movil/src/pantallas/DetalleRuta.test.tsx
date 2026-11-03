@@ -7,11 +7,11 @@ import { DetalleRuta } from './DetalleRuta';
 describe('DetalleRuta', () => {
   it('presenta el corredor sin inventar posición ni eta', async () => {
     const pantalla = await renderPantalla(
-      <DetalleRuta alVolver={() => undefined} rutaId="cor_wac_man" />,
+      <DetalleRuta alVolver={() => undefined} rutaId="cor_boa_man" />,
     );
 
     expect(
-      pantalla.getByRole('header', { name: 'Wácwala → Managua' }),
+      pantalla.getByRole('header', { name: 'Boaco → Managua' }),
     ).toBeTruthy();
     expect(
       pantalla.getByText('Seguimiento en vivo pendiente de datos operativos'),
