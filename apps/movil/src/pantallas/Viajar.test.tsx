@@ -53,6 +53,16 @@ describe('Viajar', () => {
     expect(pantalla.getAllByRole('button', { name: /andén/ })).toHaveLength(1);
   });
 
+  it('actualiza la próxima salida al elegir otro destino', async () => {
+    const pantalla = await dibujar();
+    await fireEvent.changeText(pantalla.getByLabelText('Voy hacia'), 'Estelí');
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Terminal Estelí' }),
+    );
+    expect(pantalla.getByDisplayValue('Terminal Estelí')).toBeTruthy();
+    expect(pantalla.getAllByText('Estelí').length).toBeGreaterThan(0);
+  });
+
   it('va directo a los asientos desde el botón del próximo viaje', async () => {
     const alElegirAsiento = jest.fn();
     const pantalla = await dibujar({ alElegirAsiento });
