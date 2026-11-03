@@ -92,7 +92,7 @@ const RECORRIDOS = [
   { codigo: 'dir', distanciaKm: 42, duracionMin: 60 },
 ] as const;
 
-export const RUTAS: Ruta[] = RECORRIDOS.map((recorrido) => ({
+export const RUTAS: Ruta[] = RECORRIDOS.flatMap((recorrido) => [({
   destinoId: `ter_${recorrido.codigo}`,
   distanciaKm: recorrido.distanciaKm,
   duracionMin: recorrido.duracionMin,
@@ -106,7 +106,17 @@ export const RUTAS: Ruta[] = RECORRIDOS.map((recorrido) => ({
       tipo: 'terminal',
     },
   ],
-}));
+}), ({
+  destinoId: 'ter_uca',
+  distanciaKm: recorrido.distanciaKm,
+  duracionMin: recorrido.duracionMin,
+  id: `rut_${recorrido.codigo}_uca`,
+  origenId: `ter_${recorrido.codigo}`,
+  paradas: [
+    { minutosDesdeOrigen: 0, terminalId: `ter_${recorrido.codigo}`, tipo: 'terminal' },
+    { minutosDesdeOrigen: recorrido.duracionMin, terminalId: 'ter_uca', tipo: 'terminal' },
+  ],
+})]);
 
 /** tarifa de muestra en córdobas por ruta y servicio */
 const TARIFAS: Record<string, Partial<Record<TipoServicio, number>>> = {
@@ -128,7 +138,10 @@ export const TARIFARIO: Tarifario = RECORRIDOS.flatMap((recorrido) =>
       rutaId: `rut_uca_${recorrido.codigo}`,
       servicio: servicio as TipoServicio,
     }),
-  ),
+  ).flatMap((tarifa) => [
+    tarifa,
+    { ...tarifa, rutaId: `rut_${recorrido.codigo}_uca` },
+  ]),
 );
 
 const CONFIGURACION_POR_SERVICIO: Record<TipoServicio, ConfiguracionBus> = {
@@ -145,7 +158,14 @@ const NOMBRES_CHOFER = [
 ] as const;
 
 /** salidas de muestra, en minutos respecto de la hora actual */
-const SALIDAS = [
+const SALIDAS: Array<{
+  anden: number;
+  atraso: number;
+  desde: number;
+  destino: string;
+  origen?: string;
+  servicio: TipoServicio;
+}> = [
   { anden: 3, atraso: 0, desde: -10, destino: 'mas', servicio: 'ordinario' },
   { anden: 4, atraso: 0, desde: 20, destino: 'gra', servicio: 'ordinario' },
   { anden: 6, atraso: 0, desde: 28, destino: 'jin', servicio: 'ordinario' },
@@ -160,6 +180,12 @@ const SALIDAS = [
   { anden: 5, atraso: 0, desde: 55, destino: 'dir', servicio: 'ordinario' },
   { anden: 2, atraso: 0, desde: 65, destino: 'mas', servicio: 'expreso' },
   { anden: 1, atraso: 0, desde: 80, destino: 'est', servicio: 'expreso' },
+  { anden: 1, atraso: 0, desde: 18, destino: 'uca', origen: 'gra', servicio: 'ordinario' },
+  { anden: 2, atraso: 0, desde: 26, destino: 'uca', origen: 'mas', servicio: 'ordinario' },
+  { anden: 1, atraso: 0, desde: 34, destino: 'uca', origen: 'jin', servicio: 'ordinario' },
+  { anden: 2, atraso: 0, desde: 42, destino: 'uca', origen: 'leo', servicio: 'expreso' },
+  { anden: 1, atraso: 0, desde: 50, destino: 'uca', origen: 'est', servicio: 'expreso' },
+  { anden: 2, atraso: 0, desde: 58, destino: 'uca', origen: 'dir', servicio: 'ordinario' },
 ] as const;
 
 /** notas de muestra de cada chofer, de la más vieja a la más nueva */
@@ -222,7 +248,9 @@ export function crearMuestra(ahora: Date): DatosMuestra {
       estado: salida.atraso > 0 ? 'atrasado' : 'programado',
       id: `via_${numero}`,
       minutosAtraso: salida.atraso,
-      rutaId: `rut_uca_${salida.destino}`,
+      rutaId: salida.origen
+        ? `rut_${salida.origen}_uca`
+        : `rut_uca_${salida.destino}`,
       salida: new Date(ahora.getTime() + salida.desde * 60_000).toISOString(),
     });
   });
