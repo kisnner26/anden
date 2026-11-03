@@ -6,7 +6,7 @@ import { Bloque } from '@/componentes/Bloque';
 import { formatoDuracion, formatoHoraCompleta } from '@/datos/formato';
 import { armarRutas } from '@/datos/rutas';
 import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
-import { espacios } from '@/tema/espacios';
+import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -72,6 +72,7 @@ export function Rutas({ alAbrirRuta }: PropiedadesRutas) {
             accessibilityRole="button"
             key={`boton-${ruta.id}`}
             onPress={() => alAbrirRuta?.(ruta.id)}
+            style={estilos.destinoMapa}
           >
             <Text style={[tipografia.pequeno, { color: colores.tinta }]}>
               {ruta.destino}
@@ -145,6 +146,12 @@ const estilos = StyleSheet.create({
     fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
     fontSize: 34,
     lineHeight: 36,
+  },
+  destinoMapa: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: tamanosControl.toqueMinimo,
+    paddingHorizontal: espacios.ocho,
   },
   ruta: { gap: espacios.doce, padding: espacios.veinticuatro },
   mapa: { alignItems: 'center', gap: espacios.ocho },
