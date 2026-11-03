@@ -154,6 +154,8 @@ export const textos = {
     errorMaximo: 'Podés reservar hasta 6 asientos.',
     errorTarifa: 'Este viaje todavía no tiene tarifa cargada.',
     errorGeneral: 'No pudimos hacer la reserva. Probá de nuevo.',
+    sinReserva: 'No hay asientos elegidos. Volvé a elegirlos.',
+    pasajero: 'pasajero',
   },
   boleto: {
     titulo: 'Tu boleto',
