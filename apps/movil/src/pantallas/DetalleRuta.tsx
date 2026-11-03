@@ -25,7 +25,9 @@ export function DetalleRuta({ alVolver, rutaId }: PropiedadesDetalleRuta) {
   const ahora = useAhora();
   const datos = obtenerMuestra();
   const ruta = datos.rutas.find((candidata) => candidata.id === rutaId);
-  const vista = armarRutas(datos, ahora).find((candidata) => candidata.id === rutaId);
+  const vista = armarRutas(datos, ahora).find(
+    (candidata) => candidata.id === rutaId,
+  );
   const destino = datos.terminales.find(
     (terminal) => terminal.id === ruta?.destinoId,
   );
@@ -45,7 +47,10 @@ export function DetalleRuta({ alVolver, rutaId }: PropiedadesDetalleRuta) {
     <ScrollView
       contentContainerStyle={[
         estilos.contenido,
-        { paddingBottom: espacios.cuarentaYOcho, paddingTop: margenes.top + espacios.ocho },
+        {
+          paddingBottom: espacios.cuarentaYOcho,
+          paddingTop: margenes.top + espacios.ocho,
+        },
       ]}
       style={{ backgroundColor: colores.fondo }}
     >
@@ -53,7 +58,10 @@ export function DetalleRuta({ alVolver, rutaId }: PropiedadesDetalleRuta) {
       <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {t('rutas.detalleTitulo')}
       </Text>
-      <Text accessibilityRole="header" style={[tipografia.display, { color: colores.tinta }]}>
+      <Text
+        accessibilityRole="header"
+        style={[tipografia.display, { color: colores.tinta }]}
+      >
         {destino.ciudad}
       </Text>
 
@@ -86,11 +94,27 @@ export function DetalleRuta({ alVolver, rutaId }: PropiedadesDetalleRuta) {
                 )?.nombre
               : parada.nombre;
           return (
-            <View accessibilityLabel={`${nombre}, ${parada.minutosDesdeOrigen} ${t('rutas.minutos')}`} key={parada.minutosDesdeOrigen} style={estilos.parada}>
-              <View style={[estilos.punto, { backgroundColor: indice === 0 ? colores.ambar : colores.bloqueNegro }]} />
+            <View
+              accessibilityLabel={`${nombre}, ${parada.minutosDesdeOrigen} ${t('rutas.minutos')}`}
+              key={parada.minutosDesdeOrigen}
+              style={estilos.parada}
+            >
+              <View
+                style={[
+                  estilos.punto,
+                  {
+                    backgroundColor:
+                      indice === 0 ? colores.ambar : colores.bloqueNegro,
+                  },
+                ]}
+              />
               <View style={estilos.nombreParada}>
-                <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>{nombre}</Text>
-                <Text style={[tipografia.dato, { color: colores.tintaSuave }]}>{`${parada.minutosDesdeOrigen} ${t('rutas.minutos')}`}</Text>
+                <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
+                  {nombre}
+                </Text>
+                <Text
+                  style={[tipografia.dato, { color: colores.tintaSuave }]}
+                >{`${parada.minutosDesdeOrigen} ${t('rutas.minutos')}`}</Text>
               </View>
             </View>
           );
@@ -102,9 +126,18 @@ export function DetalleRuta({ alVolver, rutaId }: PropiedadesDetalleRuta) {
       </Text>
       <View style={estilos.tarifas}>
         {vista.servicios.map(({ servicio, tarifa }) => (
-          <Bloque estiloContenido={estilos.tarifa} hundido key={servicio} radio="loseta">
-            <Text style={[tipografia.pequeno, { color: colores.tinta }]}>{t(`servicios.${servicio}`)}</Text>
-            <Text style={[tipografia.dato, { color: colores.ambarTexto }]}>{tarifa === null ? t('rutas.sinTarifa') : `C$ ${tarifa}`}</Text>
+          <Bloque
+            estiloContenido={estilos.tarifa}
+            hundido
+            key={servicio}
+            radio="loseta"
+          >
+            <Text style={[tipografia.pequeno, { color: colores.tinta }]}>
+              {t(`servicios.${servicio}`)}
+            </Text>
+            <Text style={[tipografia.dato, { color: colores.ambarTexto }]}>
+              {tarifa === null ? t('rutas.sinTarifa') : `C$ ${tarifa}`}
+            </Text>
           </Bloque>
         ))}
       </View>
@@ -113,12 +146,20 @@ export function DetalleRuta({ alVolver, rutaId }: PropiedadesDetalleRuta) {
 }
 
 const estilos = StyleSheet.create({
-  cabeceraSeccion: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
+  cabeceraSeccion: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   contenido: { gap: espacios.dieciseis, paddingHorizontal: espacios.lateral },
   nombreParada: { flex: 1, gap: espacios.cuatro },
   parada: { alignItems: 'center', flexDirection: 'row', gap: espacios.doce },
   paradas: { gap: espacios.dieciseis, padding: espacios.veinticuatro },
-  punto: { borderRadius: espacios.ocho, height: espacios.dieciseis, width: espacios.dieciseis },
+  punto: {
+    borderRadius: espacios.ocho,
+    height: espacios.dieciseis,
+    width: espacios.dieciseis,
+  },
   resumen: { gap: espacios.ocho, padding: espacios.veinticuatro },
   tarifa: { gap: espacios.cuatro, padding: espacios.dieciseis },
   tarifas: { flexDirection: 'row', flexWrap: 'wrap', gap: espacios.ocho },

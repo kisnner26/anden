@@ -129,14 +129,20 @@ export function VerBoleto({
           >
             <Bloque estiloContenido={estilos.accion} radio="loseta">
               <View style={estilos.textoAccion}>
-                <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+                <Text
+                  style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
+                >
                   {t('boleto.modoPrueba')}
                 </Text>
                 <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
                   {t('boleto.validar')}
                 </Text>
               </View>
-              <Icono color={colores.tinta} nombre="siguiente" tamano="mediano" />
+              <Icono
+                color={colores.tinta}
+                nombre="siguiente"
+                tamano="mediano"
+              />
             </Bloque>
           </Pressable>
           <Pressable
@@ -148,7 +154,11 @@ export function VerBoleto({
               <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
                 {t('boleto.compartir')}
               </Text>
-              <Icono color={colores.tinta} nombre="siguiente" tamano="mediano" />
+              <Icono
+                color={colores.tinta}
+                nombre="siguiente"
+                tamano="mediano"
+              />
             </Bloque>
           </Pressable>
           <Pressable
@@ -160,7 +170,11 @@ export function VerBoleto({
               <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
                 {t('boleto.recordatorio')}
               </Text>
-              <Icono color={colores.tinta} nombre="siguiente" tamano="mediano" />
+              <Icono
+                color={colores.tinta}
+                nombre="siguiente"
+                tamano="mediano"
+              />
             </Bloque>
           </Pressable>
           <Pressable
@@ -172,7 +186,11 @@ export function VerBoleto({
               <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
                 {t('boleto.cambiar')}
               </Text>
-              <Icono color={colores.tinta} nombre="siguiente" tamano="mediano" />
+              <Icono
+                color={colores.tinta}
+                nombre="siguiente"
+                tamano="mediano"
+              />
             </Bloque>
           </Pressable>
         </View>

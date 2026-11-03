@@ -1,10 +1,4 @@
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Autobus } from '@/componentes/Autobus';
@@ -59,11 +53,11 @@ export function Avisos({ alVolver }: PropiedadesAvisos) {
       </Text>
 
       <Pressable
-          accessibilityLabel={t('avisos.interruptor')}
-          accessibilityRole="switch"
-          accessibilityState={{ checked: activado }}
-          onPress={cambiarInterruptor}
-        >
+        accessibilityLabel={t('avisos.interruptor')}
+        accessibilityRole="switch"
+        accessibilityState={{ checked: activado }}
+        onPress={cambiarInterruptor}
+      >
         <Bloque estiloContenido={estilos.interruptor}>
           <View style={estilos.textoInterruptor}>
             <Text style={[estilos.nombre, { color: colores.tinta }]}>
@@ -86,7 +80,9 @@ export function Avisos({ alVolver }: PropiedadesAvisos) {
                 estilos.perilla,
                 {
                   alignSelf: activado ? 'flex-end' : 'flex-start',
-                  backgroundColor: activado ? colores.sobreAmbar : colores.fondo,
+                  backgroundColor: activado
+                    ? colores.sobreAmbar
+                    : colores.fondo,
                 },
               ]}
             />
