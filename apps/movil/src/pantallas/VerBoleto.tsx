@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { TalonBoleto } from '@/componentes/TalonBoleto';
+import { estadoVisibleBoleto } from '@/datos/estadoBoleto';
 import { useBoletos } from '@/datos/useBoletos';
+import { useAvisos } from '@/datos/useAvisos';
 import { useAhora } from '@/datos/useSalidas';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -30,7 +32,9 @@ export function VerBoleto({
   const margenes = useSafeAreaInsets();
   const ahora = useAhora();
   const { boletos, cancelar } = useBoletos();
+  const { activar } = useAvisos();
   const [confirmando, establecerConfirmando] = useState(false);
+  const [cambioNoDisponible, establecerCambioNoDisponible] = useState(false);
   const guardado = boletos.find(({ boleto }) => boleto.id === boletoId);
 
   if (!guardado) {
@@ -46,6 +50,12 @@ export function VerBoleto({
   const minutos = Math.round(
     (new Date(guardado.resumen.salida).getTime() - ahora.getTime()) / 60_000,
   );
+  const estado = estadoVisibleBoleto(guardado, ahora);
+  const puedeOperar = estado === 'vigente';
+  const compartir = () =>
+    Share.share({
+      message: `${t('boleto.titulo')} a ${guardado.resumen.destino}. ${t('boleto.sale')} ${new Date(guardado.resumen.salida).toLocaleString('es-NI')}. ${t('boleto.anden')} ${guardado.resumen.anden}. ${t('boleto.placa')} ${guardado.resumen.placa}.`,
+    });
 
   return (
     <ScrollView
@@ -64,6 +74,10 @@ export function VerBoleto({
       )}
 
       <TalonBoleto guardado={guardado} />
+
+      <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+        {t('boleto.muestra')}
+      </Text>
 
       <Bloque estiloContenido={estilos.pago} hundido radio="loseta">
         <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
@@ -88,6 +102,47 @@ export function VerBoleto({
           </Text>
         </Bloque>
       </Pressable>
+
+      {puedeOperar && (
+        <View style={estilos.acciones}>
+          <Pressable
+            accessibilityLabel={t('boleto.compartir')}
+            accessibilityRole="button"
+            onPress={() => void compartir()}
+            style={estilos.accion}
+          >
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+              {t('boleto.compartir')}
+            </Text>
+          </Pressable>
+          <Pressable
+            accessibilityLabel={t('boleto.recordatorio')}
+            accessibilityRole="button"
+            onPress={() => void activar()}
+            style={estilos.accion}
+          >
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+              {t('boleto.recordatorio')}
+            </Text>
+          </Pressable>
+          <Pressable
+            accessibilityLabel={t('boleto.cambiar')}
+            accessibilityRole="button"
+            onPress={() => establecerCambioNoDisponible(true)}
+            style={estilos.accion}
+          >
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+              {t('boleto.cambiar')}
+            </Text>
+          </Pressable>
+        </View>
+      )}
+
+      {cambioNoDisponible && (
+        <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+          {t('boleto.cambioNoDisponible')}
+        </Text>
+      )}
 
       {confirmando ? (
         <Bloque estiloContenido={estilos.confirmar} hundido radio="loseta">
@@ -135,6 +190,8 @@ export function VerBoleto({
 }
 
 const estilos = StyleSheet.create({
+  acciones: { gap: espacios.ocho },
+  accion: { minHeight: 44, justifyContent: 'center', paddingHorizontal: espacios.doce },
   boton: {
     alignItems: 'center',
     justifyContent: 'center',
