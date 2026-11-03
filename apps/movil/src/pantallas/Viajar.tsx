@@ -43,8 +43,10 @@ export function Viajar({
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const [origenId, establecerOrigenId] = useState('ter_uca');
-  const [mensajeUbicacion, establecerMensajeUbicacion] = useState<
-    string | null
+  const [estadoUbicacion, establecerEstadoUbicacion] = useState<
+    | { tipo: 'confirmada'; mensaje: string }
+    | { tipo: 'denegada'; mensaje: string }
+    | null
   >(null);
   const { ahora, datos, proxima, salidas } = useSalidas(origenId);
   const { noLeidos } = useAvisos();
@@ -55,15 +57,19 @@ export function Viajar({
   const usarUbicacion = async () => {
     const resultado = await obtenerUbicacionActual();
     if (resultado.estado !== 'otorgado') {
-      establecerMensajeUbicacion(t('viajar.ubicacionDenegada'));
+      establecerEstadoUbicacion({
+        mensaje: t('viajar.ubicacionDenegada'),
+        tipo: 'denegada',
+      });
       return;
     }
     const cercana = terminalMasCercana(datos.terminales, resultado.punto);
     if (cercana) {
       establecerOrigenId(cercana.terminal.id);
-      establecerMensajeUbicacion(
-        `${t('viajar.ubicacionCercana')}: ${cercana.terminal.nombre}, ${t('viajar.ubicacionDistancia').replace('{{km}}', cercana.distanciaKm.toFixed(1))}`,
-      );
+      establecerEstadoUbicacion({
+        mensaje: `${t('viajar.ubicacionCercana')}: ${cercana.terminal.nombre}, ${t('viajar.ubicacionDistancia').replace('{{km}}', cercana.distanciaKm.toFixed(1))}`,
+        tipo: 'confirmada',
+      });
     }
   };
 
@@ -187,20 +193,33 @@ export function Viajar({
           {origen.nombre}
         </Text>
       )}
-      {mensajeUbicacion && (
+      {estadoUbicacion && (
         <View>
-          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {mensajeUbicacion}
-          </Text>
-          <Pressable
-            accessibilityLabel={t('viajar.abrirAjustes')}
-            accessibilityRole="button"
-            onPress={() => Linking.openSettings()}
+          <Text
+            accessibilityLiveRegion="polite"
+            style={[
+              tipografia.pequeno,
+              {
+                color:
+                  estadoUbicacion.tipo === 'denegada'
+                    ? colores.cancelado
+                    : colores.aTiempo,
+              },
+            ]}
           >
-            <Text style={[tipografia.pequeno, { color: colores.ambarTexto }]}>
-              {t('viajar.abrirAjustes')}
-            </Text>
-          </Pressable>
+            {estadoUbicacion.mensaje}
+          </Text>
+          {estadoUbicacion.tipo === 'denegada' && (
+            <Pressable
+              accessibilityLabel={t('viajar.abrirAjustes')}
+              accessibilityRole="button"
+              onPress={() => Linking.openSettings()}
+            >
+              <Text style={[tipografia.pequeno, { color: colores.ambarTexto }]}>
+                {t('viajar.abrirAjustes')}
+              </Text>
+            </Pressable>
+          )}
         </View>
       )}
 
