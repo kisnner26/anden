@@ -220,6 +220,26 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - hacer: consumir posiciones autorizadas de cada unidad por viaje, mostrar última actualización, rumbo y estado de señal, dibujar el avance por la ruta y calcular eta por parada en dominio; nunca inventar movimiento cuando la señal esté vieja.
 - hecho cuando: actualizaciones realtime mueven la unidad sin recargar, el eta se corrige con atraso y progreso, y existen estados sin señal, señal vieja, viaje finalizado y reconexión.
 
+### T-099 · corredor interlocal y Rutas rediseñada
+- depende de: T-090 · zona: `packages/datos`, `apps/movil/src/pantallas`, `apps/movil/src/componentes` · raíz: no · estado: en curso
+- hacer: limitar la muestra visible al corredor Wácwala/Chagüilpa–Managua y rehacer Rutas sin el gráfico radial: dos recorridos claros, dirección, próxima unidad, estado y eta de muestra; detalle accesible y estados sin servicio.
+- hecho cuando: no aparecen destinos fuera del corredor, cada elemento visual tiene significado rotulado y las capturas en iphone coinciden con la dirección v2.
+
+### T-100 · ubicación automática en configuración
+- depende de: T-097 · zona: `apps/movil/src/pantallas`, `apps/movil/src/datos` · raíz: no · estado: libre
+- hacer: quitar el botón permanente de Viajar y agregar una preferencia persistente en configuración; al activarla se pide permiso y Viajar propone el origen automáticamente, con estado, desactivar y reintentar en configuración.
+- hecho cuando: Viajar no muestra el botón, la preferencia sobrevive al reinicio y nunca guarda ni envía coordenadas.
+
+### T-101 · cierre directo de reserva
+- depende de: T-046, T-047 · zona: `apps/movil/app`, `apps/movil/src/pantallas` · raíz: no · estado: libre
+- hacer: al confirmar, mostrar éxito breve con código y llevar a la navegación principal con Boletos activo; evitar apilar pantallas que obliguen a volver repetidamente.
+- hecho cuando: una reserva confirmada aparece en Boletos, Atrás no devuelve al pago y existe acción directa para volver a Viajar.
+
+### T-102 · respuesta sensorial opcional
+- depende de: T-099, T-100, T-101 · zona: `apps/movil/src/tema`, `apps/movil/src/datos`, `apps/movil/src/componentes` · raíz: sí · estado: libre
+- hacer: animaciones breves por transform y opacidad, háptica y sonidos propios cortos para confirmación, llegada de unidad y error; interruptores de sonido y háptica en configuración.
+- hecho cuando: reducir movimiento elimina desplazamientos, el modo silencio no se ignora, el sonido puede apagarse y no hay animaciones continuas fuera de pantalla.
+
 ### T-010 · tipos, esquemas y resultado
 - depende de: T-002 · estado: hecha
 - hacer: tipos de `03-arquitectura.md` en `tipos.ts`, esquemas Zod en `esquemas.ts`, tipo `Resultado` con helpers `ok()` y `error()`.

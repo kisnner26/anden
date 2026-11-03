@@ -17,6 +17,10 @@ Hoy el viaje interlocal se resuelve llegando a la terminal y preguntando: no se 
 | quien manda a un familiar | comprar el boleto para otra persona y seguir el bus en vivo |
 | chofer y cooperativa (fase posterior) | ver su viaje asignado, validar boletos por código, reportar atrasos |
 
+## corredor inicial
+
+La primera operación pública se limita a taxis interlocales entre **Wácwala y Managua** y entre **Chagüilpa y Managua**, en ambos sentidos. No se muestran otros destinos como si estuvieran disponibles. La terminal exacta en Managua, los horarios, las coordenadas, las unidades y las tarifas quedan como datos de muestra hasta verificarlos con la cooperativa y el MTI.
+
 ## funciones de la v1
 
 Todo lo de esta tabla entra en la primera versión publicable. El orden de construcción está en `04-tareas.md`.

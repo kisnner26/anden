@@ -130,7 +130,7 @@ Las capturas de `mockups/capturas/v2/` son la referencia exacta.
 5. **Elegí tu asiento.** `MapaAsientos` en su carcasa, leyenda arriba, retención de 10 minutos en una píldora de barro y, abajo, un `BloqueNegro` con el total y un único `Boton` ámbar.
 6. **Pasajeros y pago.** Pasos numerados (asiento, pasajeros, pago). Formularios en bloques de barro, nunca listas de iOS.
 7. **Tu boleto.** `Talon` centrado sobre el fondo, cuenta regresiva, "Seguir el bus" y "Agregar al calendario".
-8. **Rutas.** Mapa claro con las rutas autorizadas en ámbar; al tocar una, sube una `Hoja` con `LineaRuta`.
+8. **Rutas.** Vista de corredor, no mapa radial: dos tarjetas grandes para Wácwala–Managua y Chagüilpa–Managua, con la próxima unidad, dirección, estado, eta y una ilustración lineal del trayecto. No se dibujan nodos flotantes ni un centro negro sin significado. Al tocar una ruta se abre su detalle y seguimiento.
 9. **Chofer.** Foto grande, datos, bus que maneja y últimas calificaciones con etiquetas.
 
 ## texto
@@ -143,3 +143,5 @@ Las capturas de `mockups/capturas/v2/` son la referencia exacta.
 ## mapa
 
 Estilo base gratuito sin clave (OpenFreeMap) con una capa de estilo propia en `apps/movil/src/mapa/estilo-claro.json` y su variante `estilo-oscuro.json` para la noche: tierra `fondo`, calles `linea`, agua en un azul grisáceo suave, etiquetas `tintaSuave`, rutas en `ambar` (con `ambarTexto` para rótulos). Sin pines rojos: las terminales son losetas ámbar con el código de terminal en mono.
+
+El mapa geográfico se reserva para el seguimiento de una unidad con coordenadas verificadas. La portada de Rutas usa un corredor esquemático legible y rotulado; nunca aparenta precisión geográfica que los datos no tienen.
