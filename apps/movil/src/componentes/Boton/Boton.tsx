@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import {
   AccessibilityInfo,
@@ -98,6 +99,16 @@ export function Boton({
         pressed && estilos.presionado,
       ]}
     >
+      {variante === 'principal' && !cargando && (
+        <LinearGradient
+          colors={[colores.ambar, colores.ambarProfundo]}
+          end={{ x: 1, y: 1 }}
+          pointerEvents="none"
+          start={{ x: 0, y: 0 }}
+          style={[StyleSheet.absoluteFill, estilos.fondoPrincipal]}
+          testID="boton-principal-fondo"
+        />
+      )}
       <Text style={[tipografia.subtitulo, { color: colorTexto }]}>
         {etiqueta}
       </Text>
@@ -169,6 +180,7 @@ const estilos = StyleSheet.create({
     justifyContent: 'center',
     width: tamanosControl.circuloPildora,
   },
+  fondoPrincipal: { borderRadius: radios.pildora },
   presionado: { opacity: 0.82 },
 });
 
