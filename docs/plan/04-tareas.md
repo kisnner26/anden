@@ -561,3 +561,8 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - hacer: mientras `TARIFARIO_OFICIAL` sea `false`, mostrar "tarifas de muestra, no oficiales" en el buscador, en los resultados, en el pago y en el boleto.
 - hecho cuando: el aviso aparece en las cuatro pantallas y desaparece con la constante en `true`.
 - commits: `feat: constante del tarifario oficial` · un `feat:` por pantalla · `test:` de visibilidad
+
+### T-103 · corregir nombres del corredor
+- depende de: T-099 · zona: `docs/plan`, `apps/movil/src/datos` · raíz: no · estado: hecha
+- hacer: reemplazar Wácwala y Chagüilpa por Boaco y Juigalpa, ambos con Managua y en los dos sentidos.
+- hecho cuando: ningún texto, id ni prueba nombra los destinos erróneos y `pnpm verificar` pasa.
