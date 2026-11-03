@@ -7,7 +7,11 @@ import { Hoja } from './Hoja';
 describe('Hoja', () => {
   it('no expone el contenido cuando está cerrada', async () => {
     const pantalla = await render(
-      <Hoja abierta={false} alCerrar={() => undefined} etiquetaCerrar="Cerrar detalle">
+      <Hoja
+        abierta={false}
+        alCerrar={() => undefined}
+        etiquetaCerrar="Cerrar detalle"
+      >
         <Text>Detalle del viaje</Text>
       </Hoja>,
     );
