@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
@@ -14,13 +14,14 @@ import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
 export interface PropiedadesViajar {
+  alAbrirAjustes?: () => void;
   alElegirViaje: (viajeId: string) => void;
 }
 
 const ESTADOS_PENDIENTES = ['abordando', 'atrasado', 'programado'];
 
 /** inicio: el próximo viaje con el bus y las salidas de hoy */
-export function Viajar({ alElegirViaje }: PropiedadesViajar) {
+export function Viajar({ alAbrirAjustes, alElegirViaje }: PropiedadesViajar) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const { ahora, proxima, salidas } = useSalidas();
@@ -37,11 +38,17 @@ export function Viajar({ alElegirViaje }: PropiedadesViajar) {
       style={{ backgroundColor: colores.fondo }}
     >
       <View style={estilos.cabecera}>
-        <Loseta tamano={46} variante="negra">
-          <Text style={[tipografia.dato, { color: colores.sobreNegro }]}>
-            A
-          </Text>
-        </Loseta>
+        <Pressable
+          accessibilityLabel={t('ajustes.titulo')}
+          accessibilityRole="button"
+          onPress={alAbrirAjustes}
+        >
+          <Loseta tamano={46} variante="negra">
+            <Text style={[tipografia.dato, { color: colores.sobreNegro }]}>
+              A
+            </Text>
+          </Loseta>
+        </Pressable>
         <View style={estilos.saludo}>
           <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
             {t('viajar.saludo')}
