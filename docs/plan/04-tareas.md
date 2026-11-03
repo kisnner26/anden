@@ -175,7 +175,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - hecho cuando: con permiso se propone la terminal cercana y sin permiso se elige a mano.
 
 ### T-090 · Rutas rediseñada
-- depende de: T-089 · zona: `apps/movil` · raíz: no · estado: libre
+- depende de: T-089 · zona: `apps/movil` · raíz: no · estado: hecha
 - hacer: mapa esquemático con react-native-svg, filas con datos tipográficos y sellos, detalle de ruta con paradas, tiempos, tarifas de muestra y salidas del día.
 - hecho cuando: se toca un destino del mapa y se abre su detalle.
 
