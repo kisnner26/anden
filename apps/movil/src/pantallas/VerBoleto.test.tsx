@@ -70,7 +70,7 @@ describe('VerBoleto', () => {
     ).toBeTruthy();
   });
 
-  it('cancela la reserva y borra el boleto guardado', async () => {
+  it('cancela la reserva y conserva el boleto con su estado', async () => {
     const alCancelado = jest.fn();
     const pantalla = await dibujar({ alCancelado });
     await fireEvent.press(
@@ -80,7 +80,7 @@ describe('VerBoleto', () => {
       pantalla.getByRole('button', { name: 'Sí, cancelar' }),
     );
     await waitFor(() => expect(alCancelado).toHaveBeenCalledTimes(1));
-    expect(await AsyncStorage.getItem(CLAVE_BOLETOS)).toBe('[]');
+    expect(await AsyncStorage.getItem(CLAVE_BOLETOS)).toContain('"estado":"cancelado"');
   });
 
   it('dice que no encontró un boleto inexistente', async () => {
