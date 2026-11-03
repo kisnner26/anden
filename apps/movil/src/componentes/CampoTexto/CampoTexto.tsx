@@ -14,6 +14,7 @@ import { useTema } from '@/tema/useTema';
 export interface PropiedadesCampoTexto {
   alCambiar: (valor: string) => void;
   etiqueta: string;
+  error?: string;
   marcador?: string;
   teclado?: KeyboardTypeOptions;
   valor: string;
@@ -23,6 +24,7 @@ export interface PropiedadesCampoTexto {
 export function CampoTexto({
   alCambiar,
   etiqueta,
+  error,
   marcador,
   teclado = 'default',
   valor,
@@ -37,6 +39,8 @@ export function CampoTexto({
       <Bloque estiloContenido={estilos.caja} hundido radio="loseta">
         <TextInput
           accessibilityLabel={etiqueta}
+          accessibilityHint={error}
+          aria-invalid={error !== undefined}
           keyboardType={teclado}
           onChangeText={alCambiar}
           placeholder={marcador}
@@ -46,6 +50,14 @@ export function CampoTexto({
           value={valor}
         />
       </Bloque>
+      {error !== undefined && (
+        <Text
+          accessibilityLiveRegion="polite"
+          style={[tipografia.pequeno, { color: colores.cancelado }]}
+        >
+          {error}
+        </Text>
+      )}
     </View>
   );
 }
