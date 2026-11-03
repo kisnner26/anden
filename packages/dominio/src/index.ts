@@ -8,3 +8,4 @@ export * from './precio';
 export * from './resultado';
 export * from './tipos';
 export * from './telefono';
+export * from './franjas';
