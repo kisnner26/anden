@@ -47,6 +47,12 @@ describe('crearMuestra', () => {
     );
   });
 
+  it('incluye retornos de cada terminal de muestra a Managua', () => {
+    for (const ruta of datos.rutas.filter((ruta) => ruta.destinoId === 'ter_uca')) {
+      expect(datos.viajes.some((viaje) => viaje.rutaId === ruta.id)).toBe(true);
+    }
+  });
+
   it('trae calificaciones válidas para cada chofer', () => {
     expect(datos.calificaciones.length).toBeGreaterThan(40);
     for (const calificacion of datos.calificaciones) {
