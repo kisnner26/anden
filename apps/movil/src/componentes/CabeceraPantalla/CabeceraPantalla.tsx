@@ -28,7 +28,11 @@ export function CabeceraPantalla({
         accessibilityRole="button"
         onPress={alVolver}
       >
-        <Bloque estiloContenido={estilos.circulo} radio="pildora">
+        <Bloque
+          estilo={estilos.volver}
+          estiloContenido={estilos.circulo}
+          radio="pildora"
+        >
           <Icono nombre="volver" tamano="grande" />
         </Bloque>
       </Pressable>
@@ -56,4 +60,5 @@ const estilos = StyleSheet.create({
     fontSize: 46,
     lineHeight: 48,
   },
+  volver: { alignSelf: 'flex-start' },
 });
