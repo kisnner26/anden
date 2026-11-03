@@ -55,3 +55,16 @@ it('presenta el permiso denegado sin intentar elegir terminal', async () => {
   expect(result.current.estado).toEqual({ tipo: 'denegada' });
   expect(alSeleccionar).not.toHaveBeenCalled();
 });
+
+it('presenta los servicios desactivados como estado propio', async () => {
+  jest
+    .mocked(obtenerUbicacionActual)
+    .mockResolvedValue({ estado: 'desactivado' });
+  const { result } = await renderHook(() =>
+    useUbicacionCercana(TERMINALES, () => undefined),
+  );
+
+  await act(() => result.current.resolver());
+
+  expect(result.current.estado).toEqual({ tipo: 'desactivada' });
+});
