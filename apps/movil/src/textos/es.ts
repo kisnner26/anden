@@ -333,7 +333,7 @@ export const textos = {
     hacia: 'hacia',
     datosPendientes: 'Horarios y ubicación por confirmar',
     datosPendientesDetalle:
-      'La cooperativa todavía no publicó la próxima unidad.',
+      'La hora, el estado y la llegada son ilustrativos hasta tener datos en vivo.',
     verRecorrido: 'Ver recorrido',
     abrirCorredor: 'Abrir corredor de {{origen}} a Managua',
     dosRutas: '2 rutas activas',
