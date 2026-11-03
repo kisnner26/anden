@@ -37,6 +37,13 @@ describe('Viajar', () => {
     expect(pantalla.getByText('Tarifas de muestra')).toBeTruthy();
   });
 
+  it('deja cambiar el origen manualmente', async () => {
+    const pantalla = await dibujar();
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Terminal Granada' }));
+    expect(pantalla.getByText('Terminal Granada')).toBeTruthy();
+    expect(pantalla.getAllByText('Managua').length).toBeGreaterThan(0);
+  });
+
   it('lista tres salidas pendientes', async () => {
     const pantalla = await dibujar();
     expect(pantalla.getAllByRole('button', { name: /andén/ })).toHaveLength(3);
