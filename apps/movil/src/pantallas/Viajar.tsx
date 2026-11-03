@@ -7,7 +7,6 @@ import {
   View,
 } from 'react-native';
 import { useMemo, useState } from 'react';
-import { terminalMasCercana } from '@anden/dominio';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
@@ -24,8 +23,8 @@ import {
 } from '@/componentes/SelectorViaje';
 import { TarjetaProximoViaje } from '@/componentes/TarjetaProximoViaje';
 import { useAvisos } from '@/datos/useAvisos';
+import { useUbicacionCercana } from '@/datos/useUbicacionCercana';
 import { useSalidas } from '@/datos/useSalidas';
-import { obtenerUbicacionActual } from '@/datos/ubicacion';
 import { proximaSalida } from '@/datos/salidas';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -73,11 +72,6 @@ export function Viajar({
   const margenes = useSafeAreaInsets();
   const [origenId, establecerOrigenId] = useState('ter_uca');
   const [destinoId, establecerDestinoId] = useState('ter_boa');
-  const [estadoUbicacion, establecerEstadoUbicacion] = useState<
-    | { tipo: 'confirmada'; mensaje: string }
-    | { tipo: 'denegada'; mensaje: string }
-    | null
-  >(null);
   const { ahora, datos, salidas } = useSalidas(origenId);
   const dias = useMemo(() => diasDesde(ahora), [ahora]);
   const [fechaId, establecerFechaId] = useState(() => dias[0]?.id ?? '');
@@ -118,24 +112,8 @@ export function Viajar({
       if (primeraRuta) establecerDestinoId(primeraRuta.destinoId);
     }
   };
-  const usarUbicacion = async () => {
-    const resultado = await obtenerUbicacionActual();
-    if (resultado.estado !== 'otorgado') {
-      establecerEstadoUbicacion({
-        mensaje: t('viajar.ubicacionDenegada'),
-        tipo: 'denegada',
-      });
-      return;
-    }
-    const cercana = terminalMasCercana(datos.terminales, resultado.punto);
-    if (cercana) {
-      cambiarOrigen(cercana.terminal.id);
-      establecerEstadoUbicacion({
-        mensaje: `${t('viajar.ubicacionCercana')}: ${cercana.terminal.nombre}, ${t('viajar.ubicacionDistancia').replace('{{km}}', cercana.distanciaKm.toFixed(1))}`,
-        tipo: 'confirmada',
-      });
-    }
-  };
+  const ubicacion = useUbicacionCercana(datos.terminales, cambiarOrigen);
+  const buscandoUbicacion = ubicacion.estado.tipo === 'esperando';
 
   return (
     <ScrollView
@@ -209,13 +187,20 @@ export function Viajar({
           {t('viajar.origen')}
         </Text>
         <Pressable
-          accessibilityLabel={t('viajar.usarUbicacion')}
+          accessibilityLabel={
+            buscandoUbicacion
+              ? t('viajar.ubicacionEsperando')
+              : t('viajar.usarUbicacion')
+          }
           accessibilityRole="button"
-          onPress={usarUbicacion}
+          disabled={buscandoUbicacion}
+          onPress={ubicacion.resolver}
           style={[estilos.ubicacion, { backgroundColor: colores.ambar }]}
         >
           <Text style={[tipografia.pequeno, { color: colores.sobreAmbar }]}>
-            {t('viajar.usarUbicacion')}
+            {buscandoUbicacion
+              ? t('viajar.ubicacionEsperando')
+              : t('viajar.usarUbicacion')}
           </Text>
         </Pressable>
       </View>
@@ -231,7 +216,7 @@ export function Viajar({
         origenId={origenId}
         textoSinResultados={t('viajar.sinTerminales')}
       />
-      {estadoUbicacion && (
+      {ubicacion.estado.tipo !== 'pendiente' && (
         <View>
           <Text
             accessibilityLiveRegion="polite"
@@ -239,15 +224,26 @@ export function Viajar({
               tipografia.pequeno,
               {
                 color:
-                  estadoUbicacion.tipo === 'denegada'
-                    ? colores.cancelado
-                    : colores.aTiempo,
+                  ubicacion.estado.tipo === 'confirmada'
+                    ? colores.aTiempo
+                    : ubicacion.estado.tipo === 'esperando'
+                      ? colores.tintaSuave
+                      : colores.cancelado,
               },
             ]}
           >
-            {estadoUbicacion.mensaje}
+            {ubicacion.estado.tipo === 'confirmada'
+              ? `${t('viajar.ubicacionCercana')}: ${ubicacion.estado.nombre}, ${t('viajar.ubicacionDistancia').replace('{{km}}', ubicacion.estado.distanciaKm.toFixed(1))}`
+              : ubicacion.estado.tipo === 'denegada'
+                ? t('viajar.ubicacionDenegada')
+                : ubicacion.estado.tipo === 'desactivada'
+                  ? t('viajar.ubicacionDesactivada')
+                  : ubicacion.estado.tipo === 'esperando'
+                    ? t('viajar.ubicacionEsperando')
+                    : t('viajar.ubicacionError')}
           </Text>
-          {estadoUbicacion.tipo === 'denegada' && (
+          {(ubicacion.estado.tipo === 'denegada' ||
+            ubicacion.estado.tipo === 'desactivada') && (
             <Pressable
               accessibilityLabel={t('viajar.abrirAjustes')}
               accessibilityRole="button"
@@ -255,6 +251,17 @@ export function Viajar({
             >
               <Text style={[tipografia.pequeno, { color: colores.ambarTexto }]}>
                 {t('viajar.abrirAjustes')}
+              </Text>
+            </Pressable>
+          )}
+          {ubicacion.estado.tipo === 'error' && (
+            <Pressable
+              accessibilityLabel={t('viajar.reintentarUbicacion')}
+              accessibilityRole="button"
+              onPress={ubicacion.resolver}
+            >
+              <Text style={[tipografia.pequeno, { color: colores.ambarTexto }]}>
+                {t('viajar.reintentarUbicacion')}
               </Text>
             </Pressable>
           )}
