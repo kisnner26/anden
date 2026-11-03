@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import {
+  SchedulableTriggerInputTypes,
   getPermissionsAsync,
   requestPermissionsAsync,
   scheduleNotificationAsync,
@@ -73,7 +74,7 @@ describe('programarRecordatorio', () => {
     expect(id).toBe('id-1');
     expect(scheduleNotificationAsync).toHaveBeenCalledWith({
       content: { body: 'Andén 4', title: 'Tu bus a Granada' },
-      trigger: { date: cuando, type: 'date' },
+      trigger: { date: cuando, type: SchedulableTriggerInputTypes.DATE },
     });
   });
 });
