@@ -111,9 +111,19 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
     [boletos, guardar],
   );
 
+  const validar = useCallback(async (boletoId: string) => {
+    await guardar(
+      boletos.map((guardado) =>
+        guardado.boleto.id === boletoId
+          ? { ...guardado, boleto: { ...guardado.boleto, estado: 'usado' } }
+          : guardado,
+      ),
+    );
+  }, [boletos, guardar]);
+
   const valor = useMemo(
-    () => ({ boletos, cancelar, cargando, reservar }),
-    [boletos, cancelar, cargando, reservar],
+    () => ({ boletos, cancelar, cargando, reservar, validar }),
+    [boletos, cancelar, cargando, reservar, validar],
   );
 
   return (

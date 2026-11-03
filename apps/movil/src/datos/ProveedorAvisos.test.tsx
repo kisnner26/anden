@@ -80,6 +80,7 @@ function conBoletos(boletos: BoletoGuardado[]) {
     cancelar: async () => undefined,
     cargando: false,
     reservar: async () => ({ error: 'viaje-inexistente', ok: false }),
+    validar: async () => undefined,
   };
   return function Envoltura({ children }: { children: ReactNode }) {
     return (
