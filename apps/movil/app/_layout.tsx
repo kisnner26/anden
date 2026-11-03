@@ -15,6 +15,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 
 import { ProveedorBoletos } from '@/datos/ProveedorBoletos';
+import { ProveedorPerfil } from '@/datos/ProveedorPerfil';
 import { ProveedorReserva } from '@/datos/ProveedorReserva';
 import { ProveedorTema } from '@/tema/ProveedorTema';
 
@@ -43,11 +44,13 @@ export default function DisenoRaiz() {
 
   return (
     <ProveedorTema>
-      <ProveedorBoletos>
-        <ProveedorReserva>
-          <Stack screenOptions={{ headerShown: false }} />
-        </ProveedorReserva>
-      </ProveedorBoletos>
+      <ProveedorPerfil>
+        <ProveedorBoletos>
+          <ProveedorReserva>
+            <Stack screenOptions={{ headerShown: false }} />
+          </ProveedorReserva>
+        </ProveedorBoletos>
+      </ProveedorPerfil>
     </ProveedorTema>
   );
 }
