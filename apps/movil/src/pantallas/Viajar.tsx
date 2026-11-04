@@ -64,7 +64,7 @@ export function Viajar({
 }: PropiedadesViajar) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
-  const [origenId, establecerOrigenId] = useState('ter_uca');
+  const [origenId, establecerOrigenId] = useState('ter_may');
   const [destinoId, establecerDestinoId] = useState('ter_boa');
   const { ahora, datos, salidas } = useSalidas(origenId);
   const dias = useMemo(() => diasDesde(ahora), [ahora]);

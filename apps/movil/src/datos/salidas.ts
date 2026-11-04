@@ -39,7 +39,7 @@ const ESTADOS_PENDIENTES: EstadoViaje[] = [
 export function armarSalidas(
   datos: DatosMuestra,
   ahora: Date,
-  origenId: string = 'ter_uca',
+  origenId: string = 'ter_may',
 ): Salida[] {
   const salidas: Salida[] = [];
 

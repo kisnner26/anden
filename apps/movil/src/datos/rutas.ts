@@ -30,7 +30,7 @@ export function armarRutas(datos: DatosMuestra, ahora: Date): RutaVista[] {
   const salidas = armarSalidas(datos, ahora);
 
   return datos.rutas
-    .filter((ruta) => ruta.origenId === 'ter_uca')
+    .filter((ruta) => ruta.origenId === 'ter_may')
     .map((ruta) => {
       const destino = datos.terminales.find(
         (terminal) => terminal.id === ruta.destinoId,

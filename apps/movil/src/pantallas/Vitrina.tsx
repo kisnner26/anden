@@ -63,7 +63,7 @@ function MuestraCampoLugar({
 }: {
   colores: typeof coloresOscuros | typeof coloresClaros;
 }) {
-  const [valorId, establecerValorId] = useState<string | null>('ter_uca');
+  const [valorId, establecerValorId] = useState<string | null>('ter_may');
   const [lugares] = useState(() =>
     crearMuestra(new Date()).terminales.map(({ codigo, id, nombre }) => ({
       codigo,

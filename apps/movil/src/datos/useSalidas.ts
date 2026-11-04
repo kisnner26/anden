@@ -31,7 +31,7 @@ export function useAhora(intervalo: number = MEDIO_MINUTO): Date {
   return ahora;
 }
 
-export function useSalidas(origenId: string = 'ter_uca') {
+export function useSalidas(origenId: string = 'ter_may') {
   const ahora = useAhora();
   const datos = obtenerMuestra();
   const salidas = useMemo(
