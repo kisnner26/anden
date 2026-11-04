@@ -1,9 +1,15 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
 import { Icono, type NombreIcono } from '@/componentes/Icono';
-import { espacios, radios, tamanosBarraPestanas } from '@/tema/espacios';
+import {
+  disposicionPantalla,
+  espacios,
+  radios,
+  tamanosBarraPestanas,
+} from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 
@@ -26,67 +32,76 @@ export function BarraPestanas({
   pestanas,
 }: PropiedadesBarraPestanas) {
   const { colores } = useTema();
+  const margenes = useSafeAreaInsets();
 
   return (
-    <View pointerEvents="box-none" style={estilos.flotante}>
-      <Bloque
-        estiloContenido={estilos.fila}
-        radio="pildora"
-        testID="barra-pestanas"
-      >
-        {pestanas.map((pestana) => {
-          const seleccionada = pestana.clave === activa;
-          const contenido = (
-            <>
-              <Icono
-                color={seleccionada ? colores.sobreNegro : colores.tintaSuave}
-                colorDetalle={
-                  seleccionada ? colores.bloqueNegro : colores.barroClaro
-                }
-                nombre={pestana.icono}
-                tamano="destacado"
-              />
-              <Text
-                style={[
-                  tipografia.pequeno,
-                  estilos.nombre,
-                  {
-                    color: seleccionada
-                      ? colores.sobreNegro
-                      : colores.tintaSuave,
-                  },
-                ]}
-              >
-                {pestana.nombre}
-              </Text>
-            </>
-          );
-
-          return (
-            <Pressable
-              accessibilityLabel={pestana.nombre}
-              accessibilityRole="tab"
-              accessibilityState={{ selected: seleccionada }}
-              key={pestana.clave}
-              onPress={() => alSeleccionar(pestana.clave)}
-              style={estilos.pestana}
-            >
-              {seleccionada ? (
-                <LinearGradient
-                  colors={[colores.bloqueNegroClaro, colores.bloqueNegro]}
-                  end={{ x: 1, y: 1 }}
-                  start={{ x: 0, y: 0 }}
-                  style={estilos.activa}
+    <View
+      pointerEvents="box-none"
+      style={[
+        estilos.flotante,
+        { bottom: tamanosBarraPestanas.margenInferior + margenes.bottom },
+      ]}
+    >
+      <View style={estilos.marco}>
+        <Bloque
+          estiloContenido={estilos.fila}
+          radio="pildora"
+          testID="barra-pestanas"
+        >
+          {pestanas.map((pestana) => {
+            const seleccionada = pestana.clave === activa;
+            const contenido = (
+              <>
+                <Icono
+                  color={seleccionada ? colores.sobreNegro : colores.tintaSuave}
+                  colorDetalle={
+                    seleccionada ? colores.bloqueNegro : colores.barroClaro
+                  }
+                  nombre={pestana.icono}
+                  tamano="destacado"
+                />
+                <Text
+                  style={[
+                    tipografia.pequeno,
+                    estilos.nombre,
+                    {
+                      color: seleccionada
+                        ? colores.sobreNegro
+                        : colores.tintaSuave,
+                    },
+                  ]}
                 >
-                  {contenido}
-                </LinearGradient>
-              ) : (
-                <View style={estilos.inactiva}>{contenido}</View>
-              )}
-            </Pressable>
-          );
-        })}
-      </Bloque>
+                  {pestana.nombre}
+                </Text>
+              </>
+            );
+
+            return (
+              <Pressable
+                accessibilityLabel={pestana.nombre}
+                accessibilityRole="tab"
+                accessibilityState={{ selected: seleccionada }}
+                key={pestana.clave}
+                onPress={() => alSeleccionar(pestana.clave)}
+                style={estilos.pestana}
+              >
+                {seleccionada ? (
+                  <LinearGradient
+                    colors={[colores.bloqueNegroClaro, colores.bloqueNegro]}
+                    end={{ x: 1, y: 1 }}
+                    start={{ x: 0, y: 0 }}
+                    style={estilos.activa}
+                  >
+                    {contenido}
+                  </LinearGradient>
+                ) : (
+                  <View style={estilos.inactiva}>{contenido}</View>
+                )}
+              </Pressable>
+            );
+          })}
+        </Bloque>
+      </View>
     </View>
   );
 }
@@ -98,7 +113,8 @@ const estilos = StyleSheet.create({
     gap: espacios.cuatro,
     height: tamanosBarraPestanas.altoPestana,
     justifyContent: 'center',
-    width: tamanosBarraPestanas.anchoPestana,
+    maxWidth: tamanosBarraPestanas.anchoPestana,
+    width: '100%',
   },
   fila: {
     alignItems: 'center',
@@ -108,18 +124,24 @@ const estilos = StyleSheet.create({
     paddingHorizontal: tamanosBarraPestanas.rellenoHorizontal,
   },
   flotante: {
-    bottom: tamanosBarraPestanas.margenInferior,
-    left: tamanosBarraPestanas.margenLateral,
+    alignItems: 'center',
+    left: 0,
     position: 'absolute',
-    right: tamanosBarraPestanas.margenLateral,
+    right: 0,
   },
   inactiva: {
     alignItems: 'center',
     gap: espacios.cuatro,
     height: tamanosBarraPestanas.altoPestana,
     justifyContent: 'center',
-    width: tamanosBarraPestanas.anchoPestana,
+    maxWidth: tamanosBarraPestanas.anchoPestana,
+    width: '100%',
+  },
+  marco: {
+    maxWidth: disposicionPantalla.anchoMaximo,
+    paddingHorizontal: tamanosBarraPestanas.margenLateral,
+    width: '100%',
   },
   nombre: { fontFamily: 'Archivo_600SemiBold', fontSize: 11, lineHeight: 14 },
-  pestana: { alignItems: 'center' },
+  pestana: { alignItems: 'center', flex: 1 },
 });
