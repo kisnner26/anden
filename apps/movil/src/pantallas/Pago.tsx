@@ -39,13 +39,17 @@ export function Pago({ alReservado, alVolver, viajeId }: PropiedadesPago) {
   const margenes = useSafeAreaInsets();
   const { borrador, limpiar } = useReserva();
   const { reservar } = useBoletos();
-  const { salidas } = useSalidas();
+  const { datos, salidas } = useSalidas();
   const [reservando, establecerReservando] = useState(false);
   const [error, establecerError] = useState<string | null>(null);
   const [confirmacion, establecerConfirmacion] = useState<{
     codigo: string;
   } | null>(null);
   const salida = salidas.find((candidata) => candidata.viajeId === viajeId);
+  const ruta = datos.rutas.find((candidata) => candidata.id === salida?.rutaId);
+  const origen = datos.terminales.find(
+    (terminal) => terminal.id === ruta?.origenId,
+  );
 
   if (confirmacion) {
     return <ReservaConfirmada codigo={confirmacion.codigo} />;
@@ -103,7 +107,7 @@ export function Pago({ alReservado, alVolver, viajeId }: PropiedadesPago) {
         <Bloque estiloContenido={estilos.resumen}>
           <Text
             style={[estilos.viaje, { color: colores.tinta }]}
-          >{`UCA → ${salida.destino}`}</Text>
+          >{`${origen?.nombre ?? ''} → ${salida.destino}`}</Text>
           <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
             {`${formatoFechaCorta(salida.salida)}, ${formatoHoraCompleta(salida.salida)} · ${t(`servicios.${salida.servicio}`)} · ${salida.placa}`}
           </Text>
