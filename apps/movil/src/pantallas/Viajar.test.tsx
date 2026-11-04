@@ -1,9 +1,8 @@
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
-import { fireEvent, waitFor } from '@testing-library/react-native';
+import { fireEvent } from '@testing-library/react-native';
 
 import { ContextoAvisos, type ValorAvisos } from '@/datos/useAvisos';
 import { reiniciarMuestra } from '@/datos/useSalidas';
-import * as ubicacion from '@/datos/ubicacion';
 import { renderPantalla } from '@/pruebas/render';
 
 import { Viajar } from './Viajar';
@@ -111,10 +110,12 @@ describe('Viajar', () => {
     expect(alAbrirViaje).toHaveBeenCalledWith('via_2');
   });
 
-  it('abre la apariencia desde el avatar', async () => {
+  it('abre configuración desde el avatar', async () => {
     const alAbrirAjustes = jest.fn();
     const pantalla = await dibujar({ alAbrirAjustes });
-    await fireEvent.press(pantalla.getByRole('button', { name: 'Apariencia' }));
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Configuración' }),
+    );
     expect(alAbrirAjustes).toHaveBeenCalledTimes(1);
   });
 
@@ -151,57 +152,5 @@ describe('Viajar', () => {
   it('sin avisos por leer la campana no lleva punto', async () => {
     const pantalla = await dibujar();
     expect(pantalla.queryByTestId('campana-sin-leer')).toBeNull();
-  });
-
-  it('ofrece ajustes solo cuando se deniega la ubicación', async () => {
-    const pedirUbicacion = jest
-      .spyOn(ubicacion, 'obtenerUbicacionActual')
-      .mockResolvedValue({ estado: 'denegado' });
-    const pantalla = await dibujar();
-    await fireEvent.press(
-      pantalla.getByRole('button', { name: 'Usar mi ubicación' }),
-    );
-    await waitFor(() =>
-      expect(
-        pantalla.getByRole('button', { name: 'Abrir ajustes' }),
-      ).toBeTruthy(),
-    );
-    pedirUbicacion.mockRestore();
-  });
-
-  it('permite reintentar cuando falla el proveedor de ubicación', async () => {
-    const pedirUbicacion = jest
-      .spyOn(ubicacion, 'obtenerUbicacionActual')
-      .mockResolvedValue({ estado: 'error' });
-    const pantalla = await dibujar();
-    await fireEvent.press(
-      pantalla.getByRole('button', { name: 'Usar mi ubicación' }),
-    );
-    const reintentar = await pantalla.findByRole('button', {
-      name: 'Reintentar ubicación',
-    });
-
-    await fireEvent.press(reintentar);
-
-    expect(pedirUbicacion).toHaveBeenCalledTimes(2);
-  });
-
-  it('ofrece ajustes cuando el teléfono tiene la ubicación apagada', async () => {
-    jest
-      .spyOn(ubicacion, 'obtenerUbicacionActual')
-      .mockResolvedValue({ estado: 'desactivado' });
-    const pantalla = await dibujar();
-    await fireEvent.press(
-      pantalla.getByRole('button', { name: 'Usar mi ubicación' }),
-    );
-
-    expect(
-      await pantalla.findByText(
-        'La ubicación del teléfono está apagada. Activala o elegí una terminal.',
-      ),
-    ).toBeTruthy();
-    expect(
-      pantalla.getByRole('button', { name: 'Abrir ajustes' }),
-    ).toBeTruthy();
   });
 });

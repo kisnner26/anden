@@ -1,12 +1,5 @@
-import {
-  Linking,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import { useMemo, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
@@ -23,6 +16,7 @@ import {
 } from '@/componentes/SelectorViaje';
 import { TarjetaProximoViaje } from '@/componentes/TarjetaProximoViaje';
 import { useAvisos } from '@/datos/useAvisos';
+import { usePreferenciaUbicacion } from '@/datos/ProveedorUbicacion';
 import { useUbicacionCercana } from '@/datos/useUbicacionCercana';
 import { useSalidas } from '@/datos/useSalidas';
 import { proximaSalida } from '@/datos/salidas';
@@ -77,6 +71,8 @@ export function Viajar({
   const [fechaId, establecerFechaId] = useState(() => dias[0]?.id ?? '');
   const [pasajeros, establecerPasajeros] = useState(1);
   const { noLeidos } = useAvisos();
+  const preferenciaUbicacion = usePreferenciaUbicacion();
+  const ubicacionResuelta = useRef(false);
   const salidasDestino = salidas.filter(
     (salida) =>
       datos.rutas.find((ruta) => ruta.id === salida.rutaId)?.destinoId ===
@@ -113,7 +109,19 @@ export function Viajar({
     }
   };
   const ubicacion = useUbicacionCercana(datos.terminales, cambiarOrigen);
-  const buscandoUbicacion = ubicacion.estado.tipo === 'esperando';
+
+  useEffect(() => {
+    if (
+      !preferenciaUbicacion.activada ||
+      preferenciaUbicacion.estado !== 'otorgado'
+    ) {
+      ubicacionResuelta.current = false;
+      return;
+    }
+    if (ubicacionResuelta.current) return;
+    ubicacionResuelta.current = true;
+    void ubicacion.resolver();
+  }, [preferenciaUbicacion.activada, preferenciaUbicacion.estado, ubicacion]);
 
   return (
     <ScrollView
@@ -182,28 +190,6 @@ export function Viajar({
         </Text>
       )}
 
-      <View style={estilos.seccion}>
-        <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-          {t('viajar.origen')}
-        </Text>
-        <Pressable
-          accessibilityLabel={
-            buscandoUbicacion
-              ? t('viajar.ubicacionEsperando')
-              : t('viajar.usarUbicacion')
-          }
-          accessibilityRole="button"
-          disabled={buscandoUbicacion}
-          onPress={ubicacion.resolver}
-          style={[estilos.ubicacion, { backgroundColor: colores.ambar }]}
-        >
-          <Text style={[tipografia.pequeno, { color: colores.sobreAmbar }]}>
-            {buscandoUbicacion
-              ? t('viajar.ubicacionEsperando')
-              : t('viajar.usarUbicacion')}
-          </Text>
-        </Pressable>
-      </View>
       <CamposLugares
         alCambiarDestino={establecerDestinoId}
         alCambiarOrigen={cambiarOrigen}
@@ -216,57 +202,6 @@ export function Viajar({
         origenId={origenId}
         textoSinResultados={t('viajar.sinTerminales')}
       />
-      {ubicacion.estado.tipo !== 'pendiente' && (
-        <View>
-          <Text
-            accessibilityLiveRegion="polite"
-            style={[
-              tipografia.pequeno,
-              {
-                color:
-                  ubicacion.estado.tipo === 'confirmada'
-                    ? colores.aTiempo
-                    : ubicacion.estado.tipo === 'esperando'
-                      ? colores.tintaSuave
-                      : colores.cancelado,
-              },
-            ]}
-          >
-            {ubicacion.estado.tipo === 'confirmada'
-              ? `${t('viajar.ubicacionCercana')}: ${ubicacion.estado.nombre}, ${t('viajar.ubicacionDistancia').replace('{{km}}', ubicacion.estado.distanciaKm.toFixed(1))}`
-              : ubicacion.estado.tipo === 'denegada'
-                ? t('viajar.ubicacionDenegada')
-                : ubicacion.estado.tipo === 'desactivada'
-                  ? t('viajar.ubicacionDesactivada')
-                  : ubicacion.estado.tipo === 'esperando'
-                    ? t('viajar.ubicacionEsperando')
-                    : t('viajar.ubicacionError')}
-          </Text>
-          {(ubicacion.estado.tipo === 'denegada' ||
-            ubicacion.estado.tipo === 'desactivada') && (
-            <Pressable
-              accessibilityLabel={t('viajar.abrirAjustes')}
-              accessibilityRole="button"
-              onPress={() => Linking.openSettings()}
-            >
-              <Text style={[tipografia.pequeno, { color: colores.ambarTexto }]}>
-                {t('viajar.abrirAjustes')}
-              </Text>
-            </Pressable>
-          )}
-          {ubicacion.estado.tipo === 'error' && (
-            <Pressable
-              accessibilityLabel={t('viajar.reintentarUbicacion')}
-              accessibilityRole="button"
-              onPress={ubicacion.resolver}
-            >
-              <Text style={[tipografia.pequeno, { color: colores.ambarTexto }]}>
-                {t('viajar.reintentarUbicacion')}
-              </Text>
-            </Pressable>
-          )}
-        </View>
-      )}
 
       <View style={estilos.planificacion}>
         <SelectorFecha
@@ -362,12 +297,6 @@ const estilos = StyleSheet.create({
     width: 44,
   },
   contenido: { paddingHorizontal: espacios.lateral },
-  ubicacion: {
-    borderRadius: 999,
-    minHeight: 44,
-    justifyContent: 'center',
-    paddingHorizontal: espacios.doce,
-  },
   saludo: { flex: 1 },
   planificacion: {
     gap: espacios.dieciseis,
