@@ -59,3 +59,17 @@ it('activa la preferencia y solicita permiso', async () => {
   expect(solicitarAccesoUbicacion).toHaveBeenCalledTimes(1);
   expect(await AsyncStorage.getItem(CLAVE_UBICACION_AUTOMATICA)).toBe('1');
 });
+
+it('desactiva la preferencia sin modificar permisos del sistema', async () => {
+  await AsyncStorage.setItem(CLAVE_UBICACION_AUTOMATICA, '1');
+  const { result } = await renderHook(() => usePreferenciaUbicacion(), {
+    wrapper: Envoltura,
+  });
+  await waitFor(() => expect(result.current.activada).toBe(true));
+
+  await act(() => result.current.desactivar());
+
+  expect(result.current.activada).toBe(false);
+  expect(result.current.estado).toBe('apagada');
+  expect(await AsyncStorage.getItem(CLAVE_UBICACION_AUTOMATICA)).toBe('0');
+});
