@@ -107,17 +107,7 @@ export function TarjetaCorredor({
             </Text>
           </View>
         )}
-        <View style={estilos.estado}>
-          <View>
-            <Text style={[tipografia.pequeno, { color: colores.sobreNegro }]}>
-              {t('rutas.datosPendientes')}
-            </Text>
-            <Text
-              style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
-            >
-              {t('rutas.datosPendientesDetalle')}
-            </Text>
-          </View>
+        <View style={estilos.avanceFila}>
           <View style={[estilos.avance, { backgroundColor: colores.ambar }]}>
             <Icono nombre="siguiente" tamano="mediano" />
           </View>
@@ -135,18 +125,13 @@ const estilos = StyleSheet.create({
     justifyContent: 'center',
     width: tamanosControl.toqueMinimo,
   },
+  avanceFila: { alignItems: 'flex-end' },
   contenido: { gap: espacios.doce, padding: espacios.veinticuatro },
   datoOperacion: { flex: 1, gap: espacios.cuatro },
   datoOperacionDerecha: {
     alignItems: 'flex-end',
     flex: 1,
     gap: espacios.cuatro,
-  },
-  estado: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: espacios.doce,
-    justifyContent: 'space-between',
   },
   ilustracion: { alignItems: 'center', flexDirection: 'row' },
   linea: { flex: 1, height: espacios.cuatro },
