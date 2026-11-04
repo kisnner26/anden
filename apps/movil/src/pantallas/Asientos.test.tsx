@@ -19,7 +19,7 @@ describe('Asientos', () => {
       />,
     );
     expect(pantalla.getByText(/Elegí tu/)).toBeTruthy();
-    expect(pantalla.getByText(/UCA → Boaco/)).toBeTruthy();
+    expect(pantalla.getByText(/Mercado Mayoreo → Boaco/)).toBeTruthy();
     expect(pantalla.getByText('10:00')).toBeTruthy();
   });
 

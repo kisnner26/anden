@@ -70,7 +70,7 @@ describe('Pago', () => {
 
   it('muestra el resumen de la reserva con sus pasajeros y la placa', async () => {
     const pantalla = await dibujar(DOS);
-    expect(await pantalla.findByText('UCA → Boaco')).toBeTruthy();
+    expect(await pantalla.findByText('Mercado Mayoreo → Boaco')).toBeTruthy();
     expect(pantalla.getByText('Asiento 8 · Ana Ruiz')).toBeTruthy();
     expect(pantalla.getByText('Asiento 9 · Luis Pérez')).toBeTruthy();
     expect(pantalla.getByText(/M 222-114/)).toBeTruthy();

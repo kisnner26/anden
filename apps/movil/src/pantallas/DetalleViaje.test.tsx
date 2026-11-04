@@ -26,7 +26,9 @@ function dibujar(
 describe('DetalleViaje', () => {
   it('muestra el destino y la ruta con el servicio', async () => {
     const pantalla = await dibujar();
-    expect(pantalla.getByText(/UCA → Boaco · Ordinario/)).toBeTruthy();
+    expect(
+      pantalla.getByText(/Mercado Mayoreo → Boaco · Ordinario/),
+    ).toBeTruthy();
   });
 
   it('muestra la placa de la unidad', async () => {
@@ -46,8 +48,8 @@ describe('DetalleViaje', () => {
 
   it('muestra el recorrido con las dos terminales', async () => {
     const pantalla = await dibujar();
-    expect(pantalla.getByText('Terminal UCA')).toBeTruthy();
-    expect(pantalla.getByText('Terminal Boaco')).toBeTruthy();
+    expect(pantalla.getByText('Mercado Mayoreo')).toBeTruthy();
+    expect(pantalla.getByText('Terminal de Buses de Managua')).toBeTruthy();
   });
 
   it('muestra la tarifa de muestra', async () => {
