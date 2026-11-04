@@ -1,6 +1,19 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent } from '@testing-library/react-native';
 
+jest.mock('@/datos/ubicacion', () => ({
+  consultarAccesoUbicacion: jest.fn(),
+  obtenerUbicacionActual: jest.fn(),
+  solicitarAccesoUbicacion: jest.fn(),
+}));
+
+import { ProveedorUbicacion } from '@/datos/ProveedorUbicacion';
+import { CLAVE_UBICACION_AUTOMATICA } from '@/datos/preferenciaUbicacion';
+import {
+  consultarAccesoUbicacion,
+  obtenerUbicacionActual,
+} from '@/datos/ubicacion';
 import { ContextoAvisos, type ValorAvisos } from '@/datos/useAvisos';
 import { reiniciarMuestra } from '@/datos/useSalidas';
 import { renderPantalla } from '@/pruebas/render';
@@ -57,6 +70,29 @@ describe('Viajar', () => {
     expect(
       pantalla.queryByRole('button', { name: 'Usar mi ubicación' }),
     ).toBeNull();
+  });
+
+  it('propone el origen al abrir si la preferencia estaba activada', async () => {
+    await AsyncStorage.setItem(CLAVE_UBICACION_AUTOMATICA, '1');
+    jest
+      .mocked(consultarAccesoUbicacion)
+      .mockResolvedValue({ estado: 'otorgado' });
+    jest.mocked(obtenerUbicacionActual).mockResolvedValue({
+      estado: 'otorgado',
+      punto: { lat: 12.469, lng: -85.656 },
+    });
+
+    const pantalla = await renderPantalla(
+      <ProveedorUbicacion>
+        <Viajar
+          alAbrirViaje={() => undefined}
+          alElegirAsiento={() => undefined}
+        />
+      </ProveedorUbicacion>,
+    );
+
+    expect(await pantalla.findByDisplayValue('Terminal Boaco')).toBeTruthy();
+    expect(obtenerUbicacionActual).toHaveBeenCalledTimes(1);
   });
 
   it('lista las salidas pendientes del destino elegido', async () => {
