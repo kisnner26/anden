@@ -231,7 +231,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - hecho cuando: Viajar no muestra el botón, la preferencia sobrevive al reinicio y nunca guarda ni envía coordenadas.
 
 ### T-101 · cierre directo de reserva
-- depende de: T-046, T-047 · zona: `apps/movil/app`, `apps/movil/src/pantallas` · raíz: no · estado: libre
+- depende de: T-046, T-047 · zona: `apps/movil/app`, `apps/movil/src/pantallas` · raíz: no · estado: en curso
 - hacer: al confirmar, mostrar éxito breve con código y llevar a la navegación principal con Boletos activo; evitar apilar pantallas que obliguen a volver repetidamente.
 - hecho cuando: una reserva confirmada aparece en Boletos, Atrás no devuelve al pago y existe acción directa para volver a Viajar.
 
