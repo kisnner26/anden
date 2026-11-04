@@ -27,10 +27,10 @@ export const TERMINALES: Terminal[] = [
   {
     andenes: 6,
     ciudad: 'Managua',
-    codigo: 'UCA',
-    coordenadas: { lat: 12.1328, lng: -86.2504 },
+    codigo: 'MAY',
+    coordenadas: { lat: 12.13413, lng: -86.1933 },
     id: 'ter_uca',
-    nombre: 'Terminal UCA',
+    nombre: 'Mercado Mayoreo',
   },
   {
     andenes: 3,
