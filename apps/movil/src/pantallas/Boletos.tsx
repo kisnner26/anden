@@ -108,23 +108,27 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
                   </Text>
                 </BloqueNegro>
               </Pressable>
-              <Text
-                style={[
-                  tipografia.subtitulo,
-                  estilos.seccion,
-                  { color: colores.tinta },
-                ]}
-              >
-                {t('boletos.proximos')}
-              </Text>
-              {proximos.slice(1).map((guardado) => (
-                <FilaBoleto
-                  alPresionar={alAbrirBoleto}
-                  ahora={ahora}
-                  guardado={guardado}
-                  key={guardado.boleto.id}
-                />
-              ))}
+              {proximos.length > 1 && (
+                <>
+                  <Text
+                    style={[
+                      tipografia.subtitulo,
+                      estilos.seccion,
+                      { color: colores.tinta },
+                    ]}
+                  >
+                    {t('boletos.proximos')}
+                  </Text>
+                  {proximos.slice(1).map((guardado) => (
+                    <FilaBoleto
+                      alPresionar={alAbrirBoleto}
+                      ahora={ahora}
+                      guardado={guardado}
+                      key={guardado.boleto.id}
+                    />
+                  ))}
+                </>
+              )}
             </View>
           )}
           {pasados.length > 0 && (
