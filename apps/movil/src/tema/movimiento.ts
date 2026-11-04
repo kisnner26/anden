@@ -1,5 +1,6 @@
 export const movimiento = {
   cambioEstado: 240,
+  confirmacionReserva: 1100,
   abordaje: 180,
   escalaPresion: 0.98,
   entradaPantalla: 320,
