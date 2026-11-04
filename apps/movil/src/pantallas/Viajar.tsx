@@ -16,6 +16,7 @@ import { useUbicacionCercana } from '@/datos/useUbicacionCercana';
 import { useSalidas } from '@/datos/useSalidas';
 import { proximaSalida } from '@/datos/salidas';
 import { espacios } from '@/tema/espacios';
+import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -78,6 +79,7 @@ export function Viajar({
           accessibilityLabel={t('ajustes.titulo')}
           accessibilityRole="button"
           onPress={alAbrirAjustes}
+          style={({ pressed }) => pressed && estilos.presionado}
         >
           <Avatar
             descripcion={t('perfil.fotoDescripcion')}
@@ -102,6 +104,7 @@ export function Viajar({
           }
           accessibilityRole="button"
           onPress={alAbrirAvisos}
+          style={({ pressed }) => pressed && estilos.presionado}
         >
           <Bloque estiloContenido={estilos.campana} radio="pildora">
             <Icono nombre="campana" tamano="ilustracion" />
@@ -170,6 +173,10 @@ const estilos = StyleSheet.create({
     right: 4,
     top: 4,
     width: 12,
+  },
+  presionado: {
+    opacity: 0.9,
+    transform: [{ scale: movimiento.escalaPresion }],
   },
   cabecera: { alignItems: 'center', flexDirection: 'row', gap: espacios.doce },
   campana: {
