@@ -206,6 +206,10 @@ export const textos = {
     errorGeneral: 'No pudimos hacer la reserva. Probá de nuevo.',
     sinReserva: 'No hay asientos elegidos. Volvé a elegirlos.',
     pasajero: 'pasajero',
+    confirmadaTitulo: 'Reserva lista',
+    confirmadaDetalle: 'Tu boleto ya está guardado en este teléfono.',
+    codigoAbordaje: 'Código de abordaje',
+    abriendoBoletos: 'Abriendo tus boletos…',
   },
   boleto: {
     titulo: 'Tu boleto',
