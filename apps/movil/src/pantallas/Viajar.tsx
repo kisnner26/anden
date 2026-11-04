@@ -1,6 +1,5 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
 import { CamposLugares } from '@/componentes/CampoLugar';
@@ -8,6 +7,7 @@ import { EtiquetaMuestra } from '@/componentes/EtiquetaMuestra';
 import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
+import { MarcoPestana } from '@/componentes/MarcoPestana';
 import {
   SelectorFecha,
   SelectorPasajeros,
@@ -62,7 +62,6 @@ export function Viajar({
   alElegirAsiento,
 }: PropiedadesViajar) {
   const { colores } = useTema();
-  const margenes = useSafeAreaInsets();
   const [origenId, establecerOrigenId] = useState('ter_may');
   const [destinoId, establecerDestinoId] = useState('ter_boa');
   const { ahora, datos, salidas } = useSalidas(origenId);
@@ -113,13 +112,7 @@ export function Viajar({
   }, [preferenciaUbicacion.activada, preferenciaUbicacion.estado, ubicacion]);
 
   return (
-    <ScrollView
-      contentContainerStyle={[
-        estilos.contenido,
-        { paddingBottom: 130, paddingTop: margenes.top + 8 },
-      ]}
-      style={{ backgroundColor: colores.fondo }}
-    >
+    <MarcoPestana>
       <View style={estilos.cabecera}>
         <Pressable
           accessibilityLabel={t('ajustes.titulo')}
@@ -233,7 +226,7 @@ export function Viajar({
           salida={salida}
         />
       ))}
-    </ScrollView>
+    </MarcoPestana>
   );
 }
 
@@ -253,7 +246,6 @@ const estilos = StyleSheet.create({
     justifyContent: 'center',
     width: 44,
   },
-  contenido: { paddingHorizontal: espacios.lateral },
   saludo: { flex: 1 },
   planificacion: {
     gap: espacios.dieciseis,
