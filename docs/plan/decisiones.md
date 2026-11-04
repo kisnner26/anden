@@ -4,6 +4,7 @@ Registro de decisiones tomadas durante el desarrollo. Una por entrada, la más r
 
 | fecha | tarea | decisión | por qué |
 |---|---|---|---|
+| 2026-11-03 | T-105 | terminales del corredor: Mercado Mayoreo, Managua (12.13413, -86.19330; OSM 528862794), Terminal de Buses de Managua, Boaco (12.46901, -85.65587; OSM 405153082) y Terminal Mayales, Juigalpa (12.09172, -85.36106; OSM 209135788) | coordenadas y nombres contrastados en OpenStreetMap mediante GeoView/Mapcarta; Mercado Mayoreo figura además como terminal para Boaco y Chontales en COMMEMA |
 | 2026-11-03 | producto | la primera operación se limita a Boaco–Managua y Juigalpa–Managua, en ambos sentidos; ubicación automática se controla desde configuración y la reserva terminada vuelve a la navegación principal con Boletos activo | decisión explícita del dueño tras probar la app en iphone; reduce el alcance y elimina controles y recorridos confusos |
 | 2026-11-03 | T-089 | las coordenadas de terminales y las rutas de regreso a Managua son datos de muestra | sirven para proponer un origen y mostrar el flujo completo mientras no exista una fuente operativa verificada |
 | 2026-11-02 | producto | se permite elegir foto solo desde la galería y pedir ubicación solo en primer plano tras una acción explícita; la cámara, el micrófono, la ubicación en segundo plano y las notificaciones remotas siguen fuera | decisión explícita del dueño: el perfil puede personalizarse y el origen puede sugerirse sin conservar ni enviar ubicación; la cuenta gratuita de Apple solo usará notificaciones locales |
