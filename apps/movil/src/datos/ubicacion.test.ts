@@ -27,12 +27,10 @@ beforeEach(() => {
 describe('solicitarAccesoUbicacion', () => {
   it('obtiene permiso sin leer coordenadas', async () => {
     jest.mocked(Location.hasServicesEnabledAsync).mockResolvedValue(true);
-    jest
-      .mocked(Location.requestForegroundPermissionsAsync)
-      .mockResolvedValue({
-        canAskAgain: true,
-        status: Location.PermissionStatus.GRANTED,
-      } as never);
+    jest.mocked(Location.requestForegroundPermissionsAsync).mockResolvedValue({
+      canAskAgain: true,
+      status: Location.PermissionStatus.GRANTED,
+    } as never);
 
     await expect(solicitarAccesoUbicacion()).resolves.toEqual({
       estado: 'otorgado',

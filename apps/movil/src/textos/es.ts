@@ -249,7 +249,8 @@ export const textos = {
       'Propone tu terminal más cercana al abrir Viajar. Tus coordenadas no se guardan ni se envían.',
     ubicacionLista: 'Lista para encontrar tu terminal.',
     ubicacionPendiente: 'El permiso se pide cuando la activás.',
-    ubicacionDenegada: 'El permiso está denegado. Podés reintentar o abrir Ajustes.',
+    ubicacionDenegada:
+      'El permiso está denegado. Podés reintentar o abrir Ajustes.',
     ubicacionDesactivada: 'La ubicación del teléfono está apagada.',
     ubicacionError: 'No pudimos comprobar la ubicación.',
     ubicacionConsultando: 'Comprobando ubicación',

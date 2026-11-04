@@ -19,10 +19,7 @@ import {
 } from './ubicacion';
 
 export type EstadoPreferenciaUbicacion =
-  | EstadoAccesoUbicacion['estado']
-  | 'apagada'
-  | 'cargando'
-  | 'consultando';
+  EstadoAccesoUbicacion['estado'] | 'apagada' | 'cargando' | 'consultando';
 
 interface ValorUbicacion {
   activada: boolean;
