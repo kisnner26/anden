@@ -1,14 +1,16 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 
+import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { EtiquetaMuestra } from '@/componentes/EtiquetaMuestra';
 import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
-import { Loseta } from '@/componentes/Loseta';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { TarjetaProximoViaje } from '@/componentes/TarjetaProximoViaje';
+import { iniciales } from '@/datos/perfil';
 import { useAvisos } from '@/datos/useAvisos';
+import { usePerfil } from '@/datos/usePerfil';
 import { usePreferenciaUbicacion } from '@/datos/ProveedorUbicacion';
 import { useUbicacionCercana } from '@/datos/useUbicacionCercana';
 import { useSalidas } from '@/datos/useSalidas';
@@ -35,11 +37,17 @@ export function Viajar({
   alElegirAsiento,
 }: PropiedadesViajar) {
   const { colores } = useTema();
+  const { perfil } = usePerfil();
   const [origenId, establecerOrigenId] = useState('ter_may');
   const { ahora, datos, salidas } = useSalidas(origenId);
   const { noLeidos } = useAvisos();
   const preferenciaUbicacion = usePreferenciaUbicacion();
   const ubicacionResuelta = useRef(false);
+  const primerNombre = perfil.nombre.trim().split(/\s+/)[0] ?? '';
+  const saludo =
+    primerNombre === ''
+      ? t('viajar.saludo')
+      : `${t('viajar.saludo')}, ${primerNombre}`;
   const proxima = proximaSalida(salidas);
   const pendientes = salidas
     .filter(
@@ -71,15 +79,16 @@ export function Viajar({
           accessibilityRole="button"
           onPress={alAbrirAjustes}
         >
-          <Loseta tamano={46} variante="negra">
-            <Text style={[tipografia.dato, { color: colores.sobreNegro }]}>
-              A
-            </Text>
-          </Loseta>
+          <Avatar
+            descripcion={t('perfil.fotoDescripcion')}
+            iniciales={iniciales(perfil)}
+            tamano={48}
+            uri={perfil.fotoUri}
+          />
         </Pressable>
         <View style={estilos.saludo}>
           <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-            {t('viajar.saludo')}
+            {saludo}
           </Text>
           <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
             {t('viajar.pregunta')}
