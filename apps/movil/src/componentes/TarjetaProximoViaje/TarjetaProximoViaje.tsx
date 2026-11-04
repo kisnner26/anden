@@ -5,7 +5,7 @@ import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { formatoHoraCompleta } from '@/datos/formato';
 import type { Salida } from '@/datos/salidas';
-import { espacios } from '@/tema/espacios';
+import { espacios, tamanosIlustracion } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -15,8 +15,6 @@ export interface PropiedadesTarjetaProximoViaje {
   alVerBoleto: () => void;
   salida: Salida;
 }
-
-const ANCHO_BUS = 262;
 
 /** el próximo viaje: bloque negro con el bus centrado cruzando su borde superior */
 export function TarjetaProximoViaje({
@@ -34,12 +32,15 @@ export function TarjetaProximoViaje({
   return (
     <View style={estilos.contenedor}>
       <View pointerEvents="none" style={estilos.bus}>
-        <Autobus ancho={ANCHO_BUS} letrero={salida.destino.toUpperCase()} />
+        <Autobus
+          ancho={tamanosIlustracion.autobusProximo}
+          letrero={salida.destino.toUpperCase()}
+        />
       </View>
       <BloqueNegro estiloContenido={estilos.tarjeta} testID="proximo-viaje">
         <View style={estilos.fila}>
           <View>
-            <Text style={[estilos.destino, { color: colores.sobreNegro }]}>
+            <Text style={[tipografia.display, { color: colores.sobreNegro }]}>
               {salida.destino}
             </Text>
             <Text
@@ -78,16 +79,11 @@ const estilos = StyleSheet.create({
     left: 0,
     position: 'absolute',
     right: 0,
-    top: -114,
+    top: -tamanosIlustracion.solapeAutobusProximo,
     zIndex: 2,
   },
-  contenedor: { marginTop: 106 },
+  contenedor: { marginTop: tamanosIlustracion.espacioAutobusProximo },
   derecha: { alignItems: 'flex-end' },
-  destino: {
-    fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
-    fontSize: 46,
-    lineHeight: 44,
-  },
   fila: {
     alignItems: 'flex-end',
     flexDirection: 'row',
@@ -96,6 +92,6 @@ const estilos = StyleSheet.create({
   tarjeta: {
     paddingBottom: espacios.dieciseis,
     paddingHorizontal: espacios.lateral,
-    paddingTop: 48,
+    paddingTop: espacios.cuarentaYOcho,
   },
 });

@@ -55,5 +55,8 @@ export const disposicionPantalla = {
 
 export const tamanosIlustracion = {
   autobusCorredor: 116,
+  autobusProximo: 262,
   confirmacionReserva: 88,
+  espacioAutobusProximo: 106,
+  solapeAutobusProximo: 114,
 } as const;
