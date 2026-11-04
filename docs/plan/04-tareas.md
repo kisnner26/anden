@@ -571,3 +571,13 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - depende de: T-103 · zona: `apps/movil/src/datos`, `apps/movil/src/pantallas`, `docs/plan` · raíz: no · estado: hecha
 - hacer: dejar en los datos de muestra únicamente las terminales Boaco, Juigalpa y la de Managua, con sus rutas en ambos sentidos, salidas, tarifas y boletos; que Viajar, Horarios, Rutas, Boletos y Buscador solo muestren esos destinos.
 - hecho cuando: ninguna pantalla ni dato de muestra nombra otro destino y `pnpm verificar` pasa.
+
+### T-105 · terminales reales y cuatro sentidos
+- depende de: T-104 · zona: `apps/movil/src/datos`, `apps/movil/src/pantallas`, `docs/plan` · raíz: no · estado: libre
+- hacer: reemplazar UCA y centros urbanos por las terminales verificadas Mercado Mayoreo, Terminal de Buses de Managua en Boaco y Terminal Mayales; representar Boaco–Managua y Juigalpa–Managua en ambos sentidos en Rutas y en el selector de viaje.
+- hecho cuando: las tres terminales usan coordenadas abiertas verificables, Rutas ofrece los cuatro sentidos sin duplicados y GPS nunca propone UCA para este corredor.
+
+### T-106 · simplificación integral de recorridos
+- depende de: T-100, T-101, T-105 · zona: `apps/movil/src/pantallas`, `apps/movil/src/componentes`, `apps/movil/app` · raíz: no · estado: libre
+- hacer: auditar de punta a punta Viajar, Horarios, Rutas, compra, Boletos y configuración; retirar acciones duplicadas o permanentes sin utilidad, reducir texto repetido y dejar una acción primaria evidente por estado.
+- hecho cuando: cada recorrido principal se completa sin volver repetidamente, ninguna pantalla duplica títulos o controles y una revisión en iphone confirma jerarquía, scroll, retorno y zonas táctiles.
