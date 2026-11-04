@@ -80,7 +80,11 @@ export function Viajar({
   );
   const proxima = proximaSalida(salidasDestino);
   const pendientes = salidasDestino
-    .filter((salida) => ESTADOS_PENDIENTES.includes(salida.estado))
+    .filter(
+      (salida) =>
+        salida.viajeId !== proxima?.viajeId &&
+        ESTADOS_PENDIENTES.includes(salida.estado),
+    )
     .slice(0, 3);
   const origen = datos.terminales.find((terminal) => terminal.id === origenId);
   const rutasFrecuentes = datos.rutas
