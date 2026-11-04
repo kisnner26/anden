@@ -48,6 +48,8 @@ export function MarcoPestana({
             {
               paddingBottom:
                 disposicionPantalla.espacioBarraPestanas + margenes.bottom,
+              paddingHorizontal:
+                espacios.lateral + Math.max(margenes.left, margenes.right),
               paddingTop: disposicionPantalla.rellenoSuperior + margenes.top,
             },
             estiloContenido,
@@ -64,7 +66,6 @@ const estilos = StyleSheet.create({
   contenido: {
     alignSelf: 'center',
     maxWidth: disposicionPantalla.anchoMaximo,
-    paddingHorizontal: espacios.lateral,
     width: '100%',
   },
   desplazamiento: { flexGrow: 1 },
