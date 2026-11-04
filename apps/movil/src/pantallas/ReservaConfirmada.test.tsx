@@ -16,4 +16,14 @@ describe('ReservaConfirmada', () => {
       ),
     ).toBeTruthy();
   });
+
+  it('anuncia inmediatamente el resultado completo', async () => {
+    const pantalla = await renderPantalla(
+      <ReservaConfirmada codigo="P3NS6TW4" />,
+    );
+
+    const resumen = pantalla.getByLabelText(/P3NS6TW4/);
+    expect(resumen.props.accessibilityLiveRegion).toBe('assertive');
+    expect(resumen.props.accessible).toBe(true);
+  });
 });
