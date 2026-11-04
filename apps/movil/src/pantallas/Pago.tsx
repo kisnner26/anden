@@ -6,7 +6,6 @@ import { Bloque } from '@/componentes/Bloque';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
-import { OpcionSeleccion } from '@/componentes/OpcionSeleccion';
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
 import { totalReserva, type ErrorReserva } from '@/datos/reserva';
 import { useBoletos } from '@/datos/useBoletos';
@@ -121,24 +120,13 @@ export function Pago({ alReservado, alVolver, viajeId }: PropiedadesPago) {
           ))}
         </Bloque>
 
-        <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-          {t('pago.elegir')}
-        </Text>
-        <OpcionSeleccion
-          alElegir={() => undefined}
-          detalle={t('pago.efectivoDetalle')}
-          elegida
-          nombre={t('pago.efectivo')}
-        />
-        <OpcionSeleccion
-          alElegir={() => undefined}
-          deshabilitada
-          detalle={t('pago.tarjetaDetalle')}
-          elegida={false}
-          nombre={t('pago.tarjeta')}
-          rotulo={t('pago.proximamente')}
-        />
-        <Bloque estiloContenido={estilos.aviso} hundido radio="loseta">
+        <Bloque estiloContenido={estilos.metodo} hundido radio="loseta">
+          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+            {t('pago.efectivo')}
+          </Text>
+          <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
+            {t('pago.efectivoDetalle')}
+          </Text>
           <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
             {t('pago.avisoEfectivo')}
           </Text>
@@ -188,7 +176,6 @@ export function Pago({ alReservado, alVolver, viajeId }: PropiedadesPago) {
 }
 
 const estilos = StyleSheet.create({
-  aviso: { padding: espacios.dieciseis },
   centro: {
     alignItems: 'center',
     flex: 1,
@@ -204,6 +191,7 @@ const estilos = StyleSheet.create({
     paddingHorizontal: espacios.veinticuatro,
     paddingVertical: espacios.dieciseis,
   },
+  metodo: { gap: espacios.ocho, padding: espacios.dieciseis },
   pantalla: { flex: 1 },
   pie: { left: 14, position: 'absolute', right: 14 },
   resumen: { gap: espacios.ocho, padding: espacios.veinticuatro },
