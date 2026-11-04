@@ -82,17 +82,11 @@ describe('Pago', () => {
     expect(pantalla.getByText(/tarifa de muestra · C\$ 70/)).toBeTruthy();
   });
 
-  it('deja elegido el efectivo y la tarjeta como próximamente', async () => {
+  it('muestra solo el pago en efectivo al abordar', async () => {
     const pantalla = await dibujar(DOS);
-    const efectivo = await pantalla.findByRole('radio', {
-      name: 'Efectivo al abordar',
-    });
-    expect(efectivo.props.accessibilityState).toMatchObject({ checked: true });
-    expect(
-      pantalla.getByRole('radio', { name: 'Tarjeta o transferencia' }).props
-        .accessibilityState,
-    ).toMatchObject({ disabled: true });
-    expect(pantalla.getByText('Próximamente')).toBeTruthy();
+    expect(await pantalla.findByText(/No se cobra nada ahora/)).toBeTruthy();
+    expect(pantalla.queryByText('Próximamente')).toBeNull();
+    expect(pantalla.queryByRole('radio')).toBeNull();
   });
 
   it('explica que no se cobra nada ahora y que se paga el monto exacto', async () => {
