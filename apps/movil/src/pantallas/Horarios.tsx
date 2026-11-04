@@ -1,12 +1,12 @@
 import type { TipoServicio } from '@anden/dominio';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
 import { Chip } from '@/componentes/Chip';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
+import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { TableroSalidas } from '@/componentes/TableroSalidas';
 import { useSalidas } from '@/datos/useSalidas';
 import { espacios } from '@/tema/espacios';
@@ -30,7 +30,6 @@ export interface PropiedadesHorarios {
 /** el tablero de salidas de la terminal, con filtro por servicio */
 export function Horarios({ alAbrirBuscador }: PropiedadesHorarios) {
   const { colores } = useTema();
-  const margenes = useSafeAreaInsets();
   const { datos, salidas } = useSalidas();
   const terminal = datos.terminales.find(
     (candidata) => candidata.id === 'ter_may',
@@ -42,13 +41,7 @@ export function Horarios({ alAbrirBuscador }: PropiedadesHorarios) {
       : salidas.filter((salida) => salida.servicio === filtro);
 
   return (
-    <ScrollView
-      contentContainerStyle={[
-        estilos.contenido,
-        { paddingBottom: 130, paddingTop: margenes.top + 8 },
-      ]}
-      style={{ backgroundColor: colores.fondo }}
-    >
+    <MarcoPestana>
       <View style={estilos.cabecera}>
         <Text style={[estilos.titulo, { color: colores.tinta }]}>
           {t('horarios.titulo')}
@@ -99,7 +92,7 @@ export function Horarios({ alAbrirBuscador }: PropiedadesHorarios) {
       <View style={estilos.tablero}>
         <TableroSalidas salidas={visibles} />
       </View>
-    </ScrollView>
+    </MarcoPestana>
   );
 }
 
@@ -115,7 +108,6 @@ const estilos = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  contenido: { paddingHorizontal: espacios.lateral },
   datosTerminal: { flex: 1 },
   filaTerminal: {
     alignItems: 'center',
