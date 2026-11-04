@@ -8,6 +8,7 @@ import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 
 export interface LugarCampo {
+  ciudad?: string;
   codigo: string;
   id: string;
   nombre: string;
@@ -52,7 +53,7 @@ export function CampoLugar({
     const termino = consulta.trim().toLocaleLowerCase('es-NI');
     if (termino === '') return lugares;
     return lugares.filter((lugar) =>
-      `${lugar.nombre} ${lugar.codigo}`
+      `${lugar.nombre} ${lugar.ciudad ?? ''} ${lugar.codigo}`
         .toLocaleLowerCase('es-NI')
         .includes(termino),
     );
