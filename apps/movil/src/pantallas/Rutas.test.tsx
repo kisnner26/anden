@@ -19,7 +19,12 @@ describe('Rutas', () => {
     const pantalla = await renderPantalla(<Rutas />);
     expect(
       pantalla.getAllByText('Horarios y ubicación por confirmar'),
-    ).toHaveLength(4);
+    ).toHaveLength(1);
+    expect(
+      pantalla.getAllByText(
+        'La hora, el estado y la llegada son ilustrativos hasta tener datos en vivo.',
+      ),
+    ).toHaveLength(1);
     expect(pantalla.queryByLabelText('Mapa esquemático de rutas')).toBeNull();
   });
 
