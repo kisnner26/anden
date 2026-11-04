@@ -8,6 +8,7 @@ import {
 } from '@/datos/corredores';
 import { espacios, radios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
+import { movimiento } from '@/tema/movimiento';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
@@ -34,6 +35,10 @@ export function TarjetaCorredor({
       accessibilityLabel={etiqueta}
       accessibilityRole="button"
       onPress={() => alPresionar(corredor.id)}
+      style={({ pressed }) => [
+        estilos.tarjeta,
+        pressed && estilos.tarjetaPresionada,
+      ]}
     >
       <Bloque estiloContenido={estilos.contenido} radio="tarjeta">
         <View style={estilos.cabecera}>
@@ -139,5 +144,7 @@ const estilos = StyleSheet.create({
   sentido: { gap: espacios.cuatro },
   separador: { height: espacios.trazo },
   sinServicio: { gap: espacios.cuatro },
+  tarjeta: { minHeight: tamanosControl.toqueMinimo },
+  tarjetaPresionada: { transform: [{ scale: movimiento.escalaPresion }] },
   trayecto: { alignItems: 'center', flexDirection: 'row', gap: espacios.doce },
 });
