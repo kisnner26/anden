@@ -53,20 +53,11 @@ describe('Viajar', () => {
     expect(pantalla.getByText('Tarifas de muestra')).toBeTruthy();
   });
 
-  it('deja cambiar el origen manualmente', async () => {
-    const pantalla = await dibujar();
-    await fireEvent(pantalla.getByLabelText('Salgo desde'), 'focus');
-    await fireEvent.press(
-      pantalla.getByRole('button', { name: 'Terminal Mayales' }),
-    );
-    expect(pantalla.getByDisplayValue('Terminal Mayales')).toBeTruthy();
-    expect(pantalla.getByDisplayValue('Mercado Mayoreo')).toBeTruthy();
-  });
-
-  it('no repite el origen ni muestra un botón permanente de ubicación', async () => {
+  it('deja origen, destino y ubicación fuera de la portada', async () => {
     const pantalla = await dibujar();
 
-    expect(pantalla.getAllByText('Salgo desde')).toHaveLength(1);
+    expect(pantalla.queryByLabelText('Salgo desde')).toBeNull();
+    expect(pantalla.queryByLabelText('Voy hacia')).toBeNull();
     expect(
       pantalla.queryByRole('button', { name: 'Usar mi ubicación' }),
     ).toBeNull();
@@ -91,43 +82,27 @@ describe('Viajar', () => {
       </ProveedorUbicacion>,
     );
 
-    expect(
-      await pantalla.findByDisplayValue('Terminal de Buses de Managua'),
-    ).toBeTruthy();
+    expect((await pantalla.findAllByText('Managua')).length).toBeGreaterThan(0);
     expect(obtenerUbicacionActual).toHaveBeenCalledTimes(1);
   });
 
   it('lista otras salidas sin repetir la destacada', async () => {
     const pantalla = await dibujar();
-    expect(pantalla.getAllByRole('button', { name: /andén/ })).toHaveLength(2);
+    expect(pantalla.getAllByRole('button', { name: /andén/ })).toHaveLength(3);
   });
 
-  it('actualiza la próxima salida al elegir otro destino', async () => {
+  it('muestra salidas hacia Boaco y Juigalpa', async () => {
     const pantalla = await dibujar();
-    await fireEvent.changeText(
-      pantalla.getByLabelText('Voy hacia'),
-      'Juigalpa',
-    );
-    await fireEvent.press(
-      pantalla.getByRole('button', { name: 'Terminal Mayales' }),
-    );
-    expect(pantalla.getByDisplayValue('Terminal Mayales')).toBeTruthy();
+    expect(pantalla.getAllByText('Boaco').length).toBeGreaterThan(0);
     expect(pantalla.getAllByText('Juigalpa').length).toBeGreaterThan(0);
   });
 
-  it('permite elegir fecha y cantidad de pasajeros', async () => {
+  it('no mezcla fecha ni pasajeros con las salidas inmediatas', async () => {
     const pantalla = await dibujar();
-    const fechas = pantalla.getAllByRole('radio');
-    expect(fechas).toHaveLength(3);
-    await fireEvent.press(fechas[1] as never);
+    expect(pantalla.queryAllByRole('radio')).toHaveLength(0);
     expect(
-      (fechas[1] as never as { props: { accessibilityState: unknown } }).props
-        .accessibilityState,
-    ).toEqual(expect.objectContaining({ checked: true }));
-    await fireEvent.press(
-      pantalla.getByRole('button', { name: 'Agregar pasajero' }),
-    );
-    expect(pantalla.getByLabelText('2 Pasajeros')).toBeTruthy();
+      pantalla.queryByRole('button', { name: 'Agregar pasajero' }),
+    ).toBeNull();
   });
 
   it('no repite los destinos como botones secundarios', async () => {
@@ -150,7 +125,7 @@ describe('Viajar', () => {
     await fireEvent.press(
       pantalla.getAllByRole('button', { name: /andén/ })[0] as never,
     );
-    expect(alAbrirViaje).toHaveBeenCalledWith('via_5');
+    expect(alAbrirViaje).toHaveBeenCalledWith('via_3');
   });
 
   it('abre configuración desde el avatar', async () => {
