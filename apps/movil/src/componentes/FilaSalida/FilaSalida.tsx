@@ -6,7 +6,7 @@ import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
 import { formatoHora, formatoHoraCompleta } from '@/datos/formato';
 import type { Salida } from '@/datos/salidas';
-import { espacios } from '@/tema/espacios';
+import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -24,7 +24,7 @@ function IconoServicio({ servicio }: { servicio: Salida['servicio'] }) {
   if (servicio === 'taxi-interlocal') {
     return <Icono nombre="taxi" tamano="ilustracion" />;
   }
-  return <Autobus ancho={44} />;
+  return <Autobus ancho={tamanosControl.toqueMinimo} />;
 }
 
 /** una salida de la terminal: ícono del servicio, destino, andén, hora y el estado del boleto */
@@ -48,7 +48,7 @@ export function FilaSalida({
           <IconoServicio servicio={salida.servicio} />
         </Loseta>
         <View style={estilos.texto}>
-          <Text style={[estilos.destino, { color: colores.tinta }]}>
+          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
             {salida.destino}
           </Text>
           <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
@@ -79,19 +79,17 @@ export function FilaSalida({
 }
 
 const estilos = StyleSheet.create({
-  circuloVacio: { height: 40, width: 40 },
+  circuloVacio: {
+    height: tamanosControl.circuloPildora,
+    width: tamanosControl.circuloPildora,
+  },
   contenido: {
     alignItems: 'center',
     flexDirection: 'row',
     gap: espacios.doce,
     paddingHorizontal: espacios.doce,
-    paddingVertical: 11,
+    paddingVertical: espacios.doce,
   },
-  destino: {
-    fontFamily: 'Archivo_600SemiBold',
-    fontSize: 18,
-    lineHeight: 22,
-  },
-  fila: { marginTop: 10 },
+  fila: { marginTop: espacios.doce },
   texto: { flex: 1 },
 });
