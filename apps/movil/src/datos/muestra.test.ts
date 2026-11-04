@@ -49,10 +49,31 @@ describe('crearMuestra', () => {
 
   it('incluye retornos de cada terminal de muestra a Managua', () => {
     for (const ruta of datos.rutas.filter(
-      (ruta) => ruta.destinoId === 'ter_uca',
+      (ruta) => ruta.destinoId === 'ter_may',
     )) {
       expect(datos.viajes.some((viaje) => viaje.rutaId === ruta.id)).toBe(true);
     }
+  });
+
+  it('usa las tres terminales verificadas del corredor', () => {
+    expect(datos.terminales).toEqual([
+      expect.objectContaining({
+        codigo: 'MAY',
+        coordenadas: { lat: 12.13413, lng: -86.1933 },
+        id: 'ter_may',
+        nombre: 'Mercado Mayoreo',
+      }),
+      expect.objectContaining({
+        coordenadas: { lat: 12.46901, lng: -85.65587 },
+        id: 'ter_boa',
+        nombre: 'Terminal de Buses de Managua',
+      }),
+      expect.objectContaining({
+        coordenadas: { lat: 12.09172, lng: -85.36106 },
+        id: 'ter_jui',
+        nombre: 'Terminal Mayales',
+      }),
+    ]);
   });
 
   it('trae calificaciones válidas para cada chofer', () => {
