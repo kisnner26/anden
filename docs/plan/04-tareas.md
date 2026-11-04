@@ -588,7 +588,7 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - hecho cuando: las cuatro pestañas comparten una cuadrícula consistente, la barra nunca tapa contenido ni salta de posición, todos los controles principales miden al menos 44 puntos y reducir movimiento conserva una respuesta clara.
 
 ### T-108 · rediseñar viajar y horarios
-- depende de: T-107 · zona: `apps/movil/src/pantallas`, `apps/movil/src/componentes` · raíz: no · estado: libre
+- depende de: T-107 · zona: `apps/movil/src/pantallas`, `apps/movil/src/componentes` · raíz: no · estado: en curso
 - hacer: llevar Viajar y Horarios a la jerarquía exacta del mockup v2, con una sola pieza dominante, selección de terminal comprensible, tablero legible y acciones secundarias fuera del foco.
 - hecho cuando: origen, destino, próxima salida y tablero se entienden sin explicación, no hay controles decorativos ni contenido cortado y las capturas en iphone coinciden con la dirección aprobada.
 
