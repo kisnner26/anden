@@ -1,5 +1,7 @@
 import { describe, expect, it, jest } from '@jest/globals';
-import { fireEvent, render } from '@testing-library/react-native';
+import { fireEvent } from '@testing-library/react-native';
+
+import { renderPantalla } from '@/pruebas/render';
 
 import { BarraPestanas, type Pestana } from './BarraPestanas';
 
@@ -12,7 +14,7 @@ const PESTANAS: Pestana[] = [
 
 describe('BarraPestanas', () => {
   it('muestra las cuatro pestañas', async () => {
-    const pantalla = await render(
+    const pantalla = await renderPantalla(
       <BarraPestanas
         activa="viajar"
         alSeleccionar={() => undefined}
@@ -23,7 +25,7 @@ describe('BarraPestanas', () => {
   });
 
   it('marca como seleccionada solo la activa', async () => {
-    const pantalla = await render(
+    const pantalla = await renderPantalla(
       <BarraPestanas
         activa="horarios"
         alSeleccionar={() => undefined}
@@ -40,7 +42,7 @@ describe('BarraPestanas', () => {
 
   it('avisa la clave de la pestaña presionada', async () => {
     const alSeleccionar = jest.fn();
-    const pantalla = await render(
+    const pantalla = await renderPantalla(
       <BarraPestanas
         activa="viajar"
         alSeleccionar={alSeleccionar}
