@@ -226,7 +226,7 @@ Todas en `packages/dominio`, raíz: no. Cada regla viene con sus pruebas en el m
 - hecho cuando: no aparecen destinos fuera del corredor, cada elemento visual tiene significado rotulado y las capturas en iphone coinciden con la dirección v2.
 
 ### T-100 · ubicación automática en configuración
-- depende de: T-097 · zona: `apps/movil/src/pantallas`, `apps/movil/src/datos` · raíz: no · estado: libre
+- depende de: T-097 · zona: `apps/movil/src/pantallas`, `apps/movil/src/datos` · raíz: no · estado: en curso
 - hacer: quitar el botón permanente de Viajar y agregar una preferencia persistente en configuración; al activarla se pide permiso y Viajar propone el origen automáticamente, con estado, desactivar y reintentar en configuración.
 - hecho cuando: Viajar no muestra el botón, la preferencia sobrevive al reinicio y nunca guarda ni envía coordenadas.
 
