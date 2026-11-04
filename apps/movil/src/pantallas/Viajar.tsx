@@ -9,7 +9,6 @@ import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
 import {
-  RutaFrecuente,
   SelectorFecha,
   SelectorPasajeros,
   type DiaViaje,
@@ -86,20 +85,6 @@ export function Viajar({
         ESTADOS_PENDIENTES.includes(salida.estado),
     )
     .slice(0, 3);
-  const origen = datos.terminales.find((terminal) => terminal.id === origenId);
-  const rutasFrecuentes = datos.rutas
-    .filter((ruta) => ruta.origenId === origenId)
-    .slice(0, 2)
-    .map((ruta) => ({
-      destino: datos.terminales.find(
-        (terminal) => terminal.id === ruta.destinoId,
-      ),
-      proxima: proximaSalida(
-        salidas.filter((salida) => salida.rutaId === ruta.id),
-      ),
-      ruta,
-    }))
-    .filter(({ destino }) => destino !== undefined);
   const cambiarOrigen = (nuevoOrigenId: string) => {
     establecerOrigenId(nuevoOrigenId);
     const destinoDisponible = datos.rutas.some(
@@ -223,38 +208,6 @@ export function Viajar({
         />
       </View>
 
-      {origen && rutasFrecuentes.length > 0 && (
-        <View style={estilos.rutas}>
-          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-            {t('viajar.rutasFrecuentes')}
-          </Text>
-          {rutasFrecuentes.map(({ destino, proxima: salida, ruta }) => (
-            <RutaFrecuente
-              alPresionar={() => establecerDestinoId(ruta.destinoId)}
-              destino={destino?.ciudad ?? ''}
-              etiqueta={t('viajar.usarRuta').replace(
-                '{{destino}}',
-                destino?.ciudad ?? '',
-              )}
-              key={ruta.id}
-              origen={origen.ciudad}
-              proximaHora={
-                salida
-                  ? t('viajar.proximaRuta').replace(
-                      '{{hora}}',
-                      salida.salida.toLocaleTimeString('es-NI', {
-                        hour: '2-digit',
-                        hour12: false,
-                        minute: '2-digit',
-                      }),
-                    )
-                  : undefined
-              }
-            />
-          ))}
-        </View>
-      )}
-
       <View style={estilos.seccion}>
         <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
           {t('viajar.salidasDeHoy')}
@@ -306,7 +259,6 @@ const estilos = StyleSheet.create({
     gap: espacios.dieciseis,
     marginTop: espacios.veinticuatro,
   },
-  rutas: { gap: espacios.doce, marginTop: espacios.veinticuatro },
   seccion: {
     alignItems: 'center',
     flexDirection: 'row',
