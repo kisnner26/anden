@@ -9,7 +9,7 @@ import { Loseta } from '@/componentes/Loseta';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { TableroSalidas } from '@/componentes/TableroSalidas';
 import { useSalidas } from '@/datos/useSalidas';
-import { espacios } from '@/tema/espacios';
+import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -43,7 +43,7 @@ export function Horarios({ alAbrirBuscador }: PropiedadesHorarios) {
   return (
     <MarcoPestana>
       <View style={estilos.cabecera}>
-        <Text style={[estilos.titulo, { color: colores.tinta }]}>
+        <Text style={[tipografia.display, { color: colores.tinta }]}>
           {t('horarios.titulo')}
           <Text style={{ color: colores.ambarTitular }}>.</Text>
         </Text>
@@ -65,7 +65,7 @@ export function Horarios({ alAbrirBuscador }: PropiedadesHorarios) {
           </Text>
         </Loseta>
         <View style={estilos.datosTerminal}>
-          <Text style={[estilos.nombreTerminal, { color: colores.tinta }]}>
+          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
             {terminal?.nombre}
           </Text>
           <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
@@ -99,9 +99,9 @@ export function Horarios({ alAbrirBuscador }: PropiedadesHorarios) {
 const estilos = StyleSheet.create({
   buscar: {
     alignItems: 'center',
-    height: 44,
+    height: tamanosControl.toqueMinimo,
     justifyContent: 'center',
-    width: 44,
+    width: tamanosControl.toqueMinimo,
   },
   cabecera: {
     alignItems: 'center',
@@ -113,20 +113,10 @@ const estilos = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     gap: espacios.doce,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingHorizontal: espacios.doce,
+    paddingVertical: espacios.doce,
   },
-  filtros: { gap: 10, paddingVertical: 14 },
-  nombreTerminal: {
-    fontFamily: 'Archivo_600SemiBold',
-    fontSize: 17,
-    lineHeight: 21,
-  },
-  tablero: { marginTop: 2 },
-  terminal: { marginTop: 14 },
-  titulo: {
-    fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
-    fontSize: 46,
-    lineHeight: 48,
-  },
+  filtros: { gap: espacios.ocho, paddingVertical: espacios.dieciseis },
+  tablero: { marginTop: espacios.cuatro },
+  terminal: { marginTop: espacios.dieciseis },
 });
