@@ -44,7 +44,6 @@ export function Pago({ alReservado, alVolver, viajeId }: PropiedadesPago) {
   const [error, establecerError] = useState<string | null>(null);
   const [confirmacion, establecerConfirmacion] = useState<{
     codigo: string;
-    id: string;
   } | null>(null);
   const salida = salidas.find((candidata) => candidata.viajeId === viajeId);
 
@@ -76,7 +75,6 @@ export function Pago({ alReservado, alVolver, viajeId }: PropiedadesPago) {
       if (primero) {
         establecerConfirmacion({
           codigo: primero.boleto.codigo,
-          id: primero.boleto.id,
         });
         alReservado(primero.boleto.id);
       }
