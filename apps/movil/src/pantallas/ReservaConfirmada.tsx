@@ -20,6 +20,9 @@ export function ReservaConfirmada({ codigo }: PropiedadesReservaConfirmada) {
 
   return (
     <View
+      accessibilityLabel={`${t('pago.confirmadaTitulo')}. ${t('pago.codigoAbordaje')}: ${codigo}. ${t('pago.abriendoBoletos')}`}
+      accessibilityLiveRegion="assertive"
+      accessible
       style={[
         estilos.pantalla,
         {
@@ -55,7 +58,10 @@ export function ReservaConfirmada({ codigo }: PropiedadesReservaConfirmada) {
           >
             {t('pago.codigoAbordaje')}
           </Text>
-          <Text style={[tipografia.datoGrande, { color: colores.ambar }]}>
+          <Text
+            selectable
+            style={[tipografia.datoGrande, { color: colores.ambar }]}
+          >
             {codigo}
           </Text>
         </BloqueNegro>
