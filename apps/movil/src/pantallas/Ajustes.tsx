@@ -81,6 +81,7 @@ export function Ajustes({ alAbrirPerfil, alVolver }: PropiedadesAjustes) {
         accessibilityLabel={t('ajustes.volver')}
         accessibilityRole="button"
         onPress={alVolver}
+        style={estilos.volver}
       >
         <Bloque estiloContenido={estilos.circulo} radio="pildora">
           <Icono nombre="volver" tamano="grande" />
@@ -279,4 +280,5 @@ const estilos = StyleSheet.create({
     fontSize: 46,
     lineHeight: 48,
   },
+  volver: { alignSelf: 'flex-start' },
 });
