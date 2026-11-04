@@ -50,8 +50,9 @@ describe('Boletos', () => {
       JSON.stringify([boletoDePrueba(EN_UNA_HORA())]),
     );
     const pantalla = await dibujar();
-    expect(await pantalla.findByText('Próximos')).toBeTruthy();
+    expect(await pantalla.findByText('Tu próximo viaje')).toBeTruthy();
     expect(pantalla.getByText('Andén 4 · Asiento 8')).toBeTruthy();
+    expect(pantalla.queryByText('Próximos')).toBeNull();
     expect(pantalla.queryByText('Pasados')).toBeNull();
   });
 
@@ -66,6 +67,7 @@ describe('Boletos', () => {
     const pantalla = await dibujar();
     expect(await pantalla.findByText('Tu próximo viaje')).toBeTruthy();
     expect(pantalla.getByLabelText('Tu próximo viaje Boaco')).toBeTruthy();
+    expect(pantalla.getByText('Próximos')).toBeTruthy();
   });
 
   it('separa los boletos pasados', async () => {
@@ -77,7 +79,8 @@ describe('Boletos', () => {
       ]),
     );
     const pantalla = await dibujar();
-    expect(await pantalla.findByText('Próximos')).toBeTruthy();
+    expect(await pantalla.findByText('Tu próximo viaje')).toBeTruthy();
+    expect(pantalla.queryByText('Próximos')).toBeNull();
     expect(pantalla.getByText('Pasados')).toBeTruthy();
   });
 
