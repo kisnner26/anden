@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, waitFor } from '@testing-library/react-native';
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 
 import { VIAJE_BOACO } from '@/datos/muestra';
 import { ProveedorBoletos } from '@/datos/ProveedorBoletos';
@@ -20,11 +20,15 @@ function Preparar({
   children: ReactNode;
   pasajeros?: PasajeroReserva[];
 }) {
-  const { borrador, establecerBorrador } = useReserva();
+  const { establecerBorrador } = useReserva();
+  const [preparado, establecerPreparado] = useState(!pasajeros);
   useEffect(() => {
-    if (pasajeros) establecerBorrador(VIAJE_BOACO, pasajeros);
-  }, [establecerBorrador, pasajeros]);
-  return pasajeros && !borrador ? null : <>{children}</>;
+    if (pasajeros && !preparado) {
+      establecerBorrador(VIAJE_BOACO, pasajeros);
+      establecerPreparado(true);
+    }
+  }, [establecerBorrador, pasajeros, preparado]);
+  return pasajeros && !preparado ? null : <>{children}</>;
 }
 
 const DOS = [
@@ -102,6 +106,9 @@ describe('Pago', () => {
     await fireEvent.press(
       await pantalla.findByRole('button', { name: 'Confirmar reserva' }),
     );
+    expect(
+      await pantalla.findByLabelText(/Reserva lista.*Código de abordaje/),
+    ).toBeTruthy();
     await waitFor(() => expect(alReservado).toHaveBeenCalledTimes(1));
     expect(String(alReservado.mock.calls[0]?.[0])).toMatch(/^bol_/);
   });
