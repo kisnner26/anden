@@ -19,7 +19,7 @@ it('explica el corredor y abre su detalle', async () => {
   );
 
   const tarjeta = pantalla.getByRole('button', {
-    name: 'Abrir corredor de Boaco a Managua',
+    name: 'Abrir Boaco a Managua',
   });
   expect(tarjeta.props.accessibilityHint).toBe(
     'Horarios y ubicación por confirmar',

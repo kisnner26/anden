@@ -11,7 +11,7 @@ afterEach(() => reiniciarMuestra());
 describe('Horarios', () => {
   it('muestra el título y la terminal', async () => {
     const pantalla = await renderPantalla(<Horarios />);
-    expect(pantalla.getByText('Terminal UCA')).toBeTruthy();
+    expect(pantalla.getByText('Mercado Mayoreo')).toBeTruthy();
     expect(pantalla.getByTestId('tablero-salidas')).toBeTruthy();
   });
 
