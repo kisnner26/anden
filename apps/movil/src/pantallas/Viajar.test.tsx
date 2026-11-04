@@ -97,9 +97,9 @@ describe('Viajar', () => {
     expect(obtenerUbicacionActual).toHaveBeenCalledTimes(1);
   });
 
-  it('lista las salidas pendientes del destino elegido', async () => {
+  it('lista otras salidas sin repetir la destacada', async () => {
     const pantalla = await dibujar();
-    expect(pantalla.getAllByRole('button', { name: /andén/ })).toHaveLength(3);
+    expect(pantalla.getAllByRole('button', { name: /andén/ })).toHaveLength(2);
   });
 
   it('actualiza la próxima salida al elegir otro destino', async () => {
@@ -130,13 +130,11 @@ describe('Viajar', () => {
     expect(pantalla.getByLabelText('2 Pasajeros')).toBeTruthy();
   });
 
-  it('recupera un destino desde tus rutas', async () => {
+  it('no repite los destinos como botones secundarios', async () => {
     const pantalla = await dibujar();
-    await fireEvent.press(
-      pantalla.getByRole('button', { name: 'Usar ruta a Juigalpa' }),
-    );
-    expect(pantalla.getByDisplayValue('Terminal Mayales')).toBeTruthy();
-    expect(pantalla.getAllByText('Juigalpa').length).toBeGreaterThan(0);
+    expect(
+      pantalla.queryByRole('button', { name: /Usar ruta a/ }),
+    ).toBeNull();
   });
 
   it('va directo a los asientos desde el botón del próximo viaje', async () => {
@@ -154,7 +152,7 @@ describe('Viajar', () => {
     await fireEvent.press(
       pantalla.getAllByRole('button', { name: /andén/ })[0] as never,
     );
-    expect(alAbrirViaje).toHaveBeenCalledWith('via_2');
+    expect(alAbrirViaje).toHaveBeenCalledWith('via_5');
   });
 
   it('abre configuración desde el avatar', async () => {
