@@ -1,18 +1,12 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Autobus } from '@/componentes/Autobus';
-import { BloqueNegro } from '@/componentes/BloqueNegro';
+import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
 import {
   OPERACION_MUESTRA_POR_CORREDOR,
   type CorredorInterlocal,
 } from '@/datos/corredores';
-import {
-  espacios,
-  radios,
-  tamanosControl,
-  tamanosIlustracion,
-} from '@/tema/espacios';
+import { espacios, radios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -31,6 +25,8 @@ export function TarjetaCorredor({
     .replace('{{origen}}', corredor.origen)
     .replace('{{destino}}', corredor.destino);
   const operacion = OPERACION_MUESTRA_POR_CORREDOR[corredor.id];
+  const codigoOrigen = corredor.origen.slice(0, 3).toUpperCase();
+  const codigoDestino = corredor.destino.slice(0, 3).toUpperCase();
 
   return (
     <Pressable
@@ -39,72 +35,71 @@ export function TarjetaCorredor({
       accessibilityRole="button"
       onPress={() => alPresionar(corredor.id)}
     >
-      <BloqueNegro estiloContenido={estilos.contenido}>
-        <View style={estilos.ilustracion}>
-          <View style={[estilos.punto, { backgroundColor: colores.ambar }]} />
-          <View style={[estilos.linea, { backgroundColor: colores.ambar }]} />
-          <Autobus
-            ancho={tamanosIlustracion.autobusCorredor}
-            letrero={corredor.destino.toUpperCase()}
-          />
-        </View>
-        <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
-          {t('rutas.corredor')}
-        </Text>
-        <View style={estilos.trayecto}>
-          <Text style={[tipografia.titulo, { color: colores.sobreNegro }]}>
-            {corredor.origen}
-          </Text>
-          <Text
-            style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
-          >
-            {t('rutas.hacia')}
-          </Text>
-          <Text style={[tipografia.titulo, { color: colores.ambar }]}>
-            {corredor.destino}
-          </Text>
-        </View>
-        <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
-          {t('rutas.operacionMuestra')}
-        </Text>
-        {operacion.estado === 'proxima' ? (
-          <View style={estilos.operacion}>
-            <View style={estilos.datoOperacion}>
-              <Text
-                style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
-              >
-                {t('rutas.proximaUnidad')}
-              </Text>
-              <Text
-                style={[tipografia.datoGrande, { color: colores.sobreNegro }]}
-              >
-                {operacion.proximaSalida}
+      <Bloque estiloContenido={estilos.contenido} radio="tarjeta">
+        <View style={estilos.cabecera}>
+          <View style={estilos.trayecto}>
+            <View
+              style={[estilos.codigo, { backgroundColor: colores.bloqueNegro }]}
+            >
+              <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+                {codigoOrigen}
               </Text>
             </View>
-            <Text
-              style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
-            >
-              {t('rutas.horarioReferencial')}
-            </Text>
+            <View style={estilos.sentido}>
+              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                {corredor.origen}
+              </Text>
+              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+                {t('rutas.hacia')}
+              </Text>
+              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                {corredor.destino}
+              </Text>
+            </View>
           </View>
-        ) : (
-          <View style={estilos.sinServicio}>
-            <Text style={[tipografia.subtitulo, { color: colores.sobreNegro }]}>
-              {t('rutas.sinServicio')}
+          <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+            {codigoDestino}
+          </Text>
+        </View>
+
+        <View style={[estilos.separador, { backgroundColor: colores.linea }]} />
+
+        <View style={estilos.pie}>
+          <View style={estilos.operacion}>
+            <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+              {t('rutas.operacionMuestra')}
             </Text>
-            <Text
-              style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
-            >
-              {t('rutas.sinServicioDetalle')}
-            </Text>
+            {operacion.estado === 'proxima' ? (
+              <View style={estilos.horario}>
+                <Text style={[tipografia.dato, { color: colores.tinta }]}>
+                  {operacion.proximaSalida}
+                </Text>
+                <Text
+                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                >
+                  {t('rutas.horarioReferencial')}
+                </Text>
+              </View>
+            ) : (
+              <View style={estilos.sinServicio}>
+                <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
+                  {t('rutas.sinServicio')}
+                </Text>
+                <Text
+                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                >
+                  {t('rutas.sinServicioDetalle')}
+                </Text>
+              </View>
+            )}
           </View>
-        )}
-        <View style={estilos.avanceFila}>
-          <View style={[estilos.avance, { backgroundColor: colores.ambar }]}>
-            <Icono nombre="siguiente" tamano="mediano" />
+          <View
+            style={[estilos.avance, { backgroundColor: colores.bloqueNegro }]}
+          >
+            <Icono color={colores.ambar} nombre="siguiente" tamano="mediano" />
           </View>
         </View>
-      </BloqueNegro>
+      </Bloque>
     </Pressable>
   );
 }
@@ -117,22 +112,32 @@ const estilos = StyleSheet.create({
     justifyContent: 'center',
     width: tamanosControl.toqueMinimo,
   },
-  avanceFila: { alignItems: 'flex-end' },
-  contenido: { gap: espacios.doce, padding: espacios.veinticuatro },
-  datoOperacion: { flex: 1, gap: espacios.cuatro },
-  ilustracion: { alignItems: 'center', flexDirection: 'row' },
-  linea: { flex: 1, height: espacios.cuatro },
+  cabecera: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  codigo: {
+    alignItems: 'center',
+    borderRadius: radios.loseta,
+    height: tamanosControl.toqueMinimo,
+    justifyContent: 'center',
+    width: tamanosControl.toqueMinimo,
+  },
+  contenido: { gap: espacios.doce, padding: espacios.dieciseis },
+  horario: { gap: espacios.cuatro },
   operacion: {
+    flex: 1,
+    gap: espacios.cuatro,
+  },
+  pie: {
     alignItems: 'flex-end',
     flexDirection: 'row',
     gap: espacios.doce,
     justifyContent: 'space-between',
   },
-  punto: {
-    borderRadius: radios.pildora,
-    height: espacios.dieciseis,
-    width: espacios.dieciseis,
-  },
+  sentido: { gap: espacios.cuatro },
+  separador: { height: espacios.trazo },
   sinServicio: { gap: espacios.cuatro },
-  trayecto: { gap: espacios.cuatro },
+  trayecto: { alignItems: 'center', flexDirection: 'row', gap: espacios.doce },
 });

@@ -1,4 +1,5 @@
 export const espacios = {
+  trazo: 1,
   cuatro: 4,
   ocho: 8,
   doce: 12,
