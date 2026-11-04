@@ -1,7 +1,7 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { Bloque } from '@/componentes/Bloque';
+import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { TarjetaCorredor } from '@/componentes/TarjetaCorredor';
 import { CORREDORES_INICIALES } from '@/datos/corredores';
 import { espacios } from '@/tema/espacios';
@@ -16,16 +16,9 @@ export interface PropiedadesRutas {
 /** los dos corredores que opera Andén; sin geometría falsa mientras faltan datos verificados */
 export function Rutas({ alAbrirRuta }: PropiedadesRutas) {
   const { colores } = useTema();
-  const margenes = useSafeAreaInsets();
 
   return (
-    <ScrollView
-      contentContainerStyle={[
-        estilos.contenido,
-        { paddingBottom: 130, paddingTop: margenes.top + espacios.ocho },
-      ]}
-      style={{ backgroundColor: colores.fondo }}
-    >
+    <MarcoPestana estiloContenido={estilos.contenido}>
       <View style={estilos.cabecera}>
         <View style={estilos.titular}>
           <Text style={[tipografia.display, { color: colores.tinta }]}>
@@ -61,7 +54,7 @@ export function Rutas({ alAbrirRuta }: PropiedadesRutas) {
           />
         ))}
       </View>
-    </ScrollView>
+    </MarcoPestana>
   );
 }
 
@@ -71,7 +64,6 @@ const estilos = StyleSheet.create({
   cantidad: { alignSelf: 'flex-start', padding: espacios.doce },
   contenido: {
     gap: espacios.veinticuatro,
-    paddingHorizontal: espacios.lateral,
   },
   corredores: { gap: espacios.dieciseis },
   titular: { gap: espacios.ocho },
