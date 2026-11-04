@@ -1,18 +1,12 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Bloque } from '@/componentes/Bloque';
-import { CamposLugares } from '@/componentes/CampoLugar';
 import { EtiquetaMuestra } from '@/componentes/EtiquetaMuestra';
 import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
-import {
-  SelectorFecha,
-  SelectorPasajeros,
-  type DiaViaje,
-} from '@/componentes/SelectorViaje';
 import { TarjetaProximoViaje } from '@/componentes/TarjetaProximoViaje';
 import { useAvisos } from '@/datos/useAvisos';
 import { usePreferenciaUbicacion } from '@/datos/ProveedorUbicacion';
@@ -32,27 +26,6 @@ export interface PropiedadesViajar {
 }
 
 const ESTADOS_PENDIENTES = ['abordando', 'atrasado', 'programado'];
-const CANTIDAD_DIAS = 3;
-
-function diasDesde(fecha: Date): DiaViaje[] {
-  return Array.from({ length: CANTIDAD_DIAS }, (_, indice) => {
-    const dia = new Date(fecha);
-    dia.setDate(fecha.getDate() + indice);
-    const id = [dia.getFullYear(), dia.getMonth() + 1, dia.getDate()]
-      .map((parte) => parte.toString().padStart(2, '0'))
-      .join('-');
-    return {
-      etiqueta:
-        indice === 0
-          ? t('viajar.hoy')
-          : new Intl.DateTimeFormat('es-NI', { weekday: 'short' })
-              .format(dia)
-              .replace('.', ''),
-      id,
-      numero: dia.getDate().toString().padStart(2, '0'),
-    };
-  });
-}
 
 /** inicio: el próximo viaje con el bus y las salidas de hoy */
 export function Viajar({
@@ -63,40 +36,19 @@ export function Viajar({
 }: PropiedadesViajar) {
   const { colores } = useTema();
   const [origenId, establecerOrigenId] = useState('ter_may');
-  const [destinoId, establecerDestinoId] = useState('ter_boa');
   const { ahora, datos, salidas } = useSalidas(origenId);
-  const dias = useMemo(() => diasDesde(ahora), [ahora]);
-  const [fechaId, establecerFechaId] = useState(() => dias[0]?.id ?? '');
-  const [pasajeros, establecerPasajeros] = useState(1);
   const { noLeidos } = useAvisos();
   const preferenciaUbicacion = usePreferenciaUbicacion();
   const ubicacionResuelta = useRef(false);
-  const salidasDestino = salidas.filter(
-    (salida) =>
-      datos.rutas.find((ruta) => ruta.id === salida.rutaId)?.destinoId ===
-      destinoId,
-  );
-  const proxima = proximaSalida(salidasDestino);
-  const pendientes = salidasDestino
+  const proxima = proximaSalida(salidas);
+  const pendientes = salidas
     .filter(
       (salida) =>
         salida.viajeId !== proxima?.viajeId &&
         ESTADOS_PENDIENTES.includes(salida.estado),
     )
     .slice(0, 3);
-  const cambiarOrigen = (nuevoOrigenId: string) => {
-    establecerOrigenId(nuevoOrigenId);
-    const destinoDisponible = datos.rutas.some(
-      (ruta) => ruta.origenId === nuevoOrigenId && ruta.destinoId === destinoId,
-    );
-    if (!destinoDisponible) {
-      const primeraRuta = datos.rutas.find(
-        (ruta) => ruta.origenId === nuevoOrigenId,
-      );
-      if (primeraRuta) establecerDestinoId(primeraRuta.destinoId);
-    }
-  };
-  const ubicacion = useUbicacionCercana(datos.terminales, cambiarOrigen);
+  const ubicacion = useUbicacionCercana(datos.terminales, establecerOrigenId);
 
   useEffect(() => {
     if (
@@ -172,35 +124,6 @@ export function Viajar({
         </Text>
       )}
 
-      <CamposLugares
-        alCambiarDestino={establecerDestinoId}
-        alCambiarOrigen={cambiarOrigen}
-        destinoId={destinoId}
-        etiquetaDestino={t('viajar.destino')}
-        etiquetaIntercambiar={t('viajar.intercambiarLugares')}
-        etiquetaOrigen={t('viajar.origen')}
-        lugares={datos.terminales}
-        marcador={t('viajar.elegirTerminal')}
-        origenId={origenId}
-        textoSinResultados={t('viajar.sinTerminales')}
-      />
-
-      <View style={estilos.planificacion}>
-        <SelectorFecha
-          alElegir={establecerFechaId}
-          dias={dias}
-          etiqueta={t('viajar.cuando')}
-          seleccionado={fechaId}
-        />
-        <SelectorPasajeros
-          alCambiar={establecerPasajeros}
-          cantidad={pasajeros}
-          etiqueta={t('viajar.pasajeros')}
-          etiquetaAumentar={t('viajar.agregarPasajero')}
-          etiquetaDisminuir={t('viajar.quitarPasajero')}
-        />
-      </View>
-
       <View style={estilos.seccion}>
         <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
           {t('viajar.salidasDeHoy')}
@@ -247,10 +170,6 @@ const estilos = StyleSheet.create({
     width: 44,
   },
   saludo: { flex: 1 },
-  planificacion: {
-    gap: espacios.dieciseis,
-    marginTop: espacios.veinticuatro,
-  },
   seccion: {
     alignItems: 'center',
     flexDirection: 'row',
