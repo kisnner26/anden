@@ -107,4 +107,35 @@ describe('Ajustes', () => {
     ).toBeTruthy();
     expect(await AsyncStorage.getItem(CLAVE_UBICACION_AUTOMATICA)).toBe('1');
   });
+
+  it('deja reintentar un fallo desde configuración', async () => {
+    jest
+      .mocked(solicitarAccesoUbicacion)
+      .mockResolvedValueOnce({ estado: 'error' })
+      .mockResolvedValueOnce({ estado: 'otorgado' });
+    const pantalla = await renderPantalla(
+      <ProveedorUbicacion>
+        <Ajustes alVolver={() => undefined} />
+      </ProveedorUbicacion>,
+    );
+    const interruptor = await pantalla.findByRole('switch', {
+      name: 'Ubicación automática',
+    });
+    await waitFor(() =>
+      expect(interruptor.props.accessibilityState?.disabled).toBe(false),
+    );
+    await fireEvent.press(interruptor);
+    const reintentar = await pantalla.findByRole('button', {
+      name: 'Reintentar',
+    });
+
+    await fireEvent.press(reintentar);
+
+    await waitFor(() =>
+      expect(
+        pantalla.getByText('Lista para encontrar tu terminal.'),
+      ).toBeTruthy(),
+    );
+    expect(solicitarAccesoUbicacion).toHaveBeenCalledTimes(2);
+  });
 });
