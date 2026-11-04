@@ -7,6 +7,7 @@ jest.mock('./ubicacion', () => ({
 }));
 
 import { obtenerUbicacionActual, type ResultadoUbicacion } from './ubicacion';
+import { crearMuestra } from './muestra';
 import { useUbicacionCercana } from './useUbicacionCercana';
 
 const TERMINALES: Terminal[] = [
@@ -63,6 +64,26 @@ it('elige la terminal y conserva solo el resultado derivado', async () => {
     tipo: 'confirmada',
   });
   expect(result.current.estado).not.toHaveProperty('punto');
+});
+
+it('propone Mercado Mayoreo en Managua y nunca UCA', async () => {
+  jest.mocked(obtenerUbicacionActual).mockResolvedValue({
+    estado: 'otorgado',
+    punto: { lat: 12.1342, lng: -86.1934 },
+  });
+  const alSeleccionar = jest.fn();
+  const terminales = crearMuestra(new Date()).terminales;
+  const { result } = await renderHook(() =>
+    useUbicacionCercana(terminales, alSeleccionar),
+  );
+
+  await act(() => result.current.resolver());
+
+  expect(alSeleccionar).toHaveBeenCalledWith('ter_may');
+  expect(result.current.estado).toMatchObject({
+    nombre: 'Mercado Mayoreo',
+    tipo: 'confirmada',
+  });
 });
 
 it('presenta el permiso denegado sin intentar elegir terminal', async () => {
