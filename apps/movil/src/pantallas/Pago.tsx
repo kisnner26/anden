@@ -47,6 +47,10 @@ export function Pago({ alReservado, alVolver, viajeId }: PropiedadesPago) {
   } | null>(null);
   const salida = salidas.find((candidata) => candidata.viajeId === viajeId);
 
+  if (confirmacion) {
+    return <ReservaConfirmada codigo={confirmacion.codigo} />;
+  }
+
   if (!borrador || borrador.viajeId !== viajeId || !salida) {
     return (
       <View style={[estilos.centro, { backgroundColor: colores.fondo }]}>
@@ -81,10 +85,6 @@ export function Pago({ alReservado, alVolver, viajeId }: PropiedadesPago) {
     } else {
       establecerError(mensajeDe(resultado.error));
     }
-  }
-
-  if (confirmacion) {
-    return <ReservaConfirmada codigo={confirmacion.codigo} />;
   }
 
   return (
