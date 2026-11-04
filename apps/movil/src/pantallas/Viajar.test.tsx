@@ -50,6 +50,15 @@ describe('Viajar', () => {
     expect(pantalla.getByDisplayValue('Terminal UCA')).toBeTruthy();
   });
 
+  it('no repite el origen ni muestra un botón permanente de ubicación', async () => {
+    const pantalla = await dibujar();
+
+    expect(pantalla.getAllByText('Salgo desde')).toHaveLength(1);
+    expect(
+      pantalla.queryByRole('button', { name: 'Usar mi ubicación' }),
+    ).toBeNull();
+  });
+
   it('lista las salidas pendientes del destino elegido', async () => {
     const pantalla = await dibujar();
     expect(pantalla.getAllByRole('button', { name: /andén/ })).toHaveLength(3);
