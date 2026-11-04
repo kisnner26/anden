@@ -9,12 +9,14 @@ jest.mock('@/datos/ubicacion', () => ({
 }));
 
 import { ProveedorUbicacion } from '@/datos/ProveedorUbicacion';
+import { PERFIL_VACIO } from '@/datos/perfil';
 import { CLAVE_UBICACION_AUTOMATICA } from '@/datos/preferenciaUbicacion';
 import {
   consultarAccesoUbicacion,
   obtenerUbicacionActual,
 } from '@/datos/ubicacion';
 import { ContextoAvisos, type ValorAvisos } from '@/datos/useAvisos';
+import { ContextoPerfil } from '@/datos/usePerfil';
 import { reiniciarMuestra } from '@/datos/useSalidas';
 import { renderPantalla } from '@/pruebas/render';
 
@@ -40,6 +42,28 @@ describe('Viajar', () => {
     const pantalla = await dibujar();
     expect(pantalla.getByText('Hola')).toBeTruthy();
     expect(pantalla.getByText('¿A dónde vas hoy?')).toBeTruthy();
+  });
+
+  it('saluda por el primer nombre y usa las iniciales del perfil', async () => {
+    const pantalla = await renderPantalla(
+      <ContextoPerfil.Provider
+        value={{
+          agregarPasajero: async () => undefined,
+          cargando: false,
+          guardar: async () => undefined,
+          perfil: { ...PERFIL_VACIO, apellido: 'Ruiz', nombre: 'Ana María' },
+          quitarPasajero: async () => undefined,
+        }}
+      >
+        <Viajar
+          alAbrirViaje={() => undefined}
+          alElegirAsiento={() => undefined}
+        />
+      </ContextoPerfil.Provider>,
+    );
+
+    expect(pantalla.getByText('Hola, Ana')).toBeTruthy();
+    expect(pantalla.getByText('AR')).toBeTruthy();
   });
 
   it('muestra el próximo viaje a Boaco', async () => {
