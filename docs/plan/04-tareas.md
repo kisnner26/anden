@@ -573,7 +573,7 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - hecho cuando: ninguna pantalla ni dato de muestra nombra otro destino y `pnpm verificar` pasa.
 
 ### T-105 · terminales reales y cuatro sentidos
-- depende de: T-104 · zona: `apps/movil/src/datos`, `apps/movil/src/pantallas`, `docs/plan` · raíz: no · estado: libre
+- depende de: T-104 · zona: `apps/movil/src/datos`, `apps/movil/src/pantallas`, `docs/plan` · raíz: no · estado: en curso
 - hacer: reemplazar UCA y centros urbanos por las terminales verificadas Mercado Mayoreo, Terminal de Buses de Managua en Boaco y Terminal Mayales; representar Boaco–Managua y Juigalpa–Managua en ambos sentidos en Rutas y en el selector de viaje.
 - hecho cuando: las tres terminales usan coordenadas abiertas verificables, Rutas ofrece los cuatro sentidos sin duplicados y GPS nunca propone UCA para este corredor.
 
