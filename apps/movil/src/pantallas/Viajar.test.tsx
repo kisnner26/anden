@@ -132,9 +132,7 @@ describe('Viajar', () => {
 
   it('no repite los destinos como botones secundarios', async () => {
     const pantalla = await dibujar();
-    expect(
-      pantalla.queryByRole('button', { name: /Usar ruta a/ }),
-    ).toBeNull();
+    expect(pantalla.queryByRole('button', { name: /Usar ruta a/ })).toBeNull();
   });
 
   it('va directo a los asientos desde el botón del próximo viaje', async () => {
