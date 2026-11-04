@@ -1,4 +1,11 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Linking,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Avatar } from '@/componentes/Avatar';
@@ -7,7 +14,8 @@ import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
 import { iniciales, nombreCompleto } from '@/datos/perfil';
 import { usePerfil } from '@/datos/usePerfil';
-import { espacios } from '@/tema/espacios';
+import { usePreferenciaUbicacion } from '@/datos/ProveedorUbicacion';
+import { espacios, radios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema, type PreferenciaTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -43,8 +51,23 @@ const OPCIONES: readonly {
 export function Ajustes({ alAbrirPerfil, alVolver }: PropiedadesAjustes) {
   const { colores, establecerPreferencia, preferencia } = useTema();
   const { perfil } = usePerfil();
+  const ubicacion = usePreferenciaUbicacion();
   const nombre = nombreCompleto(perfil);
   const margenes = useSafeAreaInsets();
+  const ubicacionOcupada =
+    ubicacion.estado === 'cargando' || ubicacion.estado === 'consultando';
+  const estadoUbicacion =
+    ubicacion.estado === 'otorgado'
+      ? t('ajustes.ubicacionLista')
+      : ubicacion.estado === 'denegado'
+        ? t('ajustes.ubicacionDenegada')
+        : ubicacion.estado === 'desactivado'
+          ? t('ajustes.ubicacionDesactivada')
+          : ubicacion.estado === 'error'
+            ? t('ajustes.ubicacionError')
+            : ubicacionOcupada
+              ? t('ajustes.ubicacionConsultando')
+              : t('ajustes.ubicacionPendiente');
 
   return (
     <ScrollView
@@ -95,6 +118,87 @@ export function Ajustes({ alAbrirPerfil, alVolver }: PropiedadesAjustes) {
           <Icono nombre="siguiente" tamano="mediano" />
         </Bloque>
       </Pressable>
+
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+        {t('ajustes.ubicacionSeccion')}
+      </Text>
+      <Pressable
+        accessibilityLabel={t('ajustes.ubicacionAutomatica')}
+        accessibilityRole="switch"
+        accessibilityState={{
+          checked: ubicacion.activada,
+          disabled: ubicacionOcupada,
+        }}
+        disabled={ubicacionOcupada}
+        onPress={() =>
+          void (ubicacion.activada
+            ? ubicacion.desactivar()
+            : ubicacion.activar())
+        }
+      >
+        <Bloque estiloContenido={estilos.filaOpcion}>
+          <View style={estilos.texto}>
+            <Text style={[estilos.nombre, { color: colores.tinta }]}>
+              {t('ajustes.ubicacionAutomatica')}
+            </Text>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {t('ajustes.ubicacionDetalle')}
+            </Text>
+            <Text
+              accessibilityLiveRegion="polite"
+              style={[tipografia.pequeno, { color: colores.ambarTexto }]}
+            >
+              {estadoUbicacion}
+            </Text>
+          </View>
+          <View
+            style={[
+              estilos.pista,
+              {
+                backgroundColor: ubicacion.activada
+                  ? colores.ambar
+                  : colores.linea,
+              },
+            ]}
+          >
+            <View
+              style={[
+                estilos.perilla,
+                {
+                  alignSelf: ubicacion.activada ? 'flex-end' : 'flex-start',
+                  backgroundColor: ubicacion.activada
+                    ? colores.sobreAmbar
+                    : colores.fondo,
+                },
+              ]}
+            />
+          </View>
+        </Bloque>
+      </Pressable>
+      {ubicacion.activada && ubicacion.estado === 'error' && (
+        <Pressable
+          accessibilityLabel={t('ajustes.reintentarUbicacion')}
+          accessibilityRole="button"
+          onPress={() => void ubicacion.reintentar()}
+        >
+          <Text style={[tipografia.pequeno, { color: colores.ambarTexto }]}>
+            {t('ajustes.reintentarUbicacion')}
+          </Text>
+        </Pressable>
+      )}
+      {ubicacion.activada &&
+        (ubicacion.estado === 'denegado' ||
+          ubicacion.estado === 'desactivado') && (
+          <Pressable
+            accessibilityLabel={t('ajustes.abrirAjustes')}
+            accessibilityRole="button"
+            onPress={() => Linking.openSettings()}
+          >
+            <Text style={[tipografia.pequeno, { color: colores.ambarTexto }]}>
+              {t('ajustes.abrirAjustes')}
+            </Text>
+          </Pressable>
+        )}
 
       <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {t('perfil.apariencia')}
@@ -157,6 +261,18 @@ const estilos = StyleSheet.create({
   },
   nombre: { fontFamily: 'Archivo_600SemiBold', fontSize: 18, lineHeight: 22 },
   opcion: {},
+  perilla: {
+    borderRadius: radios.pildora,
+    height: espacios.veinticuatro,
+    width: espacios.veinticuatro,
+  },
+  pista: {
+    borderRadius: radios.pildora,
+    justifyContent: 'center',
+    minHeight: tamanosControl.toqueMinimo,
+    padding: espacios.cuatro,
+    width: espacios.cuarentaYOcho,
+  },
   texto: { flex: 1, gap: 2 },
   titulo: {
     fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
