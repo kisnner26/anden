@@ -583,7 +583,7 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - hecho cuando: cada recorrido principal se completa sin volver repetidamente, ninguna pantalla duplica títulos o controles y una revisión en iphone confirma jerarquía, scroll, retorno y zonas táctiles.
 
 ### T-107 · sistema visual y navegación móvil
-- depende de: T-106 · zona: `apps/movil/src/tema`, `apps/movil/src/componentes`, `apps/movil/app` · raíz: no · estado: en curso
+- depende de: T-106 · zona: `apps/movil/src/tema`, `apps/movil/src/componentes`, `apps/movil/app` · raíz: no · estado: hecha
 - hacer: consolidar el armazón editorial de barro, tablero y talón; corregir áreas seguras, barra inferior, ancho legible, profundidad táctil y respuesta presionada sin introducir colores, medidas ni duraciones fuera del tema.
 - hecho cuando: las cuatro pestañas comparten una cuadrícula consistente, la barra nunca tapa contenido ni salta de posición, todos los controles principales miden al menos 44 puntos y reducir movimiento conserva una respuesta clara.
 
