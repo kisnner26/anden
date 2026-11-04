@@ -1,5 +1,4 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Bloque } from '@/componentes/Bloque';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
@@ -7,6 +6,7 @@ import { BotonAccion } from '@/componentes/BotonAccion';
 import { FilaBoleto } from '@/componentes/FilaBoleto';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
+import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { minutosHastaSalida } from '@/datos/estadoBoleto';
 import type { BoletoGuardado } from '@/datos/reserva';
 import { useBoletos } from '@/datos/useBoletos';
@@ -30,7 +30,6 @@ function porSalida(a: BoletoGuardado, b: BoletoGuardado): number {
 /** los boletos guardados en el teléfono, próximos primero; sin boletos muestra cómo conseguir uno */
 export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
   const { colores } = useTema();
-  const margenes = useSafeAreaInsets();
   const ahora = useAhora();
   const { boletos } = useBoletos();
   const proximos = boletos
@@ -41,13 +40,7 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
     .sort((a, b) => porSalida(b, a));
 
   return (
-    <ScrollView
-      contentContainerStyle={[
-        estilos.contenido,
-        { paddingBottom: 130, paddingTop: margenes.top + 8 },
-      ]}
-      style={{ backgroundColor: colores.fondo }}
-    >
+    <MarcoPestana>
       <Text style={[estilos.titulo, { color: colores.tinta }]}>
         {t('boletos.titulo')}
         <Text style={{ color: colores.ambarTitular }}>.</Text>
@@ -154,14 +147,13 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
           )}
         </>
       )}
-    </ScrollView>
+    </MarcoPestana>
   );
 }
 
 const estilos = StyleSheet.create({
   bloque: { marginTop: espacios.veinticuatro },
   centrada: { alignItems: 'center' },
-  contenido: { paddingHorizontal: espacios.lateral },
   detalle: { textAlign: 'center' },
   seccion: { marginTop: espacios.veinticuatro },
   proximo: { gap: espacios.ocho, padding: espacios.veinticuatro },
