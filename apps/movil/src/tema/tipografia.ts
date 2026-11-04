@@ -36,6 +36,16 @@ export const tipografia = {
     fontSize: 20,
     lineHeight: 26,
   },
+  tableroDestino: {
+    fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
+    fontSize: 24,
+    lineHeight: 24,
+  },
+  tableroHora: {
+    fontFamily: 'JetBrainsMono_600SemiBold',
+    fontSize: 17,
+    lineHeight: 20,
+  },
   titulo: {
     fontFamily: 'ArchivoCondensed_700Bold',
     fontSize: 34,

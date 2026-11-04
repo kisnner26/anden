@@ -8,7 +8,9 @@ import Animated, {
 import { StyleSheet, View } from 'react-native';
 
 import { coloresOscuros as negro } from '@/tema/colores';
+import { radios, tamanosTablero } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
+import { tipografia } from '@/tema/tipografia';
 
 export interface PropiedadesFichaFlap {
   caracter: string;
@@ -59,15 +61,14 @@ const estilos = StyleSheet.create({
   ficha: {
     alignItems: 'center',
     backgroundColor: negro.barroOscuro,
-    borderRadius: 3,
-    height: 28,
+    borderRadius: radios.cuadrado,
+    height: tamanosTablero.altoFicha,
     justifyContent: 'center',
-    width: 15,
+    width: tamanosTablero.anchoFicha,
   },
-  letra: {
-    fontFamily: 'JetBrainsMono_600SemiBold',
-    fontSize: 17,
-    lineHeight: 20,
+  letra: tipografia.tableroHora,
+  separador: {
+    backgroundColor: 'transparent',
+    width: tamanosTablero.anchoSeparador,
   },
-  separador: { backgroundColor: 'transparent', width: 6 },
 });

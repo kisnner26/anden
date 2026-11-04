@@ -4,6 +4,7 @@ import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { formatoHora } from '@/datos/formato';
 import type { Salida } from '@/datos/salidas';
 import { coloresOscuros as negro } from '@/tema/colores';
+import { espacios, radios, tamanosTablero } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { t } from '@/textos/t';
 
@@ -175,34 +176,44 @@ export function TableroSalidas({ salidas }: PropiedadesTableroSalidas) {
 const estilos = StyleSheet.create({
   anillo: {
     backgroundColor: 'transparent',
-    borderRadius: 999,
+    borderRadius: radios.pildora,
     borderWidth: 1.5,
   },
   caja: {
     alignItems: 'center',
     borderColor: negro.linea,
-    borderRadius: 8,
+    borderRadius: radios.cuadrado,
     borderWidth: 1,
-    height: 30,
+    height: tamanosTablero.altoAnden,
     justifyContent: 'center',
-    width: 34,
+    width: tamanosTablero.anchoAnden,
   },
-  colAnden: { width: 38 },
+  colAnden: { width: tamanosTablero.anchoColumnaAnden },
   colDestino: { flex: 1 },
-  colEstado: { width: 88 },
-  colHora: { width: 72 },
-  contenido: { paddingHorizontal: 14, paddingVertical: 8 },
-  destino: {
-    fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
-    fontSize: 23,
-    lineHeight: 24,
+  colEstado: { width: tamanosTablero.anchoColumnaEstado },
+  colHora: { width: tamanosTablero.anchoColumnaHora },
+  contenido: {
+    paddingHorizontal: espacios.dieciseis,
+    paddingVertical: espacios.ocho,
   },
-  encabezado: { height: 34 },
-  estado: { alignItems: 'center', flexDirection: 'row', gap: 6 },
+  destino: tipografia.tableroDestino,
+  encabezado: { height: tamanosTablero.altoEncabezado },
+  estado: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.cuatro,
+  },
   fichas: { flexDirection: 'row', gap: 2 },
-  fila: { alignItems: 'center', flexDirection: 'row', gap: 8 },
-  marca: { height: 7, width: 7 },
-  punto: { borderRadius: 999 },
+  fila: { alignItems: 'center', flexDirection: 'row', gap: espacios.ocho },
+  marca: {
+    height: tamanosTablero.marcaEstado,
+    width: tamanosTablero.marcaEstado,
+  },
+  punto: { borderRadius: radios.pildora },
   raya: { height: 1.5, width: 8 },
-  separacion: { borderTopColor: negro.linea, borderTopWidth: 1, height: 56 },
+  separacion: {
+    borderTopColor: negro.linea,
+    borderTopWidth: 1,
+    height: tamanosTablero.altoFila,
+  },
 });

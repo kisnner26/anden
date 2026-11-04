@@ -60,3 +60,17 @@ export const tamanosIlustracion = {
   espacioAutobusProximo: 106,
   solapeAutobusProximo: 114,
 } as const;
+
+export const tamanosTablero = {
+  altoAnden: 32,
+  altoEncabezado: 36,
+  altoFicha: 28,
+  altoFila: 60,
+  anchoAnden: 36,
+  anchoColumnaAnden: 40,
+  anchoColumnaEstado: 88,
+  anchoColumnaHora: 72,
+  anchoFicha: 15,
+  anchoSeparador: 6,
+  marcaEstado: 8,
+} as const;
