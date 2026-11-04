@@ -43,6 +43,15 @@ export function Rutas({ alAbrirRuta }: PropiedadesRutas) {
         </Bloque>
       </View>
 
+      <Bloque estiloContenido={estilos.aviso} hundido>
+        <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+          {t('rutas.datosPendientes')}
+        </Text>
+        <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+          {t('rutas.datosPendientesDetalle')}
+        </Text>
+      </Bloque>
+
       <View style={estilos.corredores}>
         {CORREDORES_INICIALES.map((corredor) => (
           <TarjetaCorredor
@@ -57,6 +66,7 @@ export function Rutas({ alAbrirRuta }: PropiedadesRutas) {
 }
 
 const estilos = StyleSheet.create({
+  aviso: { gap: espacios.cuatro, padding: espacios.dieciseis },
   cabecera: { gap: espacios.dieciseis },
   cantidad: { alignSelf: 'flex-start', padding: espacios.doce },
   contenido: {
