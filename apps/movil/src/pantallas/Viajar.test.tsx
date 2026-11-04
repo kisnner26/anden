@@ -57,10 +57,10 @@ describe('Viajar', () => {
     const pantalla = await dibujar();
     await fireEvent(pantalla.getByLabelText('Salgo desde'), 'focus');
     await fireEvent.press(
-      pantalla.getByRole('button', { name: 'Terminal Juigalpa' }),
+      pantalla.getByRole('button', { name: 'Terminal Mayales' }),
     );
-    expect(pantalla.getByDisplayValue('Terminal Juigalpa')).toBeTruthy();
-    expect(pantalla.getByDisplayValue('Terminal UCA')).toBeTruthy();
+    expect(pantalla.getByDisplayValue('Terminal Mayales')).toBeTruthy();
+    expect(pantalla.getByDisplayValue('Mercado Mayoreo')).toBeTruthy();
   });
 
   it('no repite el origen ni muestra un botón permanente de ubicación', async () => {
@@ -91,7 +91,9 @@ describe('Viajar', () => {
       </ProveedorUbicacion>,
     );
 
-    expect(await pantalla.findByDisplayValue('Terminal Boaco')).toBeTruthy();
+    expect(
+      await pantalla.findByDisplayValue('Terminal de Buses de Managua'),
+    ).toBeTruthy();
     expect(obtenerUbicacionActual).toHaveBeenCalledTimes(1);
   });
 
@@ -107,9 +109,9 @@ describe('Viajar', () => {
       'Juigalpa',
     );
     await fireEvent.press(
-      pantalla.getByRole('button', { name: 'Terminal Juigalpa' }),
+      pantalla.getByRole('button', { name: 'Terminal Mayales' }),
     );
-    expect(pantalla.getByDisplayValue('Terminal Juigalpa')).toBeTruthy();
+    expect(pantalla.getByDisplayValue('Terminal Mayales')).toBeTruthy();
     expect(pantalla.getAllByText('Juigalpa').length).toBeGreaterThan(0);
   });
 
@@ -133,7 +135,7 @@ describe('Viajar', () => {
     await fireEvent.press(
       pantalla.getByRole('button', { name: 'Usar ruta a Juigalpa' }),
     );
-    expect(pantalla.getByDisplayValue('Terminal Juigalpa')).toBeTruthy();
+    expect(pantalla.getByDisplayValue('Terminal Mayales')).toBeTruthy();
     expect(pantalla.getAllByText('Juigalpa').length).toBeGreaterThan(0);
   });
 
