@@ -581,3 +581,23 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - depende de: T-100, T-101, T-105 · zona: `apps/movil/src/pantallas`, `apps/movil/src/componentes`, `apps/movil/app` · raíz: no · estado: hecha
 - hacer: auditar de punta a punta Viajar, Horarios, Rutas, compra, Boletos y configuración; retirar acciones duplicadas o permanentes sin utilidad, reducir texto repetido y dejar una acción primaria evidente por estado.
 - hecho cuando: cada recorrido principal se completa sin volver repetidamente, ninguna pantalla duplica títulos o controles y una revisión en iphone confirma jerarquía, scroll, retorno y zonas táctiles.
+
+### T-107 · sistema visual y navegación móvil
+- depende de: T-106 · zona: `apps/movil/src/tema`, `apps/movil/src/componentes`, `apps/movil/app` · raíz: no · estado: en curso
+- hacer: consolidar el armazón editorial de barro, tablero y talón; corregir áreas seguras, barra inferior, ancho legible, profundidad táctil y respuesta presionada sin introducir colores, medidas ni duraciones fuera del tema.
+- hecho cuando: las cuatro pestañas comparten una cuadrícula consistente, la barra nunca tapa contenido ni salta de posición, todos los controles principales miden al menos 44 puntos y reducir movimiento conserva una respuesta clara.
+
+### T-108 · rediseñar viajar y horarios
+- depende de: T-107 · zona: `apps/movil/src/pantallas`, `apps/movil/src/componentes` · raíz: no · estado: libre
+- hacer: llevar Viajar y Horarios a la jerarquía exacta del mockup v2, con una sola pieza dominante, selección de terminal comprensible, tablero legible y acciones secundarias fuera del foco.
+- hecho cuando: origen, destino, próxima salida y tablero se entienden sin explicación, no hay controles decorativos ni contenido cortado y las capturas en iphone coinciden con la dirección aprobada.
+
+### T-109 · rediseñar rutas y seguimiento
+- depende de: T-105, T-107 · zona: `apps/movil/src/pantallas`, `apps/movil/src/componentes` · raíz: no · estado: libre
+- hacer: convertir Rutas en una portada visual de los dos corredores y sus cuatro sentidos, con tarjetas compactas, dirección inequívoca y detalle operativo sin mapa ni eta falsos.
+- hecho cuando: cada corredor se reconoce de un vistazo, el sentido activo no depende solo del color y el detalle separa claramente datos de muestra de datos en vivo pendientes.
+
+### T-110 · rediseñar compra, boletos y ajustes
+- depende de: T-107, T-108 · zona: `apps/movil/src/pantallas`, `apps/movil/src/componentes`, `apps/movil/app` · raíz: no · estado: libre
+- hacer: unificar asientos, pasajeros, pago, confirmación, boletos y ajustes como un recorrido continuo con progreso visible, pie seguro, regreso coherente y un único botón principal por pantalla.
+- hecho cuando: la reserva se completa sin callejones, el boleto queda como pieza dominante, ajustes deja de parecer una lista y el recorrido completo se verifica visualmente en iphone.
