@@ -11,6 +11,7 @@ import {
   tamanosBarraPestanas,
 } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
+import { movimiento } from '@/tema/movimiento';
 import { useTema } from '@/tema/useTema';
 
 export interface Pestana {
@@ -83,7 +84,10 @@ export function BarraPestanas({
                 accessibilityState={{ selected: seleccionada }}
                 key={pestana.clave}
                 onPress={() => alSeleccionar(pestana.clave)}
-                style={estilos.pestana}
+                style={({ pressed }) => [
+                  estilos.pestana,
+                  pressed && estilos.presionada,
+                ]}
               >
                 {seleccionada ? (
                   <LinearGradient
@@ -144,4 +148,8 @@ const estilos = StyleSheet.create({
   },
   nombre: { fontFamily: 'Archivo_600SemiBold', fontSize: 11, lineHeight: 14 },
   pestana: { alignItems: 'center', flex: 1 },
+  presionada: {
+    opacity: 0.9,
+    transform: [{ scale: movimiento.escalaPresion }],
+  },
 });
