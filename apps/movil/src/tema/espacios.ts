@@ -43,6 +43,16 @@ export const tamanosBarraPestanas = {
   anchoPestana: 74,
 } as const;
 
+export const disposicionPantalla = {
+  anchoMaximo: 480,
+  espacioBarraPestanas:
+    tamanosBarraPestanas.alto +
+    tamanosBarraPestanas.margenInferior +
+    espacios.treintaYDos,
+  rellenoInferior: espacios.cuarentaYOcho,
+  rellenoSuperior: espacios.ocho,
+} as const;
+
 export const tamanosIlustracion = {
   autobusCorredor: 116,
   confirmacionReserva: 88,
