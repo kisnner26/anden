@@ -29,7 +29,7 @@ export const TERMINALES: Terminal[] = [
     ciudad: 'Managua',
     codigo: 'MAY',
     coordenadas: { lat: 12.13413, lng: -86.1933 },
-    id: 'ter_uca',
+    id: 'ter_may',
     nombre: 'Mercado Mayoreo',
   },
   {
@@ -50,7 +50,7 @@ export const TERMINALES: Terminal[] = [
   },
 ];
 
-/** destino, kilómetros y minutos de cada ruta que sale de la terminal UCA */
+/** destino, kilómetros y minutos de cada ruta que sale de Mercado Mayoreo */
 const RECORRIDOS = [
   { codigo: 'boa', distanciaKm: 90, duracionMin: 100 },
   { codigo: 'jui', distanciaKm: 139, duracionMin: 150 },
@@ -61,10 +61,10 @@ export const RUTAS: Ruta[] = RECORRIDOS.flatMap((recorrido) => [
     destinoId: `ter_${recorrido.codigo}`,
     distanciaKm: recorrido.distanciaKm,
     duracionMin: recorrido.duracionMin,
-    id: `rut_uca_${recorrido.codigo}`,
-    origenId: 'ter_uca',
+    id: `rut_may_${recorrido.codigo}`,
+    origenId: 'ter_may',
     paradas: [
-      { minutosDesdeOrigen: 0, terminalId: 'ter_uca', tipo: 'terminal' },
+      { minutosDesdeOrigen: 0, terminalId: 'ter_may', tipo: 'terminal' },
       {
         minutosDesdeOrigen: recorrido.duracionMin,
         terminalId: `ter_${recorrido.codigo}`,
@@ -73,10 +73,10 @@ export const RUTAS: Ruta[] = RECORRIDOS.flatMap((recorrido) => [
     ],
   },
   {
-    destinoId: 'ter_uca',
+    destinoId: 'ter_may',
     distanciaKm: recorrido.distanciaKm,
     duracionMin: recorrido.duracionMin,
-    id: `rut_${recorrido.codigo}_uca`,
+    id: `rut_${recorrido.codigo}_may`,
     origenId: `ter_${recorrido.codigo}`,
     paradas: [
       {
@@ -86,7 +86,7 @@ export const RUTAS: Ruta[] = RECORRIDOS.flatMap((recorrido) => [
       },
       {
         minutosDesdeOrigen: recorrido.duracionMin,
-        terminalId: 'ter_uca',
+        terminalId: 'ter_may',
         tipo: 'terminal',
       },
     ],
@@ -106,12 +106,12 @@ export const TARIFARIO: Tarifario = RECORRIDOS.flatMap((recorrido) =>
       desdeParada: 0,
       hastaParada: 1,
       resolucion: 'muestra',
-      rutaId: `rut_uca_${recorrido.codigo}`,
+      rutaId: `rut_may_${recorrido.codigo}`,
       servicio: servicio as TipoServicio,
     }))
     .flatMap((tarifa) => [
       tarifa,
-      { ...tarifa, rutaId: `rut_${recorrido.codigo}_uca` },
+      { ...tarifa, rutaId: `rut_${recorrido.codigo}_may` },
     ]),
 );
 
@@ -155,7 +155,7 @@ const SALIDAS: Array<{
     anden: 1,
     atraso: 0,
     desde: 18,
-    destino: 'uca',
+    destino: 'may',
     origen: 'boa',
     servicio: 'ordinario',
   },
@@ -163,7 +163,7 @@ const SALIDAS: Array<{
     anden: 2,
     atraso: 0,
     desde: 26,
-    destino: 'uca',
+    destino: 'may',
     origen: 'jui',
     servicio: 'ordinario',
   },
@@ -171,7 +171,7 @@ const SALIDAS: Array<{
     anden: 1,
     atraso: 0,
     desde: 34,
-    destino: 'uca',
+    destino: 'may',
     origen: 'boa',
     servicio: 'taxi-interlocal',
   },
@@ -179,7 +179,7 @@ const SALIDAS: Array<{
     anden: 2,
     atraso: 0,
     desde: 42,
-    destino: 'uca',
+    destino: 'may',
     origen: 'jui',
     servicio: 'expreso',
   },
@@ -187,7 +187,7 @@ const SALIDAS: Array<{
     anden: 1,
     atraso: 0,
     desde: 50,
-    destino: 'uca',
+    destino: 'may',
     origen: 'boa',
     servicio: 'ordinario',
   },
@@ -195,7 +195,7 @@ const SALIDAS: Array<{
     anden: 2,
     atraso: 0,
     desde: 58,
-    destino: 'uca',
+    destino: 'may',
     origen: 'jui',
     servicio: 'ordinario',
   },
@@ -262,8 +262,8 @@ export function crearMuestra(ahora: Date): DatosMuestra {
       id: `via_${numero}`,
       minutosAtraso: salida.atraso,
       rutaId: salida.origen
-        ? `rut_${salida.origen}_uca`
-        : `rut_uca_${salida.destino}`,
+        ? `rut_${salida.origen}_may`
+        : `rut_may_${salida.destino}`,
       salida: new Date(ahora.getTime() + salida.desde * 60_000).toISOString(),
     });
   });
