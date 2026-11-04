@@ -578,6 +578,6 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - hecho cuando: las tres terminales usan coordenadas abiertas verificables, Rutas ofrece los cuatro sentidos sin duplicados y GPS nunca propone UCA para este corredor.
 
 ### T-106 · simplificación integral de recorridos
-- depende de: T-100, T-101, T-105 · zona: `apps/movil/src/pantallas`, `apps/movil/src/componentes`, `apps/movil/app` · raíz: no · estado: libre
+- depende de: T-100, T-101, T-105 · zona: `apps/movil/src/pantallas`, `apps/movil/src/componentes`, `apps/movil/app` · raíz: no · estado: en curso
 - hacer: auditar de punta a punta Viajar, Horarios, Rutas, compra, Boletos y configuración; retirar acciones duplicadas o permanentes sin utilidad, reducir texto repetido y dejar una acción primaria evidente por estado.
 - hecho cuando: cada recorrido principal se completa sin volver repetidamente, ninguna pantalla duplica títulos o controles y una revisión en iphone confirma jerarquía, scroll, retorno y zonas táctiles.
