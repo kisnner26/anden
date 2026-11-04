@@ -60,6 +60,7 @@ export function DetalleViaje({
   }
 
   const { chofer, salida, unidad } = detalle;
+  const origen = detalle.paradas[0]?.nombre ?? '';
   const estado = estadoTablero(salida);
   const comodidades = unidad.comodidades
     .map((clave) => t(`detalle.comodidades.${clave}`))
@@ -85,7 +86,7 @@ export function DetalleViaje({
             { color: colores.tintaSuave },
           ]}
         >
-          {`UCA → ${salida.destino} · ${t(`servicios.${salida.servicio}`)}`}
+          {`${origen} → ${salida.destino} · ${t(`servicios.${salida.servicio}`)}`}
         </Text>
 
         <View style={estilos.contenedorHero}>
