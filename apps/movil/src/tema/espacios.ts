@@ -45,4 +45,5 @@ export const tamanosBarraPestanas = {
 
 export const tamanosIlustracion = {
   autobusCorredor: 116,
+  confirmacionReserva: 88,
 } as const;
