@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 
 jest.mock('expo-location', () => ({
   Accuracy: { Low: 1 },
@@ -14,7 +14,32 @@ jest.mock('expo-location', () => ({
 }));
 
 import * as Location from 'expo-location';
-import { consultarAccesoUbicacion, obtenerUbicacionActual } from './ubicacion';
+import {
+  consultarAccesoUbicacion,
+  obtenerUbicacionActual,
+  solicitarAccesoUbicacion,
+} from './ubicacion';
+
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
+describe('solicitarAccesoUbicacion', () => {
+  it('obtiene permiso sin leer coordenadas', async () => {
+    jest.mocked(Location.hasServicesEnabledAsync).mockResolvedValue(true);
+    jest
+      .mocked(Location.requestForegroundPermissionsAsync)
+      .mockResolvedValue({
+        canAskAgain: true,
+        status: Location.PermissionStatus.GRANTED,
+      } as never);
+
+    await expect(solicitarAccesoUbicacion()).resolves.toEqual({
+      estado: 'otorgado',
+    });
+    expect(Location.getCurrentPositionAsync).not.toHaveBeenCalled();
+  });
+});
 
 describe('consultarAccesoUbicacion', () => {
   it('distingue cuando el sistema desactivó los servicios', async () => {
