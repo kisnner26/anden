@@ -18,6 +18,7 @@ import { ProveedorAvisos } from '@/datos/ProveedorAvisos';
 import { ProveedorBoletos } from '@/datos/ProveedorBoletos';
 import { ProveedorPerfil } from '@/datos/ProveedorPerfil';
 import { ProveedorReserva } from '@/datos/ProveedorReserva';
+import { ProveedorUbicacion } from '@/datos/ProveedorUbicacion';
 import { ProveedorTema } from '@/tema/ProveedorTema';
 
 void SplashScreen.preventAutoHideAsync();
@@ -48,9 +49,11 @@ export default function DisenoRaiz() {
       <ProveedorPerfil>
         <ProveedorBoletos>
           <ProveedorAvisos>
-            <ProveedorReserva>
-              <Stack screenOptions={{ headerShown: false }} />
-            </ProveedorReserva>
+            <ProveedorUbicacion>
+              <ProveedorReserva>
+                <Stack screenOptions={{ headerShown: false }} />
+              </ProveedorReserva>
+            </ProveedorUbicacion>
           </ProveedorAvisos>
         </ProveedorBoletos>
       </ProveedorPerfil>
