@@ -52,9 +52,6 @@ export const textos = {
     pasajeros: 'Pasajeros',
     agregarPasajero: 'Agregar pasajero',
     quitarPasajero: 'Quitar pasajero',
-    rutasFrecuentes: 'Tus rutas',
-    usarRuta: 'Usar ruta a {{destino}}',
-    proximaRuta: 'Próxima {{hora}}',
     usarUbicacion: 'Usar mi ubicación',
     ubicacionCercana: 'Terminal más cercana',
     ubicacionDistancia: 'a {{km}} km de vos',
@@ -187,12 +184,8 @@ export const textos = {
   pago: {
     titulo: 'Pago',
     resumen: 'Tu reserva',
-    elegir: 'Cómo vas a pagar',
     efectivo: 'Efectivo al abordar',
     efectivoDetalle: 'Pagás al subir al bus, el monto exacto de la tarifa.',
-    tarjeta: 'Tarjeta o transferencia',
-    tarjetaDetalle: 'Todavía no está disponible.',
-    proximamente: 'Próximamente',
     avisoEfectivo:
       'No se cobra nada ahora. Llevá el monto exacto: la tarifa autorizada es la única que se puede cobrar. Tu asiento queda reservado hasta 15 minutos antes de la salida.',
     total: 'Total a pagar al abordar',
