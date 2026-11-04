@@ -67,4 +67,11 @@ describe('TableroSalidas', () => {
     expect(pantalla.getByText('Andén')).toBeTruthy();
     expect(pantalla.getByText('Estado')).toBeTruthy();
   });
+
+  it('explica cuando el filtro no deja salidas visibles', async () => {
+    const pantalla = await render(<TableroSalidas salidas={[]} />);
+    const vacio = pantalla.getByText('No hay salidas con este filtro.');
+
+    expect(vacio.props.accessibilityLiveRegion).toBe('polite');
+  });
 });
