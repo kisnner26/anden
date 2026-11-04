@@ -76,6 +76,7 @@ export const textos = {
     columnaAnden: 'Andén',
     columnaEstado: 'Estado',
     buscar: 'Buscar',
+    sinSalidas: 'No hay salidas con este filtro.',
   },
   buscador: {
     titulo: 'Buscar',

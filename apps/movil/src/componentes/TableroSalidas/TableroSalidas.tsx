@@ -123,6 +123,18 @@ export function TableroSalidas({ salidas }: PropiedadesTableroSalidas) {
           </Text>
         ))}
       </View>
+      {salidas.length === 0 && (
+        <Text
+          accessibilityLiveRegion="polite"
+          style={[
+            tipografia.cuerpo,
+            estilos.vacio,
+            { color: negro.sobreNegroSuave },
+          ]}
+        >
+          {t('horarios.sinSalidas')}
+        </Text>
+      )}
       {salidas.map((salida) => {
         const estado = estadoTablero(salida);
         const pasada = salida.estado === 'en-ruta' || salida.estado === 'llego';
@@ -215,5 +227,10 @@ const estilos = StyleSheet.create({
     borderTopColor: negro.linea,
     borderTopWidth: 1,
     height: tamanosTablero.altoFila,
+  },
+  vacio: {
+    paddingHorizontal: espacios.dieciseis,
+    paddingVertical: espacios.veinticuatro,
+    textAlign: 'center',
   },
 });
