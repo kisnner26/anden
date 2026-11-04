@@ -38,7 +38,7 @@ export function Rutas({ alAbrirRuta }: PropiedadesRutas) {
         </View>
         <Bloque estiloContenido={estilos.cantidad} hundido radio="pildora">
           <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-            {t('rutas.dosRutas')}
+            {t('rutas.cuatroSentidos')}
           </Text>
         </Bloque>
       </View>

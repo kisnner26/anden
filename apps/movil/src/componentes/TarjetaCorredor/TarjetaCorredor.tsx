@@ -27,10 +27,9 @@ export function TarjetaCorredor({
   corredor,
 }: PropiedadesTarjetaCorredor) {
   const { colores } = useTema();
-  const etiqueta = t('rutas.abrirCorredor').replace(
-    '{{origen}}',
-    corredor.origen,
-  );
+  const etiqueta = t('rutas.abrirCorredor')
+    .replace('{{origen}}', corredor.origen)
+    .replace('{{destino}}', corredor.destino);
   const operacion = OPERACION_MUESTRA_POR_CORREDOR[corredor.id];
 
   return (

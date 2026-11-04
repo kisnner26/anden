@@ -351,15 +351,15 @@ export const textos = {
   },
   rutas: {
     titulo: 'Rutas',
-    detalle: 'Interlocales hacia Managua, sin vueltas.',
+    detalle: 'Interlocales entre Managua, Boaco y Juigalpa.',
     corredor: 'Corredor interlocal',
     hacia: 'hacia',
     datosPendientes: 'Horarios y ubicación por confirmar',
     datosPendientesDetalle:
       'La hora, el estado y la llegada son ilustrativos hasta tener datos en vivo.',
     verRecorrido: 'Ver recorrido',
-    abrirCorredor: 'Abrir corredor de {{origen}} a Managua',
-    dosRutas: '2 rutas activas',
+    abrirCorredor: 'Abrir {{origen}} a {{destino}}',
+    cuatroSentidos: '4 sentidos',
     operacionMuestra: 'Operación de muestra',
     proximaUnidad: 'Próxima unidad',
     llegadaEstimada: 'Llegada estimada',
