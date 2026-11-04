@@ -17,6 +17,8 @@ import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
+import { ReservaConfirmada } from './ReservaConfirmada';
+
 export interface PropiedadesPago {
   alReservado: (boletoId: string) => void;
   alVolver: () => void;
@@ -40,6 +42,10 @@ export function Pago({ alReservado, alVolver, viajeId }: PropiedadesPago) {
   const { salidas } = useSalidas();
   const [reservando, establecerReservando] = useState(false);
   const [error, establecerError] = useState<string | null>(null);
+  const [confirmacion, establecerConfirmacion] = useState<{
+    codigo: string;
+    id: string;
+  } | null>(null);
   const salida = salidas.find((candidata) => candidata.viajeId === viajeId);
 
   if (!borrador || borrador.viajeId !== viajeId || !salida) {
@@ -67,10 +73,20 @@ export function Pago({ alReservado, alVolver, viajeId }: PropiedadesPago) {
     if (resultado.ok) {
       limpiar();
       const primero = resultado.valor[0];
-      if (primero) alReservado(primero.boleto.id);
+      if (primero) {
+        establecerConfirmacion({
+          codigo: primero.boleto.codigo,
+          id: primero.boleto.id,
+        });
+        alReservado(primero.boleto.id);
+      }
     } else {
       establecerError(mensajeDe(resultado.error));
     }
+  }
+
+  if (confirmacion) {
+    return <ReservaConfirmada codigo={confirmacion.codigo} />;
   }
 
   return (
