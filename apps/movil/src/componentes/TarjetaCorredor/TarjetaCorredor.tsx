@@ -81,19 +81,11 @@ export function TarjetaCorredor({
                 {operacion.proximaSalida}
               </Text>
             </View>
-            <View style={estilos.datoOperacionDerecha}>
-              <Text
-                style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
-              >
-                {t('rutas.llegadaEstimada')}
-              </Text>
-              <Text style={[tipografia.datoGrande, { color: colores.ambar }]}>
-                {t('rutas.minutosEstimados').replace(
-                  '{{minutos}}',
-                  String(operacion.etaMinutos),
-                )}
-              </Text>
-            </View>
+            <Text
+              style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
+            >
+              {t('rutas.horarioReferencial')}
+            </Text>
           </View>
         ) : (
           <View style={estilos.sinServicio}>
@@ -128,11 +120,6 @@ const estilos = StyleSheet.create({
   avanceFila: { alignItems: 'flex-end' },
   contenido: { gap: espacios.doce, padding: espacios.veinticuatro },
   datoOperacion: { flex: 1, gap: espacios.cuatro },
-  datoOperacionDerecha: {
-    alignItems: 'flex-end',
-    flex: 1,
-    gap: espacios.cuatro,
-  },
   ilustracion: { alignItems: 'center', flexDirection: 'row' },
   linea: { flex: 1, height: espacios.cuatro },
   operacion: {

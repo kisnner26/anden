@@ -6,7 +6,6 @@ export interface CorredorInterlocal {
 
 export interface OperacionCorredorMuestra {
   estado: 'proxima' | 'sin_servicio';
-  etaMinutos: number | null;
   proximaSalida: string | null;
 }
 
@@ -38,22 +37,18 @@ export const OPERACION_MUESTRA_POR_CORREDOR: Readonly<
 > = {
   cor_boa_man: {
     estado: 'proxima',
-    etaMinutos: 18,
     proximaSalida: '6:30 a. m.',
   },
   cor_jui_man: {
     estado: 'sin_servicio',
-    etaMinutos: null,
     proximaSalida: null,
   },
   cor_man_boa: {
     estado: 'proxima',
-    etaMinutos: 16,
     proximaSalida: '6:35 a. m.',
   },
   cor_man_jui: {
     estado: 'proxima',
-    etaMinutos: 24,
     proximaSalida: '6:43 a. m.',
   },
 };
