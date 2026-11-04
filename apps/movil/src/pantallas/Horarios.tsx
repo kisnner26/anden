@@ -31,7 +31,10 @@ export interface PropiedadesHorarios {
 export function Horarios({ alAbrirBuscador }: PropiedadesHorarios) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
-  const { salidas } = useSalidas();
+  const { datos, salidas } = useSalidas();
+  const terminal = datos.terminales.find(
+    (candidata) => candidata.id === 'ter_may',
+  );
   const [filtro, establecerFiltro] = useState<Filtro>('todos');
   const visibles =
     filtro === 'todos'
@@ -65,15 +68,15 @@ export function Horarios({ alAbrirBuscador }: PropiedadesHorarios) {
       <Bloque estilo={estilos.terminal} estiloContenido={estilos.filaTerminal}>
         <Loseta tamano={50} variante="ambar">
           <Text style={[tipografia.dato, { color: colores.sobreAmbar }]}>
-            UCA
+            {terminal?.codigo}
           </Text>
         </Loseta>
         <View style={estilos.datosTerminal}>
           <Text style={[estilos.nombreTerminal, { color: colores.tinta }]}>
-            {t('horarios.terminal')}
+            {terminal?.nombre}
           </Text>
           <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {t('horarios.ciudad')}
+            {terminal?.ciudad}
           </Text>
         </View>
       </Bloque>
