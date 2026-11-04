@@ -53,10 +53,14 @@ export function Asientos({ alSeguir, alVolver, viajeId }: PropiedadesAsientos) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const mapa = useMapaAsientos(viajeId);
-  const { salidas } = useSalidas();
+  const { datos, salidas } = useSalidas();
   const { alternar, aviso, elegidos, total } = useSeleccionAsientos(viajeId);
   const restantes = useCuentaRegresiva(SEGUNDOS_RETENCION);
   const salida = salidas.find((candidata) => candidata.viajeId === viajeId);
+  const ruta = datos.rutas.find((candidata) => candidata.id === salida?.rutaId);
+  const origen = datos.terminales.find(
+    (terminal) => terminal.id === ruta?.origenId,
+  );
 
   if (!mapa || !salida) {
     return (
@@ -112,7 +116,7 @@ export function Asientos({ alSeguir, alVolver, viajeId }: PropiedadesAsientos) {
             { color: colores.tintaSuave },
           ]}
         >
-          {`UCA → ${salida.destino} · ${formatoHoraCompleta(salida.salida)} · ${t(`servicios.${salida.servicio}`)}`}
+          {`${origen?.nombre ?? ''} → ${salida.destino} · ${formatoHoraCompleta(salida.salida)} · ${t(`servicios.${salida.servicio}`)}`}
         </Text>
 
         <View style={estilos.leyendas}>
