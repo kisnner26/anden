@@ -2,13 +2,31 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, waitFor } from '@testing-library/react-native';
 
+jest.mock('@/datos/ubicacion', () => ({
+  consultarAccesoUbicacion: jest.fn(),
+  solicitarAccesoUbicacion: jest.fn(),
+}));
+
+import { ProveedorUbicacion } from '@/datos/ProveedorUbicacion';
+import { CLAVE_UBICACION_AUTOMATICA } from '@/datos/preferenciaUbicacion';
+import {
+  consultarAccesoUbicacion,
+  solicitarAccesoUbicacion,
+} from '@/datos/ubicacion';
 import { renderPantalla } from '@/pruebas/render';
 import { CLAVE_PREFERENCIA_TEMA, ProveedorTema } from '@/tema/ProveedorTema';
 
 import { Ajustes } from './Ajustes';
 
 beforeEach(async () => {
+  jest.clearAllMocks();
   await AsyncStorage.clear();
+  jest
+    .mocked(consultarAccesoUbicacion)
+    .mockResolvedValue({ estado: 'otorgado' });
+  jest
+    .mocked(solicitarAccesoUbicacion)
+    .mockResolvedValue({ estado: 'otorgado' });
 });
 
 describe('Ajustes', () => {
@@ -58,5 +76,35 @@ describe('Ajustes', () => {
       pantalla.getByRole('button', { name: 'Tu perfil y tus pasajeros' }),
     );
     expect(alAbrirPerfil).toHaveBeenCalledTimes(1);
+  });
+
+  it('activa ubicación automática desde un interruptor persistente', async () => {
+    const pantalla = await renderPantalla(
+      <ProveedorUbicacion>
+        <Ajustes alVolver={() => undefined} />
+      </ProveedorUbicacion>,
+    );
+    const interruptor = await pantalla.findByRole('switch', {
+      name: 'Ubicación automática',
+    });
+    await waitFor(() =>
+      expect(interruptor.props.accessibilityState).toEqual({
+        checked: false,
+        disabled: false,
+      }),
+    );
+
+    await fireEvent.press(interruptor);
+
+    await waitFor(() =>
+      expect(interruptor.props.accessibilityState).toEqual({
+        checked: true,
+        disabled: false,
+      }),
+    );
+    expect(
+      pantalla.getByText('Lista para encontrar tu terminal.'),
+    ).toBeTruthy();
+    expect(await AsyncStorage.getItem(CLAVE_UBICACION_AUTOMATICA)).toBe('1');
   });
 });
