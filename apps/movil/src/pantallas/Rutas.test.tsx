@@ -6,11 +6,11 @@ import { renderPantalla } from '@/pruebas/render';
 import { Rutas } from './Rutas';
 
 describe('Rutas', () => {
-  it('muestra únicamente los dos corredores iniciales', async () => {
+  it('muestra los cuatro sentidos del corredor inicial', async () => {
     const pantalla = await renderPantalla(<Rutas />);
-    expect(pantalla.getByText('Boaco')).toBeTruthy();
-    expect(pantalla.getByText('Juigalpa')).toBeTruthy();
-    expect(pantalla.getAllByText('Managua')).toHaveLength(2);
+    expect(pantalla.getAllByText('Boaco')).toHaveLength(2);
+    expect(pantalla.getAllByText('Juigalpa')).toHaveLength(2);
+    expect(pantalla.getAllByText('Managua')).toHaveLength(4);
     expect(pantalla.queryByText('Granada')).toBeNull();
     expect(pantalla.queryByText('Estelí')).toBeNull();
   });
@@ -19,7 +19,7 @@ describe('Rutas', () => {
     const pantalla = await renderPantalla(<Rutas />);
     expect(
       pantalla.getAllByText('Horarios y ubicación por confirmar'),
-    ).toHaveLength(2);
+    ).toHaveLength(4);
     expect(pantalla.queryByLabelText('Mapa esquemático de rutas')).toBeNull();
   });
 
@@ -28,7 +28,7 @@ describe('Rutas', () => {
     const pantalla = await renderPantalla(<Rutas alAbrirRuta={alAbrirRuta} />);
     await fireEvent.press(
       pantalla.getByRole('button', {
-        name: 'Abrir corredor de Boaco a Managua',
+        name: 'Abrir Boaco a Managua',
       }),
     );
     expect(alAbrirRuta).toHaveBeenCalledWith('cor_boa_man');
