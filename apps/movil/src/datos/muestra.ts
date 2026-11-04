@@ -44,9 +44,9 @@ export const TERMINALES: Terminal[] = [
     andenes: 3,
     ciudad: 'Juigalpa',
     codigo: 'JUI',
-    coordenadas: { lat: 12.1064, lng: -85.3647 },
+    coordenadas: { lat: 12.09172, lng: -85.36106 },
     id: 'ter_jui',
-    nombre: 'Terminal Juigalpa',
+    nombre: 'Terminal Mayales',
   },
 ];
 
