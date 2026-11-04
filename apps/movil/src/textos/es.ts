@@ -71,7 +71,7 @@ export const textos = {
   },
   horarios: {
     titulo: 'Salidas',
-    terminal: 'Terminal UCA',
+    terminal: 'Mercado Mayoreo',
     ciudad: 'Managua',
     todos: 'Todos',
     columnaHora: 'Hora',

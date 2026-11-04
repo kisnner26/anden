@@ -29,6 +29,8 @@ export interface ResumenBoleto {
   cooperativa: string;
   destino: string;
   metodoPago: 'efectivo-al-abordar';
+  /** terminal guardada al reservar; ausente en boletos creados antes de T-105 */
+  origen?: string;
   placa: string;
   salida: string;
   servicio: TipoServicio;
@@ -69,7 +71,10 @@ export function crearReserva(
   const destino = datos.terminales.find(
     (terminal) => terminal.id === ruta?.destinoId,
   );
-  if (!viaje || !ruta || !bus || !chofer || !destino) {
+  const origen = datos.terminales.find(
+    (terminal) => terminal.id === ruta?.origenId,
+  );
+  if (!viaje || !ruta || !bus || !chofer || !destino || !origen) {
     return error('viaje-inexistente');
   }
 
@@ -106,6 +111,7 @@ export function crearReserva(
     cooperativa: bus.cooperativa,
     destino: destino.ciudad,
     metodoPago: 'efectivo-al-abordar',
+    origen: origen.nombre,
     placa: bus.placa,
     salida: viaje.salida,
     servicio: bus.servicio,

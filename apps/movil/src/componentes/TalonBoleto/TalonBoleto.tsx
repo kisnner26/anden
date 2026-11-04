@@ -79,7 +79,7 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
           >{`C$ ${boleto.precio}`}</Text>
         </View>
         <Text style={[estilos.destino, { color: colores.tintaPapel }]}>
-          {`${t('horarios.terminal')} → ${resumen.destino}.`}
+          {`${resumen.origen ?? t('horarios.terminal')} → ${resumen.destino}.`}
         </Text>
         <View style={estilos.campos}>
           <Campo
