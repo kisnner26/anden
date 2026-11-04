@@ -10,10 +10,10 @@ export default function RutaPago() {
   return (
     <Pago
       alReservado={() =>
-        setTimeout(
-          () => router.dismissTo('/boletos'),
-          movimiento.confirmacionReserva,
-        )
+        setTimeout(() => {
+          router.dismissAll();
+          router.replace('/boletos');
+        }, movimiento.confirmacionReserva)
       }
       alVolver={() => router.back()}
       viajeId={id ?? ''}
