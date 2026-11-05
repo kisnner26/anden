@@ -13,7 +13,7 @@ import {
 } from '@/datos/corredores';
 import { armarRutas } from '@/datos/rutas';
 import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
-import { espacios, tamanosIlustracion } from '@/tema/espacios';
+import { espacios, radios, tamanosIlustracion } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -55,6 +55,14 @@ function DetalleCorredor({
       </Text>
 
       <BloqueNegro estiloContenido={estilos.seguimiento}>
+        <View style={estilos.estadoSeguimiento}>
+          <View
+            style={[estilos.marcaSeguimiento, { borderColor: colores.ambar }]}
+          />
+          <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+            {t('rutas.enVivoNoDisponible')}
+          </Text>
+        </View>
         <View style={estilos.busCorredor}>
           <View
             style={[estilos.lineaCorredor, { backgroundColor: colores.ambar }]}
@@ -64,7 +72,7 @@ function DetalleCorredor({
             letrero={corredor.destino.toUpperCase()}
           />
         </View>
-        <Text style={[tipografia.subtitulo, { color: colores.sobreNegro }]}>
+        <Text style={[tipografia.titulo, { color: colores.sobreNegro }]}>
           {t('rutas.seguimientoPendiente')}
         </Text>
         <Text style={[tipografia.cuerpo, { color: colores.sobreNegroSuave }]}>
@@ -244,10 +252,21 @@ const estilos = StyleSheet.create({
     justifyContent: 'space-between',
   },
   contenido: { gap: espacios.dieciseis, paddingHorizontal: espacios.lateral },
+  estadoSeguimiento: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.ocho,
+  },
   extremo: { gap: espacios.cuatro },
   extremos: { gap: espacios.dieciseis, padding: espacios.veinticuatro },
   lineaCorredor: { flex: 1, height: espacios.cuatro },
   lineaVertical: { height: espacios.treintaYDos, width: espacios.cuatro },
+  marcaSeguimiento: {
+    borderRadius: radios.pildora,
+    borderWidth: espacios.trazo,
+    height: espacios.doce,
+    width: espacios.doce,
+  },
   nombreParada: { flex: 1, gap: espacios.cuatro },
   parada: { alignItems: 'center', flexDirection: 'row', gap: espacios.doce },
   paradas: { gap: espacios.dieciseis, padding: espacios.veinticuatro },

@@ -364,6 +364,7 @@ export const textos = {
     origenCorredor: 'Origen',
     destinoCorredor: 'Destino',
     seguimientoPendiente: 'Seguimiento en vivo pendiente de datos operativos',
+    enVivoNoDisponible: 'En vivo no disponible',
     seguimientoDetalle:
       'Cuando la cooperativa conecte la unidad, acá vas a ver su posición y llegada estimada.',
     km: 'km',
