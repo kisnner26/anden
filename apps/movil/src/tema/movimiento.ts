@@ -2,6 +2,7 @@ export const movimiento = {
   cambioEstado: 240,
   confirmacionReserva: 800,
   abordaje: 180,
+  escalaConfirmacion: 0.88,
   escalaPresion: 0.98,
   entradaPantalla: 320,
   recorridoCorredor: 360,

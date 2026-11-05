@@ -1,10 +1,18 @@
+import { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
 import { espacios, tamanosIlustracion } from '@/tema/espacios';
+import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -17,6 +25,23 @@ export interface PropiedadesReservaConfirmada {
 export function ReservaConfirmada({ codigo }: PropiedadesReservaConfirmada) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
+  const reducirMovimiento = useReducedMotion();
+  const entrada = useSharedValue(
+    reducirMovimiento ? 1 : movimiento.escalaConfirmacion,
+  );
+  const estiloEntrada = useAnimatedStyle(() => ({
+    transform: [{ scale: entrada.value }],
+  }));
+
+  useEffect(() => {
+    if (reducirMovimiento) {
+      entrada.value = 1;
+      return;
+    }
+    entrada.value = withTiming(1, {
+      duration: movimiento.confirmacionReserva,
+    });
+  }, [entrada, reducirMovimiento]);
 
   return (
     <View
@@ -33,16 +58,18 @@ export function ReservaConfirmada({ codigo }: PropiedadesReservaConfirmada) {
       ]}
     >
       <View style={estilos.contenido}>
-        <Loseta
-          tamano={tamanosIlustracion.confirmacionReserva}
-          variante="ambar"
-        >
-          <Icono
-            color={colores.sobreAmbar}
-            nombre="confirmar"
-            tamano="ilustracion"
-          />
-        </Loseta>
+        <Animated.View style={estiloEntrada}>
+          <Loseta
+            tamano={tamanosIlustracion.confirmacionReserva}
+            variante="ambar"
+          >
+            <Icono
+              color={colores.sobreAmbar}
+              nombre="confirmar"
+              tamano="ilustracion"
+            />
+          </Loseta>
+        </Animated.View>
         <View style={estilos.textos}>
           <Text style={[tipografia.display, { color: colores.tinta }]}>
             {t('pago.confirmadaTitulo')}
