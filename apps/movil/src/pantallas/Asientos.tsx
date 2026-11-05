@@ -2,17 +2,17 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
-import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { Icono } from '@/componentes/Icono';
 import { MapaAsientos } from '@/componentes/MapaAsientos';
+import { PieReserva } from '@/componentes/PieReserva';
 import { ProgresoReserva } from '@/componentes/ProgresoReserva';
 import { formatoHoraCompleta } from '@/datos/formato';
 import { formatoCuenta, useCuentaRegresiva } from '@/datos/useCuentaRegresiva';
 import { useMapaAsientos } from '@/datos/useMapaAsientos';
 import { useSalidas } from '@/datos/useSalidas';
 import { useSeleccionAsientos } from '@/datos/useSeleccionAsientos';
-import { espacios } from '@/tema/espacios';
+import { disposicionPantalla, espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -83,7 +83,10 @@ export function Asientos({ alSeguir, alVolver, viajeId }: PropiedadesAsientos) {
       <ScrollView
         contentContainerStyle={[
           estilos.contenido,
-          { paddingBottom: 180, paddingTop: margenes.top + 8 },
+          {
+            paddingBottom: disposicionPantalla.espacioPieReserva,
+            paddingTop: margenes.top + espacios.ocho,
+          },
         ]}
       >
         <View style={estilos.cabecera}>
@@ -186,34 +189,30 @@ export function Asientos({ alSeguir, alVolver, viajeId }: PropiedadesAsientos) {
         </View>
       </ScrollView>
 
-      <View style={[estilos.pie, { bottom: margenes.bottom + 8 }]}>
-        <BloqueNegro estiloContenido={estilos.contenidoPie}>
-          <View style={estilos.resumen}>
-            <Text
-              style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
-            >
-              {cantidad === 0
-                ? t('asientos.sinElegir')
-                : `${cantidad} ${cantidad === 1 ? t('asientos.unAsiento') : t('asientos.variosAsientos')} · ${elegidos.join(' y ')}`}
-            </Text>
-            <Text
-              style={[tipografia.datoGrande, { color: colores.sobreNegro }]}
-            >
-              {total ? `C$ ${total.total}` : 'C$ 0'}
-            </Text>
-            <Text
-              style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
-            >
-              {detalleTarifa}
-            </Text>
-          </View>
-          <BotonAccion
-            alPresionar={() => alSeguir([...elegidos].sort((a, b) => a - b))}
-            deshabilitado={cantidad === 0}
-            etiqueta={t('asientos.seguir')}
-          />
-        </BloqueNegro>
-      </View>
+      <PieReserva estiloContenido={estilos.contenidoPie}>
+        <View style={estilos.resumen}>
+          <Text
+            style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
+          >
+            {cantidad === 0
+              ? t('asientos.sinElegir')
+              : `${cantidad} ${cantidad === 1 ? t('asientos.unAsiento') : t('asientos.variosAsientos')} · ${elegidos.join(' y ')}`}
+          </Text>
+          <Text style={[tipografia.datoGrande, { color: colores.sobreNegro }]}>
+            {total ? `C$ ${total.total}` : 'C$ 0'}
+          </Text>
+          <Text
+            style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
+          >
+            {detalleTarifa}
+          </Text>
+        </View>
+        <BotonAccion
+          alPresionar={() => alSeguir([...elegidos].sort((a, b) => a - b))}
+          deshabilitado={cantidad === 0}
+          etiqueta={t('asientos.seguir')}
+        />
+      </PieReserva>
     </View>
   );
 }
@@ -228,9 +227,9 @@ const estilos = StyleSheet.create({
   centro: { alignItems: 'center', flex: 1, justifyContent: 'center' },
   circulo: {
     alignItems: 'center',
-    height: 44,
+    height: tamanosControl.toqueMinimo,
     justifyContent: 'center',
-    width: 44,
+    width: tamanosControl.toqueMinimo,
   },
   contenido: { paddingHorizontal: espacios.lateral },
   contenidoPie: {
@@ -249,7 +248,6 @@ const estilos = StyleSheet.create({
   },
   muestra: { borderRadius: 5, height: 16, width: 16 },
   pantalla: { flex: 1 },
-  pie: { left: 14, position: 'absolute', right: 14 },
   plano: { marginTop: espacios.dieciseis },
   resumen: { flex: 1 },
   retencion: {
