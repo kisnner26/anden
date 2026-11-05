@@ -46,12 +46,14 @@ export const tamanosBarraPestanas = {
 
 export const disposicionPantalla = {
   anchoMaximo: 480,
+  espacioPieReserva: 200,
   espacioBarraPestanas:
     tamanosBarraPestanas.alto +
     tamanosBarraPestanas.margenInferior +
     espacios.treintaYDos,
   rellenoInferior: espacios.cuarentaYOcho,
   rellenoSuperior: espacios.ocho,
+  margenFlotante: 14,
 } as const;
 
 export const tamanosIlustracion = {
