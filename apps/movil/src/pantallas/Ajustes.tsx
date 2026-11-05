@@ -14,7 +14,12 @@ import { Icono } from '@/componentes/Icono';
 import { iniciales, nombreCompleto } from '@/datos/perfil';
 import { usePerfil } from '@/datos/usePerfil';
 import { usePreferenciaUbicacion } from '@/datos/ProveedorUbicacion';
-import { espacios, radios, tamanosControl } from '@/tema/espacios';
+import {
+  espacios,
+  radios,
+  tamanosControl,
+  tamanosIlustracion,
+} from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema, type PreferenciaTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -73,7 +78,10 @@ export function Ajustes({ alAbrirPerfil, alVolver }: PropiedadesAjustes) {
     <ScrollView
       contentContainerStyle={[
         estilos.contenido,
-        { paddingTop: margenes.top + 8, paddingBottom: 48 },
+        {
+          paddingBottom: espacios.cuarentaYOcho,
+          paddingTop: margenes.top + espacios.ocho,
+        },
       ]}
       style={{ backgroundColor: colores.fondo }}
     >
@@ -88,7 +96,7 @@ export function Ajustes({ alAbrirPerfil, alVolver }: PropiedadesAjustes) {
         </Bloque>
       </Pressable>
 
-      <Text style={[estilos.titulo, { color: colores.tinta }]}>
+      <Text style={[tipografia.display, { color: colores.tinta }]}>
         {t('ajustes.titulo')}
         <Text style={{ color: colores.ambarTitular }}>.</Text>
       </Text>
@@ -105,11 +113,11 @@ export function Ajustes({ alAbrirPerfil, alVolver }: PropiedadesAjustes) {
           <Avatar
             descripcion={t('perfil.fotoDescripcion')}
             iniciales={iniciales(perfil)}
-            tamano={56}
+            tamano={tamanosIlustracion.avatarAjustes}
             uri={perfil.fotoUri}
           />
           <View style={estilos.texto}>
-            <Text style={[estilos.nombre, { color: colores.tinta }]}>
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
               {nombre === '' ? t('perfil.sinNombre') : nombre}
             </Text>
             <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
@@ -139,7 +147,7 @@ export function Ajustes({ alAbrirPerfil, alVolver }: PropiedadesAjustes) {
       >
         <Bloque estiloContenido={estilos.filaOpcion}>
           <View style={estilos.texto}>
-            <Text style={[estilos.nombre, { color: colores.tinta }]}>
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
               {t('ajustes.ubicacionAutomatica')}
             </Text>
             <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
@@ -256,9 +264,9 @@ export function Ajustes({ alAbrirPerfil, alVolver }: PropiedadesAjustes) {
 const estilos = StyleSheet.create({
   circulo: {
     alignItems: 'center',
-    height: 44,
+    height: tamanosControl.toqueMinimo,
     justifyContent: 'center',
-    width: 44,
+    width: tamanosControl.toqueMinimo,
   },
   contenido: { gap: espacios.dieciseis, paddingHorizontal: espacios.lateral },
   contenidoOpcionTema: {
@@ -276,7 +284,6 @@ const estilos = StyleSheet.create({
     gap: espacios.dieciseis,
     padding: espacios.dieciseis,
   },
-  nombre: { fontFamily: 'Archivo_600SemiBold', fontSize: 18, lineHeight: 22 },
   opcionTema: { flex: 1 },
   perilla: {
     borderRadius: radios.pildora,
@@ -295,11 +302,6 @@ const estilos = StyleSheet.create({
     flexDirection: 'row',
     padding: espacios.cuatro,
   },
-  texto: { flex: 1, gap: 2 },
-  titulo: {
-    fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
-    fontSize: 46,
-    lineHeight: 48,
-  },
+  texto: { flex: 1, gap: espacios.cuatro },
   volver: { alignSelf: 'flex-start' },
 });

@@ -57,6 +57,7 @@ export const disposicionPantalla = {
 } as const;
 
 export const tamanosIlustracion = {
+  avatarAjustes: 56,
   autobusCorredor: 116,
   autobusProximo: 262,
   confirmacionReserva: 88,
