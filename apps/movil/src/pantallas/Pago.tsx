@@ -3,16 +3,16 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
-import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
+import { PieReserva } from '@/componentes/PieReserva';
 import { ProgresoReserva } from '@/componentes/ProgresoReserva';
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
 import { totalReserva, type ErrorReserva } from '@/datos/reserva';
 import { useBoletos } from '@/datos/useBoletos';
 import { useReserva } from '@/datos/useReserva';
 import { obtenerMuestra, useSalidas } from '@/datos/useSalidas';
-import { espacios } from '@/tema/espacios';
+import { disposicionPantalla, espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -96,7 +96,10 @@ export function Pago({ alReservado, alVolver, viajeId }: PropiedadesPago) {
       <ScrollView
         contentContainerStyle={[
           estilos.contenido,
-          { paddingBottom: 200, paddingTop: margenes.top + 8 },
+          {
+            paddingBottom: disposicionPantalla.espacioPieReserva,
+            paddingTop: margenes.top + espacios.ocho,
+          },
         ]}
       >
         <CabeceraPantalla alVolver={alVolver} titulo={t('pago.titulo')} />
@@ -144,35 +147,31 @@ export function Pago({ alReservado, alVolver, viajeId }: PropiedadesPago) {
         )}
       </ScrollView>
 
-      <View style={[estilos.pie, { bottom: margenes.bottom + 8 }]}>
-        <BloqueNegro estiloContenido={estilos.contenidoPie}>
-          <View style={estilos.total}>
-            <Text
-              style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
-            >
-              {t('pago.total')}
-            </Text>
-            <Text
-              style={[tipografia.datoGrande, { color: colores.sobreNegro }]}
-            >
-              {total ? `C$ ${total.total}` : '—'}
-            </Text>
-            <Text
-              style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
-            >
-              {total
-                ? `${t('pago.tarifaMuestra')} · C$ ${total.unitario} ${t('asientos.porPasajero')}`
-                : t('pago.errorTarifa')}
-            </Text>
-          </View>
-          <BotonAccion
-            alPresionar={() => void confirmar()}
-            deshabilitado={reservando || total === null}
-            etiqueta={reservando ? t('pago.reservando') : t('pago.confirmar')}
-            icono="boleto"
-          />
-        </BloqueNegro>
-      </View>
+      <PieReserva estiloContenido={estilos.contenidoPie}>
+        <View style={estilos.total}>
+          <Text
+            style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
+          >
+            {t('pago.total')}
+          </Text>
+          <Text style={[tipografia.datoGrande, { color: colores.sobreNegro }]}>
+            {total ? `C$ ${total.total}` : '—'}
+          </Text>
+          <Text
+            style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
+          >
+            {total
+              ? `${t('pago.tarifaMuestra')} · C$ ${total.unitario} ${t('asientos.porPasajero')}`
+              : t('pago.errorTarifa')}
+          </Text>
+        </View>
+        <BotonAccion
+          alPresionar={() => void confirmar()}
+          deshabilitado={reservando || total === null}
+          etiqueta={reservando ? t('pago.reservando') : t('pago.confirmar')}
+          icono="boleto"
+        />
+      </PieReserva>
     </View>
   );
 }
@@ -195,7 +194,6 @@ const estilos = StyleSheet.create({
   },
   metodo: { gap: espacios.ocho, padding: espacios.dieciseis },
   pantalla: { flex: 1 },
-  pie: { left: 14, position: 'absolute', right: 14 },
   resumen: { gap: espacios.ocho, padding: espacios.veinticuatro },
   total: { flex: 1 },
   viaje: {
