@@ -1,8 +1,23 @@
-import { describe, expect, it } from '@jest/globals';
+import { beforeEach, describe, expect, it } from '@jest/globals';
+import { useReducedMotion, withTiming } from 'react-native-reanimated';
 
 import { renderPantalla } from '@/pruebas/render';
+import { movimiento } from '@/tema/movimiento';
 
 import { DetalleRuta } from './DetalleRuta';
+
+interface MockSimulado {
+  mockClear: () => void;
+  mockReturnValue: (valor: boolean) => void;
+}
+
+const animar = withTiming as unknown as MockSimulado;
+const reducir = useReducedMotion as unknown as MockSimulado;
+
+beforeEach(() => {
+  animar.mockClear();
+  reducir.mockReturnValue(false);
+});
 
 describe('DetalleRuta', () => {
   it('presenta el corredor sin inventar posición ni eta', async () => {
@@ -36,5 +51,24 @@ describe('DetalleRuta', () => {
     expect(pantalla.getByText('Mercado Mayoreo')).toBeTruthy();
     expect(pantalla.getAllByText('Tarifas de muestra')).toHaveLength(2);
     expect(pantalla.getByText('Siguiente salida')).toBeTruthy();
+  });
+
+  it('anima el bus con la duración del tema', async () => {
+    await renderPantalla(
+      <DetalleRuta alVolver={() => undefined} rutaId="cor_man_boa" />,
+    );
+
+    expect(animar).toHaveBeenCalledWith(1, {
+      duration: movimiento.recorridoCorredor,
+    });
+  });
+
+  it('muestra el bus sin animarlo al reducir movimiento', async () => {
+    reducir.mockReturnValue(true);
+    await renderPantalla(
+      <DetalleRuta alVolver={() => undefined} rutaId="cor_man_boa" />,
+    );
+
+    expect(animar).not.toHaveBeenCalled();
   });
 });
