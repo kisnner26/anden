@@ -18,13 +18,14 @@ describe('CORREDORES_INICIALES', () => {
   it('distingue una próxima unidad del estado sin servicio', () => {
     expect(OPERACION_MUESTRA_POR_CORREDOR.cor_boa_man).toEqual({
       estado: 'proxima',
-      etaMinutos: 18,
       proximaSalida: '6:30 a. m.',
     });
     expect(OPERACION_MUESTRA_POR_CORREDOR.cor_jui_man).toEqual({
       estado: 'sin_servicio',
-      etaMinutos: null,
       proximaSalida: null,
     });
+    expect(OPERACION_MUESTRA_POR_CORREDOR.cor_boa_man).not.toHaveProperty(
+      'etaMinutos',
+    );
   });
 });
