@@ -55,7 +55,13 @@ function DetalleCorredor({
       </Text>
 
       <BloqueNegro estiloContenido={estilos.seguimiento}>
-        <View style={estilos.estadoSeguimiento}>
+        <View
+          accessibilityLabel={`${t('rutas.enVivoNoDisponible')}. ${t('rutas.seguimientoPendiente')}`}
+          accessibilityLiveRegion="polite"
+          accessibilityRole="text"
+          accessible
+          style={estilos.estadoSeguimiento}
+        >
           <View
             style={[estilos.marcaSeguimiento, { borderColor: colores.ambar }]}
           />
@@ -81,7 +87,14 @@ function DetalleCorredor({
       </BloqueNegro>
 
       <Bloque estiloContenido={estilos.recorrido}>
-        <View style={estilos.estacion}>
+        <View
+          accessibilityLabel={t('rutas.origenAccesible').replace(
+            '{{lugar}}',
+            corredor.origen,
+          )}
+          accessible
+          style={estilos.estacion}
+        >
           <View
             style={[estilos.puntoEstacion, { backgroundColor: colores.ambar }]}
           />
@@ -99,7 +112,14 @@ function DetalleCorredor({
             style={[estilos.lineaVertical, { backgroundColor: colores.ambar }]}
           />
         </View>
-        <View style={estilos.estacion}>
+        <View
+          accessibilityLabel={t('rutas.destinoAccesible').replace(
+            '{{lugar}}',
+            corredor.destino,
+          )}
+          accessible
+          style={estilos.estacion}
+        >
           <View
             style={[estilos.puntoEstacion, { borderColor: colores.ambar }]}
           />

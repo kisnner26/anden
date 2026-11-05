@@ -363,6 +363,8 @@ export const textos = {
     sinServicioDetalle: 'Revisá más tarde para ver la próxima unidad.',
     origenCorredor: 'Origen',
     destinoCorredor: 'Destino',
+    origenAccesible: 'Origen: {{lugar}}',
+    destinoAccesible: 'Destino: {{lugar}}',
     seguimientoPendiente: 'Seguimiento en vivo pendiente de datos operativos',
     enVivoNoDisponible: 'En vivo no disponible',
     seguimientoDetalle:
