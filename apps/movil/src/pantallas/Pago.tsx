@@ -6,6 +6,7 @@ import { Bloque } from '@/componentes/Bloque';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
+import { ProgresoReserva } from '@/componentes/ProgresoReserva';
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
 import { totalReserva, type ErrorReserva } from '@/datos/reserva';
 import { useBoletos } from '@/datos/useBoletos';
@@ -99,6 +100,7 @@ export function Pago({ alReservado, alVolver, viajeId }: PropiedadesPago) {
         ]}
       >
         <CabeceraPantalla alVolver={alVolver} titulo={t('pago.titulo')} />
+        <ProgresoReserva paso={3} />
 
         <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
           {t('pago.resumen')}
