@@ -7,7 +7,7 @@ import {
   CORREDORES_INICIALES,
   type CorredorInterlocal,
 } from '@/datos/corredores';
-import { espacios } from '@/tema/espacios';
+import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -53,14 +53,19 @@ export function Rutas({ alAbrirRuta }: PropiedadesRutas) {
         </Bloque>
       </View>
 
-      <Bloque estiloContenido={estilos.aviso} hundido>
-        <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-          {t('rutas.datosPendientes')}
-        </Text>
-        <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-          {t('rutas.datosPendientesDetalle')}
-        </Text>
-      </Bloque>
+      <View style={estilos.estadoDatos}>
+        <View
+          style={[estilos.marcaEstado, { borderColor: colores.ambarTexto }]}
+        />
+        <View style={estilos.textoEstado}>
+          <Text style={[tipografia.etiqueta, { color: colores.tinta }]}>
+            {t('rutas.datosPendientes')}
+          </Text>
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {t('rutas.datosPendientesDetalle')}
+          </Text>
+        </View>
+      </View>
 
       <View style={estilos.corredores}>
         {GRUPOS_CORREDOR.map((grupo) => (
@@ -87,14 +92,26 @@ export function Rutas({ alAbrirRuta }: PropiedadesRutas) {
 }
 
 const estilos = StyleSheet.create({
-  aviso: { gap: espacios.cuatro, padding: espacios.dieciseis },
   cabecera: { gap: espacios.dieciseis },
   cantidad: { alignSelf: 'flex-start', padding: espacios.doce },
   contenido: {
     gap: espacios.veinticuatro,
   },
   corredores: { gap: espacios.veinticuatro },
+  estadoDatos: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    gap: espacios.doce,
+  },
   grupo: { gap: espacios.doce },
+  marcaEstado: {
+    borderRadius: radios.pildora,
+    borderWidth: espacios.trazo,
+    height: espacios.doce,
+    marginTop: espacios.cuatro,
+    width: espacios.doce,
+  },
   sentidos: { gap: espacios.doce },
+  textoEstado: { flex: 1, gap: espacios.cuatro },
   titular: { gap: espacios.ocho },
 });
