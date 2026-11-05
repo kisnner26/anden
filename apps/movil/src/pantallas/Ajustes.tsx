@@ -11,7 +11,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
-import { Loseta } from '@/componentes/Loseta';
 import { iniciales, nombreCompleto } from '@/datos/perfil';
 import { usePerfil } from '@/datos/usePerfil';
 import { usePreferenciaUbicacion } from '@/datos/ProveedorUbicacion';
@@ -68,6 +67,7 @@ export function Ajustes({ alAbrirPerfil, alVolver }: PropiedadesAjustes) {
             : ubicacionOcupada
               ? t('ajustes.ubicacionConsultando')
               : t('ajustes.ubicacionPendiente');
+  const opcionActiva = OPCIONES.find(({ clave }) => clave === preferencia);
 
   return (
     <ScrollView
@@ -204,44 +204,51 @@ export function Ajustes({ alAbrirPerfil, alVolver }: PropiedadesAjustes) {
       <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {t('perfil.apariencia')}
       </Text>
-      {OPCIONES.map(({ clave, detalle, nombre }) => {
-        const elegida = preferencia === clave;
-        return (
-          <Pressable
-            accessibilityLabel={nombre()}
-            accessibilityRole="radio"
-            accessibilityState={{ checked: elegida }}
-            key={clave}
-            onPress={() => void establecerPreferencia(clave)}
-          >
-            <Bloque
-              estilo={estilos.opcion}
-              estiloContenido={estilos.filaOpcion}
-              hundido={elegida}
+      <Bloque estiloContenido={estilos.selectorTema} hundido radio="pildora">
+        {OPCIONES.map(({ clave, nombre }) => {
+          const elegida = preferencia === clave;
+          return (
+            <Pressable
+              accessibilityLabel={nombre()}
+              accessibilityRole="radio"
+              accessibilityState={{ checked: elegida }}
+              key={clave}
+              onPress={() => void establecerPreferencia(clave)}
+              style={estilos.opcionTema}
             >
-              <View style={estilos.texto}>
-                <Text style={[estilos.nombre, { color: colores.tinta }]}>
-                  {nombre()}
-                </Text>
-                <Text
-                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
-                >
-                  {detalle()}
-                </Text>
-              </View>
-              <Loseta tamano={36} variante={elegida ? 'ambar' : 'claro'}>
+              <View
+                style={[
+                  estilos.contenidoOpcionTema,
+                  elegida && { backgroundColor: colores.ambar },
+                ]}
+              >
                 {elegida && (
                   <Icono
                     color={colores.sobreAmbar}
                     nombre="confirmar"
-                    tamano="mediano"
+                    tamano="pequeno"
                   />
                 )}
-              </Loseta>
-            </Bloque>
-          </Pressable>
-        );
-      })}
+                <Text
+                  style={[
+                    tipografia.pequeno,
+                    {
+                      color: elegida ? colores.sobreAmbar : colores.tinta,
+                    },
+                  ]}
+                >
+                  {nombre()}
+                </Text>
+              </View>
+            </Pressable>
+          );
+        })}
+      </Bloque>
+      {opcionActiva && (
+        <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+          {opcionActiva.detalle()}
+        </Text>
+      )}
     </ScrollView>
   );
 }
@@ -254,6 +261,15 @@ const estilos = StyleSheet.create({
     width: 44,
   },
   contenido: { gap: espacios.dieciseis, paddingHorizontal: espacios.lateral },
+  contenidoOpcionTema: {
+    alignItems: 'center',
+    borderRadius: radios.pildora,
+    flexDirection: 'row',
+    gap: espacios.cuatro,
+    justifyContent: 'center',
+    minHeight: tamanosControl.toqueMinimo,
+    paddingHorizontal: espacios.ocho,
+  },
   filaOpcion: {
     alignItems: 'center',
     flexDirection: 'row',
@@ -261,7 +277,7 @@ const estilos = StyleSheet.create({
     padding: espacios.dieciseis,
   },
   nombre: { fontFamily: 'Archivo_600SemiBold', fontSize: 18, lineHeight: 22 },
-  opcion: {},
+  opcionTema: { flex: 1 },
   perilla: {
     borderRadius: radios.pildora,
     height: espacios.veinticuatro,
@@ -273,6 +289,11 @@ const estilos = StyleSheet.create({
     minHeight: tamanosControl.toqueMinimo,
     padding: espacios.cuatro,
     width: espacios.cuarentaYOcho,
+  },
+  selectorTema: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    padding: espacios.cuatro,
   },
   texto: { flex: 1, gap: 2 },
   titulo: {
