@@ -29,6 +29,12 @@ export const textos = {
     llego: 'Llegó',
     salio: 'Salió',
   },
+  reserva: {
+    progreso: 'Paso {{paso}} de {{total}}: {{nombre}}',
+    pasoAsientos: 'Asientos',
+    pasoPasajeros: 'Pasajeros',
+    pasoConfirmar: 'Confirmar',
+  },
   viajar: {
     saludo: 'Hola',
     pregunta: '¿A dónde vas hoy?',
