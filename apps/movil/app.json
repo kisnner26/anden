@@ -54,7 +54,13 @@
           "isAndroidForegroundServiceEnabled": false
         }
       ],
-      ["expo-audio", { "microphonePermission": false }]
+      ["expo-audio", { "microphonePermission": false }],
+      [
+        "expo-notifications",
+        {
+          "enableRemoteNotifications": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
