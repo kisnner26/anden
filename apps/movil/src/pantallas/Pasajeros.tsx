@@ -15,6 +15,7 @@ import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { CampoTexto } from '@/componentes/CampoTexto';
 import { Chip } from '@/componentes/Chip';
+import { ProgresoReserva } from '@/componentes/ProgresoReserva';
 import { nombreCompleto, type PasajeroGuardado } from '@/datos/perfil';
 import type { PasajeroReserva } from '@/datos/reserva';
 import { usePerfil } from '@/datos/usePerfil';
@@ -99,6 +100,7 @@ export function Pasajeros({
         keyboardShouldPersistTaps="handled"
       >
         <CabeceraPantalla alVolver={alVolver} titulo={t('pasajeros.titulo')} />
+        <ProgresoReserva paso={2} />
         <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
           {t('pasajeros.detalle')}
         </Text>
