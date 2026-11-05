@@ -593,7 +593,7 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - hecho cuando: origen, destino, próxima salida y tablero se entienden sin explicación, no hay controles decorativos ni contenido cortado y las capturas en iphone coinciden con la dirección aprobada.
 
 ### T-109 · rediseñar rutas y seguimiento
-- depende de: T-105, T-107 · zona: `apps/movil/src/pantallas`, `apps/movil/src/componentes` · raíz: no · estado: en curso
+- depende de: T-105, T-107 · zona: `apps/movil/src/pantallas`, `apps/movil/src/componentes` · raíz: no · estado: hecha
 - hacer: convertir Rutas en una portada visual de los dos corredores y sus cuatro sentidos, con tarjetas compactas, dirección inequívoca y detalle operativo sin mapa ni eta falsos.
 - hecho cuando: cada corredor se reconoce de un vistazo, el sentido activo no depende solo del color y el detalle separa claramente datos de muestra de datos en vivo pendientes.
 
