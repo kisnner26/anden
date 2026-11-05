@@ -6,6 +6,7 @@ import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { Icono } from '@/componentes/Icono';
 import { MapaAsientos } from '@/componentes/MapaAsientos';
+import { ProgresoReserva } from '@/componentes/ProgresoReserva';
 import { formatoHoraCompleta } from '@/datos/formato';
 import { formatoCuenta, useCuentaRegresiva } from '@/datos/useCuentaRegresiva';
 import { useMapaAsientos } from '@/datos/useMapaAsientos';
@@ -102,6 +103,8 @@ export function Asientos({ alSeguir, alVolver, viajeId }: PropiedadesAsientos) {
             </Text>
           </Bloque>
         </View>
+
+        <ProgresoReserva paso={1} />
 
         <Text style={[estilos.titulo, { color: colores.tinta }]}>
           {`${t('asientos.tituloInicio')} `}
