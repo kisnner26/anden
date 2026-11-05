@@ -16,6 +16,13 @@ describe('DetalleRuta', () => {
     expect(
       pantalla.getByText('Seguimiento en vivo pendiente de datos operativos'),
     ).toBeTruthy();
+    expect(
+      pantalla.getByLabelText(
+        'En vivo no disponible. Seguimiento en vivo pendiente de datos operativos',
+      ),
+    ).toBeTruthy();
+    expect(pantalla.getByLabelText('Origen: Boaco')).toBeTruthy();
+    expect(pantalla.getByLabelText('Destino: Managua')).toBeTruthy();
     expect(pantalla.queryByText(/km/)).toBeNull();
     expect(pantalla.queryByText(/min/)).toBeNull();
   });
