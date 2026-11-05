@@ -1,4 +1,11 @@
+import { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
@@ -14,6 +21,7 @@ import {
 import { armarRutas } from '@/datos/rutas';
 import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
 import { espacios, radios, tamanosIlustracion } from '@/tema/espacios';
+import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -32,6 +40,26 @@ function DetalleCorredor({
 }) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
+  const reducirMovimiento = useReducedMotion();
+  const entradaBus = useSharedValue(reducirMovimiento ? 1 : 0);
+  const estiloEntradaBus = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateX: (entradaBus.value - 1) * espacios.veinticuatro,
+      },
+    ],
+  }));
+
+  useEffect(() => {
+    if (reducirMovimiento) {
+      entradaBus.value = 1;
+      return;
+    }
+    entradaBus.value = withTiming(1, {
+      duration: movimiento.recorridoCorredor,
+    });
+  }, [entradaBus, reducirMovimiento]);
+
   return (
     <ScrollView
       contentContainerStyle={[
@@ -73,10 +101,12 @@ function DetalleCorredor({
           <View
             style={[estilos.lineaCorredor, { backgroundColor: colores.ambar }]}
           />
-          <Autobus
-            ancho={tamanosIlustracion.autobusCorredor}
-            letrero={corredor.destino.toUpperCase()}
-          />
+          <Animated.View style={estiloEntradaBus}>
+            <Autobus
+              ancho={tamanosIlustracion.autobusCorredor}
+              letrero={corredor.destino.toUpperCase()}
+            />
+          </Animated.View>
         </View>
         <Text style={[tipografia.titulo, { color: colores.sobreNegro }]}>
           {t('rutas.seguimientoPendiente')}

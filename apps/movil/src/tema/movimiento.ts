@@ -4,6 +4,7 @@ export const movimiento = {
   abordaje: 180,
   escalaPresion: 0.98,
   entradaPantalla: 320,
+  recorridoCorredor: 360,
   reducir: 120,
   toque: 180,
 } as const;
