@@ -15,6 +15,13 @@ describe('Rutas', () => {
     expect(pantalla.queryByText('Estelí')).toBeNull();
   });
 
+  it('agrupa los sentidos en dos corredores reconocibles', async () => {
+    const pantalla = await renderPantalla(<Rutas />);
+    expect(pantalla.getByText('Boaco · Managua')).toBeTruthy();
+    expect(pantalla.getByText('Juigalpa · Managua')).toBeTruthy();
+    expect(pantalla.getAllByRole('button')).toHaveLength(4);
+  });
+
   it('explica que faltan datos operativos sin mostrar un mapa radial', async () => {
     const pantalla = await renderPantalla(<Rutas />);
     expect(
