@@ -27,6 +27,9 @@ it('explica el corredor y abre su detalle', async () => {
   expect(pantalla.getByText('Boaco')).toBeTruthy();
   expect(pantalla.getByText('Managua')).toBeTruthy();
   expect(pantalla.getByText('6:30 a. m.')).toBeTruthy();
+  expect(pantalla.getByText('Horario referencial')).toBeTruthy();
+  expect(pantalla.queryByText('Llegada estimada')).toBeNull();
+  expect(pantalla.queryByText('18 min')).toBeNull();
   expect(pantalla.getByText('Operación de muestra')).toBeTruthy();
   await fireEvent.press(tarjeta);
   expect(alPresionar).toHaveBeenCalledWith('cor_boa_man');
