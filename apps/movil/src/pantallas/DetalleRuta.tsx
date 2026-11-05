@@ -80,25 +80,37 @@ function DetalleCorredor({
         </Text>
       </BloqueNegro>
 
-      <Bloque estiloContenido={estilos.extremos}>
-        <View style={estilos.extremo}>
-          <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
-            {t('rutas.origenCorredor')}
-          </Text>
-          <Text style={[tipografia.titulo, { color: colores.tinta }]}>
-            {corredor.origen}
-          </Text>
+      <Bloque estiloContenido={estilos.recorrido}>
+        <View style={estilos.estacion}>
+          <View
+            style={[estilos.puntoEstacion, { backgroundColor: colores.ambar }]}
+          />
+          <View style={estilos.extremo}>
+            <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+              {t('rutas.origenCorredor')}
+            </Text>
+            <Text style={[tipografia.titulo, { color: colores.tinta }]}>
+              {corredor.origen}
+            </Text>
+          </View>
         </View>
-        <View
-          style={[estilos.lineaVertical, { backgroundColor: colores.ambar }]}
-        />
-        <View style={estilos.extremo}>
-          <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
-            {t('rutas.destinoCorredor')}
-          </Text>
-          <Text style={[tipografia.titulo, { color: colores.tinta }]}>
-            {corredor.destino}
-          </Text>
+        <View style={estilos.tramo}>
+          <View
+            style={[estilos.lineaVertical, { backgroundColor: colores.ambar }]}
+          />
+        </View>
+        <View style={estilos.estacion}>
+          <View
+            style={[estilos.puntoEstacion, { borderColor: colores.ambar }]}
+          />
+          <View style={estilos.extremo}>
+            <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+              {t('rutas.destinoCorredor')}
+            </Text>
+            <Text style={[tipografia.titulo, { color: colores.tinta }]}>
+              {corredor.destino}
+            </Text>
+          </View>
         </View>
       </Bloque>
     </ScrollView>
@@ -257,10 +269,14 @@ const estilos = StyleSheet.create({
     flexDirection: 'row',
     gap: espacios.ocho,
   },
+  estacion: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.doce,
+  },
   extremo: { gap: espacios.cuatro },
-  extremos: { gap: espacios.dieciseis, padding: espacios.veinticuatro },
   lineaCorredor: { flex: 1, height: espacios.cuatro },
-  lineaVertical: { height: espacios.treintaYDos, width: espacios.cuatro },
+  lineaVertical: { flex: 1, width: espacios.cuatro },
   marcaSeguimiento: {
     borderRadius: radios.pildora,
     borderWidth: espacios.trazo,
@@ -275,9 +291,21 @@ const estilos = StyleSheet.create({
     height: espacios.dieciseis,
     width: espacios.dieciseis,
   },
+  puntoEstacion: {
+    borderRadius: radios.pildora,
+    borderWidth: espacios.trazo,
+    height: espacios.dieciseis,
+    width: espacios.dieciseis,
+  },
+  recorrido: { padding: espacios.veinticuatro },
   resumen: { gap: espacios.ocho, padding: espacios.veinticuatro },
   seguimiento: { gap: espacios.doce, padding: espacios.veinticuatro },
   tarifa: { gap: espacios.cuatro, padding: espacios.dieciseis },
   tarifas: { flexDirection: 'row', flexWrap: 'wrap', gap: espacios.ocho },
+  tramo: {
+    alignItems: 'center',
+    height: espacios.treintaYDos,
+    width: espacios.dieciseis,
+  },
   vacio: { flex: 1, gap: espacios.dieciseis, padding: espacios.lateral },
 });
