@@ -54,7 +54,6 @@
           "isAndroidForegroundServiceEnabled": false
         }
       ],
-      "expo-notifications",
       ["expo-audio", { "microphonePermission": false }]
     ],
     "experiments": {
