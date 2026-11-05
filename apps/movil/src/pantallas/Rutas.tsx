@@ -3,7 +3,10 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Bloque } from '@/componentes/Bloque';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { TarjetaCorredor } from '@/componentes/TarjetaCorredor';
-import { CORREDORES_INICIALES } from '@/datos/corredores';
+import {
+  CORREDORES_INICIALES,
+  type CorredorInterlocal,
+} from '@/datos/corredores';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -12,6 +15,20 @@ import { t } from '@/textos/t';
 export interface PropiedadesRutas {
   alAbrirRuta?: (id: string) => void;
 }
+
+const GRUPOS_CORREDOR: readonly {
+  ids: readonly CorredorInterlocal['id'][];
+  titulo: 'rutas.boacoManagua' | 'rutas.juigalpaManagua';
+}[] = [
+  {
+    ids: ['cor_boa_man', 'cor_man_boa'],
+    titulo: 'rutas.boacoManagua',
+  },
+  {
+    ids: ['cor_jui_man', 'cor_man_jui'],
+    titulo: 'rutas.juigalpaManagua',
+  },
+];
 
 /** los dos corredores que opera Andén; sin geometría falsa mientras faltan datos verificados */
 export function Rutas({ alAbrirRuta }: PropiedadesRutas) {
@@ -46,12 +63,23 @@ export function Rutas({ alAbrirRuta }: PropiedadesRutas) {
       </Bloque>
 
       <View style={estilos.corredores}>
-        {CORREDORES_INICIALES.map((corredor) => (
-          <TarjetaCorredor
-            alPresionar={(id) => alAbrirRuta?.(id)}
-            corredor={corredor}
-            key={corredor.id}
-          />
+        {GRUPOS_CORREDOR.map((grupo) => (
+          <View key={grupo.titulo} style={estilos.grupo}>
+            <Text style={[tipografia.titulo, { color: colores.tinta }]}>
+              {t(grupo.titulo)}
+            </Text>
+            <View style={estilos.sentidos}>
+              {CORREDORES_INICIALES.filter((corredor) =>
+                grupo.ids.includes(corredor.id),
+              ).map((corredor) => (
+                <TarjetaCorredor
+                  alPresionar={(id) => alAbrirRuta?.(id)}
+                  corredor={corredor}
+                  key={corredor.id}
+                />
+              ))}
+            </View>
+          </View>
         ))}
       </View>
     </MarcoPestana>
@@ -65,6 +93,8 @@ const estilos = StyleSheet.create({
   contenido: {
     gap: espacios.veinticuatro,
   },
-  corredores: { gap: espacios.dieciseis },
+  corredores: { gap: espacios.veinticuatro },
+  grupo: { gap: espacios.doce },
+  sentidos: { gap: espacios.doce },
   titular: { gap: espacios.ocho },
 });
