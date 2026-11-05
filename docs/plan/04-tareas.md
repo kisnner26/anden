@@ -598,6 +598,6 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - hecho cuando: cada corredor se reconoce de un vistazo, el sentido activo no depende solo del color y el detalle separa claramente datos de muestra de datos en vivo pendientes.
 
 ### T-110 · rediseñar compra, boletos y ajustes
-- depende de: T-107, T-108 · zona: `apps/movil/src/pantallas`, `apps/movil/src/componentes`, `apps/movil/app` · raíz: no · estado: en curso
+- depende de: T-107, T-108 · zona: `apps/movil/src/pantallas`, `apps/movil/src/componentes`, `apps/movil/app` · raíz: no · estado: hecha
 - hacer: unificar asientos, pasajeros, pago, confirmación, boletos y ajustes como un recorrido continuo con progreso visible, pie seguro, regreso coherente y un único botón principal por pantalla.
 - hecho cuando: la reserva se completa sin callejones, el boleto queda como pieza dominante, ajustes deja de parecer una lista y el recorrido completo se verifica visualmente en iphone.
