@@ -11,13 +11,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
-import { Icono } from '@/componentes/Icono';
 import { TalonBoleto } from '@/componentes/TalonBoleto';
 import { estadoVisibleBoleto } from '@/datos/estadoBoleto';
 import { useBoletos } from '@/datos/useBoletos';
 import { useAvisos } from '@/datos/useAvisos';
 import { useAhora } from '@/datos/useSalidas';
-import { espacios } from '@/tema/espacios';
+import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -39,10 +38,9 @@ export function VerBoleto({
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const ahora = useAhora();
-  const { boletos, cancelar, validar } = useBoletos();
+  const { boletos, cancelar } = useBoletos();
   const { activar } = useAvisos();
   const [confirmando, establecerConfirmando] = useState(false);
-  const [cambioNoDisponible, establecerCambioNoDisponible] = useState(false);
   const guardado = boletos.find(({ boleto }) => boleto.id === boletoId);
 
   if (!guardado) {
@@ -123,83 +121,30 @@ export function VerBoleto({
       {puedeOperar && (
         <View style={estilos.acciones}>
           <Pressable
-            accessibilityLabel={t('boleto.validar')}
-            accessibilityRole="button"
-            onPress={() => void validar(boletoId)}
-          >
-            <Bloque estiloContenido={estilos.accion} radio="loseta">
-              <View style={estilos.textoAccion}>
-                <Text
-                  style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
-                >
-                  {t('boleto.modoPrueba')}
-                </Text>
-                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                  {t('boleto.validar')}
-                </Text>
-              </View>
-              <Icono
-                color={colores.tinta}
-                nombre="siguiente"
-                tamano="mediano"
-              />
-            </Bloque>
-          </Pressable>
-          <Pressable
             accessibilityLabel={t('boleto.compartir')}
             accessibilityRole="button"
             onPress={() => void compartir()}
+            style={estilos.accionEnFila}
           >
-            <Bloque estiloContenido={estilos.accion} radio="loseta">
+            <Bloque estiloContenido={estilos.accion} radio="pildora">
               <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
                 {t('boleto.compartir')}
               </Text>
-              <Icono
-                color={colores.tinta}
-                nombre="siguiente"
-                tamano="mediano"
-              />
             </Bloque>
           </Pressable>
           <Pressable
             accessibilityLabel={t('boleto.recordatorio')}
             accessibilityRole="button"
             onPress={() => void activar()}
+            style={estilos.accionEnFila}
           >
-            <Bloque estiloContenido={estilos.accion} radio="loseta">
+            <Bloque estiloContenido={estilos.accion} radio="pildora">
               <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
                 {t('boleto.recordatorio')}
               </Text>
-              <Icono
-                color={colores.tinta}
-                nombre="siguiente"
-                tamano="mediano"
-              />
-            </Bloque>
-          </Pressable>
-          <Pressable
-            accessibilityLabel={t('boleto.cambiar')}
-            accessibilityRole="button"
-            onPress={() => establecerCambioNoDisponible(true)}
-          >
-            <Bloque estiloContenido={estilos.accion} radio="loseta">
-              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                {t('boleto.cambiar')}
-              </Text>
-              <Icono
-                color={colores.tinta}
-                nombre="siguiente"
-                tamano="mediano"
-              />
             </Bloque>
           </Pressable>
         </View>
-      )}
-
-      {cambioNoDisponible && (
-        <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-          {t('boleto.cambioNoDisponible')}
-        </Text>
       )}
 
       {puedeOperar && confirmando ? (
@@ -248,15 +193,16 @@ export function VerBoleto({
 }
 
 const estilos = StyleSheet.create({
-  acciones: { gap: espacios.ocho },
+  acciones: { flexDirection: 'row', gap: espacios.ocho },
   accion: {
     alignItems: 'center',
-    flexDirection: 'row',
+    flex: 1,
     justifyContent: 'space-between',
-    minHeight: 44,
+    minHeight: tamanosControl.toqueMinimo,
     paddingHorizontal: espacios.doce,
     paddingVertical: espacios.ocho,
   },
+  accionEnFila: { flex: 1 },
   boton: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -278,5 +224,4 @@ const estilos = StyleSheet.create({
   contenido: { gap: espacios.dieciseis, paddingHorizontal: espacios.lateral },
   opcion: { flex: 1, paddingVertical: espacios.doce },
   pago: { gap: 4, padding: espacios.dieciseis },
-  textoAccion: { flex: 1, gap: espacios.cuatro },
 });

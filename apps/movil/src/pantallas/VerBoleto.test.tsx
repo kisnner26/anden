@@ -68,8 +68,11 @@ describe('VerBoleto', () => {
       pantalla.getByRole('button', { name: 'Agregar recordatorio' }),
     ).toBeTruthy();
     expect(
-      pantalla.getByRole('button', { name: 'Cambiar salida' }),
-    ).toBeTruthy();
+      pantalla.queryByRole('button', { name: 'Cambiar salida' }),
+    ).toBeNull();
+    expect(
+      pantalla.queryByRole('button', { name: 'Validar abordaje' }),
+    ).toBeNull();
   });
 
   it('comparte datos del viaje sin exponer el código de abordaje', async () => {
