@@ -72,8 +72,23 @@ def salida():
     return senal * lejania * envolvente(len(t), 0.04, 0.2)
 
 
+def confirmacion():
+    """sello de boleto y arpegio ascendente: do, mi, sol, do agudo"""
+    t = t_de(1.3)
+    senal = np.zeros(len(t))
+    golpe = np.exp(-t * 60) * (np.sin(2 * np.pi * 110 * t) + 0.4 * rng.standard_normal(len(t)))
+    senal += 0.7 * golpe
+    for inicio, nota in ((0.12, 523.25), (0.26, 659.25), (0.40, 783.99), (0.56, 1046.5)):
+        local = np.clip(t - inicio, 0, None)
+        vivo = (t >= inicio).astype(float)
+        campana = np.sin(2 * np.pi * nota * local) + 0.3 * np.sin(2 * np.pi * nota * 2 * local)
+        senal += 0.55 * campana * np.exp(-local * 5.5) * vivo
+    return senal * envolvente(len(t), 0.004, 0.25)
+
+
 if __name__ == "__main__":
     SALIDA.mkdir(parents=True, exist_ok=True)
     guardar("arranque.wav", arranque())
     guardar("bocina.wav", bocina())
     guardar("salida.wav", salida())
+    guardar("confirmacion.wav", confirmacion())
