@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react';
-import { Animated } from 'react-native';
+import { Animated, type StyleProp, type ViewStyle } from 'react-native';
 
 import { movimiento } from '@/tema/movimiento';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
@@ -8,10 +8,11 @@ export interface PropiedadesRebote {
   /** al pasar a true el contenido da un pequeño salto */
   activo: boolean;
   children: ReactNode;
+  estilo?: StyleProp<ViewStyle>;
 }
 
 /** salto breve al activarse; sin movimiento si el modo lo pide. */
-export function Rebote({ activo, children }: PropiedadesRebote) {
+export function Rebote({ activo, children, estilo }: PropiedadesRebote) {
   const reducido = useMovimientoReducido();
   const escala = useRef(new Animated.Value(1)).current;
   const primera = useRef(true);
@@ -42,7 +43,7 @@ export function Rebote({ activo, children }: PropiedadesRebote) {
   }, [activo, escala, reducido]);
 
   return (
-    <Animated.View style={{ transform: [{ scale: escala }] }}>
+    <Animated.View style={[estilo, { transform: [{ scale: escala }] }]}>
       {children}
     </Animated.View>
   );
