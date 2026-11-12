@@ -1,5 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { Rebote } from '@/componentes/Rebote';
+
 import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -45,16 +47,21 @@ export function ProgresoReserva({ paso }: PropiedadesProgresoReserva) {
         {([1, 2, 3] as const).map((numero) => {
           const alcanzado = numero <= paso;
           return (
-            <View
+            <Rebote
+              activo={numero === paso}
+              estilo={estilos.celdaSegmento}
               key={numero}
-              style={[
-                estilos.segmento,
-                alcanzado ? estilos.alcanzado : estilos.pendiente,
-                {
-                  backgroundColor: alcanzado ? colores.ambar : colores.linea,
-                },
-              ]}
-            />
+            >
+              <View
+                style={[
+                  estilos.segmento,
+                  alcanzado ? estilos.alcanzado : estilos.pendiente,
+                  {
+                    backgroundColor: alcanzado ? colores.ambar : colores.linea,
+                  },
+                ]}
+              />
+            </Rebote>
           );
         })}
       </View>
@@ -64,6 +71,7 @@ export function ProgresoReserva({ paso }: PropiedadesProgresoReserva) {
 
 const estilos = StyleSheet.create({
   alcanzado: { height: espacios.ocho },
+  celdaSegmento: { flex: 1 },
   contenedor: { gap: espacios.ocho },
   fila: {
     alignItems: 'center',
