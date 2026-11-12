@@ -11,6 +11,12 @@ import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 
+/** sin interlínea fija: en iOS un lineHeight menor que la letra recorta las colas de g, y, p */
+const textoCampo = {
+  fontFamily: tipografia.cuerpo.fontFamily,
+  fontSize: tipografia.cuerpo.fontSize,
+};
+
 export interface PropiedadesCampoTexto {
   alCambiar: (valor: string) => void;
   etiqueta: string;
@@ -46,7 +52,7 @@ export function CampoTexto({
           placeholder={marcador}
           placeholderTextColor={colores.tintaSuave}
           selectionColor={colores.ambarTexto}
-          style={[tipografia.cuerpo, estilos.entrada, { color: colores.tinta }]}
+          style={[textoCampo, estilos.entrada, { color: colores.tinta }]}
           value={valor}
         />
       </Bloque>
@@ -65,5 +71,5 @@ export function CampoTexto({
 const estilos = StyleSheet.create({
   caja: { paddingHorizontal: espacios.dieciseis },
   contenedor: { gap: espacios.ocho },
-  entrada: { minHeight: 48, paddingVertical: espacios.doce },
+  entrada: { minHeight: 56, paddingVertical: espacios.dieciseis },
 });
