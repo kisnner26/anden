@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent } from '@testing-library/react-native';
 
+import { ProveedorFavoritos } from '@/datos/ProveedorFavoritos';
 import { reiniciarMuestra } from '@/datos/useSalidas';
 import { renderPantalla } from '@/pruebas/render';
 
@@ -50,5 +51,34 @@ describe('Horarios', () => {
     );
     await fireEvent.press(pantalla.getByRole('button', { name: 'Buscar' }));
     expect(alAbrirBuscador).toHaveBeenCalledTimes(1);
+  });
+
+  it('destaca la próxima salida con cuánto falta y los asientos', async () => {
+    const pantalla = await renderPantalla(<Horarios />);
+    expect(pantalla.getByText('Próxima salida')).toBeTruthy();
+    expect(
+      pantalla.getByText(/^Sale en \d+ min · (\d+ libres|Pocos asientos)$/),
+    ).toBeTruthy();
+  });
+
+  it('lista la disponibilidad de las salidas que faltan', async () => {
+    const pantalla = await renderPantalla(<Horarios />);
+    expect(pantalla.getByText('Disponibilidad')).toBeTruthy();
+    expect(
+      pantalla.getAllByText(/^\d+ libres$|^Pocos asientos · \d+$|^Agotado$/)
+        .length,
+    ).toBeGreaterThan(0);
+  });
+
+  it('explica cómo marcar favoritas cuando no hay ninguna', async () => {
+    const pantalla = await renderPantalla(
+      <ProveedorFavoritos>
+        <Horarios />
+      </ProveedorFavoritos>,
+    );
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Mis rutas' }));
+    expect(
+      pantalla.getByText('Marcá una ruta con la estrella para verla acá.'),
+    ).toBeTruthy();
   });
 });

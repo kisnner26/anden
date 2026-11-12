@@ -2,12 +2,18 @@ import type { TipoServicio } from '@anden/dominio';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { Aparece } from '@/componentes/Aparece';
 import { Bloque } from '@/componentes/Bloque';
 import { Chip } from '@/componentes/Chip';
+import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { TableroSalidas } from '@/componentes/TableroSalidas';
+import { CORREDORES_INICIALES, TERMINAL_POR_CIUDAD } from '@/datos/corredores';
+import { minutosParaSalir, nivelDisponibilidad } from '@/datos/disponibilidad';
+import { formatoHoraCompleta } from '@/datos/formato';
+import { useFavoritos } from '@/datos/useFavoritos';
 import { useSalidas } from '@/datos/useSalidas';
 import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -35,7 +41,9 @@ export function Horarios({
 }: PropiedadesHorarios) {
   const { colores } = useTema();
   const [terminalId, establecerTerminalId] = useState('ter_may');
-  const { datos, salidas } = useSalidas(terminalId);
+  const { ahora, datos, proxima, salidas } = useSalidas(terminalId);
+  const { favoritos } = useFavoritos();
+  const [soloFavoritas, establecerSoloFavoritas] = useState(false);
   const terminal = datos.terminales.find(
     (candidata) => candidata.id === terminalId,
   );
@@ -45,11 +53,25 @@ export function Horarios({
     filtro === 'todos'
       ? salidas
       : salidas.filter((salida) => salida.servicio === filtro);
-  const visibles = soloProximas
+  const porProximas = soloProximas
     ? porServicio.filter(
         (salida) => salida.estado !== 'en-ruta' && salida.estado !== 'llego',
       )
     : porServicio;
+  const destinosFavoritos: string[] = CORREDORES_INICIALES.filter(
+    (corredor) =>
+      favoritos.includes(corredor.id) &&
+      TERMINAL_POR_CIUDAD[corredor.origen] === terminalId,
+  ).map((corredor) => corredor.destino);
+  const visibles = soloFavoritas
+    ? porProximas.filter((salida) => destinosFavoritos.includes(salida.destino))
+    : porProximas;
+  const disponibles = visibles.filter(
+    (salida) => salida.estado !== 'en-ruta' && salida.estado !== 'llego',
+  );
+  const nivelProxima = proxima
+    ? nivelDisponibilidad(proxima.asientosLibres)
+    : null;
 
   return (
     <MarcoPestana>
@@ -85,6 +107,31 @@ export function Horarios({
         </View>
       </Bloque>
 
+      {proxima ? (
+        <Aparece>
+          <Bloque estilo={estilos.terminal} estiloContenido={estilos.proxima}>
+            <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+              {t('horarios.proximaSalida')}
+            </Text>
+            <View style={estilos.filaProxima}>
+              <Text style={[tipografia.titulo, { color: colores.tinta }]}>
+                {proxima.destino}
+              </Text>
+              <Text style={[tipografia.dato, { color: colores.tinta }]}>
+                {formatoHoraCompleta(proxima.salida)}
+              </Text>
+            </View>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {`${t('horarios.saleEn')} ${minutosParaSalir(proxima, ahora)} ${t('horarios.minutos')} · ${
+                nivelProxima === 'pocos'
+                  ? t('horarios.pocosAsientos')
+                  : `${proxima.asientosLibres} ${t('horarios.libres')}`
+              }`}
+            </Text>
+          </Bloque>
+        </Aparece>
+      ) : null}
+
       <ScrollView
         contentContainerStyle={estilos.filtros}
         horizontal
@@ -104,6 +151,11 @@ export function Horarios({
         horizontal
         showsHorizontalScrollIndicator={false}
       >
+        <Chip
+          alCambiar={() => establecerSoloFavoritas(!soloFavoritas)}
+          etiqueta={t('horarios.favoritas')}
+          seleccionado={soloFavoritas}
+        />
         <Chip
           alCambiar={() => establecerSoloProximas(!soloProximas)}
           etiqueta={t('horarios.proximas')}
@@ -127,6 +179,35 @@ export function Horarios({
           salidas={visibles}
         />
       </View>
+
+      {soloFavoritas && destinosFavoritos.length === 0 ? (
+        <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
+          {t('horarios.sinFavoritas')}
+        </Text>
+      ) : null}
+
+      {disponibles.length > 0 ? (
+        <View>
+          <Text
+            style={[
+              tipografia.subtitulo,
+              estilos.tituloLista,
+              { color: colores.tinta },
+            ]}
+          >
+            {t('horarios.disponibilidad')}
+          </Text>
+          {disponibles.map((salida, indice) => (
+            <Aparece indice={indice} key={salida.viajeId}>
+              <FilaSalida
+                alPresionar={alAbrirViaje}
+                mostrarDisponibilidad
+                salida={salida}
+              />
+            </Aparece>
+          ))}
+        </View>
+      ) : null}
     </MarcoPestana>
   );
 }
@@ -152,6 +233,13 @@ const estilos = StyleSheet.create({
     paddingVertical: espacios.doce,
   },
   filtros: { gap: espacios.ocho, paddingVertical: espacios.ocho },
+  filaProxima: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  proxima: { gap: espacios.cuatro, padding: espacios.dieciseis },
   tablero: { marginTop: espacios.cuatro },
+  tituloLista: { marginTop: espacios.veinticuatro },
   terminal: { marginTop: espacios.dieciseis },
 });
