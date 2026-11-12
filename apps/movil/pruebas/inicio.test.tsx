@@ -8,7 +8,7 @@ describe('Inicio', () => {
   it('muestra la portada la primera vez', async () => {
     const pantalla = await renderPantalla(<Inicio />);
     expect(
-      await pantalla.findByRole('button', { name: 'Empezar' }),
+      await pantalla.findByRole('button', { name: 'Deslizar para empezar' }),
     ).toBeTruthy();
   });
 });
