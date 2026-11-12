@@ -4,6 +4,7 @@ import { fireEvent, waitFor } from '@testing-library/react-native';
 import { Share } from 'react-native';
 
 import { CLAVE_BOLETOS, ProveedorBoletos } from '@/datos/ProveedorBoletos';
+import { ProveedorHabituales } from '@/datos/ProveedorHabituales';
 import { ProveedorPagos } from '@/datos/ProveedorPagos';
 import { reiniciarMuestra } from '@/datos/useSalidas';
 import { boletoDePrueba } from '@/pruebas/boletos';
@@ -244,5 +245,51 @@ describe('VerBoleto', () => {
     await pantalla.findByTestId('talon-boleto');
     expect(pantalla.getByText('Estado: Salida vencida')).toBeTruthy();
     expect(pantalla.queryByText('Pagás al abordar')).toBeNull();
+  });
+
+  it('guarda el viaje del boleto como viaje habitual y lo dice', async () => {
+    const base = boletoDePrueba(new Date(Date.now() + 60 * 60_000));
+    await AsyncStorage.setItem(
+      CLAVE_BOLETOS,
+      JSON.stringify([
+        { ...base, resumen: { ...base.resumen, origen: 'Mercado Mayoreo' } },
+      ]),
+    );
+    const pantalla = await renderPantalla(
+      <ProveedorBoletos>
+        <ProveedorHabituales>
+          <VerBoleto
+            alCancelado={() => undefined}
+            alVerChofer={() => undefined}
+            alVolver={() => undefined}
+            boletoId="bol_K7RM4QX9"
+          />
+        </ProveedorHabituales>
+      </ProveedorBoletos>,
+    );
+    await fireEvent.press(
+      await pantalla.findByRole('button', {
+        name: 'Guardar como mi viaje habitual',
+      }),
+    );
+    expect(
+      await pantalla.findByText('Guardado como tu viaje habitual'),
+    ).toBeTruthy();
+    expect(await AsyncStorage.getItem('anden.habituales')).toContain(
+      '"origen":"Managua"',
+    );
+    expect(await AsyncStorage.getItem('anden.habituales')).toContain(
+      '"destino":"Boaco"',
+    );
+  });
+
+  it('sin saber de qué terminal sale no ofrece guardarlo como habitual', async () => {
+    const pantalla = await dibujar();
+    await pantalla.findByTestId('talon-boleto');
+    expect(
+      pantalla.queryByRole('button', {
+        name: 'Guardar como mi viaje habitual',
+      }),
+    ).toBeNull();
   });
 });
