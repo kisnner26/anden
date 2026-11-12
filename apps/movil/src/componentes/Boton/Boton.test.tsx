@@ -1,7 +1,10 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, render } from '@testing-library/react-native';
+import { Animated } from 'react-native';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 
+import { ajustesDeModo } from '@/tema/modoUso';
+import { ContextoModoUso } from '@/tema/useModoUso';
 import { t } from '@/textos/t';
 
 import { Boton } from './Boton';
@@ -90,5 +93,29 @@ describe('Boton', () => {
       }),
     );
     expect(alPresionar).not.toHaveBeenCalled();
+  });
+
+  it('al cargar gira el indicador en el modo completo', async () => {
+    const bucle = jest.spyOn(Animated, 'loop');
+    await render(<Boton alPresionar={jest.fn()} cargando etiqueta="Ir" />);
+    expect(bucle).toHaveBeenCalled();
+    bucle.mockRestore();
+  });
+
+  it('al cargar no anima en el modo rápido', async () => {
+    const bucle = jest.spyOn(Animated, 'loop');
+    await render(
+      <ContextoModoUso.Provider
+        value={{
+          ajustes: ajustesDeModo('rapido'),
+          establecerModo: async () => undefined,
+          modo: 'rapido',
+        }}
+      >
+        <Boton alPresionar={jest.fn()} cargando etiqueta="Ir" />
+      </ContextoModoUso.Provider>,
+    );
+    expect(bucle).not.toHaveBeenCalled();
+    bucle.mockRestore();
   });
 });
