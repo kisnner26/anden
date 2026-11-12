@@ -1,11 +1,48 @@
-import { describe, expect, it, jest } from '@jest/globals';
-import { fireEvent } from '@testing-library/react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { fireEvent, waitFor } from '@testing-library/react-native';
 
+import { ProveedorFavoritos } from '@/datos/ProveedorFavoritos';
 import { renderPantalla } from '@/pruebas/render';
 
 import { Rutas } from './Rutas';
 
+beforeEach(async () => {
+  await AsyncStorage.clear();
+});
+
 describe('Rutas', () => {
+  it('pone primero, dentro de su grupo, el corredor favorito', async () => {
+    await AsyncStorage.setItem(
+      'anden.favoritos',
+      JSON.stringify(['cor_man_boa']),
+    );
+    const pantalla = await renderPantalla(
+      <ProveedorFavoritos>
+        <Rutas />
+      </ProveedorFavoritos>,
+    );
+    const nombres = () =>
+      pantalla
+        .getAllByRole('button', { name: /^Abrir / })
+        .map((boton) => boton.props.accessibilityLabel as string);
+
+    await waitFor(() => expect(nombres()[0]).toBe('Abrir Managua a Boaco'));
+    expect(nombres()[1]).toBe('Abrir Boaco a Managua');
+  });
+
+  it('sin favoritos mantiene el orden de siempre', async () => {
+    const pantalla = await renderPantalla(
+      <ProveedorFavoritos>
+        <Rutas />
+      </ProveedorFavoritos>,
+    );
+    const nombres = pantalla
+      .getAllByRole('button', { name: /^Abrir / })
+      .map((boton) => boton.props.accessibilityLabel as string);
+    expect(nombres[0]).toBe('Abrir Boaco a Managua');
+  });
+
   it('muestra los cuatro sentidos del corredor inicial', async () => {
     const pantalla = await renderPantalla(<Rutas />);
     expect(pantalla.getAllByText('Boaco')).toHaveLength(2);
