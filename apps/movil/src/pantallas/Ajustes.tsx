@@ -197,6 +197,7 @@ export function Ajustes({
                   })}
                 </Text>
               </View>
+              <Icono nombre="siguiente" tamano="mediano" />
             </Bloque>
           </Pressable>
           <Pressable accessibilityRole="button" onPress={() => void cerrar()}>
@@ -220,6 +221,7 @@ export function Ajustes({
                 {t('ajustes.conductorDetalle')}
               </Text>
             </View>
+            <Icono nombre="siguiente" tamano="mediano" />
           </Bloque>
         </Pressable>
       )}
