@@ -20,6 +20,18 @@ function abrir(alAbrirViaje: (id: string) => void = () => undefined) {
 }
 
 describe('Buscador', () => {
+  it('abre con el texto inicial ya aplicado, como al repetir un viaje', async () => {
+    const pantalla = await renderPantalla(
+      <Buscador
+        alAbrirViaje={() => undefined}
+        alVolver={() => undefined}
+        consultaInicial="Boaco"
+      />,
+    );
+    expect(pantalla.getByLabelText('Buscar salidas').props.value).toBe('Boaco');
+    expect(pantalla.queryByText('Rutas frecuentes')).toBeNull();
+  });
+
   it('sin escribir ofrece las rutas frecuentes', async () => {
     const pantalla = await abrir();
     expect(pantalla.getByText('Rutas frecuentes')).toBeTruthy();

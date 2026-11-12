@@ -40,6 +40,8 @@ import { t } from '@/textos/t';
 export interface PropiedadesBuscador {
   alAbrirViaje: (viajeId: string) => void;
   alVolver: () => void;
+  /** texto con el que se abre la búsqueda, por ejemplo el destino de un viaje anterior */
+  consultaInicial?: string;
 }
 
 const SERVICIOS: readonly { clave: TipoServicio; etiqueta: () => string }[] = [
@@ -56,11 +58,18 @@ const NOMBRE_FRANJA: Record<Franja, () => string> = {
 };
 
 /** la lupa de Horarios: texto, servicio y franja filtran las salidas mientras se escribe */
-export function Buscador({ alAbrirViaje, alVolver }: PropiedadesBuscador) {
+export function Buscador({
+  alAbrirViaje,
+  alVolver,
+  consultaInicial = '',
+}: PropiedadesBuscador) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const { ahora, salidas } = useSalidas();
-  const [filtros, establecerFiltros] = useState<FiltrosBusqueda>(SIN_FILTROS);
+  const [filtros, establecerFiltros] = useState<FiltrosBusqueda>({
+    ...SIN_FILTROS,
+    texto: consultaInicial,
+  });
   const [recientes, establecerRecientes] = useState<string[]>([]);
   const frecuentes = useMemo(
     () => armarRutas(obtenerMuestra(), ahora).map((ruta) => ruta.destino),
