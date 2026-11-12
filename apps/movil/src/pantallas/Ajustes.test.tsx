@@ -7,6 +7,8 @@ jest.mock('@/datos/ubicacion', () => ({
   solicitarAccesoUbicacion: jest.fn(),
 }));
 
+import { CLAVE_MODO_USO } from '@/tema/modoUso';
+import { ProveedorModoUso } from '@/tema/ProveedorModoUso';
 import { CLAVE_MASCOTA } from '@/datos/mascota';
 import { ProveedorMascota } from '@/datos/ProveedorMascota';
 import { ProveedorUbicacion } from '@/datos/ProveedorUbicacion';
@@ -32,6 +34,26 @@ beforeEach(async () => {
 });
 
 describe('Ajustes', () => {
+  it('cambia al modo sencillo y lo guarda', async () => {
+    const pantalla = await renderPantalla(
+      <ProveedorModoUso>
+        <Ajustes alVolver={() => undefined} />
+      </ProveedorModoUso>,
+    );
+    expect(
+      pantalla.getByRole('radio', { name: 'Completo' }).props
+        .accessibilityState,
+    ).toMatchObject({ checked: true });
+    await fireEvent.press(pantalla.getByRole('radio', { name: 'Sencillo' }));
+    await waitFor(async () =>
+      expect(await AsyncStorage.getItem(CLAVE_MODO_USO)).toBe('sencillo'),
+    );
+    expect(
+      pantalla.getByRole('radio', { name: 'Sencillo' }).props
+        .accessibilityState,
+    ).toMatchObject({ checked: true });
+  });
+
   it('apaga la mascota y lo recuerda', async () => {
     const pantalla = await renderPantalla(
       <ProveedorMascota>
@@ -56,7 +78,9 @@ describe('Ajustes', () => {
         <Ajustes alVolver={() => undefined} />
       </ProveedorTema>,
     );
-    expect(pantalla.getAllByRole('radio')).toHaveLength(3);
+    for (const nombre of ['Claro', 'Oscuro', 'Automático']) {
+      expect(pantalla.getByRole('radio', { name: nombre })).toBeTruthy();
+    }
     expect(
       pantalla.getByRole('radio', { name: 'Claro' }).props.accessibilityState,
     ).toEqual({ checked: true });

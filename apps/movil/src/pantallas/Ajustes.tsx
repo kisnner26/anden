@@ -12,6 +12,7 @@ import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
 import { Interruptor } from '@/componentes/Interruptor';
+import { OpcionSeleccion } from '@/componentes/OpcionSeleccion';
 import { iniciales, nombreCompleto } from '@/datos/perfil';
 import { useBloqueo } from '@/datos/useBloqueo';
 import { useMascota } from '@/datos/useMascota';
@@ -23,7 +24,9 @@ import {
   tamanosControl,
   tamanosIlustracion,
 } from '@/tema/espacios';
+import { MODOS_USO, type ModoUso } from '@/tema/modoUso';
 import { tipografia } from '@/tema/tipografia';
+import { useModoUso } from '@/tema/useModoUso';
 import { useTema, type PreferenciaTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
@@ -31,6 +34,24 @@ export interface PropiedadesAjustes {
   alAbrirPerfil?: () => void;
   alVolver: () => void;
 }
+
+const NOMBRES_MODO: Record<
+  ModoUso,
+  { detalle: () => string; nombre: () => string }
+> = {
+  completo: {
+    detalle: () => t('ajustes.modoCompletoDetalle'),
+    nombre: () => t('ajustes.modoCompleto'),
+  },
+  rapido: {
+    detalle: () => t('ajustes.modoRapidoDetalle'),
+    nombre: () => t('ajustes.modoRapido'),
+  },
+  sencillo: {
+    detalle: () => t('ajustes.modoSencilloDetalle'),
+    nombre: () => t('ajustes.modoSencillo'),
+  },
+};
 
 const OPCIONES: readonly {
   clave: PreferenciaTema;
@@ -61,6 +82,7 @@ export function Ajustes({ alAbrirPerfil, alVolver }: PropiedadesAjustes) {
   const ubicacion = usePreferenciaUbicacion();
   const bloqueo = useBloqueo();
   const mascota = useMascota();
+  const modoUso = useModoUso();
   const nombre = nombreCompleto(perfil);
   const margenes = useSafeAreaInsets();
   const ubicacionOcupada =
@@ -132,6 +154,19 @@ export function Ajustes({ alAbrirPerfil, alVolver }: PropiedadesAjustes) {
           <Icono nombre="siguiente" tamano="mediano" />
         </Bloque>
       </Pressable>
+
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+        {t('ajustes.modoSeccion')}
+      </Text>
+      {MODOS_USO.map((modo) => (
+        <OpcionSeleccion
+          alElegir={() => void modoUso.establecerModo(modo)}
+          detalle={NOMBRES_MODO[modo].detalle()}
+          elegida={modoUso.modo === modo}
+          key={modo}
+          nombre={NOMBRES_MODO[modo].nombre()}
+        />
+      ))}
 
       <Bloque estiloContenido={estilos.filaOpcion}>
         <View style={estilos.texto}>
