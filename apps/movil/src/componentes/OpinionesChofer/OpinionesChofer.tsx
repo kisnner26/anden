@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Aparece } from '@/componentes/Aparece';
+import { Rebote } from '@/componentes/Rebote';
 import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CampoTexto } from '@/componentes/CampoTexto';
@@ -129,11 +130,13 @@ export function OpinionesChofer({ choferId }: PropiedadesOpinionesChofer) {
               }}
               style={estilos.estrella}
             >
-              <Icono
-                color={n <= estrellas ? undefined : colores.linea}
-                nombre="estrella"
-                tamano="ilustracion"
-              />
+              <Rebote activo={n <= estrellas}>
+                <Icono
+                  color={n <= estrellas ? undefined : colores.linea}
+                  nombre="estrella"
+                  tamano="ilustracion"
+                />
+              </Rebote>
             </Pressable>
           ))}
         </View>
