@@ -6,6 +6,7 @@ import { Bloque } from '@/componentes/Bloque';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
+import { HojaCierreViaje } from '@/componentes/HojaCierreViaje';
 import { MapaCorredor } from '@/componentes/MapaCorredor';
 import { PieReserva } from '@/componentes/PieReserva';
 import { nombrePropio } from '@/datos/perfil';
@@ -17,13 +18,20 @@ import {
   type ResultadoTransmision,
 } from '@/datos/transmisor';
 import { useBoletos } from '@/datos/useBoletos';
+import { useCierres } from '@/datos/useCierres';
 import { useDetalleViaje } from '@/datos/useDetalleViaje';
 import { usePagos } from '@/datos/usePagos';
 import { useRecorrido } from '@/datos/useRecorrido';
 import { useSesion } from '@/datos/useSesion';
 import { useTransmision } from '@/datos/useTransmision';
+import { armarCierre } from '@/servicios/cierres';
 import { resumenDeCobro } from '@/servicios/pagos';
-import { disposicionPantalla, espacios, radios } from '@/tema/espacios';
+import {
+  disposicionPantalla,
+  espacios,
+  radios,
+  tamanosControl,
+} from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { rellenar } from '@/textos/rellenar';
@@ -58,6 +66,8 @@ export function ConductorViaje({
   const { estadoDe, marcarPagado, registro, revertir } = usePagos();
   const [iniciando, establecerIniciando] = useState(false);
   const [problema, establecerProblema] = useState<string | null>(null);
+  const [cerrando, establecerCerrando] = useState(false);
+  const { cerrar: guardarCierreViaje, cierreDe } = useCierres();
 
   if (!detalle || !sesion?.choferId) {
     return (
@@ -98,6 +108,29 @@ export function ConductorViaje({
     pasajeros.map(({ boleto }) => ({ id: boleto.id, precio: boleto.precio })),
     registro,
   );
+
+  const cierre = cierreDe(viajeId);
+  const resumenPrevio = armarCierre(
+    pasajeros.map(({ boleto }) => ({
+      asiento: boleto.asiento,
+      boletoId: boleto.id,
+      nombre: boleto.pasajero.nombre,
+      precio: boleto.precio,
+    })),
+    registro,
+    viajeId,
+    choferId,
+  );
+
+  function terminar() {
+    detenerTransmision(viajeId);
+    establecerCerrando(true);
+  }
+
+  async function confirmarCierre() {
+    await guardarCierreViaje(resumenPrevio);
+    establecerCerrando(false);
+  }
 
   async function iniciar() {
     establecerIniciando(true);
@@ -191,6 +224,28 @@ export function ConductorViaje({
           />
         )}
 
+        {cierre && (
+          <Bloque estiloContenido={estilos.cerrado} hundido radio="loseta">
+            <Text style={[tipografia.etiqueta, { color: colores.aTiempo }]}>
+              {t('conductor.cerrado')}
+            </Text>
+            <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
+              {rellenar(t('conductor.cierrePagaron'), {
+                pagados: cierre.pagados,
+                total: cierre.pasajeros,
+              })}
+            </Text>
+            <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
+              {`${rellenar(t('conductor.cierreCobrado'), { cobrado: cierre.cobrado })} · ${rellenar(t('conductor.cierrePendiente'), { pendiente: cierre.pendiente })}`}
+            </Text>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {rellenar(t('conductor.cerradoEl'), {
+                hora: formatoHoraCompleta(new Date(cierre.cerradoEn)),
+              })}
+            </Text>
+          </Bloque>
+        )}
+
         <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
           {t('conductor.pasajeros')}
         </Text>
@@ -240,6 +295,7 @@ export function ConductorViaje({
                     </Text>
                   </View>
                   <Pressable
+                    disabled={cierre !== undefined}
                     accessibilityLabel={`${pagado ? t('conductor.quitarPago') : t('conductor.marcarPagado')}, ${nombrePropio(boleto.pasajero.nombre)}`}
                     accessibilityRole="button"
                     onPress={() =>
@@ -274,19 +330,40 @@ export function ConductorViaje({
         )}
       </ScrollView>
 
-      <PieReserva estiloContenido={estilos.pie}>
-        <BotonAccion
-          alPresionar={() =>
-            transmision.activa ? detenerTransmision(viajeId) : void iniciar()
-          }
-          cargando={iniciando}
-          etiqueta={
-            transmision.activa
-              ? t('conductor.terminar')
-              : t('conductor.iniciar')
-          }
-        />
-      </PieReserva>
+      {!cierre && (
+        <PieReserva estiloContenido={estilos.pie}>
+          <BotonAccion
+            alPresionar={() =>
+              transmision.activa ? terminar() : void iniciar()
+            }
+            cargando={iniciando}
+            etiqueta={
+              transmision.activa
+                ? t('conductor.terminar')
+                : t('conductor.iniciar')
+            }
+          />
+          {!transmision.activa && (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => establecerCerrando(true)}
+              style={estilos.cerrarSinCompartir}
+            >
+              <Text
+                style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
+              >
+                {t('conductor.cerrarSinCompartir')}
+              </Text>
+            </Pressable>
+          )}
+        </PieReserva>
+      )}
+
+      <HojaCierreViaje
+        alCerrarHoja={() => establecerCerrando(false)}
+        alConfirmar={() => void confirmarCierre()}
+        resumen={cerrando ? resumenPrevio : null}
+      />
     </View>
   );
 }
@@ -295,6 +372,12 @@ const estilos = StyleSheet.create({
   boton: {
     paddingHorizontal: espacios.dieciseis,
     paddingVertical: espacios.ocho,
+  },
+  cerrado: { gap: espacios.cuatro, padding: espacios.dieciseis },
+  cerrarSinCompartir: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: tamanosControl.toqueMinimo,
   },
   sinDatos: {
     flex: 1,
