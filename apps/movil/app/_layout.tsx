@@ -10,6 +10,7 @@ import {
   JetBrainsMono_600SemiBold,
 } from '@expo-google-fonts/jetbrains-mono';
 import { useFonts } from 'expo-font';
+import { AdaptacionPorEdad } from '@/datos/AdaptacionPorEdad';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
@@ -60,6 +61,7 @@ export default function DisenoRaiz() {
         <ProveedorSesion>
           <ProveedorBloqueo>
             <ProveedorPerfil>
+              <AdaptacionPorEdad />
               <ProveedorBoletos>
                 <ProveedorEspera>
                   <ProveedorAvisos>

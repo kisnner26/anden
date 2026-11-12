@@ -24,7 +24,12 @@ import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { CampoTexto } from '@/componentes/CampoTexto';
 import { elegirFotoDeGaleria } from '@/datos/fotos';
-import { iniciales, nombreCompleto, nombrePropio } from '@/datos/perfil';
+import {
+  iniciales,
+  leerEdad,
+  nombreCompleto,
+  nombrePropio,
+} from '@/datos/perfil';
 import { usePerfil } from '@/datos/usePerfil';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -62,6 +67,9 @@ function FormularioPerfil({ alVolver }: PropiedadesPerfilUsuario) {
   const [nombre, establecerNombre] = useState(perfil.nombre);
   const [apellido, establecerApellido] = useState(perfil.apellido);
   const [telefono, establecerTelefono] = useState(perfil.telefono);
+  const [edad, establecerEdad] = useState(
+    perfil.edad === null ? '' : String(perfil.edad),
+  );
   const [correo, establecerCorreo] = useState(perfil.correo);
   const [cedula, establecerCedula] = useState(perfil.cedula);
   const [nuevoPasajero, establecerNuevoPasajero] = useState('');
@@ -72,10 +80,16 @@ function FormularioPerfil({ alVolver }: PropiedadesPerfilUsuario) {
   const nombreMalo = nombre.trim() !== '' && !nombrePersonaValido(nombre);
   const apellidoMalo = apellido.trim() !== '' && !nombrePersonaValido(apellido);
   const telefonoMalo = telefono.trim() !== '' && !digitosTelefonoNi(telefono);
+  const edadLeida = leerEdad(edad);
   const correoMalo = !correoOpcionalValido(correo);
   const cedulaMala = !cedulaOpcionalValida(cedula);
   const formularioMalo =
-    nombreMalo || apellidoMalo || telefonoMalo || correoMalo || cedulaMala;
+    nombreMalo ||
+    apellidoMalo ||
+    telefonoMalo ||
+    correoMalo ||
+    cedulaMala ||
+    !edadLeida.valida;
 
   function editar(cambiar: (valor: string) => void) {
     return (valor: string) => {
@@ -99,6 +113,7 @@ function FormularioPerfil({ alVolver }: PropiedadesPerfilUsuario) {
       apellido: apellido.trim(),
       cedula: cedula.trim(),
       correo: correo.trim(),
+      edad: edadLeida.valor,
       nombre: nombre.trim(),
       telefono: formatearTelefonoNi(telefono) ?? '',
     });
@@ -183,6 +198,17 @@ function FormularioPerfil({ alVolver }: PropiedadesPerfilUsuario) {
             teclado="phone-pad"
             valor={telefono}
           />
+          <CampoTexto
+            alCambiar={editar(establecerEdad)}
+            error={!edadLeida.valida ? t('perfil.edadInvalida') : undefined}
+            etiqueta={t('perfil.edad')}
+            marcador={t('perfil.marcadorEdad')}
+            teclado="number-pad"
+            valor={edad}
+          />
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {t('perfil.edadAyuda')}
+          </Text>
           <CampoTexto
             alCambiar={editar(establecerCorreo)}
             error={correoMalo ? t('perfil.correoInvalido') : undefined}

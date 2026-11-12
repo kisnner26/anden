@@ -269,6 +269,11 @@ export const textos = {
     marcadorNombre: 'Tu nombre',
     marcadorApellido: 'Tu apellido',
     marcadorTelefono: '8888 8888',
+    edad: 'Edad (opcional)',
+    marcadorEdad: 'Tu edad',
+    edadInvalida: 'Escribí una edad entre 5 y 110.',
+    edadAyuda:
+      'Con tu edad adaptamos la letra y los pasos para que usar Andén sea más fácil.',
     nombreInvalido: 'Escribí un nombre de 2 a 80 letras.',
     apellidoInvalido: 'Escribí tu apellido.',
     telefonoInvalido: 'Escribí un teléfono de Nicaragua de 8 dígitos.',
@@ -549,6 +554,11 @@ export const textos = {
   },
   perfil: {
     titulo: 'Tu perfil',
+    edad: 'Edad (opcional)',
+    marcadorEdad: 'Tu edad',
+    edadInvalida: 'Escribí una edad entre 5 y 110.',
+    edadAyuda:
+      'Con tu edad adaptamos la letra y los pasos para que usar Andén sea más fácil.',
     cargando: 'Cargando tu perfil',
     detalle: 'Tus datos se guardan solo en este teléfono.',
     entrada: 'Tu perfil y tus pasajeros',

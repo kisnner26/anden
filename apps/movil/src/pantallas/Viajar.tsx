@@ -28,6 +28,7 @@ import { proximaSalida } from '@/datos/salidas';
 import { espacios, tamanosControl } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
+import { useModoUso } from '@/tema/useModoUso';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
@@ -55,6 +56,7 @@ export function Viajar({
 }: PropiedadesViajar) {
   const { colores } = useTema();
   const { perfil } = usePerfil();
+  const { ajustes } = useModoUso();
   const [origenId, establecerOrigenId] = useState('ter_may');
   const hoy = useMemo(() => inicioDelDia(new Date()), []);
   const { ahora, datos, salidas } = useSalidas(origenId, hoy);
@@ -196,7 +198,7 @@ export function Viajar({
         </Aparece>
       ))}
 
-      {destinos.length > 0 && (
+      {destinos.length > 0 && !ajustes.simplificado && (
         <View>
           <Text
             style={[

@@ -22,6 +22,7 @@ import { BotonAccion } from '@/componentes/BotonAccion';
 import { CampoTexto } from '@/componentes/CampoTexto';
 import { Interruptor } from '@/componentes/Interruptor';
 import { useBloqueo } from '@/datos/useBloqueo';
+import { leerEdad } from '@/datos/perfil';
 import { usePerfil } from '@/datos/usePerfil';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -43,18 +44,21 @@ export function CrearCuenta({ alTerminar }: PropiedadesCrearCuenta) {
   const [nombre, establecerNombre] = useState('');
   const [apellido, establecerApellido] = useState('');
   const [telefono, establecerTelefono] = useState('');
+  const [edad, establecerEdad] = useState('');
   const [proteger, establecerProteger] = useState(false);
   const [validar, establecerValidar] = useState(false);
 
   const nombreOk = nombrePersonaValido(nombre);
   const apellidoOk = nombrePersonaValido(apellido);
   const telefonoOk = telefonoNiValido(telefono);
+  const edadLeida = leerEdad(edad);
 
   async function crear() {
     establecerValidar(true);
-    if (!nombreOk || !apellidoOk || !telefonoOk) return;
+    if (!nombreOk || !apellidoOk || !telefonoOk || !edadLeida.valida) return;
     await guardar({
       apellido: apellido.trim(),
+      edad: edadLeida.valor,
       nombre: nombre.trim(),
       telefono: formatearTelefonoNi(telefono) ?? telefono.trim(),
     });
@@ -119,6 +123,21 @@ export function CrearCuenta({ alTerminar }: PropiedadesCrearCuenta) {
             teclado="phone-pad"
             valor={telefono}
           />
+          <CampoTexto
+            alCambiar={establecerEdad}
+            error={
+              validar && !edadLeida.valida
+                ? t('cuenta.edadInvalida')
+                : undefined
+            }
+            etiqueta={t('cuenta.edad')}
+            marcador={t('cuenta.marcadorEdad')}
+            teclado="number-pad"
+            valor={edad}
+          />
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {t('cuenta.edadAyuda')}
+          </Text>
         </Bloque>
 
         {biometria.disponible && (
