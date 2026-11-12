@@ -69,4 +69,6 @@ Decisión 10 (recordatorios de salida): desde Horarios se puede pedir un aviso p
 
 Decisión 11 (roles, login y seguimiento): se separan los roles `pasajero` y `conductor`, con un tercero, `operador`, previsto y no construido. El conductor comparte su ubicación solo durante un viaje activo, y marca los pagos en efectivo. Todo va a Supabase. El detalle, las reglas de privacidad, el modelo y las etapas están en `docs/plan/07-roles-y-supabase.md`. Pedido por el dueño del proyecto. Hasta que exista el backend, las tres interfaces (`ServicioSesion`, `ServicioTransmision`, `ServicioPagos`) corren con implementaciones locales.
 
+Decisión 12 (funciones nuevas): reservar para otro día, viaje habitual, cierre del viaje, lista de espera, persona de confianza, objetos olvidados y encomiendas, todas con guardado local y diseñadas para pasar a Supabase. El rol operador, las posiciones reales, las notificaciones push y el enlace de seguimiento en vivo quedan escritos en `docs/plan/10-funciones-nuevas.md` porque necesitan el servidor. Pedido por el dueño del proyecto el 2026-11-12.
+
 Preguntas abiertas: reemplazar la simulación del bus por posiciones reales y mover opiniones, favoritos y cuenta a un servidor.
