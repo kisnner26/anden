@@ -2,6 +2,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Autobus } from '@/componentes/Autobus';
+import { Aparece } from '@/componentes/Aparece';
 import { Bloque } from '@/componentes/Bloque';
 import { Boton } from '@/componentes/Boton';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
@@ -128,44 +129,45 @@ export function Avisos({ alVolver }: PropiedadesAvisos) {
               variante="secundario"
             />
           )}
-          {avisos.map((aviso) => {
+          {avisos.map((aviso, indice) => {
             const leido = leidos.includes(aviso.id);
             const { detalle, titulo } = textoAviso(aviso);
             return (
-              <Pressable
-                accessibilityHint={
-                  leido ? t('avisos.leido') : t('avisos.noLeido')
-                }
-                accessibilityLabel={`${titulo}. ${detalle}`}
-                accessibilityRole="button"
-                key={aviso.id}
-                onPress={() => void marcarLeido(aviso.id)}
-              >
-                <Bloque estiloContenido={estilos.aviso} hundido={leido}>
-                  {!leido && (
-                    <View
-                      style={[
-                        estilos.punto,
-                        { backgroundColor: colores.ambar },
-                      ]}
-                      testID="aviso-sin-leer"
-                    />
-                  )}
-                  <View style={estilos.textoAviso}>
-                    <Text style={[estilos.nombre, { color: colores.tinta }]}>
-                      {titulo}
-                    </Text>
-                    <Text
-                      style={[
-                        tipografia.pequeno,
-                        { color: colores.tintaSuave },
-                      ]}
-                    >
-                      {detalle}
-                    </Text>
-                  </View>
-                </Bloque>
-              </Pressable>
+              <Aparece indice={indice} key={aviso.id}>
+                <Pressable
+                  accessibilityHint={
+                    leido ? t('avisos.leido') : t('avisos.noLeido')
+                  }
+                  accessibilityLabel={`${titulo}. ${detalle}`}
+                  accessibilityRole="button"
+                  onPress={() => void marcarLeido(aviso.id)}
+                >
+                  <Bloque estiloContenido={estilos.aviso} hundido={leido}>
+                    {!leido && (
+                      <View
+                        style={[
+                          estilos.punto,
+                          { backgroundColor: colores.ambar },
+                        ]}
+                        testID="aviso-sin-leer"
+                      />
+                    )}
+                    <View style={estilos.textoAviso}>
+                      <Text style={[estilos.nombre, { color: colores.tinta }]}>
+                        {titulo}
+                      </Text>
+                      <Text
+                        style={[
+                          tipografia.pequeno,
+                          { color: colores.tintaSuave },
+                        ]}
+                      >
+                        {detalle}
+                      </Text>
+                    </View>
+                  </Bloque>
+                </Pressable>
+              </Aparece>
             );
           })}
         </>
