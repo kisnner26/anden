@@ -11,21 +11,18 @@ export interface AjustesModoUso {
   escalaTexto: number;
   /** sin animaciones de adorno, como si el sistema pidiera reducir movimiento */
   reducirMovimiento: boolean;
-  /** muestra la mascota de bienvenida en Viajar, si la persona la tiene encendida */
-  mostrarMascota: boolean;
 }
 
 /**
  * completo: todo encendido, es el modo base.
  * sencillo: letra más grande y sin animaciones, para quien prefiere pantallas tranquilas.
- * rapido: sin adornos ni mascota, para quien ya conoce la app y va directo.
+ * rapido: sin adornos, para quien ya conoce la app y va directo.
  */
 const AJUSTES: Record<ModoUso, AjustesModoUso> = {
-  completo: { escalaTexto: 1, mostrarMascota: true, reducirMovimiento: false },
-  rapido: { escalaTexto: 1, mostrarMascota: false, reducirMovimiento: true },
+  completo: { escalaTexto: 1, reducirMovimiento: false },
+  rapido: { escalaTexto: 1, reducirMovimiento: true },
   sencillo: {
     escalaTexto: 1.25,
-    mostrarMascota: true,
     reducirMovimiento: true,
   },
 };

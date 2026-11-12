@@ -18,7 +18,6 @@ describe('ajustesDeModo', () => {
   it('el modo completo no cambia nada', () => {
     expect(ajustesDeModo('completo')).toEqual({
       escalaTexto: 1,
-      mostrarMascota: true,
       reducirMovimiento: false,
     });
   });
@@ -27,14 +26,12 @@ describe('ajustesDeModo', () => {
     const sencillo = ajustesDeModo('sencillo');
     expect(sencillo.escalaTexto).toBeGreaterThan(1);
     expect(sencillo.reducirMovimiento).toBe(true);
-    expect(sencillo.mostrarMascota).toBe(true);
   });
 
-  it('el modo rápido quita animaciones y mascota sin agrandar la letra', () => {
+  it('el modo rápido quita animaciones sin agrandar la letra', () => {
     const rapido = ajustesDeModo('rapido');
     expect(rapido.escalaTexto).toBe(1);
     expect(rapido.reducirMovimiento).toBe(true);
-    expect(rapido.mostrarMascota).toBe(false);
   });
 
   it('todos los modos tienen ajustes', () => {
