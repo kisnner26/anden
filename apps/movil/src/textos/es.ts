@@ -318,6 +318,14 @@ export const textos = {
   ajustes: {
     titulo: 'Configuración',
     detalle: 'Ajustá Andén a tu forma de viajar.',
+    modoSeccion: 'Modo de uso',
+    modoCompleto: 'Completo',
+    modoCompletoDetalle: 'Todas las animaciones, los sonidos y la mascota.',
+    modoSencillo: 'Sencillo',
+    modoSencilloDetalle:
+      'Letra más grande y pantallas tranquilas, sin animaciones.',
+    modoRapido: 'Rápido',
+    modoRapidoDetalle: 'Sin adornos ni mascota. Vas directo a tu viaje.',
     seguridadSeccion: 'Seguridad',
     bloqueoTitulo: 'Bloquear con Face ID',
     bloqueoDetalle:
