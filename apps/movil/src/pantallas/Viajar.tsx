@@ -8,7 +8,9 @@ import { EnlaceTerminal } from '@/componentes/EnlaceTerminal';
 import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
+import { MascotaBienvenida } from '@/componentes/MascotaBienvenida';
 import { TarjetaProximoViaje } from '@/componentes/TarjetaProximoViaje';
+import { formatoHora } from '@/datos/formato';
 import { iniciales } from '@/datos/perfil';
 import { useAvisos } from '@/datos/useAvisos';
 import { usePerfil } from '@/datos/usePerfil';
@@ -121,6 +123,16 @@ export function Viajar({
           )}
         </Pressable>
       </View>
+
+      <MascotaBienvenida
+        ahora={ahora}
+        nombre={primerNombre}
+        proximaSalida={
+          proxima
+            ? { destino: proxima.destino, hora: formatoHora(proxima.salida) }
+            : undefined
+        }
+      />
 
       {proxima ? (
         <TarjetaProximoViaje
