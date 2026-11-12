@@ -582,6 +582,8 @@ export const textos = {
     proximo: 'Tu próximo viaje',
     saleEn: 'Sale en',
     estado: 'Estado',
+    cantidad: '{{cantidad}} boletos',
+    recoger: 'Recoger las tarjetas',
   },
   rutas: {
     titulo: 'Rutas',
