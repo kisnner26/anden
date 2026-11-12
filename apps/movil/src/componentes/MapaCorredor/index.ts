@@ -1,0 +1,1 @@
+export { MapaCorredor } from './MapaCorredor';
