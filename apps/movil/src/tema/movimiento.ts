@@ -1,5 +1,7 @@
 export const movimiento = {
   cambioEstado: 240,
+  escalon: 70,
+  maximoEscalon: 6,
   amplitudMascota: 4,
   chispa: 900,
   chispas: 10,
