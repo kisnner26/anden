@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
+import { Rebote } from '@/componentes/Rebote';
 import { Icono, type NombreIcono } from '@/componentes/Icono';
 import {
   disposicionPantalla,
@@ -53,14 +54,18 @@ export function BarraPestanas({
             const seleccionada = pestana.clave === activa;
             const contenido = (
               <>
-                <Icono
-                  color={seleccionada ? colores.sobreNegro : colores.tintaSuave}
-                  colorDetalle={
-                    seleccionada ? colores.bloqueNegro : colores.barroClaro
-                  }
-                  nombre={pestana.icono}
-                  tamano="destacado"
-                />
+                <Rebote activo={seleccionada}>
+                  <Icono
+                    color={
+                      seleccionada ? colores.sobreNegro : colores.tintaSuave
+                    }
+                    colorDetalle={
+                      seleccionada ? colores.bloqueNegro : colores.barroClaro
+                    }
+                    nombre={pestana.icono}
+                    tamano="destacado"
+                  />
+                </Rebote>
                 <Text
                   style={[
                     tipografia.pequeno,
