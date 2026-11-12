@@ -422,11 +422,9 @@ export const textos = {
   recordatorios: {
     titulo: 'Tu bus a {destino} sale en {minutos} min',
     cuerpo: 'Andén {anden}. Andá llegando a la terminal.',
-    recordarme: 'Recordarme',
     quitar: 'Quitar recordatorio',
     hojaTitulo: 'Avisarme antes de la salida',
     minutosAntes: '{minutos} min antes',
-    activo: 'Te avisamos {minutos} min antes',
     yaPaso: 'Ese aviso ya habría sonado.',
     permisoNegado:
       'Las notificaciones están desactivadas para Andén en el teléfono. Activalas en los ajustes.',
