@@ -64,7 +64,7 @@ export function Interruptor({
         style={[
           estilos.perilla,
           {
-            backgroundColor: activo ? colores.sobreAmbar : colores.fondo,
+            backgroundColor: activo ? colores.sobreAmbar : colores.tintaSuave,
             transform: [
               {
                 translateX: posicion.interpolate({

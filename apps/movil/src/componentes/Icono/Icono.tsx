@@ -17,6 +17,8 @@ import { DibujoRayo } from './dibujos/Rayo';
 import { DibujoReloj } from './dibujos/Reloj';
 import { DibujoSiguiente } from './dibujos/Siguiente';
 import { DibujoTaxi } from './dibujos/Taxi';
+import { useTema } from '@/tema/useTema';
+
 import type { PropiedadesDibujo } from './dibujos/tipos';
 import { DibujoVolante } from './dibujos/Volante';
 import { DibujoVolver } from './dibujos/Volver';
@@ -39,6 +41,9 @@ const DIBUJOS = {
   volante: DibujoVolante,
   volver: DibujoVolver,
 } satisfies Record<string, (propiedades: PropiedadesDibujo) => ReactElement>;
+
+/** glifos de un solo trazo: sin color propio se pintan con la tinta del tema, para que se vean en oscuro */
+const GLIFOS_DE_TINTA: readonly string[] = ['volver', 'siguiente'];
 
 export type NombreIcono = keyof typeof DIBUJOS;
 export type TamanoIcono = keyof typeof tamanosIcono;
@@ -63,7 +68,10 @@ export function Icono({
   colorDetalle,
   etiquetaAccesible,
 }: PropiedadesIcono) {
+  const { colores } = useTema();
   const Dibujo = DIBUJOS[nombre];
+  const colorFinal =
+    color ?? (GLIFOS_DE_TINTA.includes(nombre) ? colores.tinta : undefined);
   const medida = tamanosIcono[tamano];
   const comunica = etiquetaAccesible !== undefined;
 
@@ -76,7 +84,7 @@ export function Icono({
       importantForAccessibility={comunica ? 'yes' : 'no-hide-descendants'}
       style={{ height: medida, width: medida }}
     >
-      <Dibujo color={color} colorDetalle={colorDetalle} tamano={medida} />
+      <Dibujo color={colorFinal} colorDetalle={colorDetalle} tamano={medida} />
     </View>
   );
 }

@@ -10,7 +10,9 @@ export default function DisenoPestanas() {
 
   return (
     <NativeTabs
+      iconColor={colores.tintaSuave}
       labelStyle={{
+        color: colores.tintaSuave,
         fontFamily: tipografia.pequeno.fontFamily,
         fontSize: tipografia.pequeno.fontSize,
       }}
