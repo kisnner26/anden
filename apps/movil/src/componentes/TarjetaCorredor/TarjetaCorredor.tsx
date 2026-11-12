@@ -54,109 +54,129 @@ export function TarjetaCorredor({
   const codigoDestino = corredor.destino.slice(0, 3).toUpperCase();
 
   return (
-    <Pressable
-      accessibilityHint={t('rutas.datosPendientes')}
-      accessibilityLabel={etiqueta}
-      accessibilityRole="button"
-      onPress={() => alPresionar(corredor.id)}
-      style={({ pressed }) => [
-        estilos.tarjeta,
-        pressed && estilos.tarjetaPresionada,
-      ]}
-    >
-      <Bloque estiloContenido={estilos.contenido} radio="tarjeta">
-        <View style={estilos.cabecera}>
-          <View style={estilos.trayecto}>
-            <View
-              style={[estilos.codigo, { backgroundColor: colores.bloqueNegro }]}
-            >
-              <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
-                {codigoOrigen}
-              </Text>
-            </View>
-            <View style={estilos.sentido}>
-              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                {corredor.origen}
-              </Text>
-              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-                {t('rutas.hacia')}
-              </Text>
-              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                {corredor.destino}
-              </Text>
-            </View>
-          </View>
-          <View style={estilos.destinoYEstrella}>
-            <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
-              {codigoDestino}
-            </Text>
-            <BotonFavorito
-              activo={favorito}
-              alCambiar={() => void alternar(corredor.id)}
-              etiqueta={t(
-                favorito ? 'rutas.quitarFavorita' : 'rutas.marcarFavorita',
-              )
-                .replace('{{origen}}', corredor.origen)
-                .replace('{{destino}}', corredor.destino)}
-            />
-          </View>
-        </View>
-
-        <View style={[estilos.separador, { backgroundColor: colores.linea }]} />
-
-        <View style={estilos.pie}>
-          <View style={estilos.operacion}>
-            <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-              {t('rutas.operacionMuestra')}
-            </Text>
-            {proxima ? (
-              <View style={estilos.horario}>
-                <Text style={[tipografia.dato, { color: colores.tinta }]}>
-                  {formatoHoraCompleta(proxima.salida)}
+    <View style={estilos.envoltura}>
+      <Pressable
+        accessibilityHint={t('rutas.datosPendientes')}
+        accessibilityLabel={etiqueta}
+        accessibilityRole="button"
+        onPress={() => alPresionar(corredor.id)}
+        style={({ pressed }) => [
+          estilos.tarjeta,
+          pressed && estilos.tarjetaPresionada,
+        ]}
+      >
+        <Bloque estiloContenido={estilos.contenido} radio="tarjeta">
+          <View style={estilos.cabecera}>
+            <View style={estilos.trayecto}>
+              <View
+                style={[
+                  estilos.codigo,
+                  { backgroundColor: colores.bloqueNegro },
+                ]}
+              >
+                <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+                  {codigoOrigen}
+                </Text>
+              </View>
+              <View style={estilos.sentido}>
+                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                  {corredor.origen}
                 </Text>
                 <Text
                   style={[tipografia.pequeno, { color: colores.tintaSuave }]}
                 >
-                  {t('rutas.proximaSaleEn').replace(
-                    '{{minutos}}',
-                    String(minutosParaSalir(proxima, ahora)),
-                  )}
+                  {t('rutas.hacia')}
                 </Text>
-                <Text
-                  style={[
-                    tipografia.etiqueta,
-                    {
-                      color:
-                        nivel === 'hay'
-                          ? colores.tintaSuave
-                          : colores.ambarTexto,
-                    },
-                  ]}
-                >
-                  {textoLibres}
+                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                  {corredor.destino}
                 </Text>
               </View>
-            ) : (
-              <View style={estilos.sinServicio}>
-                <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
-                  {t('rutas.sinServicio')}
-                </Text>
-                <Text
-                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
-                >
-                  {t('rutas.sinServicioDetalle')}
-                </Text>
-              </View>
-            )}
+            </View>
+            <View style={estilos.destinoYEstrella}>
+              <Text
+                style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
+              >
+                {codigoDestino}
+              </Text>
+              <View style={estilos.huecoEstrella} />
+            </View>
           </View>
+
           <View
-            style={[estilos.avance, { backgroundColor: colores.bloqueNegro }]}
-          >
-            <Icono color={colores.ambar} nombre="siguiente" tamano="mediano" />
+            style={[estilos.separador, { backgroundColor: colores.linea }]}
+          />
+
+          <View style={estilos.pie}>
+            <View style={estilos.operacion}>
+              <Text
+                style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
+              >
+                {t('rutas.operacionMuestra')}
+              </Text>
+              {proxima ? (
+                <View style={estilos.horario}>
+                  <Text style={[tipografia.dato, { color: colores.tinta }]}>
+                    {formatoHoraCompleta(proxima.salida)}
+                  </Text>
+                  <Text
+                    style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                  >
+                    {t('rutas.proximaSaleEn').replace(
+                      '{{minutos}}',
+                      String(minutosParaSalir(proxima, ahora)),
+                    )}
+                  </Text>
+                  <Text
+                    style={[
+                      tipografia.etiqueta,
+                      {
+                        color:
+                          nivel === 'hay'
+                            ? colores.tintaSuave
+                            : colores.ambarTexto,
+                      },
+                    ]}
+                  >
+                    {textoLibres}
+                  </Text>
+                </View>
+              ) : (
+                <View style={estilos.sinServicio}>
+                  <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
+                    {t('rutas.sinServicio')}
+                  </Text>
+                  <Text
+                    style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                  >
+                    {t('rutas.sinServicioDetalle')}
+                  </Text>
+                </View>
+              )}
+            </View>
+            <View
+              style={[estilos.avance, { backgroundColor: colores.bloqueNegro }]}
+            >
+              <Icono
+                color={colores.ambar}
+                nombre="siguiente"
+                tamano="mediano"
+              />
+            </View>
           </View>
-        </View>
-      </Bloque>
-    </Pressable>
+        </Bloque>
+      </Pressable>
+      <View style={estilos.estrella}>
+        <BotonFavorito
+          activo={favorito}
+          alCambiar={() => void alternar(corredor.id)}
+          etiqueta={t(
+            favorito ? 'rutas.quitarFavorita' : 'rutas.marcarFavorita',
+          )
+            .replace('{{origen}}', corredor.origen)
+            .replace('{{destino}}', corredor.destino)}
+        />
+      </View>
+    </View>
   );
 }
 
@@ -186,7 +206,17 @@ const estilos = StyleSheet.create({
     flexDirection: 'row',
     gap: espacios.cuatro,
   },
+  envoltura: { position: 'relative' },
+  estrella: {
+    position: 'absolute',
+    right: espacios.doce,
+    top: espacios.ocho,
+  },
   horario: { gap: espacios.cuatro },
+  huecoEstrella: {
+    height: tamanosControl.toqueMinimo,
+    width: tamanosControl.toqueMinimo,
+  },
   operacion: {
     flex: 1,
     gap: espacios.cuatro,
