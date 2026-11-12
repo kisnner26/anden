@@ -10,7 +10,7 @@ import { salidasDeChofer } from '@/datos/salidas';
 import { useSesion } from '@/datos/useSesion';
 import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
 import { useViajesEnVivo } from '@/datos/useTransmision';
-import { espacios } from '@/tema/espacios';
+import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { rellenar } from '@/textos/rellenar';
@@ -151,7 +151,7 @@ const estilos = StyleSheet.create({
   salir: {
     alignItems: 'center',
     marginTop: espacios.veinticuatro,
-    minHeight: 44,
+    minHeight: tamanosControl.toqueMinimo,
     justifyContent: 'center',
   },
   texto: { flex: 1, gap: 2 },
