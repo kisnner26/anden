@@ -4,3 +4,4 @@ apps/movil/android/
 apps/movil/ios/
 coverage/
 dist/
+apps/movil/expo-env.d.ts
