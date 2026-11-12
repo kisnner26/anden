@@ -21,6 +21,7 @@ function salida(cambios: Partial<Salida> = {}): Salida {
     destino: 'Boaco',
     estado: 'programado',
     minutosAtraso: 0,
+    origen: 'Managua',
     placa: 'M 123456',
     rutaId: 'rut_1',
     salida: EN_MINUTOS(45),

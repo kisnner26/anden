@@ -17,6 +17,8 @@ export interface Salida {
   destino: string;
   estado: EstadoViaje;
   minutosAtraso: number;
+  /** ciudad de la terminal de la que sale */
+  origen: string;
   /** placa de la unidad, que en el taxi interlocal es lo que identifica el carro */
   placa: string;
   rutaId: string;
@@ -49,6 +51,9 @@ export function armarSalidas(
     const destino = datos.terminales.find(
       (terminal) => terminal.id === ruta?.destinoId,
     );
+    const terminalOrigen = datos.terminales.find(
+      (terminal) => terminal.id === ruta?.origenId,
+    );
     if (!ruta || !bus || !destino || ruta.origenId !== origenId) continue;
 
     const precio = precioOficial(
@@ -75,6 +80,7 @@ export function armarSalidas(
       destino: destino.ciudad,
       estado: estadoViaje(viaje, ruta, ahora),
       minutosAtraso: viaje.minutosAtraso,
+      origen: terminalOrigen?.ciudad ?? '',
       placa: bus.placa,
       rutaId: ruta.id,
       salida: new Date(viaje.salida),

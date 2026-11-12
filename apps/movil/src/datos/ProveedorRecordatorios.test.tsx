@@ -30,6 +30,7 @@ function salidaEn(minutos: number, viajeId = 'via_1'): Salida {
     destino: 'Boaco',
     estado: 'programado',
     minutosAtraso: 0,
+    origen: 'Managua',
     placa: 'M 000000',
     rutaId: 'rut_1',
     salida: new Date(Date.now() + minutos * 60_000),

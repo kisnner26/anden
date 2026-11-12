@@ -16,6 +16,7 @@ const SALIDA: Salida = {
   destino: 'Boaco',
   estado: 'programado',
   minutosAtraso: 0,
+  origen: 'Managua',
   placa: 'M 000000',
   rutaId: 'rut_1',
   salida: new Date('2026-11-12T17:40:00Z'),

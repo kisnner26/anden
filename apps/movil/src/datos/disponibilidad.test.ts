@@ -16,6 +16,7 @@ function salida(parcial: Partial<Salida>): Salida {
     destino: 'Boaco',
     estado: 'programado',
     minutosAtraso: 0,
+    origen: 'Managua',
     placa: 'M 000000',
     rutaId: 'rut_1',
     salida: new Date('2026-11-12T18:00:00Z'),
