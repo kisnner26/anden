@@ -18,6 +18,8 @@ import { ProveedorAvisos } from '@/datos/ProveedorAvisos';
 import { ProveedorBloqueo } from '@/datos/ProveedorBloqueo';
 import { ProveedorBoletos } from '@/datos/ProveedorBoletos';
 import { ProveedorFavoritos } from '@/datos/ProveedorFavoritos';
+import { ProveedorPagos } from '@/datos/ProveedorPagos';
+import { ProveedorSesion } from '@/datos/ProveedorSesion';
 import { ProveedorRecordatorios } from '@/datos/ProveedorRecordatorios';
 import { ProveedorMascota } from '@/datos/ProveedorMascota';
 import { ProveedorPerfil } from '@/datos/ProveedorPerfil';
@@ -53,26 +55,30 @@ export default function DisenoRaiz() {
   return (
     <ProveedorTema>
       <ProveedorModoUso>
-        <ProveedorBloqueo>
-          <ProveedorMascota>
-            <ProveedorPerfil>
-              <ProveedorBoletos>
-                <ProveedorAvisos>
-                  <ProveedorUbicacion>
-                    <ProveedorReserva>
-                      <ProveedorFavoritos>
-                        <ProveedorRecordatorios>
-                          <Stack screenOptions={{ headerShown: false }} />
-                        </ProveedorRecordatorios>
-                      </ProveedorFavoritos>
-                    </ProveedorReserva>
-                  </ProveedorUbicacion>
-                </ProveedorAvisos>
-              </ProveedorBoletos>
-            </ProveedorPerfil>
-          </ProveedorMascota>
-          <PuertaBloqueo />
-        </ProveedorBloqueo>
+        <ProveedorSesion>
+          <ProveedorBloqueo>
+            <ProveedorMascota>
+              <ProveedorPerfil>
+                <ProveedorBoletos>
+                  <ProveedorAvisos>
+                    <ProveedorUbicacion>
+                      <ProveedorReserva>
+                        <ProveedorFavoritos>
+                          <ProveedorRecordatorios>
+                            <ProveedorPagos>
+                              <Stack screenOptions={{ headerShown: false }} />
+                            </ProveedorPagos>
+                          </ProveedorRecordatorios>
+                        </ProveedorFavoritos>
+                      </ProveedorReserva>
+                    </ProveedorUbicacion>
+                  </ProveedorAvisos>
+                </ProveedorBoletos>
+              </ProveedorPerfil>
+            </ProveedorMascota>
+            <PuertaBloqueo />
+          </ProveedorBloqueo>
+        </ProveedorSesion>
       </ProveedorModoUso>
     </ProveedorTema>
   );
