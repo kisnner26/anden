@@ -23,6 +23,7 @@ import { ProveedorHabituales } from '@/datos/ProveedorHabituales';
 import { ProveedorEspera } from '@/datos/ProveedorEspera';
 import { ProveedorFavoritos } from '@/datos/ProveedorFavoritos';
 import { ProveedorCierres } from '@/datos/ProveedorCierres';
+import { ProveedorAbordaje } from '@/datos/ProveedorAbordaje';
 import { ProveedorPagos } from '@/datos/ProveedorPagos';
 import { ProveedorSesion } from '@/datos/ProveedorSesion';
 import { ProveedorRecordatorios } from '@/datos/ProveedorRecordatorios';
@@ -73,29 +74,31 @@ export default function DisenoRaiz() {
                             <ProveedorHabituales>
                               <ProveedorRecordatorios>
                                 <ProveedorPagos>
-                                  <ProveedorCierres>
-                                    <Stack
-                                      screenOptions={{ headerShown: false }}
-                                    >
-                                      <Stack.Screen
-                                        name="boleto/[id]"
-                                        options={{
-                                          animation: 'fade_from_bottom',
-                                          animationDuration: 420,
-                                        }}
-                                      />
-                                      <Stack.Screen
-                                        name="ingresar"
-                                        options={{ animation: 'fade' }}
-                                      />
-                                      <Stack.Screen
-                                        name="buscar"
-                                        options={{
-                                          animation: 'fade_from_bottom',
-                                        }}
-                                      />
-                                    </Stack>
-                                  </ProveedorCierres>
+                                  <ProveedorAbordaje>
+                                    <ProveedorCierres>
+                                      <Stack
+                                        screenOptions={{ headerShown: false }}
+                                      >
+                                        <Stack.Screen
+                                          name="boleto/[id]"
+                                          options={{
+                                            animation: 'fade_from_bottom',
+                                            animationDuration: 420,
+                                          }}
+                                        />
+                                        <Stack.Screen
+                                          name="ingresar"
+                                          options={{ animation: 'fade' }}
+                                        />
+                                        <Stack.Screen
+                                          name="buscar"
+                                          options={{
+                                            animation: 'fade_from_bottom',
+                                          }}
+                                        />
+                                      </Stack>
+                                    </ProveedorCierres>
+                                  </ProveedorAbordaje>
                                 </ProveedorPagos>
                               </ProveedorRecordatorios>
                             </ProveedorHabituales>
