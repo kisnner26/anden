@@ -466,8 +466,6 @@ export const textos = {
     nombrePasajeroInvalido: 'Escribí un nombre válido antes de agregarlo.',
     agregarPasajero: 'Agregar pasajero',
     quitarPasajero: 'Quitar',
-    idioma: 'Idioma',
-    idiomaValor: 'Español',
     apariencia: 'Apariencia',
   },
   boletos: {
