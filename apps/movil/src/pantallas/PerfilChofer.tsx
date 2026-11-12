@@ -59,7 +59,16 @@ export function PerfilChofer({ alVolver, choferId }: PropiedadesPerfilChofer) {
 
   if (!perfil) {
     return (
-      <View style={[estilos.centro, { backgroundColor: colores.fondo }]}>
+      <View
+        style={[
+          estilos.sinDatos,
+          {
+            backgroundColor: colores.fondo,
+            paddingTop: margenes.top + espacios.ocho,
+          },
+        ]}
+      >
+        <CabeceraPantalla alVolver={alVolver} titulo={t('chofer.titulo')} />
         <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
           {t('chofer.noExiste')}
         </Text>
@@ -175,7 +184,11 @@ export function PerfilChofer({ alVolver, choferId }: PropiedadesPerfilChofer) {
 }
 
 const estilos = StyleSheet.create({
-  centro: { alignItems: 'center', flex: 1, justifyContent: 'center' },
+  sinDatos: {
+    flex: 1,
+    gap: espacios.dieciseis,
+    paddingHorizontal: espacios.lateral,
+  },
   contenido: { gap: espacios.dieciseis, paddingHorizontal: espacios.lateral },
   contenidoCifra: { alignItems: 'center', gap: 4, padding: espacios.doce },
   cifra: { flex: 1 },

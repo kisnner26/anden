@@ -51,7 +51,16 @@ export function VerBoleto({
 
   if (!guardado) {
     return (
-      <View style={[estilos.centro, { backgroundColor: colores.fondo }]}>
+      <View
+        style={[
+          estilos.sinDatos,
+          {
+            backgroundColor: colores.fondo,
+            paddingTop: margenes.top + espacios.ocho,
+          },
+        ]}
+      >
+        <CabeceraPantalla alVolver={alVolver} titulo={t('boleto.titulo')} />
         <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
           {t('boleto.noExiste')}
         </Text>
@@ -270,11 +279,10 @@ const estilos = StyleSheet.create({
     justifyContent: 'space-between',
   },
   cancelar: { alignItems: 'center', paddingVertical: espacios.dieciseis },
-  centro: {
-    alignItems: 'center',
+  sinDatos: {
     flex: 1,
-    justifyContent: 'center',
-    padding: espacios.treintaYDos,
+    gap: espacios.dieciseis,
+    paddingHorizontal: espacios.lateral,
   },
   confirmar: { gap: espacios.dieciseis, padding: espacios.veinticuatro },
   contenido: { gap: espacios.dieciseis, paddingHorizontal: espacios.lateral },

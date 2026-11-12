@@ -55,7 +55,16 @@ export function DetalleViaje({
 
   if (!detalle) {
     return (
-      <View style={[estilos.centro, { backgroundColor: colores.fondo }]}>
+      <View
+        style={[
+          estilos.sinDatos,
+          {
+            backgroundColor: colores.fondo,
+            paddingTop: margenes.top + espacios.ocho,
+          },
+        ]}
+      >
+        <CabeceraPantalla alVolver={alVolver} titulo={t('detalle.titulo')} />
         <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
           {t('detalle.noExiste')}
         </Text>
@@ -300,7 +309,11 @@ export function DetalleViaje({
 }
 
 const estilos = StyleSheet.create({
-  centro: { alignItems: 'center', flex: 1, justifyContent: 'center' },
+  sinDatos: {
+    flex: 1,
+    gap: espacios.dieciseis,
+    paddingHorizontal: espacios.lateral,
+  },
   chofer: {
     alignItems: 'center',
     flexDirection: 'row',

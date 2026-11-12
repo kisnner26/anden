@@ -60,7 +60,16 @@ export function ConductorViaje({
 
   if (!detalle || !sesion?.choferId) {
     return (
-      <View style={[estilos.centro, { backgroundColor: colores.fondo }]}>
+      <View
+        style={[
+          estilos.sinDatos,
+          {
+            backgroundColor: colores.fondo,
+            paddingTop: margenes.top + espacios.ocho,
+          },
+        ]}
+      >
+        <CabeceraPantalla alVolver={alVolver} titulo={t('detalle.titulo')} />
         <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
           {t('detalle.noExiste')}
         </Text>
@@ -286,7 +295,11 @@ const estilos = StyleSheet.create({
     paddingHorizontal: espacios.dieciseis,
     paddingVertical: espacios.ocho,
   },
-  centro: { alignItems: 'center', flex: 1, justifyContent: 'center' },
+  sinDatos: {
+    flex: 1,
+    gap: espacios.dieciseis,
+    paddingHorizontal: espacios.lateral,
+  },
   cifras: { gap: espacios.cuatro },
   contenido: { gap: espacios.doce, paddingHorizontal: espacios.lateral },
   estado: { gap: espacios.doce, padding: espacios.veinticuatro },

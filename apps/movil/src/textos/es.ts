@@ -118,6 +118,7 @@ export const textos = {
     noExiste: 'No encontramos este viaje.',
   },
   detalle: {
+    titulo: 'Viaje',
     sale: 'Sale',
     llega: 'Llega',
     mapaDescripcion: 'Mapa del recorrido de esta salida',
