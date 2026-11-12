@@ -132,4 +132,10 @@ describe('Horarios', () => {
       ).toBeNull(),
     );
   });
+
+  it('separa lo que se muestra del tipo de servicio, en dos filas con su rótulo', async () => {
+    const pantalla = await renderPantalla(<Horarios />);
+    expect(pantalla.getByText('Mostrar')).toBeTruthy();
+    expect(pantalla.getByText('Servicio')).toBeTruthy();
+  });
 });
