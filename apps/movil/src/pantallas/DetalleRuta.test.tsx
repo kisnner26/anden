@@ -1,7 +1,11 @@
-import { beforeEach, describe, expect, it } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
+import { act } from '@testing-library/react-native';
 import { useReducedMotion, withTiming } from 'react-native-reanimated';
 
+import { trazoEntre } from '@/datos/trazoCorredor';
+import { obtenerMuestra, reiniciarMuestra } from '@/datos/useSalidas';
 import { renderPantalla } from '@/pruebas/render';
+import { TRANSMISION } from '@/servicios/transmision';
 import { movimiento } from '@/tema/movimiento';
 
 import { DetalleRuta } from './DetalleRuta';
@@ -19,7 +23,37 @@ beforeEach(() => {
   reducir.mockReturnValue(false);
 });
 
+afterEach(() => {
+  TRANSMISION.activos().forEach((id) => TRANSMISION.detener(id));
+  reiniciarMuestra();
+});
+
 describe('DetalleRuta', () => {
+  it('cuando un conductor comparte el viaje del corredor muestra su avance real y no la simulación', async () => {
+    const pantalla = await renderPantalla(
+      <DetalleRuta alVolver={() => undefined} rutaId="cor_man_boa" />,
+    );
+    expect(pantalla.getByText('Simulación')).toBeTruthy();
+
+    const viaje = obtenerMuestra().viajes.find(
+      (candidato) => candidato.rutaId === 'rut_may_boa',
+    )!;
+    const medio = trazoEntre('Managua', 'Boaco')!.puntos[40]!;
+    await act(async () => {
+      TRANSMISION.iniciar(viaje.id, viaje.choferId);
+      TRANSMISION.publicar(viaje.id, {
+        lat: medio.lat,
+        lng: medio.lng,
+        registradaEn: new Date().toISOString(),
+        velocidadMs: 14,
+      });
+    });
+
+    expect(await pantalla.findByText('En vivo')).toBeTruthy();
+    expect(pantalla.queryByText('Simulación')).toBeNull();
+    expect(pantalla.getByText(/^Llega en \d+ min$/)).toBeTruthy();
+  });
+
   it('presenta el corredor con un bus simulado marcado como tal', async () => {
     const pantalla = await renderPantalla(
       <DetalleRuta alVolver={() => undefined} rutaId="cor_boa_man" />,

@@ -4,6 +4,7 @@ import { fireEvent, waitFor } from '@testing-library/react-native';
 import { Share } from 'react-native';
 
 import { CLAVE_BOLETOS, ProveedorBoletos } from '@/datos/ProveedorBoletos';
+import { ProveedorPagos } from '@/datos/ProveedorPagos';
 import { reiniciarMuestra } from '@/datos/useSalidas';
 import { boletoDePrueba } from '@/pruebas/boletos';
 import { renderPantalla } from '@/pruebas/render';
@@ -180,5 +181,33 @@ describe('VerBoleto', () => {
       }),
     );
     expect(alReservarOtra).toHaveBeenCalledWith('Boaco');
+  });
+
+  it('muestra que el conductor ya marcó el pago en efectivo', async () => {
+    await AsyncStorage.setItem(
+      'anden.pagos',
+      JSON.stringify({ bol_K7RM4QX9: { estado: 'pagado_efectivo' } }),
+    );
+    const pantalla = await renderPantalla(
+      <ProveedorBoletos>
+        <ProveedorPagos>
+          <VerBoleto
+            alCancelado={() => undefined}
+            alVerChofer={() => undefined}
+            alVolver={() => undefined}
+            boletoId="bol_K7RM4QX9"
+          />
+        </ProveedorPagos>
+      </ProveedorBoletos>,
+    );
+    expect(
+      await pantalla.findByText('Pagado en efectivo al conductor'),
+    ).toBeTruthy();
+  });
+
+  it('sin pago marcado no dice que está pagado', async () => {
+    const pantalla = await dibujar();
+    await pantalla.findByTestId('talon-boleto');
+    expect(pantalla.queryByText('Pagado en efectivo al conductor')).toBeNull();
   });
 });

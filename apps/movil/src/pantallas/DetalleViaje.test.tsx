@@ -1,13 +1,18 @@
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
-import { fireEvent } from '@testing-library/react-native';
+import { act, fireEvent } from '@testing-library/react-native';
 
 import { VIAJE_BOACO } from '@/datos/muestra';
+import { trazoEntre } from '@/datos/trazoCorredor';
 import { reiniciarMuestra } from '@/datos/useSalidas';
 import { renderPantalla } from '@/pruebas/render';
+import { TRANSMISION } from '@/servicios/transmision';
 
 import { DetalleViaje } from './DetalleViaje';
 
-afterEach(() => reiniciarMuestra());
+afterEach(() => {
+  TRANSMISION.detener(VIAJE_BOACO);
+  reiniciarMuestra();
+});
 
 function dibujar(
   propiedades: Partial<Parameters<typeof DetalleViaje>[0]> = {},
@@ -46,6 +51,27 @@ describe('DetalleViaje', () => {
     expect(
       pantalla.getByText(/^82\.9 km de carretera · Trazo de la carretera/),
     ).toBeTruthy();
+  });
+
+  it('sin transmisión no muestra el seguimiento en vivo', async () => {
+    const pantalla = await dibujar();
+    expect(pantalla.queryByText('En vivo')).toBeNull();
+  });
+
+  it('cuando el conductor comparte el viaje muestra cuánto falta para llegar', async () => {
+    const pantalla = await dibujar();
+    const medio = trazoEntre('Managua', 'Boaco')!.puntos[40]!;
+    await act(async () => {
+      TRANSMISION.iniciar(VIAJE_BOACO, 'cho_2');
+      TRANSMISION.publicar(VIAJE_BOACO, {
+        lat: medio.lat,
+        lng: medio.lng,
+        registradaEn: new Date().toISOString(),
+        velocidadMs: 14,
+      });
+    });
+    expect(await pantalla.findByText('En vivo')).toBeTruthy();
+    expect(pantalla.getByText(/^Llega en \d+ min$/)).toBeTruthy();
   });
 
   it('muestra la placa de la unidad', async () => {
