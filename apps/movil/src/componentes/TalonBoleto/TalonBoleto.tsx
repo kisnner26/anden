@@ -11,7 +11,7 @@ import Animated, {
 import { Autobus } from '@/componentes/Autobus';
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
 import type { BoletoGuardado } from '@/datos/reserva';
-import { espacios } from '@/tema/espacios';
+import { espacios, radios, tamanosBoleto } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
@@ -225,7 +225,7 @@ const estilos = StyleSheet.create({
   campo: { flex: 1, gap: 2, minWidth: '40%' },
   campoCompleto: { flexBasis: '100%', flexGrow: 0 },
   casilla: {
-    borderRadius: 16,
+    borderRadius: radios.casilla,
     gap: espacios.cuatro,
     paddingHorizontal: espacios.doce,
     paddingVertical: espacios.doce,
@@ -258,15 +258,15 @@ const estilos = StyleSheet.create({
     marginHorizontal: 18,
   },
   muesca: {
-    borderRadius: 999,
-    height: 28,
+    borderRadius: radios.pildora,
+    height: tamanosBoleto.muesca,
     position: 'absolute',
-    top: -14,
-    width: 28,
+    top: -tamanosBoleto.muesca / 2,
+    width: tamanosBoleto.muesca,
   },
-  muescaDerecha: { right: -14 },
-  muescaIzquierda: { left: -14 },
-  papel: { borderRadius: 26, overflow: 'hidden' },
+  muescaDerecha: { right: -tamanosBoleto.muesca / 2 },
+  muescaIzquierda: { left: -tamanosBoleto.muesca / 2 },
+  papel: { borderRadius: radios.bloque, overflow: 'hidden' },
   perforacion: { alignItems: 'center', flexDirection: 'row', height: 1 },
   talon: {
     alignItems: 'center',
