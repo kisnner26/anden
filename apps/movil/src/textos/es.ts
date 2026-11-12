@@ -246,7 +246,6 @@ export const textos = {
     errorTarifa: 'Este viaje todavía no tiene tarifa cargada.',
     errorGeneral: 'No pudimos hacer la reserva. Probá de nuevo.',
     sinReserva: 'No hay asientos elegidos. Volvé a elegirlos.',
-    pasajero: 'pasajero',
     confirmadaTitulo: 'Reserva lista',
     confirmadaDetalle: 'Tu boleto ya está guardado en este teléfono.',
     codigoAbordaje: 'Código de abordaje',
