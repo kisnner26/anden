@@ -18,6 +18,7 @@ import { ProveedorAvisos } from '@/datos/ProveedorAvisos';
 import { ProveedorBloqueo } from '@/datos/ProveedorBloqueo';
 import { ProveedorBoletos } from '@/datos/ProveedorBoletos';
 import { ProveedorHabituales } from '@/datos/ProveedorHabituales';
+import { ProveedorEspera } from '@/datos/ProveedorEspera';
 import { ProveedorFavoritos } from '@/datos/ProveedorFavoritos';
 import { ProveedorCierres } from '@/datos/ProveedorCierres';
 import { ProveedorPagos } from '@/datos/ProveedorPagos';
@@ -60,23 +61,27 @@ export default function DisenoRaiz() {
           <ProveedorBloqueo>
             <ProveedorPerfil>
               <ProveedorBoletos>
-                <ProveedorAvisos>
-                  <ProveedorUbicacion>
-                    <ProveedorReserva>
-                      <ProveedorFavoritos>
-                        <ProveedorHabituales>
-                          <ProveedorRecordatorios>
-                            <ProveedorPagos>
-                              <ProveedorCierres>
-                                <Stack screenOptions={{ headerShown: false }} />
-                              </ProveedorCierres>
-                            </ProveedorPagos>
-                          </ProveedorRecordatorios>
-                        </ProveedorHabituales>
-                      </ProveedorFavoritos>
-                    </ProveedorReserva>
-                  </ProveedorUbicacion>
-                </ProveedorAvisos>
+                <ProveedorEspera>
+                  <ProveedorAvisos>
+                    <ProveedorUbicacion>
+                      <ProveedorReserva>
+                        <ProveedorFavoritos>
+                          <ProveedorHabituales>
+                            <ProveedorRecordatorios>
+                              <ProveedorPagos>
+                                <ProveedorCierres>
+                                  <Stack
+                                    screenOptions={{ headerShown: false }}
+                                  />
+                                </ProveedorCierres>
+                              </ProveedorPagos>
+                            </ProveedorRecordatorios>
+                          </ProveedorHabituales>
+                        </ProveedorFavoritos>
+                      </ProveedorReserva>
+                    </ProveedorUbicacion>
+                  </ProveedorAvisos>
+                </ProveedorEspera>
               </ProveedorBoletos>
             </ProveedorPerfil>
             <PuertaBloqueo />

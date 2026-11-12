@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react';
 
-import { avisosDeBoletos, momentoRecordatorio } from './avisos';
+import { avisosDeBoletos, avisosDeEspera, momentoRecordatorio } from './avisos';
 import {
   cancelarRecordatorio,
   leerPermiso,
@@ -20,6 +20,7 @@ import {
 import { textoRecordatorio } from './textoAviso';
 import { ContextoAvisos, type ValorAvisos } from './useAvisos';
 import { useBoletos } from './useBoletos';
+import { useEspera } from './useEspera';
 import { useSalidas } from './useSalidas';
 
 export const CLAVE_AVISOS = 'anden.avisos';
@@ -56,6 +57,7 @@ function leerGuardado(texto: string | null): Guardado {
  */
 export function ProveedorAvisos({ children }: { children: ReactNode }) {
   const { boletos, cargando: cargandoBoletos } = useBoletos();
+  const { esperas } = useEspera();
   const { ahora, salidas } = useSalidas();
   const [guardado, establecerGuardado] = useState<Guardado>(VACIO);
   const [permiso, establecerPermiso] =
@@ -87,8 +89,11 @@ export function ProveedorAvisos({ children }: { children: ReactNode }) {
   }, []);
 
   const avisos = useMemo(
-    () => avisosDeBoletos(boletos, salidas, ahora),
-    [ahora, boletos, salidas],
+    () => [
+      ...avisosDeBoletos(boletos, salidas, ahora),
+      ...avisosDeEspera(esperas, salidas),
+    ],
+    [ahora, boletos, esperas, salidas],
   );
 
   // un recordatorio por boleto vigente; se cancela el de los boletos que ya no lo están

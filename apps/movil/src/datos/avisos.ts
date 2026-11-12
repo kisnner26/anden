@@ -1,3 +1,5 @@
+import type { Espera } from './espera';
+import { salidasLiberadas } from './espera';
 import type { BoletoGuardado } from './reserva';
 import type { Salida } from './salidas';
 
@@ -8,7 +10,8 @@ export const MINUTOS_AVISO_PRONTO = 60;
 
 const MS_MINUTO = 60_000;
 
-export type TipoAviso = 'anden' | 'atraso' | 'cancelado' | 'pronto';
+export type TipoAviso =
+  'anden' | 'atraso' | 'cancelado' | 'liberado' | 'pronto';
 
 /** un aviso sobre un boleto; el texto lo arma la pantalla con estos datos */
 export interface Aviso {
@@ -99,4 +102,19 @@ export function avisosDeBoletos(
     }
   }
   return avisos;
+}
+
+/** un aviso por cada salida llena que se liberó, para quien pidió que se le avise */
+export function avisosDeEspera(
+  esperas: readonly Espera[],
+  salidas: readonly Salida[],
+): Aviso[] {
+  return salidasLiberadas(esperas, salidas).map((salida) => ({
+    anden: salida.anden,
+    boletoId: salida.viajeId,
+    destino: salida.destino,
+    id: `${salida.viajeId}:liberado`,
+    minutos: salida.asientosLibres,
+    tipo: 'liberado',
+  }));
 }

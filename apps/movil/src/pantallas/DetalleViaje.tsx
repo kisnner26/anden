@@ -17,6 +17,7 @@ import { formatoDuracion, formatoFechaCorta } from '@/datos/formato';
 import { useAvanceViaje } from '@/datos/useAvanceViaje';
 import { useRecorrido } from '@/datos/useRecorrido';
 import { useDetalleViaje } from '@/datos/useDetalleViaje';
+import { useEspera } from '@/datos/useEspera';
 import {
   disposicionPantalla,
   espacios,
@@ -43,6 +44,11 @@ export function DetalleViaje({
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const detalle = useDetalleViaje(viajeId);
+  const {
+    agregar: esperarSalida,
+    enEspera,
+    quitar: dejarDeEsperar,
+  } = useEspera();
   const avance = useAvanceViaje(
     viajeId,
     detalle?.origenCiudad ?? '',
@@ -73,6 +79,8 @@ export function DetalleViaje({
   }
 
   const { chofer, salida, unidad } = detalle;
+  const salidaLlena = salida.ventaAbierta && salida.asientosLibres === 0;
+  const esperando = enEspera(salida.viajeId);
   const origen = detalle.paradas[0]?.nombre ?? '';
   const estado = estadoTablero(salida);
   const comodidades = unidad.comodidades
@@ -293,15 +301,31 @@ export function DetalleViaje({
               {t('detalle.porPasajero')}
             </Text>
           </View>
-          <BotonAccion
-            alPresionar={() => alElegirAsiento(salida.viajeId)}
-            deshabilitado={!salida.ventaAbierta}
-            etiqueta={
-              salida.ventaAbierta
-                ? t('detalle.elegirAsiento')
-                : t('detalle.ventaCerrada')
-            }
-          />
+          {salidaLlena ? (
+            <BotonAccion
+              alPresionar={() =>
+                void (esperando
+                  ? dejarDeEsperar(salida.viajeId)
+                  : esperarSalida(salida))
+              }
+              etiqueta={
+                esperando
+                  ? t('detalle.esperando')
+                  : t('detalle.avisarmeSiSeLibera')
+              }
+              icono="campana"
+            />
+          ) : (
+            <BotonAccion
+              alPresionar={() => alElegirAsiento(salida.viajeId)}
+              deshabilitado={!salida.ventaAbierta}
+              etiqueta={
+                salida.ventaAbierta
+                  ? t('detalle.elegirAsiento')
+                  : t('detalle.ventaCerrada')
+              }
+            />
+          )}
         </BloqueNegro>
       </View>
     </View>

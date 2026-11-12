@@ -156,6 +156,10 @@ export const textos = {
     tarifa: 'Tarifa de muestra',
     porPasajero: 'por pasajero',
     ventaCerrada: 'Venta cerrada',
+    salidaLlena: 'Salida llena',
+    avisarmeSiSeLibera: 'Avisarme si se libera',
+    esperando: 'Te avisamos si se libera',
+    dejarDeEsperar: 'Quitar el aviso',
     elegirAsiento: 'Elegir asiento',
     opiniones: 'opiniones',
     sinCalificacion: 'Sin calificación todavía',
@@ -382,6 +386,9 @@ export const textos = {
     andenDetalle: 'Ahora sale del andén {anden}.',
     cancelado: 'Se canceló tu viaje a {destino}',
     canceladoDetalle: 'No tenés que pagar nada. Podés reservar otra salida.',
+    liberado: 'Se liberó un asiento a {destino}',
+    liberadoDetalle:
+      'Quedan {minutos} libres. Reservá antes de que se vuelvan a ocupar.',
     recordatorioTitulo: 'Tu bus a {destino} sale en 30 min',
     recordatorioCuerpo:
       'Andén {anden}. Llevá la tarifa exacta para pagar al abordar.',
