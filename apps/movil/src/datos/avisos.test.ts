@@ -3,6 +3,7 @@ import { describe, expect, it } from '@jest/globals';
 import {
   MINUTOS_RECORDATORIO,
   avisosDeBoletos,
+  avisosDeEspera,
   momentoRecordatorio,
 } from './avisos';
 import type { BoletoGuardado } from './reserva';
@@ -153,5 +154,30 @@ describe('avisosDeBoletos', () => {
 
   it('ignora un boleto sin su salida en la muestra', () => {
     expect(avisosDeBoletos([boleto()], [], AHORA)).toEqual([]);
+  });
+});
+
+describe('avisosDeEspera', () => {
+  const espera = {
+    creadaEn: AHORA.toISOString(),
+    destino: 'Boaco',
+    viajeId: 'via_1',
+  };
+
+  it('avisa que se liberó un asiento con cuántos quedan', () => {
+    const avisos = avisosDeEspera([espera], [salida({ asientosLibres: 2 })]);
+    expect(avisos).toHaveLength(1);
+    expect(avisos[0]).toMatchObject({
+      destino: 'Boaco',
+      id: 'via_1:liberado',
+      minutos: 2,
+      tipo: 'liberado',
+    });
+  });
+
+  it('no avisa mientras la salida siga llena', () => {
+    expect(avisosDeEspera([espera], [salida({ asientosLibres: 0 })])).toEqual(
+      [],
+    );
   });
 });

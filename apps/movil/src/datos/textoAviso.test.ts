@@ -40,4 +40,17 @@ describe('textoRecordatorio', () => {
       titulo: 'Tu bus a Juigalpa sale en 30 min',
     });
   });
+
+  it('arma el texto de un asiento liberado con cuántos quedan', () => {
+    const { detalle, titulo } = textoAviso({
+      anden: 3,
+      boletoId: 'via_1',
+      destino: 'Boaco',
+      id: 'via_1:liberado',
+      minutos: 2,
+      tipo: 'liberado',
+    });
+    expect(titulo).toBe('Se liberó un asiento a Boaco');
+    expect(detalle).toContain('Quedan 2 libres');
+  });
 });

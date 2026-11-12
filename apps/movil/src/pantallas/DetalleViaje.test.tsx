@@ -2,8 +2,9 @@ import { afterEach, describe, expect, it, jest } from '@jest/globals';
 import { act, fireEvent } from '@testing-library/react-native';
 
 import { VIAJE_BOACO } from '@/datos/muestra';
+import { ProveedorEspera } from '@/datos/ProveedorEspera';
 import { trazoEntre } from '@/datos/trazoCorredor';
-import { reiniciarMuestra } from '@/datos/useSalidas';
+import { obtenerMuestra, reiniciarMuestra } from '@/datos/useSalidas';
 import { renderPantalla } from '@/pruebas/render';
 import { TRANSMISION } from '@/servicios/transmision';
 
@@ -137,5 +138,53 @@ describe('DetalleViaje', () => {
   it('dice que no encontró un viaje inexistente', async () => {
     const pantalla = await dibujar({ viajeId: 'via_inexistente' });
     expect(pantalla.getByText('No encontramos este viaje.')).toBeTruthy();
+  });
+
+  it('en una salida llena ofrece que se avise si se libera un asiento', async () => {
+    const muestra = obtenerMuestra();
+    for (let asiento = 1; asiento <= 26; asiento += 1) {
+      muestra.ocupaciones.push({
+        asiento,
+        boletoId: `bol_lleno_${asiento}`,
+        duenoId: 'usu_otro',
+        estado: 'vendido',
+        viajeId: 'via_3',
+      });
+    }
+    const pantalla = await renderPantalla(
+      <ProveedorEspera>
+        <DetalleViaje
+          alElegirAsiento={() => undefined}
+          alVerChofer={() => undefined}
+          alVolver={() => undefined}
+          viajeId="via_3"
+        />
+      </ProveedorEspera>,
+    );
+    expect(
+      pantalla.queryByRole('button', { name: 'Elegir asiento' }),
+    ).toBeNull();
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Avisarme si se libera' }),
+    );
+    expect(
+      await pantalla.findByRole('button', { name: 'Te avisamos si se libera' }),
+    ).toBeTruthy();
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Te avisamos si se libera' }),
+    );
+    expect(
+      await pantalla.findByRole('button', { name: 'Avisarme si se libera' }),
+    ).toBeTruthy();
+  });
+
+  it('con asientos libres sigue ofreciendo elegir asiento', async () => {
+    const pantalla = await dibujar();
+    expect(
+      pantalla.getByRole('button', { name: 'Elegir asiento' }),
+    ).toBeTruthy();
+    expect(
+      pantalla.queryByRole('button', { name: 'Avisarme si se libera' }),
+    ).toBeNull();
   });
 });
