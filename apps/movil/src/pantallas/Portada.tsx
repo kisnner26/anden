@@ -4,7 +4,6 @@ import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
   withDelay,
   withRepeat,
@@ -27,6 +26,7 @@ import { HumoEscape } from '@/componentes/HumoEscape';
 import { liberarSonidos, reproducirSonido } from '@/datos/sonidos';
 import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
+import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
@@ -41,7 +41,7 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
   const margenes = useSafeAreaInsets();
   const altoMarca = 150;
   const topMarca = height * 0.335;
-  const reducirMovimiento = useReducedMotion();
+  const reducirMovimiento = useMovimientoReducido();
   const [saliendo, establecerSaliendo] = useState(false);
   const temporizador = useRef<ReturnType<typeof setTimeout> | null>(null);
   const posicionBus = useSharedValue(reducirMovimiento ? 0 : -(width + 40));

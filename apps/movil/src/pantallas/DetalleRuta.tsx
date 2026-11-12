@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
@@ -25,6 +24,7 @@ import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
 import { espacios, radios, tamanosIlustracion } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
+import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
@@ -43,7 +43,7 @@ function DetalleCorredor({
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const simulacion = useBusSimulado(corredor.origen, corredor.destino);
-  const reducirMovimiento = useReducedMotion();
+  const reducirMovimiento = useMovimientoReducido();
   const entradaBus = useSharedValue(reducirMovimiento ? 1 : 0);
   const estiloEntradaBus = useAnimatedStyle(() => ({
     transform: [

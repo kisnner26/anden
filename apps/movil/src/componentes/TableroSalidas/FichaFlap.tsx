@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import Animated, {
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
@@ -11,6 +10,7 @@ import { coloresOscuros as negro } from '@/tema/colores';
 import { radios, tamanosTablero } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
+import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 
 export interface PropiedadesFichaFlap {
   caracter: string;
@@ -21,7 +21,7 @@ export interface PropiedadesFichaFlap {
 export function FichaFlap({ caracter, color }: PropiedadesFichaFlap) {
   const esSeparador = caracter === ':';
   const anterior = useRef(caracter);
-  const reducirMovimiento = useReducedMotion();
+  const reducirMovimiento = useMovimientoReducido();
   const caida = useSharedValue(1);
   const estiloCaida = useAnimatedStyle(() => ({
     transform: [{ scaleY: caida.value }],

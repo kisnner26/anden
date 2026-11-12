@@ -2,20 +2,20 @@ import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
   withDelay,
   withTiming,
 } from 'react-native-reanimated';
 
 import { movimiento } from '@/tema/movimiento';
+import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import { useTema } from '@/tema/useTema';
 
 const TAMANO_CHISPA = 10;
 
 function Chispa({ indice }: { indice: number }) {
   const { colores } = useTema();
-  const reducir = useReducedMotion();
+  const reducir = useMovimientoReducido();
   const progreso = useSharedValue(0);
   const angulo = (indice / movimiento.chispas) * Math.PI * 2;
   // las chispas alternan alcance para que el círculo no se vea mecánico
@@ -51,7 +51,7 @@ function Chispa({ indice }: { indice: number }) {
 
 function Anillo({ demora }: { demora: number }) {
   const { colores } = useTema();
-  const reducir = useReducedMotion();
+  const reducir = useMovimientoReducido();
   const progreso = useSharedValue(0);
 
   useEffect(() => {
@@ -76,7 +76,7 @@ function Anillo({ demora }: { demora: number }) {
 
 /** anillos que laten y chispas que salen del centro; no dibuja nada con "reducir movimiento" */
 export function ExplosionConfirmacion() {
-  const reducir = useReducedMotion();
+  const reducir = useMovimientoReducido();
   if (reducir) return null;
   return (
     <View

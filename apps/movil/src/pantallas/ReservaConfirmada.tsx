@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
@@ -17,6 +16,7 @@ import { reproducirSonido } from '@/datos/sonidos';
 import { espacios, tamanosIlustracion } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
+import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
@@ -28,7 +28,7 @@ export interface PropiedadesReservaConfirmada {
 export function ReservaConfirmada({ codigo }: PropiedadesReservaConfirmada) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
-  const reducirMovimiento = useReducedMotion();
+  const reducirMovimiento = useMovimientoReducido();
   const entrada = useSharedValue(
     reducirMovimiento ? 1 : movimiento.escalaConfirmacion,
   );

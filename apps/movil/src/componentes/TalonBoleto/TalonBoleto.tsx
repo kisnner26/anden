@@ -4,7 +4,6 @@ import { StyleSheet, Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import Animated, {
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
@@ -14,6 +13,7 @@ import type { BoletoGuardado } from '@/datos/reserva';
 import { espacios } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
+import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
@@ -40,7 +40,7 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
   const { colores } = useTema();
   const { boleto, resumen } = guardado;
   const salida = new Date(resumen.salida);
-  const reducirMovimiento = useReducedMotion();
+  const reducirMovimiento = useMovimientoReducido();
   const anterior = useRef(boleto.estado);
   const separacion = useSharedValue(boleto.estado === 'usado' ? 1 : 0);
   const sello = useSharedValue(boleto.estado === 'usado' ? 1 : 0);

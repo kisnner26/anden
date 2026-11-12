@@ -8,7 +8,6 @@ import { useMemo, useRef } from 'react';
 import { PanResponder, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
   withSequence,
   withSpring,
@@ -20,6 +19,7 @@ import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
 import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
+import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
@@ -46,7 +46,7 @@ export function DeslizarParaEmpezar({
   ancho,
 }: PropiedadesDeslizarParaEmpezar) {
   const { colores } = useTema();
-  const reducirMovimiento = useReducedMotion();
+  const reducirMovimiento = useMovimientoReducido();
   const maximo = Math.max(ancho - MANIJA - MARGEN * 2, 0);
   const avance = useSharedValue(0);
   const completado = useRef(false);
