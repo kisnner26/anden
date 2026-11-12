@@ -11,6 +11,7 @@ export const movimiento = {
   pulsoConfirmacion: 1100,
   radioChispas: 130,
   abordaje: 180,
+  barridoLuz: 1100,
   humoCiclo: 1900,
   humoArranque: 1000,
   llegadaBus: 1500,
