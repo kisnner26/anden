@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Autobus } from '@/componentes/Autobus';
 import { Bloque } from '@/componentes/Bloque';
+import { BotonRecordatorio } from '@/componentes/BotonRecordatorio';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
 import { nivelDisponibilidad } from '@/datos/disponibilidad';
@@ -18,6 +19,8 @@ export interface PropiedadesFilaSalida {
   conBoleto?: boolean;
   /** agrega cuántos asientos quedan, con aviso si son pocos o ninguno */
   mostrarDisponibilidad?: boolean;
+  /** campana para pedir el aviso de esta salida */
+  recordatorio?: { activo: boolean; alPresionar: () => void; etiqueta: string };
   salida: Salida;
 }
 
@@ -35,6 +38,7 @@ export function FilaSalida({
   alPresionar,
   conBoleto = false,
   mostrarDisponibilidad = false,
+  recordatorio,
   salida,
 }: PropiedadesFilaSalida) {
   const { colores } = useTema();
@@ -89,6 +93,13 @@ export function FilaSalida({
             {sufijoHora(salida.salida)}
           </Text>
         </View>
+        {recordatorio ? (
+          <BotonRecordatorio
+            activo={recordatorio.activo}
+            alPresionar={recordatorio.alPresionar}
+            etiqueta={recordatorio.etiqueta}
+          />
+        ) : null}
         {conBoleto ? (
           <Loseta tamano={44} variante="negra">
             <Icono
