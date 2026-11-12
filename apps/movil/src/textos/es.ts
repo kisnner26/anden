@@ -157,7 +157,6 @@ export const textos = {
     loQueDicen: 'Lo que dicen',
     sinOpiniones:
       'Todavía no tiene suficientes opiniones para mostrar una nota.',
-    nota: 'Solo califican quienes ya hicieron el viaje, una vez por boleto.',
     noExiste: 'No encontramos a este chofer.',
     etiquetas: {
       puntual: 'Puntual',
@@ -194,7 +193,8 @@ export const textos = {
   },
   opiniones: {
     titulo: 'Opiniones',
-    vacio: 'Todavía nadie dejó un comentario. Podés ser la primera persona.',
+    vacio: 'Todavía no hay comentarios.',
+    vacioInvita: 'Todavía no hay comentarios. Podés ser la primera persona.',
     dejar: 'Dejá tu opinión',
     estrellas: 'estrellas',
     deCinco: 'de 5 estrellas',

@@ -109,7 +109,9 @@ export function OpinionesChofer({
 
       {propias.length === 0 ? (
         <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
-          {t('opiniones.vacio')}
+          {boletoId === null
+            ? t('opiniones.vacio')
+            : t('opiniones.vacioInvita')}
         </Text>
       ) : (
         propias.map((opinion, indice) => (

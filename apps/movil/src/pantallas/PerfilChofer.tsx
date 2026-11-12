@@ -176,9 +176,6 @@ export function PerfilChofer({ alVolver, choferId }: PropiedadesPerfilChofer) {
         ))
       )}
       <OpinionesChofer alActualizar={establecerPropias} choferId={choferId} />
-      <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-        {t('chofer.nota')}
-      </Text>
     </ScrollView>
   );
 }
