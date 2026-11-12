@@ -16,7 +16,9 @@ import { estadoVisibleBoleto } from '@/datos/estadoBoleto';
 import { useBoletos } from '@/datos/useBoletos';
 import { useAvisos } from '@/datos/useAvisos';
 import { usePagos } from '@/datos/usePagos';
-import { useAhora } from '@/datos/useSalidas';
+import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
+import { habitualDeSalida, horaTexto, idHabitual } from '@/datos/habituales';
+import { useHabituales } from '@/datos/useHabituales';
 import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -46,6 +48,7 @@ export function VerBoleto({
   const { boletos, cancelar } = useBoletos();
   const { activar } = useAvisos();
   const { estadoDe } = usePagos();
+  const { agregar: agregarHabitual, habituales } = useHabituales();
   const [confirmando, establecerConfirmando] = useState(false);
   const guardado = boletos.find(({ boleto }) => boleto.id === boletoId);
 
@@ -73,6 +76,22 @@ export function VerBoleto({
   );
   const estado = estadoVisibleBoleto(guardado, ahora);
   const puedeOperar = estado === 'vigente';
+  // el boleto guarda el nombre de la terminal de origen; el viaje habitual usa la ciudad
+  const ciudadOrigen = obtenerMuestra().terminales.find(
+    (terminal) => terminal.nombre === guardado.resumen.origen,
+  )?.ciudad;
+  const salidaGuardada = new Date(guardado.resumen.salida);
+  const yaEsHabitual =
+    ciudadOrigen !== undefined &&
+    habituales.some(
+      (habitual) =>
+        habitual.id ===
+          idHabitual(
+            ciudadOrigen,
+            guardado.resumen.destino,
+            horaTexto(salidaGuardada),
+          ) && habitual.dias.includes(salidaGuardada.getDay()),
+    );
   const etiquetaEstado = {
     cancelado: t('boleto.cancelado'),
     usado: t('boleto.usado'),
@@ -170,6 +189,29 @@ export function VerBoleto({
           </Text>
         </Bloque>
       </Pressable>
+
+      {ciudadOrigen && guardado.boleto.estado !== 'cancelado' && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityState={{ disabled: yaEsHabitual }}
+          disabled={yaEsHabitual}
+          onPress={() =>
+            void agregarHabitual(
+              habitualDeSalida(
+                ciudadOrigen,
+                guardado.resumen.destino,
+                new Date(guardado.resumen.salida),
+              ),
+            )
+          }
+        >
+          <Bloque estiloContenido={estilos.boton} radio="pildora">
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+              {yaEsHabitual ? t('habitual.guardado') : t('habitual.guardar')}
+            </Text>
+          </Bloque>
+        </Pressable>
+      )}
 
       {!puedeOperar && alReservarOtra && (
         <Pressable
