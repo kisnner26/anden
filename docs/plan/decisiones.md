@@ -50,7 +50,7 @@ Por qué: no existe backend. Cuando exista, la cuenta local migra a una cuenta r
 
 Decisión 2 (Face ID): bloqueo opcional con `expo-local-authentication`. Se pide al abrir y al volver tras 60 segundos fuera. Si el teléfono no tiene biometría configurada, el bloqueo no se activa, para no dejar a nadie sin sus boletos. El código del teléfono queda como respaldo del sistema.
 
-Decisión 3 (mascota): la mascota es el bus de personaje de la marca. Saluda en Viajar por franja del día y se apaga en Configuración. Viene encendida.
+Decisión 3 (mascota): la mascota es el bus de personaje de la marca. Saluda en Viajar por franja del día y se apaga en Configuración. Viene encendida. Se quitó a pedido del dueño del proyecto el 2026-11-12: el saludo se repetía en Viajar y se eliminó el componente, su ajuste y el estado guardado.
 
 Decisión 4 (opiniones y reportes): se guardan solo en el teléfono y cualquiera puede opinar. Queda abierto atarlas al boleto usado (`puedeCalificar`) cuando exista servidor, y cambiar entonces el texto "solo califican quienes ya hicieron el viaje" de `chofer.nota`.
 
