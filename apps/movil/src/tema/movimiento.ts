@@ -1,6 +1,10 @@
 export const movimiento = {
   cambioEstado: 240,
+  chispa: 900,
+  chispas: 10,
   confirmacionReserva: 800,
+  pulsoConfirmacion: 1100,
+  radioChispas: 130,
   abordaje: 180,
   humoCiclo: 1900,
   humoArranque: 1000,
