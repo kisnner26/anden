@@ -38,11 +38,6 @@ function dibujar(propiedades: Partial<Parameters<typeof Viajar>[0]> = {}) {
 }
 
 describe('Viajar', () => {
-  it('no repite el saludo con una tarjeta de bienvenida', async () => {
-    const pantalla = await dibujar();
-    expect(pantalla.queryByTestId('mascota-bienvenida')).toBeNull();
-  });
-
   it('saluda y pregunta a dónde va la persona', async () => {
     const pantalla = await dibujar();
     expect(pantalla.getByText('Hola')).toBeTruthy();

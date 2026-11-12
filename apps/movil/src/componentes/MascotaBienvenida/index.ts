@@ -1,1 +1,0 @@
-export { MascotaBienvenida } from './MascotaBienvenida';
