@@ -96,7 +96,10 @@ export function Pasajeros({
       <ScrollView
         contentContainerStyle={[
           estilos.contenido,
-          { paddingBottom: 48, paddingTop: margenes.top + 8 },
+          {
+            paddingBottom: espacios.cuarentaYOcho,
+            paddingTop: margenes.top + espacios.ocho,
+          },
         ]}
         keyboardShouldPersistTaps="handled"
       >
