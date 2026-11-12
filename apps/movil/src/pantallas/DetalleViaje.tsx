@@ -138,6 +138,11 @@ export function DetalleViaje({
                 {estado.texto}
               </Text>
             </View>
+            <Text
+              style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
+            >
+              {t('detalle.notaEta')}
+            </Text>
           </BloqueNegro>
         </View>
 

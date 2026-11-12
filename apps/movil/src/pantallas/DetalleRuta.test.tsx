@@ -51,7 +51,7 @@ describe('DetalleRuta', () => {
 
     expect(await pantalla.findByText('En vivo')).toBeTruthy();
     expect(pantalla.queryByText('Simulación')).toBeNull();
-    expect(pantalla.getByText(/^Llega en \d+ min$/)).toBeTruthy();
+    expect(pantalla.getByText(/^Llega en unos \d+ min \(ETA\)$/)).toBeTruthy();
   });
 
   it('presenta el corredor con un bus simulado marcado como tal', async () => {
@@ -67,7 +67,7 @@ describe('DetalleRuta', () => {
       pantalla.getByLabelText('Mapa del corredor con un bus simulado'),
     ).toBeTruthy();
     expect(pantalla.getByText('Simulación')).toBeTruthy();
-    expect(pantalla.getByText(/^Llega en \d+ min$/)).toBeTruthy();
+    expect(pantalla.getByText(/^ETA \d+ min$/)).toBeTruthy();
     expect(pantalla.getByText(/^Va por el \d+ % del recorrido$/)).toBeTruthy();
     expect(pantalla.getByText(/Posición simulada/)).toBeTruthy();
     expect(pantalla.getByLabelText('Origen: Boaco')).toBeTruthy();

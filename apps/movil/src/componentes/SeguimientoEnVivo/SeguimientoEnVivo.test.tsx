@@ -21,7 +21,7 @@ describe('SeguimientoEnVivo', () => {
       <SeguimientoEnVivo progreso={PROGRESO} sinSenal={false} />,
     );
     expect(pantalla.getByText('En vivo')).toBeTruthy();
-    expect(pantalla.getByText('Llega en 47 min')).toBeTruthy();
+    expect(pantalla.getByText('Llega en unos 47 min (ETA)')).toBeTruthy();
     expect(pantalla.getByText('Va por el 40 % del recorrido')).toBeTruthy();
     expect(
       pantalla.getByText('33.2 km recorridos · 49.7 km restantes'),
@@ -40,7 +40,7 @@ describe('SeguimientoEnVivo', () => {
       <SeguimientoEnVivo progreso={PROGRESO} sinSenal />,
     );
     expect(pantalla.getByText('Sin señal reciente de la unidad.')).toBeTruthy();
-    expect(pantalla.queryByText('Llega en 47 min')).toBeNull();
+    expect(pantalla.queryByText('Llega en unos 47 min (ETA)')).toBeNull();
   });
 
   it('avisa si la unidad está lejos de la ruta', async () => {

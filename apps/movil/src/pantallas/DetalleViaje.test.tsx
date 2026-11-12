@@ -73,7 +73,7 @@ describe('DetalleViaje', () => {
       });
     });
     expect(await pantalla.findByText('En vivo')).toBeTruthy();
-    expect(pantalla.getByText(/^Llega en \d+ min$/)).toBeTruthy();
+    expect(pantalla.getByText(/^Llega en unos \d+ min \(ETA\)$/)).toBeTruthy();
   });
 
   it('muestra la placa de la unidad', async () => {

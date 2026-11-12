@@ -158,7 +158,7 @@ describe('ConductorViaje', () => {
 
     expect(await pantalla.findByText('Compartiendo tu ubicación')).toBeTruthy();
     expect(pantalla.getByText(/^\d+ %$/)).toBeTruthy();
-    expect(pantalla.getByText(/^Llegás en \d+ min$/)).toBeTruthy();
+    expect(pantalla.getByText(/^Llegás en unos \d+ min \(ETA\)$/)).toBeTruthy();
     expect(pantalla.getByText(/km recorridos · .* km restantes/)).toBeTruthy();
 
     await fireEvent.press(

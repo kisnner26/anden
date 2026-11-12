@@ -20,6 +20,6 @@ describe('LineaViaje', () => {
     expect(pantalla.getByText('MAY')).toBeTruthy();
     expect(pantalla.getByText('JUI')).toBeTruthy();
     expect(pantalla.getByText('Sale')).toBeTruthy();
-    expect(pantalla.getByText('Llega')).toBeTruthy();
+    expect(pantalla.getByText('Llega (ETA)')).toBeTruthy();
   });
 });
