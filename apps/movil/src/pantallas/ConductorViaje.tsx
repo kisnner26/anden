@@ -22,7 +22,7 @@ import { useRecorrido } from '@/datos/useRecorrido';
 import { useSesion } from '@/datos/useSesion';
 import { useTransmision } from '@/datos/useTransmision';
 import { resumenDeCobro } from '@/servicios/pagos';
-import { espacios } from '@/tema/espacios';
+import { disposicionPantalla, espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { rellenar } from '@/textos/rellenar';
@@ -103,7 +103,7 @@ export function ConductorViaje({
         contentContainerStyle={[
           estilos.contenido,
           {
-            paddingBottom: margenes.bottom + 220,
+            paddingBottom: margenes.bottom + disposicionPantalla.espacioPie,
             paddingTop: margenes.top + espacios.ocho,
           },
         ]}
@@ -306,7 +306,11 @@ const estilos = StyleSheet.create({
     paddingHorizontal: espacios.veinticuatro,
     paddingVertical: espacios.dieciseis,
   },
-  punto: { borderRadius: 999, height: espacios.doce, width: espacios.doce },
+  punto: {
+    borderRadius: radios.pildora,
+    height: espacios.doce,
+    width: espacios.doce,
+  },
   resumen: { gap: espacios.cuatro, padding: espacios.dieciseis },
   texto: { flex: 1, gap: 2 },
 });
