@@ -448,6 +448,14 @@ export const textos = {
     destinoCorredor: 'Destino',
     origenAccesible: 'Origen: {{lugar}}',
     destinoAccesible: 'Destino: {{lugar}}',
+    simulacion: 'Simulación',
+    llegaEn: 'Llega en',
+    minutosCorto: 'min',
+    recorrido_va: 'Va por el',
+    recorridoPorcentaje: 'del recorrido',
+    simulacionNota:
+      'Posición simulada: todavía no hay datos reales de las unidades. El trazo une las terminales en línea recta.',
+    mapaDescripcion: 'Mapa del corredor con un bus simulado',
     seguimientoPendiente: 'Seguimiento en vivo pendiente de datos operativos',
     enVivoNoDisponible: 'En vivo no disponible',
     seguimientoDetalle:
