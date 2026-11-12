@@ -1,4 +1,4 @@
-"""genera los sonidos de la portada: arranque del motor, bocina y salida del bus.
+"""genera los sonidos de la portada: arranque del motor, bocina, salida del bus, confirmacion y toque.
 
 sintesis propia, sin muestras externas. uso: python3 herramientas/generar-sonidos.py
 """
@@ -86,9 +86,17 @@ def confirmacion():
     return senal * envolvente(len(t), 0.004, 0.25)
 
 
+def toque():
+    """clic seco y breve al elegir un asiento: dos parciales con caida rapida"""
+    t = t_de(0.09)
+    senal = np.sin(2 * np.pi * 880 * t) + 0.5 * np.sin(2 * np.pi * 1320 * t)
+    return senal * np.exp(-t * 55) * envolvente(len(t), 0.002, 0.02)
+
+
 if __name__ == "__main__":
     SALIDA.mkdir(parents=True, exist_ok=True)
     guardar("arranque.wav", arranque())
     guardar("bocina.wav", bocina())
     guardar("salida.wav", salida())
     guardar("confirmacion.wav", confirmacion())
+    guardar("toque.wav", toque())
