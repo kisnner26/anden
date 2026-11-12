@@ -1,5 +1,6 @@
 import { NativeTabs } from 'expo-router/native-tabs';
 
+import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
@@ -8,7 +9,13 @@ export default function DisenoPestanas() {
   const { colores } = useTema();
 
   return (
-    <NativeTabs tintColor={colores.ambarTexto}>
+    <NativeTabs
+      labelStyle={{
+        fontFamily: tipografia.pequeno.fontFamily,
+        fontSize: tipografia.pequeno.fontSize,
+      }}
+      tintColor={colores.ambar}
+    >
       <NativeTabs.Trigger name="viajar">
         <NativeTabs.Trigger.Label>
           {t('pestanas.viajar')}
