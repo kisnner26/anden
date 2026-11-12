@@ -4,6 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Aparece } from '@/componentes/Aparece';
 import { Bloque } from '@/componentes/Bloque';
+import { HojaRecordatorio } from '@/componentes/HojaRecordatorio';
 import { Chip } from '@/componentes/Chip';
 import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
@@ -13,7 +14,13 @@ import { TableroSalidas } from '@/componentes/TableroSalidas';
 import { CORREDORES_INICIALES, TERMINAL_POR_CIUDAD } from '@/datos/corredores';
 import { minutosParaSalir, nivelDisponibilidad } from '@/datos/disponibilidad';
 import { formatoHoraCompleta } from '@/datos/formato';
+import type { MinutosAntes } from '@/datos/recordatorios';
+import type { Salida } from '@/datos/salidas';
 import { useFavoritos } from '@/datos/useFavoritos';
+import {
+  useRecordatorios,
+  type ResultadoRecordatorio,
+} from '@/datos/useRecordatorios';
 import { useSalidas } from '@/datos/useSalidas';
 import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -44,6 +51,30 @@ export function Horarios({
   const { ahora, datos, proxima, salidas } = useSalidas(terminalId);
   const { favoritos } = useFavoritos();
   const [soloFavoritas, establecerSoloFavoritas] = useState(false);
+  const recordatorios = useRecordatorios();
+  const [eligiendo, establecerEligiendo] = useState<Salida | null>(null);
+  const [errorRecordatorio, establecerErrorRecordatorio] = useState<Exclude<
+    ResultadoRecordatorio,
+    'listo'
+  > | null>(null);
+
+  function cerrarHoja() {
+    establecerEligiendo(null);
+    establecerErrorRecordatorio(null);
+  }
+
+  async function elegirMinutos(minutos: MinutosAntes) {
+    if (!eligiendo) return;
+    const resultado = await recordatorios.programar(eligiendo, minutos);
+    if (resultado === 'listo') cerrarHoja();
+    else establecerErrorRecordatorio(resultado);
+  }
+
+  async function quitarRecordatorio() {
+    if (!eligiendo) return;
+    await recordatorios.quitar(eligiendo.viajeId);
+    cerrarHoja();
+  }
   const terminal = datos.terminales.find(
     (candidata) => candidata.id === terminalId,
   );
@@ -202,12 +233,31 @@ export function Horarios({
               <FilaSalida
                 alPresionar={alAbrirViaje}
                 mostrarDisponibilidad
+                recordatorio={{
+                  activo: recordatorios.de(salida.viajeId) !== undefined,
+                  alPresionar: () => establecerEligiendo(salida),
+                  etiqueta: t(
+                    recordatorios.de(salida.viajeId)
+                      ? 'recordatorios.quitarEtiqueta'
+                      : 'recordatorios.abrir',
+                  ).replace('{{destino}}', salida.destino),
+                }}
                 salida={salida}
               />
             </Aparece>
           ))}
         </View>
       ) : null}
+
+      <HojaRecordatorio
+        actual={eligiendo ? recordatorios.de(eligiendo.viajeId) : undefined}
+        ahora={ahora}
+        alCerrar={cerrarHoja}
+        alElegir={(minutos) => void elegirMinutos(minutos)}
+        alQuitar={() => void quitarRecordatorio()}
+        error={errorRecordatorio}
+        salida={eligiendo}
+      />
     </MarcoPestana>
   );
 }

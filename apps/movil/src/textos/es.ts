@@ -407,8 +407,8 @@ export const textos = {
     permisoNegado:
       'Las notificaciones están desactivadas para Andén en el teléfono. Activalas en los ajustes.',
     cerrar: 'Cerrar',
-    abrir: 'Recordarme la salida a {destino}',
-    quitarEtiqueta: 'Quitar el recordatorio de la salida a {destino}',
+    abrir: 'Recordarme la salida a {{destino}}',
+    quitarEtiqueta: 'Quitar el recordatorio de la salida a {{destino}}',
   },
   perfil: {
     titulo: 'Tu perfil',
