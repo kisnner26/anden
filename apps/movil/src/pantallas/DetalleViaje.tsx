@@ -17,7 +17,11 @@ import { formatoDuracion } from '@/datos/formato';
 import { useAvanceViaje } from '@/datos/useAvanceViaje';
 import { useRecorrido } from '@/datos/useRecorrido';
 import { useDetalleViaje } from '@/datos/useDetalleViaje';
-import { espacios } from '@/tema/espacios';
+import {
+  disposicionPantalla,
+  espacios,
+  tamanosIlustracion,
+} from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -75,7 +79,10 @@ export function DetalleViaje({
       <ScrollView
         contentContainerStyle={[
           estilos.contenido,
-          { paddingBottom: 200, paddingTop: margenes.top + 8 },
+          {
+            paddingBottom: disposicionPantalla.espacioPieReserva,
+            paddingTop: margenes.top + espacios.ocho,
+          },
         ]}
       >
         <CabeceraPantalla alVolver={alVolver} titulo={salida.destino} />
@@ -315,25 +322,29 @@ const estilos = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  contenedorHero: { marginTop: 84 },
+  contenedorHero: { marginTop: tamanosIlustracion.busDetalleSolape },
   hero: {
     gap: espacios.doce,
     paddingBottom: espacios.dieciseis,
     paddingHorizontal: espacios.lateral,
-    paddingTop: 44,
+    paddingTop: disposicionPantalla.rellenoHeroDetalle,
   },
   heroBus: {
     alignItems: 'center',
     left: 0,
     position: 'absolute',
     right: 0,
-    top: -84,
+    top: -tamanosIlustracion.busDetalleSolape,
     zIndex: 2,
   },
   mapa: { gap: espacios.ocho },
   nota: { alignItems: 'center', flexDirection: 'row', gap: 6 },
   pantalla: { flex: 1 },
-  pie: { left: 14, position: 'absolute', right: 14 },
+  pie: {
+    left: disposicionPantalla.margenFlotante,
+    position: 'absolute',
+    right: disposicionPantalla.margenFlotante,
+  },
   placa: {
     alignSelf: 'flex-start',
     paddingHorizontal: espacios.dieciseis,
