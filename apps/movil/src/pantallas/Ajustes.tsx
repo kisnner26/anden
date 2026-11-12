@@ -11,7 +11,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
+import { Interruptor } from '@/componentes/Interruptor';
 import { iniciales, nombreCompleto } from '@/datos/perfil';
+import { useBloqueo } from '@/datos/useBloqueo';
 import { usePerfil } from '@/datos/usePerfil';
 import { usePreferenciaUbicacion } from '@/datos/ProveedorUbicacion';
 import {
@@ -56,6 +58,7 @@ export function Ajustes({ alAbrirPerfil, alVolver }: PropiedadesAjustes) {
   const { colores, establecerPreferencia, preferencia } = useTema();
   const { perfil } = usePerfil();
   const ubicacion = usePreferenciaUbicacion();
+  const bloqueo = useBloqueo();
   const nombre = nombreCompleto(perfil);
   const margenes = useSafeAreaInsets();
   const ubicacionOcupada =
@@ -127,6 +130,30 @@ export function Ajustes({ alAbrirPerfil, alVolver }: PropiedadesAjustes) {
           <Icono nombre="siguiente" tamano="mediano" />
         </Bloque>
       </Pressable>
+
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+        {t('ajustes.seguridadSeccion')}
+      </Text>
+      <Bloque estiloContenido={estilos.filaOpcion}>
+        <View style={estilos.texto}>
+          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+            {t('ajustes.bloqueoTitulo')}
+          </Text>
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {bloqueo.biometria.disponible || bloqueo.activo
+              ? t('ajustes.bloqueoDetalle')
+              : t('ajustes.bloqueoNoDisponible')}
+          </Text>
+        </View>
+        <Interruptor
+          activo={bloqueo.activo}
+          alCambiar={(encender) =>
+            void (encender ? bloqueo.activar() : bloqueo.desactivar())
+          }
+          deshabilitado={!bloqueo.biometria.disponible && !bloqueo.activo}
+          etiqueta={t('ajustes.bloqueoTitulo')}
+        />
+      </Bloque>
 
       <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {t('ajustes.ubicacionSeccion')}
