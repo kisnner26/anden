@@ -72,3 +72,7 @@ Decisión 11 (roles, login y seguimiento): se separan los roles `pasajero` y `co
 Decisión 12 (funciones nuevas): reservar para otro día, viaje habitual, cierre del viaje, lista de espera, persona de confianza, objetos olvidados y encomiendas, todas con guardado local y diseñadas para pasar a Supabase. El rol operador, las posiciones reales, las notificaciones push y el enlace de seguimiento en vivo quedan escritos en `docs/plan/10-funciones-nuevas.md` porque necesitan el servidor. Pedido por el dueño del proyecto el 2026-11-12.
 
 Preguntas abiertas: reemplazar la simulación del bus por posiciones reales y mover opiniones, favoritos y cuenta a un servidor.
+
+Decisión 13 (ingreso único y Supabase): hay un solo ingreso para pasajeros y conductores; la interfaz nunca pregunta ni muestra el rol y el servidor decide a dónde va cada cuenta según su perfil. Se puede usar la app como invitado. El cliente de Supabase se activa solo con variables de entorno; sin ellas rigen las cuentas de muestra. Detalle en `docs/plan/11-supabase.md`. Pedido por el dueño del proyecto el 2026-11-12.
+
+Decisión 14 (variantes de bus): 17 variantes (cinco siluetas por varios colores). Cada destino usa siempre la misma, repartida de forma estable por su nombre.
