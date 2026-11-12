@@ -8,6 +8,7 @@ import {
   CORREDORES_INICIALES,
   type CorredorInterlocal,
 } from '@/datos/corredores';
+import { useFavoritos } from '@/datos/useFavoritos';
 import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -34,6 +35,7 @@ const GRUPOS_CORREDOR: readonly {
 /** los dos corredores que opera Andén; sin geometría falsa mientras faltan datos verificados */
 export function Rutas({ alAbrirRuta }: PropiedadesRutas) {
   const { colores } = useTema();
+  const { esFavorito } = useFavoritos();
 
   return (
     <MarcoPestana estiloContenido={estilos.contenido}>
@@ -77,14 +79,18 @@ export function Rutas({ alAbrirRuta }: PropiedadesRutas) {
             <View style={estilos.sentidos}>
               {CORREDORES_INICIALES.filter((corredor) =>
                 grupo.ids.includes(corredor.id),
-              ).map((corredor, indice) => (
-                <Aparece indice={indice} key={corredor.id}>
-                  <TarjetaCorredor
-                    alPresionar={(id) => alAbrirRuta?.(id)}
-                    corredor={corredor}
-                  />
-                </Aparece>
-              ))}
+              )
+                .sort(
+                  (a, b) => Number(esFavorito(b.id)) - Number(esFavorito(a.id)),
+                )
+                .map((corredor, indice) => (
+                  <Aparece indice={indice} key={corredor.id}>
+                    <TarjetaCorredor
+                      alPresionar={(id) => alAbrirRuta?.(id)}
+                      corredor={corredor}
+                    />
+                  </Aparece>
+                ))}
             </View>
           </View>
         ))}

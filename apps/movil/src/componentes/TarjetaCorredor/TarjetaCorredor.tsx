@@ -2,10 +2,19 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
+import { BotonFavorito } from '@/componentes/BotonFavorito';
 import {
-  OPERACION_MUESTRA_POR_CORREDOR,
+  TERMINAL_POR_CIUDAD,
   type CorredorInterlocal,
 } from '@/datos/corredores';
+import {
+  minutosParaSalir,
+  nivelDisponibilidad,
+  proximaHaciaDestino,
+} from '@/datos/disponibilidad';
+import { formatoHoraCompleta } from '@/datos/formato';
+import { useFavoritos } from '@/datos/useFavoritos';
+import { useSalidas } from '@/datos/useSalidas';
 import { espacios, radios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { movimiento } from '@/tema/movimiento';
@@ -25,7 +34,22 @@ export function TarjetaCorredor({
   const etiqueta = t('rutas.abrirCorredor')
     .replace('{{origen}}', corredor.origen)
     .replace('{{destino}}', corredor.destino);
-  const operacion = OPERACION_MUESTRA_POR_CORREDOR[corredor.id];
+  const { alternar, esFavorito } = useFavoritos();
+  const favorito = esFavorito(corredor.id);
+  const { ahora, salidas } = useSalidas(TERMINAL_POR_CIUDAD[corredor.origen]);
+  const proxima = proximaHaciaDestino(salidas, corredor.destino);
+  const nivel = proxima ? nivelDisponibilidad(proxima.asientosLibres) : null;
+  const textoLibres =
+    nivel === 'agotado'
+      ? t('horarios.agotado')
+      : nivel === 'pocos'
+        ? t('horarios.pocosAsientos')
+        : proxima
+          ? t('rutas.asientosLibres').replace(
+              '{{cantidad}}',
+              String(proxima.asientosLibres),
+            )
+          : '';
   const codigoOrigen = corredor.origen.slice(0, 3).toUpperCase();
   const codigoDestino = corredor.destino.slice(0, 3).toUpperCase();
 
@@ -62,9 +86,20 @@ export function TarjetaCorredor({
               </Text>
             </View>
           </View>
-          <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
-            {codigoDestino}
-          </Text>
+          <View style={estilos.destinoYEstrella}>
+            <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+              {codigoDestino}
+            </Text>
+            <BotonFavorito
+              activo={favorito}
+              alCambiar={() => void alternar(corredor.id)}
+              etiqueta={t(
+                favorito ? 'rutas.quitarFavorita' : 'rutas.marcarFavorita',
+              )
+                .replace('{{origen}}', corredor.origen)
+                .replace('{{destino}}', corredor.destino)}
+            />
+          </View>
         </View>
 
         <View style={[estilos.separador, { backgroundColor: colores.linea }]} />
@@ -74,15 +109,31 @@ export function TarjetaCorredor({
             <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
               {t('rutas.operacionMuestra')}
             </Text>
-            {operacion.estado === 'proxima' ? (
+            {proxima ? (
               <View style={estilos.horario}>
                 <Text style={[tipografia.dato, { color: colores.tinta }]}>
-                  {operacion.proximaSalida}
+                  {formatoHoraCompleta(proxima.salida)}
                 </Text>
                 <Text
                   style={[tipografia.pequeno, { color: colores.tintaSuave }]}
                 >
-                  {t('rutas.horarioReferencial')}
+                  {t('rutas.proximaSaleEn').replace(
+                    '{{minutos}}',
+                    String(minutosParaSalir(proxima, ahora)),
+                  )}
+                </Text>
+                <Text
+                  style={[
+                    tipografia.etiqueta,
+                    {
+                      color:
+                        nivel === 'hay'
+                          ? colores.tintaSuave
+                          : colores.ambarTexto,
+                    },
+                  ]}
+                >
+                  {textoLibres}
                 </Text>
               </View>
             ) : (
@@ -130,6 +181,11 @@ const estilos = StyleSheet.create({
     width: tamanosControl.toqueMinimo,
   },
   contenido: { gap: espacios.doce, padding: espacios.dieciseis },
+  destinoYEstrella: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.cuatro,
+  },
   horario: { gap: espacios.cuatro },
   operacion: {
     flex: 1,

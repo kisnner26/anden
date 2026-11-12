@@ -19,7 +19,9 @@ describe('Rutas', () => {
     const pantalla = await renderPantalla(<Rutas />);
     expect(pantalla.getByText('Boaco · Managua')).toBeTruthy();
     expect(pantalla.getByText('Juigalpa · Managua')).toBeTruthy();
-    expect(pantalla.getAllByRole('button')).toHaveLength(4);
+    expect(pantalla.getAllByRole('button', { name: /^Abrir / })).toHaveLength(
+      4,
+    );
   });
 
   it('explica que faltan datos operativos sin mostrar un mapa radial', async () => {
