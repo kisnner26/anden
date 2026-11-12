@@ -65,4 +65,6 @@ Decisión 8 (favoritos y disponibilidad): los corredores se marcan con estrella 
 
 Decisión 9 (carretera real en el mapa): el trazo de Managua a Boaco (82,9 km) y a Juigalpa (133,5 km) sale de OpenStreetMap vía OSRM, se consultó una sola vez con `herramientas/generar-trazos.py` y vive en `src/datos/trazos.ts`; la app no consulta nada en línea. El bus ejemplo sigue ese camino y su ciclo dura lo que dura el viaje por carretera. Sigue marcado "Simulación" y el detalle cita la fuente (licencia ODbL). Reemplaza la línea recta de la decisión 5.
 
+Decisión 10 (recordatorios de salida): desde Horarios se puede pedir un aviso para cualquier salida, a 15, 30 o 60 minutos antes de la salida real (con el atraso incluido). Es una notificación local del teléfono; no se envía nada a ningún servidor. Los boletos siguen teniendo su aviso automático de 30 minutos y este no lo reemplaza. Una opción cuyo aviso ya habría sonado aparece deshabilitada. Los recordatorios de salidas que ya pasaron se descartan al abrir la app.
+
 Preguntas abiertas: reemplazar la simulación del bus por posiciones reales y mover opiniones, favoritos y cuenta a un servidor.
