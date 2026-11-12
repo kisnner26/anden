@@ -1,19 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
-import {
-  AccessibilityInfo,
-  Animated,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Icono } from '@/componentes/Icono';
 import { espacios, radios, tamanosControl } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
+import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import { useTema } from '@/tema/useTema';
 
 export type VarianteBoton = 'pildora' | 'principal' | 'secundario';
@@ -191,18 +185,3 @@ const estilos = StyleSheet.create({
     transform: [{ scale: movimiento.escalaPresion }],
   },
 });
-
-function useMovimientoReducido() {
-  const [reducido, establecerReducido] = useState(false);
-
-  useEffect(() => {
-    void AccessibilityInfo.isReduceMotionEnabled().then(establecerReducido);
-    const suscripcion = AccessibilityInfo.addEventListener(
-      'reduceMotionChanged',
-      establecerReducido,
-    );
-    return () => suscripcion.remove();
-  }, []);
-
-  return reducido;
-}
