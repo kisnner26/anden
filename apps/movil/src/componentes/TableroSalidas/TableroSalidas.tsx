@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { formatoHora } from '@/datos/formato';
@@ -11,6 +12,7 @@ import { t } from '@/textos/t';
 import { FichaFlap } from './FichaFlap';
 
 export interface PropiedadesTableroSalidas {
+  alElegir?: (salida: Salida) => void;
   salidas: readonly Salida[];
 }
 
@@ -103,7 +105,10 @@ function Hora({ salida, pasada }: { pasada: boolean; salida: Salida }) {
 }
 
 /** el tablero de andén: filas con la hora en fichas, el destino, el andén y el estado */
-export function TableroSalidas({ salidas }: PropiedadesTableroSalidas) {
+export function TableroSalidas({
+  alElegir,
+  salidas,
+}: PropiedadesTableroSalidas) {
   return (
     <BloqueNegro estiloContenido={estilos.contenido} testID="tablero-salidas">
       <View style={[estilos.fila, estilos.encabezado]}>
@@ -139,11 +144,21 @@ export function TableroSalidas({ salidas }: PropiedadesTableroSalidas) {
         const estado = estadoTablero(salida);
         const pasada = salida.estado === 'en-ruta' || salida.estado === 'llego';
         return (
-          <View
+          <Pressable
             accessible
             accessibilityLabel={`${salida.destino}, ${formatoHora(salida.salida)}, ${estado.texto}`}
+            accessibilityRole={alElegir ? 'button' : undefined}
+            disabled={!alElegir}
             key={salida.viajeId}
-            style={[estilos.fila, estilos.separacion]}
+            onPress={() => {
+              void Haptics.selectionAsync().catch(() => undefined);
+              alElegir?.(salida);
+            }}
+            style={({ pressed }) => [
+              estilos.fila,
+              estilos.separacion,
+              pressed && estilos.presionada,
+            ]}
           >
             <View style={estilos.colHora}>
               <Hora pasada={pasada} salida={salida} />
@@ -178,7 +193,7 @@ export function TableroSalidas({ salidas }: PropiedadesTableroSalidas) {
                 {estado.texto}
               </Text>
             </View>
-          </View>
+          </Pressable>
         );
       })}
     </BloqueNegro>
@@ -221,6 +236,7 @@ const estilos = StyleSheet.create({
     height: tamanosTablero.marcaEstado,
     width: tamanosTablero.marcaEstado,
   },
+  presionada: { opacity: 0.6 },
   punto: { borderRadius: radios.pildora },
   raya: { height: 1.5, width: 8 },
   separacion: {
