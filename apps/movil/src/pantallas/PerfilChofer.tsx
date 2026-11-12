@@ -5,6 +5,7 @@ import { Bloque } from '@/componentes/Bloque';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
+import { OpinionesChofer } from '@/componentes/OpinionesChofer';
 import { usePerfilChofer } from '@/datos/useDetalleViaje';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -150,6 +151,7 @@ export function PerfilChofer({ alVolver, choferId }: PropiedadesPerfilChofer) {
           </Bloque>
         ))
       )}
+      <OpinionesChofer choferId={choferId} />
       <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
         {t('chofer.nota')}
       </Text>
