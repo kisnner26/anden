@@ -35,6 +35,8 @@ export interface PropiedadesAutobus {
   letrero?: string;
   /** silueta y color del bus; sin indicar es el clásico ámbar */
   variante?: IdVarianteBus;
+  /** lo dibuja mirando a la izquierda, para un bus que avanza hacia el oeste; el letrero se lee igual */
+  espejo?: boolean;
 }
 
 /** el bus de personaje de Andén: carrocería crema con banda ámbar, vidrios oscuros, faro cálido y letrero */
@@ -43,6 +45,7 @@ export function Autobus({
   etiquetaAccesible,
   letrero = 'ANDÉN',
   variante = VARIANTE_POR_DEFECTO,
+  espejo = false,
 }: PropiedadesAutobus) {
   const { forma: nombreForma, paleta: nombrePaleta } = buscarVariante(variante);
   const forma = FORMAS[nombreForma];
@@ -52,6 +55,8 @@ export function Autobus({
   const id = (nombre: string) => `${nombre}${uid}`;
   const alto = (ancho * ALTO_BASE) / ANCHO_BASE;
   const comunica = etiquetaAccesible !== undefined;
+  const xLetrero = forma.letrero.x + forma.letrero.ancho / 2;
+  const yLetrero = forma.letrero.y + forma.letrero.alto - 5;
   const tamanoLetrero = 10.5 * Math.min(1, MAXIMO_LETRERO / letrero.length);
 
   return (
@@ -68,198 +73,212 @@ export function Autobus({
         viewBox={`0 0 ${ANCHO_BASE} ${ALTO_BASE}`}
         width={ancho}
       >
-        <Defs>
-          <LinearGradient id={id('busCarro')} x1="0" x2="0.35" y1="0" y2="1">
-            <Stop offset={0} stopColor={p.carroceriaClara} />
-            <Stop offset={0.55} stopColor={p.carroceriaMedia} />
-            <Stop offset={1} stopColor={p.carroceriaOscura} />
-          </LinearGradient>
-          <LinearGradient id={id('busBanda')} x1="0" x2="0" y1="0" y2="1">
-            <Stop offset={0} stopColor={p.bandaClara} />
-            <Stop offset={0.5} stopColor={p.banda} />
-            <Stop offset={1} stopColor={p.bandaOscura} />
-          </LinearGradient>
-          <LinearGradient id={id('busVidrio')} x1="0" x2="1" y1="0" y2="1">
-            <Stop offset={0} stopColor={p.vidrioClaro} />
-            <Stop offset={1} stopColor={p.vidrioOscuro} />
-          </LinearGradient>
-          <LinearGradient id={id('busFalda')} x1="0" x2="0" y1="0" y2="1">
-            <Stop offset={0} stopColor={p.sombraSuelo} stopOpacity={0} />
-            <Stop offset={1} stopColor={p.sombraSuelo} stopOpacity={0.28} />
-          </LinearGradient>
-          <LinearGradient id={id('busLlanta')} x1="0" x2="1" y1="0" y2="1">
-            <Stop offset={0} stopColor={p.llantaClara} />
-            <Stop offset={1} stopColor={p.llantaOscura} />
-          </LinearGradient>
-          <RadialGradient cx="30%" cy="25%" id={id('busBrillo')} r="60%">
-            <Stop offset={0} stopColor={p.llantaClara} stopOpacity={0.75} />
-            <Stop offset={1} stopColor={p.llantaClara} stopOpacity={0} />
-          </RadialGradient>
-          <RadialGradient cx="50%" cy="50%" id={id('busSuelo')} r="50%">
-            <Stop offset={0} stopColor={p.sombraSuelo} stopOpacity={0.4} />
-            <Stop offset={1} stopColor={p.sombraSuelo} stopOpacity={0} />
-          </RadialGradient>
-          <RadialGradient cx="40%" cy="40%" id={id('busFaro')} r="70%">
-            <Stop offset={0} stopColor={p.llantaClara} />
-            <Stop offset={0.45} stopColor={p.faro} />
-            <Stop offset={1} stopColor={p.faroBrillo} />
-          </RadialGradient>
-          <RadialGradient cx="50%" cy="50%" id={id('busFaroHalo')} r="50%">
-            <Stop offset={0} stopColor={p.faroBrillo} stopOpacity={0.5} />
-            <Stop offset={1} stopColor={p.faroBrillo} stopOpacity={0} />
-          </RadialGradient>
-          <ClipPath id={id('busCarroceria')}>
-            <Path d={forma.carroceria} />
-          </ClipPath>
-        </Defs>
+        <G
+          transform={
+            espejo ? `translate(${ANCHO_BASE} 0) scale(-1 1)` : undefined
+          }
+        >
+          <Defs>
+            <LinearGradient id={id('busCarro')} x1="0" x2="0.35" y1="0" y2="1">
+              <Stop offset={0} stopColor={p.carroceriaClara} />
+              <Stop offset={0.55} stopColor={p.carroceriaMedia} />
+              <Stop offset={1} stopColor={p.carroceriaOscura} />
+            </LinearGradient>
+            <LinearGradient id={id('busBanda')} x1="0" x2="0" y1="0" y2="1">
+              <Stop offset={0} stopColor={p.bandaClara} />
+              <Stop offset={0.5} stopColor={p.banda} />
+              <Stop offset={1} stopColor={p.bandaOscura} />
+            </LinearGradient>
+            <LinearGradient id={id('busVidrio')} x1="0" x2="1" y1="0" y2="1">
+              <Stop offset={0} stopColor={p.vidrioClaro} />
+              <Stop offset={1} stopColor={p.vidrioOscuro} />
+            </LinearGradient>
+            <LinearGradient id={id('busFalda')} x1="0" x2="0" y1="0" y2="1">
+              <Stop offset={0} stopColor={p.sombraSuelo} stopOpacity={0} />
+              <Stop offset={1} stopColor={p.sombraSuelo} stopOpacity={0.28} />
+            </LinearGradient>
+            <LinearGradient id={id('busLlanta')} x1="0" x2="1" y1="0" y2="1">
+              <Stop offset={0} stopColor={p.llantaClara} />
+              <Stop offset={1} stopColor={p.llantaOscura} />
+            </LinearGradient>
+            <RadialGradient cx="30%" cy="25%" id={id('busBrillo')} r="60%">
+              <Stop offset={0} stopColor={p.llantaClara} stopOpacity={0.75} />
+              <Stop offset={1} stopColor={p.llantaClara} stopOpacity={0} />
+            </RadialGradient>
+            <RadialGradient cx="50%" cy="50%" id={id('busSuelo')} r="50%">
+              <Stop offset={0} stopColor={p.sombraSuelo} stopOpacity={0.4} />
+              <Stop offset={1} stopColor={p.sombraSuelo} stopOpacity={0} />
+            </RadialGradient>
+            <RadialGradient cx="40%" cy="40%" id={id('busFaro')} r="70%">
+              <Stop offset={0} stopColor={p.llantaClara} />
+              <Stop offset={0.45} stopColor={p.faro} />
+              <Stop offset={1} stopColor={p.faroBrillo} />
+            </RadialGradient>
+            <RadialGradient cx="50%" cy="50%" id={id('busFaroHalo')} r="50%">
+              <Stop offset={0} stopColor={p.faroBrillo} stopOpacity={0.5} />
+              <Stop offset={1} stopColor={p.faroBrillo} stopOpacity={0} />
+            </RadialGradient>
+            <ClipPath id={id('busCarroceria')}>
+              <Path d={forma.carroceria} />
+            </ClipPath>
+          </Defs>
 
-        <Ellipse
-          cx={268}
-          cy={272}
-          fill={`url(#${id('busSuelo')})`}
-          rx={240}
-          ry={18}
-        />
-
-        <G transform={`translate(${forma.dx} 0)`}>
-          <G clipPath={`url(#${id('busCarroceria')})`}>
-            <Rect
-              fill={`url(#${id('busCarro')})`}
-              height={240}
-              width={500}
-              x={10}
-              y={10}
-            />
-            <Rect
-              fill={`url(#${id('busBanda')})`}
-              height={forma.banda.alto}
-              width={500}
-              x={10}
-              y={forma.banda.y}
-            />
-            <Rect
-              fill={p.llantaClara}
-              height={5}
-              opacity={0.45}
-              width={500}
-              x={10}
-              y={forma.banda.y}
-            />
-            <Rect
-              fill={`url(#${id('busFalda')})`}
-              height={50}
-              width={500}
-              x={10}
-              y={208}
-            />
-            <Ellipse
-              cx={170}
-              cy={forma.ventanas[0]?.y ?? 80}
-              fill={`url(#${id('busBrillo')})`}
-              rx={150}
-              ry={22}
-            />
-          </G>
-          <Path
-            d={forma.carroceria}
-            fill="none"
-            stroke={p.borde}
-            strokeOpacity={0.18}
-            strokeWidth={2}
+          <Ellipse
+            cx={268}
+            cy={272}
+            fill={`url(#${id('busSuelo')})`}
+            rx={240}
+            ry={18}
           />
 
-          {forma.ventanas.map((ventana) => (
-            <Rect
-              fill={`url(#${id('busVidrio')})`}
-              height={ventana.alto}
-              key={`${ventana.x}-${ventana.y}`}
-              rx={ventana.rx}
-              width={ventana.ancho}
-              x={ventana.x}
-              y={ventana.y}
-            />
-          ))}
-          <Path d={forma.frente} fill={`url(#${id('busVidrio')})`} />
-          {forma.frenteAlto && (
-            <Path d={forma.frenteAlto} fill={`url(#${id('busVidrio')})`} />
-          )}
-          {forma.destello &&
-            forma.ventanas.map((ventana) => {
-              const { alto, ancho, x, y } = ventana;
-              return (
-                <Path
-                  d={`M${x + 8},${y + 6} L${x + 8 + ancho * 0.46},${y + 6} L${x + 16},${y + alto - 6} L${x + 8},${y + alto - 6} Z`}
-                  fill={p.llantaClara}
-                  key={`d${x}-${y}`}
-                  opacity={0.1}
-                />
-              );
-            })}
-
-          <Rect
-            fill={p.rueda}
-            height={forma.letrero.alto}
-            rx={6}
-            width={forma.letrero.ancho}
-            x={forma.letrero.x}
-            y={forma.letrero.y}
-          />
-          <TextoSvg
-            fill={p.banda}
-            fontFamily="JetBrainsMono_600SemiBold"
-            fontSize={tamanoLetrero}
-            letterSpacing={1}
-            textAnchor="middle"
-            x={forma.letrero.x + forma.letrero.ancho / 2}
-            y={forma.letrero.y + forma.letrero.alto - 5}
-          >
-            {letrero}
-          </TextoSvg>
-
-          <Circle
-            cx={486}
-            cy={206}
-            fill={`url(#${id('busFaroHalo')})`}
-            r={28}
-          />
-          <Circle
-            cx={486}
-            cy={206}
-            fill={`url(#${id('busFaro')})`}
-            r={13}
-            stroke={p.faroBorde}
-            strokeWidth={2}
-          />
-          <Rect
-            fill={p.paragolpes}
-            height={14}
-            rx={7}
-            width={40}
-            x={466}
-            y={224}
-          />
-
-          {forma.ruedas.map((x) => (
-            <G key={x}>
-              <Circle cx={x} cy={248} fill={p.ruedaArco} r={45} />
-              <Circle cx={x} cy={248} fill={p.rueda} r={37} />
-              <Circle
-                cx={x}
-                cy={248}
-                fill={`url(#${id('busLlanta')})`}
-                r={23}
+          <G transform={`translate(${forma.dx} 0)`}>
+            <G clipPath={`url(#${id('busCarroceria')})`}>
+              <Rect
+                fill={`url(#${id('busCarro')})`}
+                height={240}
+                width={500}
+                x={10}
+                y={10}
               />
-              <Circle cx={x} cy={248} fill={p.ruedaCentro} r={9} />
-              <Path
-                d={`M${x - 21},236 A25,25 0 0 1 ${x + 2},224`}
-                fill="none"
-                stroke={p.llantaClara}
-                strokeLinecap="round"
-                strokeOpacity={0.7}
-                strokeWidth={3}
+              <Rect
+                fill={`url(#${id('busBanda')})`}
+                height={forma.banda.alto}
+                width={500}
+                x={10}
+                y={forma.banda.y}
+              />
+              <Rect
+                fill={p.llantaClara}
+                height={5}
+                opacity={0.45}
+                width={500}
+                x={10}
+                y={forma.banda.y}
+              />
+              <Rect
+                fill={`url(#${id('busFalda')})`}
+                height={50}
+                width={500}
+                x={10}
+                y={208}
+              />
+              <Ellipse
+                cx={170}
+                cy={forma.ventanas[0]?.y ?? 80}
+                fill={`url(#${id('busBrillo')})`}
+                rx={150}
+                ry={22}
               />
             </G>
-          ))}
+            <Path
+              d={forma.carroceria}
+              fill="none"
+              stroke={p.borde}
+              strokeOpacity={0.18}
+              strokeWidth={2}
+            />
+
+            {forma.ventanas.map((ventana) => (
+              <Rect
+                fill={`url(#${id('busVidrio')})`}
+                height={ventana.alto}
+                key={`${ventana.x}-${ventana.y}`}
+                rx={ventana.rx}
+                width={ventana.ancho}
+                x={ventana.x}
+                y={ventana.y}
+              />
+            ))}
+            <Path d={forma.frente} fill={`url(#${id('busVidrio')})`} />
+            {forma.frenteAlto && (
+              <Path d={forma.frenteAlto} fill={`url(#${id('busVidrio')})`} />
+            )}
+            {forma.destello &&
+              forma.ventanas.map((ventana) => {
+                const { alto, ancho, x, y } = ventana;
+                return (
+                  <Path
+                    d={`M${x + 8},${y + 6} L${x + 8 + ancho * 0.46},${y + 6} L${x + 16},${y + alto - 6} L${x + 8},${y + alto - 6} Z`}
+                    fill={p.llantaClara}
+                    key={`d${x}-${y}`}
+                    opacity={0.1}
+                  />
+                );
+              })}
+
+            <Rect
+              fill={p.rueda}
+              height={forma.letrero.alto}
+              rx={6}
+              width={forma.letrero.ancho}
+              x={forma.letrero.x}
+              y={forma.letrero.y}
+            />
+            <G
+              transform={
+                espejo
+                  ? `translate(${xLetrero} ${yLetrero}) scale(-1 1) translate(${-xLetrero} ${-yLetrero})`
+                  : undefined
+              }
+            >
+              <TextoSvg
+                fill={p.banda}
+                fontFamily="JetBrainsMono_600SemiBold"
+                fontSize={tamanoLetrero}
+                letterSpacing={1}
+                textAnchor="middle"
+                x={forma.letrero.x + forma.letrero.ancho / 2}
+                y={forma.letrero.y + forma.letrero.alto - 5}
+              >
+                {letrero}
+              </TextoSvg>
+            </G>
+
+            <Circle
+              cx={486}
+              cy={206}
+              fill={`url(#${id('busFaroHalo')})`}
+              r={28}
+            />
+            <Circle
+              cx={486}
+              cy={206}
+              fill={`url(#${id('busFaro')})`}
+              r={13}
+              stroke={p.faroBorde}
+              strokeWidth={2}
+            />
+            <Rect
+              fill={p.paragolpes}
+              height={14}
+              rx={7}
+              width={40}
+              x={466}
+              y={224}
+            />
+
+            {forma.ruedas.map((x) => (
+              <G key={x}>
+                <Circle cx={x} cy={248} fill={p.ruedaArco} r={45} />
+                <Circle cx={x} cy={248} fill={p.rueda} r={37} />
+                <Circle
+                  cx={x}
+                  cy={248}
+                  fill={`url(#${id('busLlanta')})`}
+                  r={23}
+                />
+                <Circle cx={x} cy={248} fill={p.ruedaCentro} r={9} />
+                <Path
+                  d={`M${x - 21},236 A25,25 0 0 1 ${x + 2},224`}
+                  fill="none"
+                  stroke={p.llantaClara}
+                  strokeLinecap="round"
+                  strokeOpacity={0.7}
+                  strokeWidth={3}
+                />
+              </G>
+            ))}
+          </G>
         </G>
       </Svg>
     </View>
