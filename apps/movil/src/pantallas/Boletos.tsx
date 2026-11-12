@@ -109,7 +109,6 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
 }
 
 const estilos = StyleSheet.create({
-  grupo: { gap: espacios.doce, marginTop: espacios.veinticuatro },
   bloque: { marginTop: espacios.veinticuatro },
   centrada: { alignItems: 'center' },
   detalle: { textAlign: 'center' },
