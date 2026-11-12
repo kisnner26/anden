@@ -613,6 +613,6 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - hecho cuando: la portada se siente viva sin bloquear, el deslizamiento y su cancelación responden bajo el dedo, el bus sale con humo y sonido al completar, y con reducir movimiento todo sigue siendo usable.
 
 ### T-114 · ubicación integrada con Apple Maps
-- depende de: T-113 · zona: `apps/movil/src/datos`, `apps/movil/src/pantallas`, `apps/movil/src/componentes` · raíz: no · estado: libre
+- depende de: T-113 · zona: `apps/movil/src/datos`, `apps/movil/src/pantallas`, `apps/movil/src/componentes` · raíz: no · estado: hecha
 - hacer: pedir la ubicación solo al activar la persona una acción, en primer plano y sin guardarla ni enviarla, y abrir Apple Maps para llegar a la terminal elegida, con la misma voz visual de la app.
 - hecho cuando: la acción explica por qué se pide la ubicación antes del diálogo del sistema, la terminal se abre en Apple Maps con su nombre y coordenadas, y negar el permiso deja la app usable.
