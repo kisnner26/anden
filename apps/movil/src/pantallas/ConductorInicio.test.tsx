@@ -9,8 +9,9 @@ import {
 } from '@jest/globals';
 import { fireEvent, waitFor } from '@testing-library/react-native';
 
+import { ProveedorCierres } from '@/datos/ProveedorCierres';
 import { ProveedorSesion } from '@/datos/ProveedorSesion';
-import { reiniciarMuestra } from '@/datos/useSalidas';
+import { obtenerMuestra, reiniciarMuestra } from '@/datos/useSalidas';
 import { renderPantalla } from '@/pruebas/render';
 import { TRANSMISION } from '@/servicios/transmision';
 
@@ -39,7 +40,9 @@ function dibujar(
 ) {
   return renderPantalla(
     <ProveedorSesion>
-      <ConductorInicio alAbrirViaje={alAbrirViaje} alSalir={alSalir} />
+      <ProveedorCierres>
+        <ConductorInicio alAbrirViaje={alAbrirViaje} alSalir={alSalir} />
+      </ProveedorCierres>
     </ProveedorSesion>,
   );
 }
@@ -96,5 +99,27 @@ describe('ConductorInicio', () => {
     );
     await waitFor(() => expect(alSalir).toHaveBeenCalledTimes(1));
     expect(await AsyncStorage.getItem('anden.sesion')).toBeNull();
+  });
+
+  it('marca los viajes que ya cerró con lo que cobró', async () => {
+    const viaje = obtenerMuestra().viajes.find((v) => v.choferId === 'cho_2')!;
+    await AsyncStorage.setItem(
+      'anden.cierres',
+      JSON.stringify([
+        {
+          cerradoEn: new Date().toISOString(),
+          choferId: 'cho_2',
+          cobrado: 140,
+          pagados: 2,
+          pasajeros: 2,
+          pendiente: 0,
+          sinPagar: [],
+          total: 140,
+          viajeId: viaje.id,
+        },
+      ]),
+    );
+    const pantalla = await dibujar();
+    expect(await pantalla.findByText('Cerrado · cobrado C$ 140')).toBeTruthy();
   });
 });
