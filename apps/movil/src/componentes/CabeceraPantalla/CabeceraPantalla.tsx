@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
 import { espacios } from '@/tema/espacios';
+import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
@@ -38,7 +39,7 @@ export function CabeceraPantalla({
       </Pressable>
       <Text
         accessibilityRole="header"
-        style={[estilos.titulo, { color: colores.tinta }]}
+        style={[tipografia.titularPantalla, { color: colores.tinta }]}
       >
         {titulo}
         <Text style={{ color: colores.ambarTitular }}>{resalte}</Text>
@@ -55,10 +56,5 @@ const estilos = StyleSheet.create({
     width: 44,
   },
   contenedor: { gap: espacios.dieciseis },
-  titulo: {
-    fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
-    fontSize: 46,
-    lineHeight: 48,
-  },
   volver: { alignSelf: 'flex-start' },
 });
