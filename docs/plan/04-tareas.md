@@ -616,3 +616,8 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - depende de: T-113 · zona: `apps/movil/src/datos`, `apps/movil/src/pantallas`, `apps/movil/src/componentes` · raíz: no · estado: hecha
 - hacer: pedir la ubicación solo al activar la persona una acción, en primer plano y sin guardarla ni enviarla, y abrir Apple Maps para llegar a la terminal elegida, con la misma voz visual de la app.
 - hecho cuando: la acción explica por qué se pide la ubicación antes del diálogo del sistema, la terminal se abre en Apple Maps con su nombre y coordenadas, y negar el permiso deja la app usable.
+
+### T-130 · escalar los tamaños de letra escritos a mano en el modo Sencillo
+- depende de: T-114 · zona: `apps/movil/src/tema`, `apps/movil/src/componentes`, `apps/movil/src/pantallas` · raíz: no · estado: libre
+- hacer: el modo Sencillo agranda la letra un 25 % desde `tipografia`, pero unos 20 estilos (TalonBoleto, CabeceraPantalla, Boletos, PerfilChofer, Pago, FilaBoleto, Avisos, Pasajeros, Portada, LineaRuta, OpcionSeleccion) escriben su `fontSize` a mano dentro de `StyleSheet.create`, así que no escalan y rompen la regla de dejar los tamaños en `src/tema`. Llevarlos a tokens de tipografía que sí escalen.
+- hecho cuando: ningún `fontSize` numérico queda fuera de `src/tema`, el modo Sencillo agranda todos los textos por igual y se revisó en un iPhone de 375 puntos que ningún título grande se corta.
