@@ -8,28 +8,39 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { Autobus } from '@/componentes/Autobus';
 import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
-import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { CampoTexto } from '@/componentes/CampoTexto';
 import { useSesion } from '@/datos/useSesion';
-import { espacios } from '@/tema/espacios';
+import type { Rol } from '@/servicios/sesion';
+import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
 export interface PropiedadesIngresar {
-  /** la sesión de conductor quedó iniciada */
-  alIngresar: () => void;
-  alVolver: () => void;
+  /** crea una cuenta nueva de pasajero */
+  alCrearCuenta?: () => void;
+  /** la sesión quedó iniciada; el rol lo decidió la cuenta, no quien entró */
+  alIngresar: (rol: Rol) => void;
+  /** seguir sin cuenta */
+  alInvitado?: () => void;
 }
 
-/** el login de los choferes; el pasajero no lo necesita y sigue usando la app sin cuenta */
-export function Ingresar({ alIngresar, alVolver }: PropiedadesIngresar) {
+/**
+ * el ingreso de todas las personas: no pregunta quién es ni con qué rol entra. Con el correo, el
+ * teléfono o el código y la contraseña, la cuenta dice si es pasajero o conductor.
+ */
+export function Ingresar({
+  alCrearCuenta,
+  alIngresar,
+  alInvitado,
+}: PropiedadesIngresar) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
-  const { iniciarComoConductor } = useSesion();
-  const [codigo, establecerCodigo] = useState('');
+  const { iniciar } = useSesion();
+  const [identificador, establecerIdentificador] = useState('');
   const [clave, establecerClave] = useState('');
   const [error, establecerError] = useState(false);
   const [ingresando, establecerIngresando] = useState(false);
@@ -37,9 +48,9 @@ export function Ingresar({ alIngresar, alVolver }: PropiedadesIngresar) {
   async function entrar() {
     establecerIngresando(true);
     establecerError(false);
-    const resultado = await iniciarComoConductor(codigo, clave);
+    const resultado = await iniciar(identificador, clave);
     establecerIngresando(false);
-    if (resultado.ok) alIngresar();
+    if (resultado.ok) alIngresar(resultado.valor.rol);
     else establecerError(true);
   }
 
@@ -49,20 +60,27 @@ export function Ingresar({ alIngresar, alVolver }: PropiedadesIngresar) {
         estilos.contenido,
         {
           paddingBottom: espacios.cuarentaYOcho,
-          paddingTop: margenes.top + espacios.ocho,
+          paddingTop: margenes.top + espacios.veinticuatro,
         },
       ]}
       keyboardShouldPersistTaps="handled"
       style={{ backgroundColor: colores.fondo }}
     >
-      {/* tocar fuera de los campos cierra el teclado numérico, que no tiene tecla para cerrarse */}
+      {/* tocar fuera de los campos cierra el teclado, que a veces no tiene tecla para cerrarse */}
       <Pressable
         accessible={false}
         onPress={Keyboard.dismiss}
         style={estilos.envoltura}
         testID="ingresar-envoltura"
       >
-        <CabeceraPantalla alVolver={alVolver} titulo={t('ingresar.titulo')} />
+        <Autobus ancho={tamanosControl.toqueMinimo * 3} />
+        <Text
+          accessibilityRole="header"
+          style={[tipografia.titularPantalla, { color: colores.tinta }]}
+        >
+          {t('ingresar.titulo')}
+          <Text style={{ color: colores.ambarTitular }}>.</Text>
+        </Text>
         <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
           {t('ingresar.detalle')}
         </Text>
@@ -70,12 +88,11 @@ export function Ingresar({ alIngresar, alVolver }: PropiedadesIngresar) {
         <Bloque estiloContenido={estilos.formulario}>
           <CampoTexto
             alCambiar={(valor) => {
-              establecerCodigo(valor);
+              establecerIdentificador(valor);
               establecerError(false);
             }}
-            etiqueta={t('ingresar.codigo')}
-            teclado="number-pad"
-            valor={codigo}
+            etiqueta={t('ingresar.identificador')}
+            valor={identificador}
           />
           <CampoTexto
             alCambiar={(valor) => {
@@ -90,10 +107,33 @@ export function Ingresar({ alIngresar, alVolver }: PropiedadesIngresar) {
           <BotonAccion
             alPresionar={() => void entrar()}
             cargando={ingresando}
-            deshabilitado={codigo.trim() === '' || clave === ''}
+            deshabilitado={identificador.trim() === '' || clave === ''}
             etiqueta={t('ingresar.entrar')}
           />
         </Bloque>
+
+        {alCrearCuenta && (
+          <Pressable
+            accessibilityRole="button"
+            onPress={alCrearCuenta}
+            style={estilos.enlace}
+          >
+            <Text style={[tipografia.subtitulo, { color: colores.ambarTexto }]}>
+              {t('ingresar.crear')}
+            </Text>
+          </Pressable>
+        )}
+        {alInvitado && (
+          <Pressable
+            accessibilityRole="button"
+            onPress={alInvitado}
+            style={estilos.enlace}
+          >
+            <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
+              {t('ingresar.invitado')}
+            </Text>
+          </Pressable>
+        )}
 
         <Bloque estiloContenido={estilos.prueba} hundido radio="loseta">
           <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
@@ -110,6 +150,11 @@ export function Ingresar({ alIngresar, alVolver }: PropiedadesIngresar) {
 
 const estilos = StyleSheet.create({
   contenido: { paddingHorizontal: espacios.lateral },
+  enlace: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: tamanosControl.toqueMinimo,
+  },
   envoltura: { gap: espacios.dieciseis },
   formulario: { gap: espacios.dieciseis, padding: espacios.veinticuatro },
   prueba: { gap: espacios.cuatro, padding: espacios.dieciseis },

@@ -2,36 +2,37 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Redirect, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 
-import { perfilVacio } from '@/datos/perfil';
-import { usePerfil } from '@/datos/usePerfil';
 import { useSesion } from '@/datos/useSesion';
 import { Portada } from '@/pantallas/Portada';
+import { esInvitado } from '@/servicios/sesion';
 
 const CLAVE_PORTADA = 'anden.portada';
 
 export default function Inicio() {
   const router = useRouter();
-  const { perfil } = usePerfil();
-  const { cargando: cargandoSesion, rol } = useSesion();
+  const { cargando: cargandoSesion, rol, sesion } = useSesion();
   const [vista, establecerVista] = useState<boolean | null>(null);
+  const [invitado, establecerInvitado] = useState<boolean | null>(null);
 
   useEffect(() => {
     AsyncStorage.getItem(CLAVE_PORTADA)
       .then((valor) => establecerVista(valor === '1'))
       .catch(() => establecerVista(false));
+    void esInvitado().then(establecerInvitado);
   }, []);
 
-  if (vista === null || cargandoSesion) return null;
-  // quien ya inició sesión como conductor entra directo a sus viajes
+  if (vista === null || invitado === null || cargandoSesion) return null;
+  // quien ya inició sesión entra directo a lo suyo; el rol lo trae la cuenta
   if (rol === 'conductor') return <Redirect href="/conductor" />;
-  if (vista) return <Redirect href="/viajar" />;
+  if (vista) {
+    return <Redirect href={sesion || invitado ? '/viajar' : '/ingresar'} />;
+  }
 
   return (
     <Portada
       alEmpezar={() => {
         void AsyncStorage.setItem(CLAVE_PORTADA, '1');
-        // sin cuenta todavía, se ofrece crearla antes de entrar
-        router.replace(perfilVacio(perfil) ? '/cuenta' : '/viajar');
+        router.replace(sesion || invitado ? '/viajar' : '/ingresar');
       }}
     />
   );

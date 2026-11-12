@@ -16,7 +16,7 @@ export default function RutaConductor() {
       alAbrirViaje={(id) =>
         router.push({ params: { id }, pathname: '/conductor/viaje/[id]' })
       }
-      alSalir={() => router.replace('/viajar')}
+      alSalir={() => router.replace('/ingresar')}
     />
   );
 }
