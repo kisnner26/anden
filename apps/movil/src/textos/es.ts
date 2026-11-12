@@ -410,6 +410,20 @@ export const textos = {
     descripcion: 'El conductor comparte su ubicación durante el viaje.',
   },
   conductor: {
+    cierreTitulo: 'Cerrar el viaje',
+    cierreDetalle:
+      'Revisá el cobro antes de cerrar. Después no se puede cambiar.',
+    cierrePagaron: '{pagados} de {total} pasajeros pagaron',
+    cierreCobrado: 'Cobrado C$ {cobrado}',
+    cierrePendiente: 'Por cobrar C$ {pendiente}',
+    cierreSinPagar: 'No pagaron',
+    cierreTodoPagado: 'Todos pagaron.',
+    cierreConfirmar: 'Cerrar viaje',
+    cierreSeguir: 'Seguir cobrando',
+    cerrarSinCompartir: 'Cerrar el viaje y ver el resumen',
+    cerrado: 'Viaje cerrado',
+    cerradoEl: 'Cerrado a las {hora}',
+    cerrarHoja: 'Cerrar resumen',
     saludo: 'Hola, {nombre}',
     titulo: 'Tus viajes',
     detalle:
