@@ -10,9 +10,11 @@ import { Icono } from '@/componentes/Icono';
 import { LineaRuta } from '@/componentes/LineaRuta';
 import { LineaViaje } from '@/componentes/LineaViaje';
 import { MapaCorredor } from '@/componentes/MapaCorredor';
+import { SeguimientoEnVivo } from '@/componentes/SeguimientoEnVivo';
 import { Loseta } from '@/componentes/Loseta';
 import { estadoTablero } from '@/componentes/TableroSalidas';
 import { formatoDuracion } from '@/datos/formato';
+import { useAvanceViaje } from '@/datos/useAvanceViaje';
 import { useRecorrido } from '@/datos/useRecorrido';
 import { useDetalleViaje } from '@/datos/useDetalleViaje';
 import { espacios } from '@/tema/espacios';
@@ -37,6 +39,11 @@ export function DetalleViaje({
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const detalle = useDetalleViaje(viajeId);
+  const avance = useAvanceViaje(
+    viajeId,
+    detalle?.origenCiudad ?? '',
+    detalle?.salida.destino ?? '',
+  );
   const recorrido = useRecorrido(
     detalle?.origenCiudad ?? '',
     detalle?.salida.destino ?? '',
@@ -219,6 +226,12 @@ export function DetalleViaje({
         >
           {t('detalle.recorrido')}
         </Text>
+        {avance.transmision.activa && (
+          <SeguimientoEnVivo
+            progreso={avance.progreso}
+            sinSenal={avance.transmision.sinSenal}
+          />
+        )}
         {recorrido && (
           <View style={estilos.mapa}>
             <View
@@ -226,7 +239,12 @@ export function DetalleViaje({
               accessibilityRole="image"
               accessible
             >
-              <MapaCorredor simulacion={recorrido} />
+              <MapaCorredor
+                simulacion={{
+                  ...recorrido,
+                  bus: avance.transmision.posicion ?? undefined,
+                }}
+              />
             </View>
             <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
               {recorrido.distanciaKm === null
