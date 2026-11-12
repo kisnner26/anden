@@ -109,7 +109,13 @@ export function Asientos({ alSeguir, alVolver, viajeId }: PropiedadesAsientos) {
 
         <ProgresoReserva paso={1} />
 
-        <Text style={[estilos.titulo, { color: colores.tinta }]}>
+        <Text
+          style={[
+            tipografia.titularPantalla,
+            estilos.titulo,
+            { color: colores.tinta },
+          ]}
+        >
           {`${t('asientos.tituloInicio')} `}
           <Text style={{ color: colores.ambarTitular }}>
             {t('asientos.tituloResalte')}
@@ -258,10 +264,5 @@ const estilos = StyleSheet.create({
     paddingVertical: 8,
   },
   subtitulo: { marginTop: espacios.ocho },
-  titulo: {
-    fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
-    fontSize: 46,
-    lineHeight: 48,
-    marginTop: espacios.doce,
-  },
+  titulo: { marginTop: espacios.doce },
 });
