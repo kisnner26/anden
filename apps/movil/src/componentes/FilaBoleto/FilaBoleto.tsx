@@ -46,7 +46,7 @@ export function FilaBoleto({
           <Icono nombre="boleto" tamano="ilustracion" />
         </Loseta>
         <View style={estilos.texto}>
-          <Text style={[estilos.destino, { color: colores.tinta }]}>
+          <Text style={[tipografia.nombreFila, { color: colores.tinta }]}>
             {resumen.destino}
           </Text>
           <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
@@ -72,7 +72,6 @@ const estilos = StyleSheet.create({
     gap: espacios.doce,
     padding: espacios.doce,
   },
-  destino: { fontFamily: 'Archivo_600SemiBold', fontSize: 18, lineHeight: 22 },
   fila: { marginTop: 10 },
   texto: { flex: 1, gap: 2 },
 });
