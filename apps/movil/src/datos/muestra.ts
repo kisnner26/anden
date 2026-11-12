@@ -11,6 +11,7 @@ import type {
   TipoServicio,
   Viaje,
 } from '@anden/dominio';
+import { DIAS_DE_RESERVA, sumarDias } from './dias';
 import { TRAZOS } from './trazos';
 
 export interface DatosMuestra {
@@ -210,6 +211,27 @@ const SALIDAS: Array<{
   },
 ] as const;
 
+/** salidas fijas de cada día para los días siguientes: las mismas horas en los cuatro sentidos */
+const HORARIO_DIARIO: ReadonlyArray<{
+  hora: number;
+  minuto: number;
+  servicio: TipoServicio;
+}> = [
+  { hora: 5, minuto: 30, servicio: 'ordinario' },
+  { hora: 7, minuto: 0, servicio: 'expreso' },
+  { hora: 9, minuto: 30, servicio: 'ordinario' },
+  { hora: 12, minuto: 0, servicio: 'ordinario' },
+  { hora: 15, minuto: 0, servicio: 'expreso' },
+  { hora: 17, minuto: 30, servicio: 'ordinario' },
+];
+
+const SENTIDOS_DIARIOS = [
+  { anden: 3, rutaId: 'rut_may_boa' },
+  { anden: 4, rutaId: 'rut_may_jui' },
+  { anden: 1, rutaId: 'rut_boa_may' },
+  { anden: 2, rutaId: 'rut_jui_may' },
+] as const;
+
 /** notas de muestra de cada chofer, de la más vieja a la más nueva */
 const NOTAS_POR_CHOFER = [
   [5, 5, 4, 5, 5, 4, 5, 5, 5, 4, 5, 5, 4, 5, 5],
@@ -276,6 +298,45 @@ export function crearMuestra(ahora: Date): DatosMuestra {
       salida: new Date(ahora.getTime() + salida.desde * 60_000).toISOString(),
     });
   });
+
+  // los días siguientes: un horario fijo por sentido, para poder reservar con anticipación
+  let secuencia = 0;
+  for (let dia = 1; dia < DIAS_DE_RESERVA; dia += 1) {
+    const base = sumarDias(ahora, dia);
+    SENTIDOS_DIARIOS.forEach((sentido, s) => {
+      HORARIO_DIARIO.forEach((horario, h) => {
+        secuencia += 1;
+        const id = `d${dia}_${s}_${h}`;
+        buses.push({
+          comodidades:
+            horario.servicio === 'expreso'
+              ? ['aire-acondicionado', 'carga-usb']
+              : [],
+          configuracion: CONFIGURACION_POR_SERVICIO[horario.servicio],
+          cooperativa: 'Cooperativa de muestra',
+          id: `bus_${id}`,
+          placa: `M ${300 + secuencia}-${100 + (secuencia % 90)}`,
+          servicio: horario.servicio,
+        });
+        viajes.push({
+          anden: sentido.anden,
+          busId: `bus_${id}`,
+          choferId: `cho_${(secuencia % choferes.length) + 1}`,
+          estado: 'programado',
+          id: `via_${id}`,
+          minutosAtraso: 0,
+          rutaId: sentido.rutaId,
+          salida: new Date(
+            base.getFullYear(),
+            base.getMonth(),
+            base.getDate(),
+            horario.hora,
+            horario.minuto,
+          ).toISOString(),
+        });
+      });
+    });
+  }
 
   const vence = new Date(ahora.getTime() + 8 * 60_000).toISOString();
   const vendidos = [2, 3, 5, 10, 11, 14, 19, 22, 23].map<Ocupacion>(

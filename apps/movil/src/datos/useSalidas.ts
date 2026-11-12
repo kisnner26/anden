@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { crearMuestra, type DatosMuestra } from './muestra';
-import { armarSalidas, proximaSalida } from './salidas';
+import {
+  armarSalidas,
+  armarTodasLasSalidas,
+  proximaSalida,
+  salidasDelDia,
+} from './salidas';
 
 const MEDIO_MINUTO = 30_000;
 
@@ -31,13 +36,27 @@ export function useAhora(intervalo: number = MEDIO_MINUTO): Date {
   return ahora;
 }
 
-export function useSalidas(origenId: string = 'ter_may') {
+/**
+ * las salidas de una terminal (o de todas si no se indica) con la hora actual refrescada.
+ * Sin `dia` trae todos los días reservables, que es lo que necesita quien busca un viaje por su id;
+ * con `dia` trae solo las de ese día, para las listas.
+ */
+export function useSalidas(origenId?: string, dia?: Date) {
   const ahora = useAhora();
   const datos = obtenerMuestra();
-  const salidas = useMemo(
-    () => armarSalidas(datos, ahora, origenId),
+  const todas = useMemo(
+    () =>
+      origenId
+        ? armarSalidas(datos, ahora, origenId)
+        : armarTodasLasSalidas(datos, ahora),
     [datos, ahora, origenId],
   );
-  const proxima = useMemo(() => proximaSalida(salidas), [salidas]);
+  const marcaDia = dia?.getTime();
+  const salidas = useMemo(
+    () =>
+      marcaDia === undefined ? todas : salidasDelDia(todas, new Date(marcaDia)),
+    [marcaDia, todas],
+  );
+  const proxima = useMemo(() => proximaSalida(todas), [todas]);
   return { ahora, datos, proxima, salidas };
 }

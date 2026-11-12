@@ -30,6 +30,7 @@ import {
   guardarReciente,
   leerRecientes,
 } from '@/datos/recientes';
+import { inicioDelDia } from '@/datos/dias';
 import { armarRutas } from '@/datos/rutas';
 import { obtenerMuestra, useSalidas } from '@/datos/useSalidas';
 import { espacios } from '@/tema/espacios';
@@ -65,7 +66,8 @@ export function Buscador({
 }: PropiedadesBuscador) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
-  const { ahora, salidas } = useSalidas();
+  const hoy = useMemo(() => inicioDelDia(new Date()), []);
+  const { ahora, salidas } = useSalidas('ter_may', hoy);
   const [filtros, establecerFiltros] = useState<FiltrosBusqueda>({
     ...SIN_FILTROS,
     texto: consultaInicial,

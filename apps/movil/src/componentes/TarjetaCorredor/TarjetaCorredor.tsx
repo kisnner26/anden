@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Bloque } from '@/componentes/Bloque';
@@ -12,6 +13,7 @@ import {
   nivelDisponibilidad,
   proximaHaciaDestino,
 } from '@/datos/disponibilidad';
+import { inicioDelDia } from '@/datos/dias';
 import { formatoHoraCompleta } from '@/datos/formato';
 import { useFavoritos } from '@/datos/useFavoritos';
 import { useSalidas } from '@/datos/useSalidas';
@@ -36,7 +38,11 @@ export function TarjetaCorredor({
     .replace('{{destino}}', corredor.destino);
   const { alternar, esFavorito } = useFavoritos();
   const favorito = esFavorito(corredor.id);
-  const { ahora, salidas } = useSalidas(TERMINAL_POR_CIUDAD[corredor.origen]);
+  const hoy = useMemo(() => inicioDelDia(new Date()), []);
+  const { ahora, salidas } = useSalidas(
+    TERMINAL_POR_CIUDAD[corredor.origen],
+    hoy,
+  );
   const proxima = proximaHaciaDestino(salidas, corredor.destino);
   const nivel = proxima ? nivelDisponibilidad(proxima.asientosLibres) : null;
   const textoLibres =

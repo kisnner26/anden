@@ -1,7 +1,7 @@
 import { precioOficial, type TipoServicio } from '@anden/dominio';
 
 import type { DatosMuestra } from './muestra';
-import { armarSalidas } from './salidas';
+import { armarSalidas, salidasDelDia } from './salidas';
 
 export interface ServicioDeRuta {
   servicio: TipoServicio;
@@ -27,7 +27,7 @@ const SERVICIOS_EN_ORDEN: TipoServicio[] = [
 
 /** las rutas de la terminal con los servicios que las recorren, su tarifa de muestra y la próxima salida */
 export function armarRutas(datos: DatosMuestra, ahora: Date): RutaVista[] {
-  const salidas = armarSalidas(datos, ahora);
+  const salidas = salidasDelDia(armarSalidas(datos, ahora), ahora);
 
   return datos.rutas
     .filter((ruta) => ruta.origenId === 'ter_may')

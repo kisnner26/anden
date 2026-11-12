@@ -7,6 +7,7 @@ import {
   type TipoServicio,
 } from '@anden/dominio';
 
+import { mismoDia } from './dias';
 import type { DatosMuestra } from './muestra';
 
 export interface Salida {
@@ -117,4 +118,19 @@ export function salidasDeChofer(
     .flatMap((terminal) => armarSalidas(datos, ahora, terminal.id))
     .filter((salida) => salida.choferId === choferId)
     .sort((a, b) => a.salida.getTime() - b.salida.getTime());
+}
+
+/** las salidas de todas las terminales, por hora; sirve para buscar un viaje sin saber de dónde sale */
+export function armarTodasLasSalidas(
+  datos: DatosMuestra,
+  ahora: Date,
+): Salida[] {
+  return datos.terminales
+    .flatMap((terminal) => armarSalidas(datos, ahora, terminal.id))
+    .sort((a, b) => a.salida.getTime() - b.salida.getTime());
+}
+
+/** las salidas que parten el día indicado */
+export function salidasDelDia(salidas: readonly Salida[], dia: Date): Salida[] {
+  return salidas.filter((salida) => mismoDia(salida.salida, dia));
 }

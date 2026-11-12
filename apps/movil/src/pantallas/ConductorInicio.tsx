@@ -6,7 +6,7 @@ import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
 import { formatoHora, sufijoHora } from '@/datos/formato';
-import { salidasDeChofer } from '@/datos/salidas';
+import { salidasDeChofer, salidasDelDia } from '@/datos/salidas';
 import { useSesion } from '@/datos/useSesion';
 import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
 import { useViajesEnVivo } from '@/datos/useTransmision';
@@ -33,7 +33,10 @@ export function ConductorInicio({
   const ahora = useAhora();
   const enVivo = useViajesEnVivo();
   const viajes = sesion?.choferId
-    ? salidasDeChofer(obtenerMuestra(), ahora, sesion.choferId)
+    ? salidasDelDia(
+        salidasDeChofer(obtenerMuestra(), ahora, sesion.choferId),
+        ahora,
+      )
     : [];
 
   return (
