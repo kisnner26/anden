@@ -52,3 +52,12 @@ export const OPERACION_MUESTRA_POR_CORREDOR: Readonly<
     proximaSalida: '6:43 a. m.',
   },
 };
+
+/** la terminal de cada ciudad en los datos de muestra */
+export const TERMINAL_POR_CIUDAD: Readonly<
+  Record<CorredorInterlocal['origen'], string>
+> = {
+  Boaco: 'ter_boa',
+  Juigalpa: 'ter_jui',
+  Managua: 'ter_may',
+};
