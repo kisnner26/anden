@@ -1,14 +1,23 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 import { Icono, type NombreIcono } from '@/componentes/Icono';
 import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
+import { movimiento } from '@/tema/movimiento';
 import { useTema } from '@/tema/useTema';
 
 export interface PropiedadesBotonAccion {
   alPresionar: () => void;
+  /** mientras trabaja muestra una rueda en el círculo y no deja volver a tocarlo */
+  cargando?: boolean;
   deshabilitado?: boolean;
   etiqueta: string;
   /** ícono dentro del círculo negro de la derecha */
@@ -18,6 +27,7 @@ export interface PropiedadesBotonAccion {
 /** el botón ámbar de la pantalla: píldora con degradado y un círculo negro a la derecha; solo hay uno por pantalla */
 export function BotonAccion({
   alPresionar,
+  cargando = false,
   deshabilitado = false,
   etiqueta,
   icono = 'siguiente',
@@ -33,12 +43,13 @@ export function BotonAccion({
     <Pressable
       accessibilityLabel={etiqueta}
       accessibilityRole="button"
-      accessibilityState={{ disabled: deshabilitado }}
-      disabled={deshabilitado}
+      accessibilityState={{ busy: cargando, disabled: deshabilitado }}
+      disabled={deshabilitado || cargando}
       onPress={presionar}
       style={({ pressed }) => [
         estilos.contenedor,
         { opacity: deshabilitado ? 0.5 : pressed ? 0.9 : 1 },
+        pressed && { transform: [{ scale: movimiento.escalaPresion }] },
       ]}
     >
       <LinearGradient
@@ -57,7 +68,15 @@ export function BotonAccion({
           style={estilos.circulo}
         >
           <View>
-            <Icono color={colores.sobreNegro} nombre={icono} tamano="grande" />
+            {cargando ? (
+              <ActivityIndicator color={colores.ambar} />
+            ) : (
+              <Icono
+                color={colores.sobreNegro}
+                nombre={icono}
+                tamano="grande"
+              />
+            )}
           </View>
         </LinearGradient>
       </LinearGradient>
