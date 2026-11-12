@@ -4,6 +4,8 @@ import { ajustesDeModo, type AjustesModoUso, type ModoUso } from './modoUso';
 
 export interface ValorModoUso {
   ajustes: AjustesModoUso;
+  /** lo llama el perfil cuando se conoce la edad: adapta la interfaz a personas mayores */
+  establecerMayor?: (mayor: boolean) => void;
   establecerModo: (modo: ModoUso) => Promise<void>;
   modo: ModoUso;
 }

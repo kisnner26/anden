@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it } from '@jest/globals';
 
 import {
   ajustesDeModo,
+  ajustesPara,
   CLAVE_MODO_USO,
   esModoUso,
   guardarModoUso,
@@ -19,6 +20,7 @@ describe('ajustesDeModo', () => {
     expect(ajustesDeModo('completo')).toEqual({
       escalaTexto: 1,
       reducirMovimiento: false,
+      simplificado: false,
     });
   });
 
@@ -66,5 +68,22 @@ describe('modo guardado', () => {
   it('ignora un valor guardado que no existe', async () => {
     await AsyncStorage.setItem(CLAVE_MODO_USO, 'inventado');
     expect(await leerModoUso()).toBe('completo');
+  });
+});
+
+describe('ajustesPara', () => {
+  it('una persona mayor sin modo elegido recibe la interfaz adaptada', () => {
+    const ajustes = ajustesPara('completo', true);
+    expect(ajustes.escalaTexto).toBeGreaterThan(1);
+    expect(ajustes.simplificado).toBe(true);
+    expect(ajustes.reducirMovimiento).toBe(true);
+  });
+
+  it('si eligió otro modo, ese manda', () => {
+    expect(ajustesPara('rapido', true)).toEqual(ajustesDeModo('rapido'));
+  });
+
+  it('una persona menor no cambia nada', () => {
+    expect(ajustesPara('completo', false)).toEqual(ajustesDeModo('completo'));
   });
 });

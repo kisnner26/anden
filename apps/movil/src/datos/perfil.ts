@@ -9,6 +9,8 @@ export interface Perfil {
   apellido: string;
   cedula: string;
   correo: string;
+  /** años cumplidos; solo sirve para adaptar la interfaz */
+  edad: number | null;
   /** ruta local de la foto elegida de la galería */
   fotoUri: string | null;
   nombre: string;
@@ -20,6 +22,7 @@ export const PERFIL_VACIO: Perfil = {
   apellido: '',
   cedula: '',
   correo: '',
+  edad: null,
   fotoUri: null,
   nombre: '',
   pasajeros: [],
@@ -69,6 +72,37 @@ export function correoValido(texto: string): boolean {
   return texto.trim() === '' || CORREO.test(texto.trim());
 }
 
+export const EDAD_MINIMA = 5;
+export const EDAD_MAXIMA = 110;
+/** desde esta edad la interfaz se adapta sola: letra más legible y menos pasos */
+export const EDAD_MAYOR = 60;
+
+export function edadValida(valor: unknown): valor is number {
+  return (
+    typeof valor === 'number' &&
+    Number.isInteger(valor) &&
+    valor >= EDAD_MINIMA &&
+    valor <= EDAD_MAXIMA
+  );
+}
+
+/** la edad escrita en un campo: vacío es válido (es opcional) y devuelve nulo */
+export function leerEdad(texto: string): {
+  valida: boolean;
+  valor: number | null;
+} {
+  const limpio = texto.trim();
+  if (limpio === '') return { valida: true, valor: null };
+  const numero = Number(limpio);
+  return edadValida(numero)
+    ? { valida: true, valor: numero }
+    : { valida: false, valor: null };
+}
+
+export function esPersonaMayor(edad: number | null): boolean {
+  return edad !== null && edad >= EDAD_MAYOR;
+}
+
 function texto(valor: unknown): string {
   return typeof valor === 'string' ? valor : '';
 }
@@ -91,6 +125,7 @@ export function leerPerfil(guardado: string | null): Perfil {
       apellido: texto(valor.apellido),
       cedula: texto(valor.cedula),
       correo: texto(valor.correo),
+      edad: edadValida(valor.edad) ? valor.edad : null,
       fotoUri: typeof valor.fotoUri === 'string' ? valor.fotoUri : null,
       nombre: texto(valor.nombre),
       pasajeros,

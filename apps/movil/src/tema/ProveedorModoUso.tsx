@@ -7,7 +7,7 @@ import {
 } from 'react';
 
 import {
-  ajustesDeModo,
+  ajustesPara,
   guardarModoUso,
   leerModoUso,
   type ModoUso,
@@ -18,7 +18,8 @@ import { ContextoModoUso } from './useModoUso';
 /** comparte el modo de uso y aplica su escala de letra antes de dibujar a quienes lo leen */
 export function ProveedorModoUso({ children }: { children: ReactNode }) {
   const [modo, establecerModoLocal] = useState<ModoUso>('completo');
-  const ajustes = ajustesDeModo(modo);
+  const [mayor, establecerMayor] = useState(false);
+  const ajustes = ajustesPara(modo, mayor);
 
   // la escala se fija durante el render: los hijos que leen la tipografía ya la ven aplicada
   establecerEscalaTexto(ajustes.escalaTexto);
@@ -39,7 +40,7 @@ export function ProveedorModoUso({ children }: { children: ReactNode }) {
   }, []);
 
   const valor = useMemo(
-    () => ({ ajustes, establecerModo, modo }),
+    () => ({ ajustes, establecerMayor, establecerModo, modo }),
     [ajustes, establecerModo, modo],
   );
 

@@ -11,6 +11,8 @@ export interface AjustesModoUso {
   escalaTexto: number;
   /** sin animaciones de adorno, como si el sistema pidiera reducir movimiento */
   reducirMovimiento: boolean;
+  /** menos adornos y atajos: lo esencial a la vista y botones directos */
+  simplificado: boolean;
 }
 
 /**
@@ -19,13 +21,27 @@ export interface AjustesModoUso {
  * rapido: sin adornos, para quien ya conoce la app y va directo.
  */
 const AJUSTES: Record<ModoUso, AjustesModoUso> = {
-  completo: { escalaTexto: 1, reducirMovimiento: false },
-  rapido: { escalaTexto: 1, reducirMovimiento: true },
+  completo: { escalaTexto: 1, reducirMovimiento: false, simplificado: false },
+  rapido: { escalaTexto: 1, reducirMovimiento: true, simplificado: false },
   sencillo: {
     escalaTexto: 1.25,
     reducirMovimiento: true,
+    simplificado: true,
   },
 };
+
+/** ajustes para una persona mayor que no eligió otro modo: letra legible, sin animaciones y flujo simple */
+const AJUSTES_MAYOR: AjustesModoUso = {
+  escalaTexto: 1.2,
+  reducirMovimiento: true,
+  simplificado: true,
+};
+
+/** el modo elegido manda; sin elegir (completo), una persona mayor recibe la interfaz adaptada */
+export function ajustesPara(modo: ModoUso, mayor: boolean): AjustesModoUso {
+  if (mayor && modo === 'completo') return AJUSTES_MAYOR;
+  return AJUSTES[modo];
+}
 
 export function ajustesDeModo(modo: ModoUso): AjustesModoUso {
   return AJUSTES[modo];

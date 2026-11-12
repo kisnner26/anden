@@ -3,6 +3,8 @@ import { describe, expect, it } from '@jest/globals';
 import {
   PERFIL_VACIO,
   correoValido,
+  esPersonaMayor,
+  leerEdad,
   iniciales,
   leerPerfil,
   nombreCompleto,
@@ -100,5 +102,28 @@ describe('nombrePropio', () => {
 
   it('colapsa espacios repetidos', () => {
     expect(nombrePropio('  ana   ruiz ')).toBe('Ana Ruiz');
+  });
+});
+
+describe('edad', () => {
+  it('vacía es válida y no guarda nada', () => {
+    expect(leerEdad('  ')).toEqual({ valida: true, valor: null });
+  });
+
+  it('acepta un número razonable', () => {
+    expect(leerEdad('67')).toEqual({ valida: true, valor: 67 });
+  });
+
+  it('rechaza letras, decimales y rangos imposibles', () => {
+    expect(leerEdad('abc').valida).toBe(false);
+    expect(leerEdad('4').valida).toBe(false);
+    expect(leerEdad('150').valida).toBe(false);
+    expect(leerEdad('60.5').valida).toBe(false);
+  });
+
+  it('desde los 60 se considera persona mayor', () => {
+    expect(esPersonaMayor(59)).toBe(false);
+    expect(esPersonaMayor(60)).toBe(true);
+    expect(esPersonaMayor(null)).toBe(false);
   });
 });
