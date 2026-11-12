@@ -487,7 +487,6 @@ export const textos = {
     detalle: 'Interlocales entre Managua, Boaco y Juigalpa.',
     boacoManagua: 'Boaco · Managua',
     juigalpaManagua: 'Juigalpa · Managua',
-    corredor: 'Corredor interlocal',
     hacia: 'hacia',
     datosPendientes: 'Horarios y ubicación por confirmar',
     datosPendientesDetalle:

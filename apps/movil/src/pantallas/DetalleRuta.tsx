@@ -90,16 +90,10 @@ function DetalleCorredor({
       ]}
       style={{ backgroundColor: colores.fondo }}
     >
-      <CabeceraPantalla alVolver={alVolver} titulo={t('rutas.titulo')} />
-      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-        {t('rutas.corredor')}
-      </Text>
-      <Text
-        accessibilityRole="header"
-        style={[tipografia.display, { color: colores.tinta }]}
-      >
-        {`${corredor.origen} → ${corredor.destino}`}
-      </Text>
+      <CabeceraPantalla
+        alVolver={alVolver}
+        titulo={`${corredor.origen} → ${corredor.destino}`}
+      />
 
       {simulacion ? (
         <View style={estilos.mapaSeccion}>
