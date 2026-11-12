@@ -15,6 +15,7 @@ import { TalonBoleto } from '@/componentes/TalonBoleto';
 import { estadoVisibleBoleto } from '@/datos/estadoBoleto';
 import { useBoletos } from '@/datos/useBoletos';
 import { useAvisos } from '@/datos/useAvisos';
+import { usePagos } from '@/datos/usePagos';
 import { useAhora } from '@/datos/useSalidas';
 import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -44,6 +45,7 @@ export function VerBoleto({
   const ahora = useAhora();
   const { boletos, cancelar } = useBoletos();
   const { activar } = useAvisos();
+  const { estadoDe } = usePagos();
   const [confirmando, establecerConfirmando] = useState(false);
   const guardado = boletos.find(({ boleto }) => boleto.id === boletoId);
 
@@ -97,6 +99,14 @@ export function VerBoleto({
       <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {`${t('boletos.estado')}: ${etiquetaEstado}`}
       </Text>
+      {estadoDe(guardado.boleto.id) === 'pagado_efectivo' && (
+        <Text
+          accessibilityLiveRegion="polite"
+          style={[tipografia.etiqueta, { color: colores.aTiempo }]}
+        >
+          {t('boleto.pagadoEfectivo')}
+        </Text>
+      )}
 
       <Bloque estiloContenido={estilos.pago} hundido radio="loseta">
         <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
