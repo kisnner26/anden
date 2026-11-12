@@ -1,11 +1,16 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withDelay,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, {
   Circle,
@@ -17,9 +22,10 @@ import Svg, {
 } from 'react-native-svg';
 
 import { Autobus } from '@/componentes/Autobus';
-import { Bloque } from '@/componentes/Bloque';
-import { Icono } from '@/componentes/Icono';
-import { Loseta } from '@/componentes/Loseta';
+import { DeslizarParaEmpezar } from '@/componentes/DeslizarParaEmpezar';
+import { HumoEscape } from '@/componentes/HumoEscape';
+import { liberarSonidos, reproducirSonido } from '@/datos/sonidos';
+import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -35,6 +41,79 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
   const margenes = useSafeAreaInsets();
   const altoMarca = 150;
   const topMarca = height * 0.335;
+  const reducirMovimiento = useReducedMotion();
+  const [saliendo, establecerSaliendo] = useState(false);
+  const temporizador = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const posicionBus = useSharedValue(reducirMovimiento ? 0 : -(width + 40));
+  const vaiven = useSharedValue(0);
+  const marcaVisible = useSharedValue(reducirMovimiento ? 1 : 0);
+  const escala = width / 520;
+
+  useEffect(() => {
+    if (reducirMovimiento) return undefined;
+    void reproducirSonido('arranque');
+    posicionBus.value = withTiming(0, {
+      duration: movimiento.llegadaBus,
+      easing: Easing.out(Easing.cubic),
+    });
+    marcaVisible.value = withDelay(
+      movimiento.llegadaBus * 0.35,
+      withTiming(1, {
+        duration: movimiento.revelarMarca,
+        easing: Easing.out(Easing.cubic),
+      }),
+    );
+    vaiven.value = withDelay(
+      movimiento.llegadaBus,
+      withRepeat(
+        withSequence(
+          withTiming(1, { duration: movimiento.vaivenBus / 2 }),
+          withTiming(0, { duration: movimiento.vaivenBus / 2 }),
+        ),
+        -1,
+        false,
+      ),
+    );
+    return undefined;
+  }, [marcaVisible, posicionBus, reducirMovimiento, vaiven]);
+
+  useEffect(
+    () => () => {
+      if (temporizador.current) clearTimeout(temporizador.current);
+      liberarSonidos();
+    },
+    [],
+  );
+
+  const empezar = () => {
+    if (saliendo) return;
+    establecerSaliendo(true);
+    if (reducirMovimiento) {
+      alEmpezar();
+      return;
+    }
+    void reproducirSonido('bocina');
+    temporizador.current = setTimeout(() => {
+      void reproducirSonido('salida');
+      posicionBus.value = withTiming(width + 60, {
+        duration: movimiento.salidaBus,
+        easing: Easing.in(Easing.cubic),
+      });
+      temporizador.current = setTimeout(alEmpezar, movimiento.salidaBus * 0.8);
+    }, 420);
+  };
+
+  const estiloBus = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: posicionBus.value },
+      { translateY: -vaiven.value * 2.5 },
+      { rotate: `${vaiven.value * -0.35}deg` },
+    ],
+  }));
+  const estiloMarca = useAnimatedStyle(() => ({
+    opacity: marcaVisible.value,
+    transform: [{ translateY: (1 - marcaVisible.value) * 28 }],
+  }));
 
   return (
     <View style={estilos.pantalla}>
@@ -83,66 +162,57 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
         </Text>
       </View>
 
-      <Svg
-        height={altoMarca}
-        style={[estilos.marca, { top: topMarca }]}
-        width={width}
-      >
-        <Defs>
-          <DegradadoSvg id="marca" x1="0" x2="0" y1="0" y2="1">
-            <Stop offset={0} stopColor={colores.marcaArriba} />
-            <Stop offset={1} stopColor={colores.marcaAbajo} />
-          </DegradadoSvg>
-        </Defs>
-        <TextoSvg
-          fill="url(#marca)"
-          fontFamily="ArchivoExtraCondensed_800ExtraBold"
-          fontSize={altoMarca}
-          textAnchor="middle"
-          x={width / 2}
-          y={altoMarca * 0.86}
-        >
-          {t('portada.marca')}
-        </TextoSvg>
-      </Svg>
+      <Animated.View style={[estilos.marca, { top: topMarca }, estiloMarca]}>
+        <Svg height={altoMarca} width={width}>
+          <Defs>
+            <DegradadoSvg id="marca" x1="0" x2="0" y1="0" y2="1">
+              <Stop offset={0} stopColor={colores.marcaArriba} />
+              <Stop offset={1} stopColor={colores.marcaAbajo} />
+            </DegradadoSvg>
+          </Defs>
+          <TextoSvg
+            fill="url(#marca)"
+            fontFamily="ArchivoExtraCondensed_800ExtraBold"
+            fontSize={altoMarca}
+            textAnchor="middle"
+            x={width / 2}
+            y={altoMarca * 0.86}
+          >
+            {t('portada.marca')}
+          </TextoSvg>
+        </Svg>
+      </Animated.View>
 
-      <View style={[estilos.bus, { top: topMarca + 100 }]}>
+      <Animated.View style={[estilos.bus, { top: topMarca + 100 }, estiloBus]}>
         <Autobus ancho={width + 8} letrero={t('portada.marca')} />
-      </View>
+        {reducirMovimiento ? null : (
+          <View
+            pointerEvents="none"
+            style={{
+              left: 34 * escala,
+              position: 'absolute',
+              top: 226 * escala,
+            }}
+          >
+            <HumoEscape
+              arranque={saliendo}
+              tamano={Math.max(14, 30 * escala)}
+            />
+          </View>
+        )}
+      </Animated.View>
 
       <View style={[estilos.pie, { bottom: margenes.bottom + 28 }]}>
-        <Pressable
-          accessibilityLabel={t('portada.empezar')}
-          accessibilityRole="button"
-          onPress={alEmpezar}
-        >
-          <Bloque estiloContenido={estilos.boton} radio="pildora">
-            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-              {t('portada.empezar')}
-            </Text>
-            <Loseta tamano={44} variante="negra">
-              <Icono
-                color={colores.sobreNegro}
-                nombre="siguiente"
-                tamano="grande"
-              />
-            </Loseta>
-          </Bloque>
-        </Pressable>
+        <DeslizarParaEmpezar
+          alCompletar={empezar}
+          ancho={Math.min(width - 56, 340)}
+        />
       </View>
     </View>
   );
 }
 
 const estilos = StyleSheet.create({
-  boton: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 18,
-    paddingLeft: 30,
-    paddingRight: 9,
-    paddingVertical: 9,
-  },
   bus: { left: -4, position: 'absolute' },
   lema: { left: 28, position: 'absolute' },
   marca: { left: 0, position: 'absolute' },
