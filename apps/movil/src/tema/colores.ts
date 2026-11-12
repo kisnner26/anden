@@ -102,3 +102,83 @@ export const paletaAutobus = {
   vidrioClaro: '#3A414B',
   vidrioOscuro: '#11141A',
 } as const;
+
+export type NombrePaletaAutobus =
+  | 'ambar'
+  | 'azul'
+  | 'blanco'
+  | 'grafito'
+  | 'naranja'
+  | 'rojo'
+  | 'turquesa'
+  | 'verde'
+  | 'violeta';
+
+type PaletaAutobus = { -readonly [K in keyof typeof paletaAutobus]: string };
+
+function conBanda(
+  carroceria: [string, string, string],
+  banda: [string, string, string],
+  borde: string,
+): Partial<PaletaAutobus> {
+  return {
+    banda: banda[1],
+    bandaClara: banda[0],
+    bandaOscura: banda[2],
+    borde,
+    carroceriaClara: carroceria[0],
+    carroceriaMedia: carroceria[1],
+    carroceriaOscura: carroceria[2],
+  };
+}
+
+/** los colores de cada variante del bus; lo que no se redefine queda como en la paleta base */
+export const paletasAutobus: Readonly<
+  Record<NombrePaletaAutobus, Partial<PaletaAutobus>>
+> = {
+  ambar: {},
+  azul: conBanda(
+    ['#F4F8FF', '#DCE7F7', '#B9CBE6'],
+    ['#6FA0F5', '#2F6FE4', '#1F4FB0'],
+    '#1F3F7A',
+  ),
+  blanco: conBanda(
+    ['#FFFFFF', '#F1F1F1', '#D9D9D9'],
+    ['#555555', '#2B2B2B', '#111111'],
+    '#444444',
+  ),
+  grafito: {
+    ...conBanda(
+      ['#6B717B', '#464B54', '#272A30'],
+      ['#FFD468', '#FFB21E', '#E08C00'],
+      '#000000',
+    ),
+    vidrioClaro: '#5B6572',
+    vidrioOscuro: '#222831',
+  },
+  naranja: conBanda(
+    ['#FFF9F2', '#F7E4CE', '#E4C8A3'],
+    ['#FF9B5E', '#F26B1D', '#C24A08'],
+    '#8A3F10',
+  ),
+  rojo: conBanda(
+    ['#FFF7F5', '#F3DDD7', '#DDBAB0'],
+    ['#F58A7B', '#E04B3A', '#B02E20'],
+    '#7A2A20',
+  ),
+  turquesa: conBanda(
+    ['#F3FBFB', '#D7ECEC', '#B3D4D4'],
+    ['#5BD0D0', '#14A5A5', '#0C7676'],
+    '#0C5A5A',
+  ),
+  verde: conBanda(
+    ['#F5FBF4', '#DCEBD8', '#BBD3B3'],
+    ['#6CCB8C', '#2E9B57', '#1D6F3C'],
+    '#1D4F2C',
+  ),
+  violeta: conBanda(
+    ['#FAF6FF', '#E6DDF4', '#CBBCE3'],
+    ['#A98BEE', '#7A4FD0', '#5A33A8'],
+    '#3F2478',
+  ),
+};
