@@ -1,7 +1,9 @@
 import * as Haptics from 'expo-haptics';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Animated, Pressable, StyleSheet } from 'react-native';
 
 import { espacios, radios, tamanosControl } from '@/tema/espacios';
+import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import { useTema } from '@/tema/useTema';
 
 export interface PropiedadesInterruptor {
@@ -11,6 +13,9 @@ export interface PropiedadesInterruptor {
   etiqueta: string;
 }
 
+const RECORRIDO =
+  espacios.cuarentaYOcho - espacios.veinticuatro - 2 * espacios.cuatro;
+
 /** interruptor de pista y perilla: ámbar cuando está encendido */
 export function Interruptor({
   activo,
@@ -19,6 +24,22 @@ export function Interruptor({
   etiqueta,
 }: PropiedadesInterruptor) {
   const { colores } = useTema();
+  const reducido = useMovimientoReducido();
+  const posicion = useRef(new Animated.Value(activo ? 1 : 0)).current;
+
+  useEffect(() => {
+    if (reducido) {
+      posicion.setValue(activo ? 1 : 0);
+      return;
+    }
+    const animacion = Animated.spring(posicion, {
+      friction: 7,
+      toValue: activo ? 1 : 0,
+      useNativeDriver: true,
+    });
+    animacion.start();
+    return () => animacion.stop();
+  }, [activo, posicion, reducido]);
 
   return (
     <Pressable
@@ -39,12 +60,19 @@ export function Interruptor({
         },
       ]}
     >
-      <View
+      <Animated.View
         style={[
           estilos.perilla,
           {
-            alignSelf: activo ? 'flex-end' : 'flex-start',
             backgroundColor: activo ? colores.sobreAmbar : colores.fondo,
+            transform: [
+              {
+                translateX: posicion.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, RECORRIDO],
+                }),
+              },
+            ],
           },
         ]}
       />
