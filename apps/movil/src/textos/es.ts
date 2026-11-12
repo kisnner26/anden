@@ -327,6 +327,7 @@ export const textos = {
     verificarChofer: 'El chofer es {chofer}.',
     verificarAnden: 'Sale del andén {anden}.',
     reservarOtra: 'Reservar otra salida a {destino}',
+    pagadoEfectivo: 'Pagado en efectivo al conductor',
     cambiar: 'Cambiar salida',
     cambioNoDisponible:
       'No hay otra salida disponible para cambiar este boleto.',
@@ -423,6 +424,16 @@ export const textos = {
     pruebaTitulo: 'Modo de prueba',
     pruebaDetalle:
       'Todavía no hay servidor. Usá el código 1001 con la clave 2026. Cuando exista, la cooperativa crea las cuentas.',
+  },
+  seguimiento: {
+    enVivo: 'En vivo',
+    sinSenal: 'Sin señal reciente de la unidad.',
+    esperando: 'La unidad ya compartió su viaje; esperando su posición.',
+    llegaEn: 'Llega en {minutos} min',
+    porcentaje: 'Va por el {porcentaje} % del recorrido',
+    kilometros: '{recorridos} km recorridos · {restantes} km restantes',
+    fueraDeRuta: 'La unidad está lejos de la ruta habitual.',
+    descripcion: 'El conductor comparte su ubicación durante el viaje.',
   },
   conductor: {
     saludo: 'Hola, {nombre}',
