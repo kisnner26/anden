@@ -606,3 +606,13 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - depende de: T-110 · zona: `apps/movil/src/componentes`, `apps/movil/src/pantallas` · raíz: no · estado: hecha
 - hacer: revisar Viajar, Horarios y Buscador en pantalla de 375 puntos y retirar lo que no informa ni se puede usar: el círculo vacío de cada salida sin boleto y la hora sin indicar mañana o tarde.
 - hecho cuando: cada fila de salida muestra solo controles con función, la hora dice a. m. o p. m. sin ambigüedad y las pruebas de los componentes lo cubren.
+
+### T-113 · portada viva con sonido y deslizar para empezar
+- depende de: T-112 · zona: `apps/movil/src/pantallas`, `apps/movil/src/componentes`, `apps/movil/src/datos`, `apps/movil/assets` · raíz: no · estado: en curso
+- hacer: animar la portada (el bus llega con vaivén de suspensión y deja humo, el nombre se revela, la ruta se dibuja), agregar sonidos propios de bus (motor, bocina, arranque) generados como archivos del proyecto, y cambiar Empezar por un control que se desliza y despide al bus. Reducir movimiento deja la portada estática y un toque basta; el sonido respeta el interruptor de silencio.
+- hecho cuando: la portada se siente viva sin bloquear, el deslizamiento y su cancelación responden bajo el dedo, el bus sale con humo y sonido al completar, y con reducir movimiento todo sigue siendo usable.
+
+### T-114 · ubicación integrada con Apple Maps
+- depende de: T-113 · zona: `apps/movil/src/datos`, `apps/movil/src/pantallas`, `apps/movil/src/componentes` · raíz: no · estado: libre
+- hacer: pedir la ubicación solo al activar la persona una acción, en primer plano y sin guardarla ni enviarla, y abrir Apple Maps para llegar a la terminal elegida, con la misma voz visual de la app.
+- hecho cuando: la acción explica por qué se pide la ubicación antes del diálogo del sistema, la terminal se abre en Apple Maps con su nombre y coordenadas, y negar el permiso deja la app usable.
