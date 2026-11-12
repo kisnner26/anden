@@ -13,13 +13,17 @@ import { Autobus } from '@/componentes/Autobus';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { EtiquetaMuestra } from '@/componentes/EtiquetaMuestra';
 import { MapaCorredor } from '@/componentes/MapaCorredor';
+import { SeguimientoEnVivo } from '@/componentes/SeguimientoEnVivo';
 import { formatoDuracion, formatoHoraCompleta } from '@/datos/formato';
 import {
   CORREDORES_INICIALES,
   type CorredorInterlocal,
 } from '@/datos/corredores';
 import { armarRutas } from '@/datos/rutas';
+import { viajeEnVivoEntre } from '@/datos/seguimiento';
+import { useAvanceViaje } from '@/datos/useAvanceViaje';
 import { useBusSimulado } from '@/datos/useBusSimulado';
+import { useViajesEnVivo } from '@/datos/useTransmision';
 import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
 import { espacios, radios, tamanosIlustracion } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
@@ -43,6 +47,18 @@ function DetalleCorredor({
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const simulacion = useBusSimulado(corredor.origen, corredor.destino);
+  const viajesEnVivo = useViajesEnVivo();
+  const viajeEnVivo = viajeEnVivoEntre(
+    obtenerMuestra(),
+    viajesEnVivo,
+    corredor.origen,
+    corredor.destino,
+  );
+  const avance = useAvanceViaje(
+    viajeEnVivo ?? '',
+    corredor.origen,
+    corredor.destino,
+  );
   const reducirMovimiento = useMovimientoReducido();
   const entradaBus = useSharedValue(reducirMovimiento ? 1 : 0);
   const estiloEntradaBus = useAnimatedStyle(() => ({
@@ -92,40 +108,68 @@ function DetalleCorredor({
             accessibilityRole="image"
             accessible
           >
-            <MapaCorredor simulacion={simulacion} />
+            <MapaCorredor
+              simulacion={
+                viajeEnVivo
+                  ? {
+                      ...simulacion,
+                      bus: avance.transmision.posicion ?? undefined,
+                    }
+                  : simulacion
+              }
+            />
           </View>
-          <View style={estilos.filaSimulacion}>
-            <EtiquetaMuestra texto={t('rutas.simulacion')} />
-          </View>
-          <BloqueNegro estiloContenido={estilos.seguimiento}>
-            <Text
-              accessibilityLiveRegion="polite"
-              style={[tipografia.display, { color: colores.ambar }]}
-            >
-              {`${t('rutas.llegaEn')} ${simulacion.restantes} ${t('rutas.minutosCorto')}`}
-            </Text>
-            <Text style={[tipografia.cuerpo, { color: colores.sobreNegro }]}>
-              {`${t('rutas.recorrido_va')} ${simulacion.porcentaje} % ${t('rutas.recorridoPorcentaje')}`}
-            </Text>
-            {simulacion.distanciaKm !== null && (
-              <Text style={[tipografia.cuerpo, { color: colores.sobreNegro }]}>
-                {t('rutas.kmCarretera').replace(
-                  '{{km}}',
-                  String(simulacion.distanciaKm),
+          {viajeEnVivo ? (
+            <SeguimientoEnVivo
+              progreso={avance.progreso}
+              sinSenal={avance.transmision.sinSenal}
+            />
+          ) : (
+            <>
+              <View style={estilos.filaSimulacion}>
+                <EtiquetaMuestra texto={t('rutas.simulacion')} />
+              </View>
+              <BloqueNegro estiloContenido={estilos.seguimiento}>
+                <Text
+                  accessibilityLiveRegion="polite"
+                  style={[tipografia.display, { color: colores.ambar }]}
+                >
+                  {`${t('rutas.llegaEn')} ${simulacion.restantes} ${t('rutas.minutosCorto')}`}
+                </Text>
+                <Text
+                  style={[tipografia.cuerpo, { color: colores.sobreNegro }]}
+                >
+                  {`${t('rutas.recorrido_va')} ${simulacion.porcentaje} % ${t('rutas.recorridoPorcentaje')}`}
+                </Text>
+                {simulacion.distanciaKm !== null && (
+                  <Text
+                    style={[tipografia.cuerpo, { color: colores.sobreNegro }]}
+                  >
+                    {t('rutas.kmCarretera').replace(
+                      '{{km}}',
+                      String(simulacion.distanciaKm),
+                    )}
+                  </Text>
                 )}
-              </Text>
-            )}
-            <Text
-              style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
-            >
-              {t('rutas.simulacionNota')}
-            </Text>
-            <Text
-              style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
-            >
-              {t('rutas.atribucionMapa')}
-            </Text>
-          </BloqueNegro>
+                <Text
+                  style={[
+                    tipografia.pequeno,
+                    { color: colores.sobreNegroSuave },
+                  ]}
+                >
+                  {t('rutas.simulacionNota')}
+                </Text>
+                <Text
+                  style={[
+                    tipografia.pequeno,
+                    { color: colores.sobreNegroSuave },
+                  ]}
+                >
+                  {t('rutas.atribucionMapa')}
+                </Text>
+              </BloqueNegro>
+            </>
+          )}
         </View>
       ) : (
         <BloqueNegro estiloContenido={estilos.seguimiento}>
