@@ -35,6 +35,7 @@ describe('Horarios', () => {
 
   it('filtra por servicio expreso', async () => {
     const pantalla = await renderPantalla(<Horarios />);
+    await fireEvent.press(pantalla.getByRole('button', { name: /^Filtros/ }));
     await fireEvent.press(pantalla.getByRole('button', { name: 'Expreso' }));
     expect(
       pantalla.getAllByLabelText(/, (Salió|Abordando|A tiempo|\+\d+ min)$/),
@@ -47,6 +48,7 @@ describe('Horarios', () => {
 
   it('vuelve a mostrar todas con el filtro Todos', async () => {
     const pantalla = await renderPantalla(<Horarios />);
+    await fireEvent.press(pantalla.getByRole('button', { name: /^Filtros/ }));
     await fireEvent.press(pantalla.getByRole('button', { name: 'Taxi' }));
     await fireEvent.press(pantalla.getByRole('button', { name: 'Todos' }));
     expect(
@@ -86,6 +88,7 @@ describe('Horarios', () => {
         <Horarios />
       </ProveedorFavoritos>,
     );
+    await fireEvent.press(pantalla.getByRole('button', { name: /^Filtros/ }));
     await fireEvent.press(pantalla.getByRole('button', { name: 'Mis rutas' }));
     expect(
       pantalla.getByText('Marcá una ruta con la estrella para verla acá.'),
@@ -133,10 +136,31 @@ describe('Horarios', () => {
     );
   });
 
-  it('separa lo que se muestra del tipo de servicio, en dos filas con su rótulo', async () => {
+  it('reúne los filtros en una hoja con rótulos y cuenta los activos', async () => {
     const pantalla = await renderPantalla(<Horarios />);
+    expect(pantalla.queryByText('Servicio')).toBeNull();
+    await fireEvent.press(pantalla.getByRole('button', { name: /^Filtros/ }));
+    expect(pantalla.getByText('Salen de')).toBeTruthy();
     expect(pantalla.getByText('Mostrar')).toBeTruthy();
     expect(pantalla.getByText('Servicio')).toBeTruthy();
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Expreso' }));
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Ver salidas' }),
+    );
+    expect(pantalla.getByRole('button', { name: 'Filtros, 1' })).toBeTruthy();
+  });
+
+  it('quita todos los filtros de una vez', async () => {
+    const pantalla = await renderPantalla(<Horarios />);
+    await fireEvent.press(pantalla.getByRole('button', { name: /^Filtros/ }));
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Expreso' }));
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Ver salidas' }),
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Quitar filtros' }),
+    );
+    expect(pantalla.getByRole('button', { name: 'Filtros' })).toBeTruthy();
   });
 
   it('deja elegir otro día y muestra las salidas de ese día', async () => {

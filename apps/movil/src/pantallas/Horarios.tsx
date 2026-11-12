@@ -1,9 +1,11 @@
 import type { TipoServicio } from '@anden/dominio';
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Aparece } from '@/componentes/Aparece';
 import { Bloque } from '@/componentes/Bloque';
+import { BotonAccion } from '@/componentes/BotonAccion';
+import { Hoja } from '@/componentes/Hoja';
 import { HojaRecordatorio } from '@/componentes/HojaRecordatorio';
 import { Chip } from '@/componentes/Chip';
 import { SelectorDia } from '@/componentes/SelectorDia';
@@ -25,7 +27,7 @@ import {
 import { useSalidas } from '@/datos/useSalidas';
 import { diasDeReserva, inicioDelDia, mismoDia } from '@/datos/dias';
 import { proximaSalida } from '@/datos/salidas';
-import { espacios, tamanosControl } from '@/tema/espacios';
+import { espacios, radios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -60,6 +62,7 @@ export function Horarios({
   const { favoritos } = useFavoritos();
   const [soloFavoritas, establecerSoloFavoritas] = useState(false);
   const recordatorios = useRecordatorios();
+  const [filtrando, establecerFiltrando] = useState(false);
   const [eligiendo, establecerEligiendo] = useState<Salida | null>(null);
   const [errorRecordatorio, establecerErrorRecordatorio] = useState<Exclude<
     ResultadoRecordatorio,
@@ -97,6 +100,15 @@ export function Horarios({
         (salida) => salida.estado !== 'en-ruta' && salida.estado !== 'llego',
       )
     : porServicio;
+  const activos =
+    (soloFavoritas ? 1 : 0) +
+    (soloProximas ? 1 : 0) +
+    (filtro !== 'todos' ? 1 : 0);
+  function limpiarFiltros() {
+    establecerSoloFavoritas(false);
+    establecerSoloProximas(false);
+    establecerFiltro('todos');
+  }
   const destinosFavoritos: string[] = CORREDORES_INICIALES.filter(
     (corredor) =>
       favoritos.includes(corredor.id) &&
@@ -176,56 +188,104 @@ export function Horarios({
         dias={dias}
         seleccionado={dia}
       />
-      <ScrollView
-        contentContainerStyle={estilos.filtros}
-        horizontal
-        showsHorizontalScrollIndicator={false}
+      <View style={estilos.barraFiltros}>
+        <Pressable
+          accessibilityLabel={
+            activos > 0
+              ? `${t('horarios.filtros')}, ${activos}`
+              : t('horarios.filtros')
+          }
+          accessibilityRole="button"
+          onPress={() => establecerFiltrando(true)}
+        >
+          <Bloque estiloContenido={estilos.botonFiltros} radio="pildora">
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+              {t('horarios.filtros')}
+            </Text>
+            {activos > 0 && (
+              <View
+                style={[estilos.cuenta, { backgroundColor: colores.ambar }]}
+              >
+                <Text
+                  style={[tipografia.etiqueta, { color: colores.sobreAmbar }]}
+                >
+                  {activos}
+                </Text>
+              </View>
+            )}
+          </Bloque>
+        </Pressable>
+        {activos > 0 && (
+          <Pressable
+            accessibilityRole="button"
+            onPress={limpiarFiltros}
+            style={estilos.limpiar}
+          >
+            <Text style={[tipografia.pequeno, { color: colores.ambarTexto }]}>
+              {t('horarios.quitarFiltros')}
+            </Text>
+          </Pressable>
+        )}
+      </View>
+      <Hoja
+        abierta={filtrando}
+        alCerrar={() => establecerFiltrando(false)}
+        etiquetaCerrar={t('recordatorios.cerrar')}
       >
-        {datos.terminales.map((candidata) => (
-          <Chip
-            alCambiar={() => establecerTerminalId(candidata.id)}
-            etiqueta={candidata.ciudad}
-            key={candidata.id}
-            seleccionado={terminalId === candidata.id}
+        <View style={estilos.hojaFiltros}>
+          <Text
+            accessibilityRole="header"
+            style={[tipografia.titulo, { color: colores.tinta }]}
+          >
+            {t('horarios.filtrarTitulo')}
+          </Text>
+          <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+            {t('horarios.origen')}
+          </Text>
+          <View style={estilos.filtros}>
+            {datos.terminales.map((candidata) => (
+              <Chip
+                alCambiar={() => establecerTerminalId(candidata.id)}
+                etiqueta={candidata.ciudad}
+                key={candidata.id}
+                seleccionado={terminalId === candidata.id}
+              />
+            ))}
+          </View>
+          <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+            {t('horarios.mostrar')}
+          </Text>
+          <View style={estilos.filtros}>
+            <Chip
+              alCambiar={() => establecerSoloFavoritas(!soloFavoritas)}
+              etiqueta={t('horarios.favoritas')}
+              seleccionado={soloFavoritas}
+            />
+            <Chip
+              alCambiar={() => establecerSoloProximas(!soloProximas)}
+              etiqueta={t('horarios.proximas')}
+              seleccionado={soloProximas}
+            />
+          </View>
+          <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+            {t('horarios.servicio')}
+          </Text>
+          <View style={estilos.filtros}>
+            {FILTROS.map(({ clave, etiqueta }) => (
+              <Chip
+                alCambiar={() => establecerFiltro(clave)}
+                etiqueta={etiqueta()}
+                key={clave}
+                seleccionado={filtro === clave}
+              />
+            ))}
+          </View>
+          <BotonAccion
+            alPresionar={() => establecerFiltrando(false)}
+            etiqueta={t('horarios.verSalidas')}
           />
-        ))}
-      </ScrollView>
-      <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
-        {t('horarios.mostrar')}
-      </Text>
-      <ScrollView
-        contentContainerStyle={estilos.filtros}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-      >
-        <Chip
-          alCambiar={() => establecerSoloFavoritas(!soloFavoritas)}
-          etiqueta={t('horarios.favoritas')}
-          seleccionado={soloFavoritas}
-        />
-        <Chip
-          alCambiar={() => establecerSoloProximas(!soloProximas)}
-          etiqueta={t('horarios.proximas')}
-          seleccionado={soloProximas}
-        />
-      </ScrollView>
-      <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
-        {t('horarios.servicio')}
-      </Text>
-      <ScrollView
-        contentContainerStyle={estilos.filtros}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-      >
-        {FILTROS.map(({ clave, etiqueta }) => (
-          <Chip
-            alCambiar={() => establecerFiltro(clave)}
-            etiqueta={etiqueta()}
-            key={clave}
-            seleccionado={filtro === clave}
-          />
-        ))}
-      </ScrollView>
+        </View>
+      </Hoja>
 
       <View style={estilos.tablero}>
         <TableroSalidas
@@ -288,6 +348,30 @@ export function Horarios({
 }
 
 const estilos = StyleSheet.create({
+  barraFiltros: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.doce,
+  },
+  botonFiltros: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.ocho,
+    paddingHorizontal: espacios.dieciseis,
+    paddingVertical: espacios.ocho,
+  },
+  cuenta: {
+    alignItems: 'center',
+    borderRadius: radios.pildora,
+    minWidth: 24,
+    paddingHorizontal: espacios.ocho,
+  },
+  hojaFiltros: {
+    gap: espacios.doce,
+    paddingBottom: espacios.cuarentaYOcho,
+    paddingHorizontal: espacios.lateral,
+  },
+  limpiar: { justifyContent: 'center', minHeight: tamanosControl.toqueMinimo },
   buscar: {
     alignItems: 'center',
     height: tamanosControl.toqueMinimo,
