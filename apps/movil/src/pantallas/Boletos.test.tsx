@@ -44,19 +44,18 @@ describe('Boletos', () => {
     expect(alBuscar).toHaveBeenCalledTimes(1);
   });
 
-  it('muestra un boleto próximo en su sección', async () => {
+  it('muestra un boleto próximo como tarjeta', async () => {
     await AsyncStorage.setItem(
       CLAVE_BOLETOS,
       JSON.stringify([boletoDePrueba(EN_UNA_HORA())]),
     );
     const pantalla = await dibujar();
-    expect(await pantalla.findByText('Tu próximo viaje')).toBeTruthy();
-    expect(pantalla.getByText('Asiento 8')).toBeTruthy();
-    expect(pantalla.queryByText('Próximos')).toBeNull();
+    expect(await pantalla.findByText('Próximos')).toBeTruthy();
+    expect(pantalla.getByText('Asiento')).toBeTruthy();
     expect(pantalla.queryByText('Pasados')).toBeNull();
   });
 
-  it('destaca el boleto con la salida más cercana', async () => {
+  it('junta varios boletos en un montón que se despliega', async () => {
     await AsyncStorage.setItem(
       CLAVE_BOLETOS,
       JSON.stringify([
@@ -64,10 +63,16 @@ describe('Boletos', () => {
         boletoDePrueba(new Date(Date.now() + 60 * 60_000), 9, 'K7RM4QX9'),
       ]),
     );
-    const pantalla = await dibujar();
-    expect(await pantalla.findByText('Tu próximo viaje')).toBeTruthy();
-    expect(pantalla.getByLabelText(/^Boaco, .*Asiento 9$/)).toBeTruthy();
-    expect(pantalla.getByText('Próximos')).toBeTruthy();
+    const alAbrirBoleto = jest.fn();
+    const pantalla = await dibujar({ alAbrirBoleto });
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Ver los 2 boletos' }),
+    );
+    expect(
+      await pantalla.findByRole('button', { name: 'Recoger las tarjetas' }),
+    ).toBeTruthy();
+    await fireEvent.press(pantalla.getByLabelText(/^Boaco, .*Asiento 9$/));
+    expect(alAbrirBoleto).toHaveBeenCalledWith('bol_K7RM4QX9');
   });
 
   it('separa los boletos pasados', async () => {
@@ -79,8 +84,7 @@ describe('Boletos', () => {
       ]),
     );
     const pantalla = await dibujar();
-    expect(await pantalla.findByText('Tu próximo viaje')).toBeTruthy();
-    expect(pantalla.queryByText('Próximos')).toBeNull();
+    expect(await pantalla.findByText('Próximos')).toBeTruthy();
     expect(pantalla.getByText('Pasados')).toBeTruthy();
   });
 
@@ -95,36 +99,5 @@ describe('Boletos', () => {
       await pantalla.findByRole('button', { name: /Boaco/ }),
     );
     expect(alAbrirBoleto).toHaveBeenCalledWith('bol_K7RM4QX9');
-  });
-
-  it('muestra solo los 3 pasados más recientes y deja desplegar el resto', async () => {
-    const pasados = [1, 2, 3, 4, 5].map((horas) =>
-      boletoDePrueba(
-        new Date(Date.now() - horas * 3_600_000),
-        horas,
-        `PASADO${horas}X`,
-      ),
-    );
-    await AsyncStorage.setItem(CLAVE_BOLETOS, JSON.stringify(pasados));
-    const pantalla = await dibujar();
-    expect(await pantalla.findAllByText('Boaco')).toHaveLength(3);
-
-    await fireEvent.press(
-      pantalla.getByRole('button', { name: 'Ver los 2 anteriores' }),
-    );
-    expect(pantalla.getAllByText('Boaco')).toHaveLength(5);
-
-    await fireEvent.press(pantalla.getByRole('button', { name: 'Ver menos' }));
-    expect(pantalla.getAllByText('Boaco')).toHaveLength(3);
-  });
-
-  it('con 3 pasados o menos no ofrece desplegar nada', async () => {
-    await AsyncStorage.setItem(
-      CLAVE_BOLETOS,
-      JSON.stringify([boletoDePrueba(HACE_UNA_HORA())]),
-    );
-    const pantalla = await dibujar();
-    await pantalla.findAllByText('Boaco');
-    expect(pantalla.queryByText(/anteriores/)).toBeNull();
   });
 });
