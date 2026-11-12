@@ -149,4 +149,36 @@ describe('VerBoleto', () => {
       pantalla.queryByRole('button', { name: 'Cancelar reserva' }),
     ).toBeNull();
   });
+
+  it('recuerda verificar placa, chofer y andén antes de subir', async () => {
+    const pantalla = await dibujar();
+    expect(await pantalla.findByText('Verificá antes de subir')).toBeTruthy();
+    expect(pantalla.getByText('La placa es M 222-114.')).toBeTruthy();
+    expect(pantalla.getByText('El chofer es Marvin Lanzas.')).toBeTruthy();
+    expect(pantalla.getByText(/^Sale del andén \d+\.$/)).toBeTruthy();
+  });
+
+  it('en un boleto cancelado ofrece reservar otra salida al mismo destino', async () => {
+    await AsyncStorage.setItem(
+      CLAVE_BOLETOS,
+      JSON.stringify([
+        {
+          ...boletoDePrueba(new Date(Date.now() + 60 * 60_000)),
+          boleto: {
+            ...boletoDePrueba(new Date(Date.now() + 60 * 60_000)).boleto,
+            estado: 'cancelado',
+          },
+        },
+      ]),
+    );
+    const alReservarOtra = jest.fn();
+    const pantalla = await dibujar({ alReservarOtra });
+    expect(pantalla.queryByText('Verificá antes de subir')).toBeNull();
+    await fireEvent.press(
+      await pantalla.findByRole('button', {
+        name: 'Reservar otra salida a Boaco',
+      }),
+    );
+    expect(alReservarOtra).toHaveBeenCalledWith('Boaco');
+  });
 });

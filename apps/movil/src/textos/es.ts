@@ -316,6 +316,11 @@ export const textos = {
     exacto: 'Llevá el monto exacto.',
     muestra: 'Reglas de muestra',
     compartir: 'Compartir datos del viaje',
+    verificarTitulo: 'Verificá antes de subir',
+    verificarPlaca: 'La placa es {placa}.',
+    verificarChofer: 'El chofer es {chofer}.',
+    verificarAnden: 'Sale del andén {anden}.',
+    reservarOtra: 'Reservar otra salida a {destino}',
     cambiar: 'Cambiar salida',
     cambioNoDisponible:
       'No hay otra salida disponible para cambiar este boleto.',

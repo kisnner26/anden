@@ -19,10 +19,13 @@ import { useAhora } from '@/datos/useSalidas';
 import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
+import { rellenar } from '@/textos/rellenar';
 import { t } from '@/textos/t';
 
 export interface PropiedadesVerBoleto {
   alCancelado: () => void;
+  /** abre la búsqueda con el destino de este boleto, para volver a viajar */
+  alReservarOtra?: (destino: string) => void;
   alVerChofer: (choferId: string) => void;
   alVolver: () => void;
   boletoId: string;
@@ -31,6 +34,7 @@ export interface PropiedadesVerBoleto {
 /** un boleto reservado con pago en efectivo: el talón con su código y QR y lo que hay que pagar al subir */
 export function VerBoleto({
   alCancelado,
+  alReservarOtra,
   alVerChofer,
   alVolver,
   boletoId,
@@ -106,6 +110,29 @@ export function VerBoleto({
         </Text>
       </Bloque>
 
+      {puedeOperar && (
+        <Bloque estiloContenido={estilos.verificar} hundido radio="loseta">
+          <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+            {t('boleto.verificarTitulo')}
+          </Text>
+          <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
+            {rellenar(t('boleto.verificarPlaca'), {
+              placa: guardado.resumen.placa,
+            })}
+          </Text>
+          <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
+            {rellenar(t('boleto.verificarChofer'), {
+              chofer: guardado.resumen.choferNombre,
+            })}
+          </Text>
+          <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
+            {rellenar(t('boleto.verificarAnden'), {
+              anden: guardado.resumen.anden,
+            })}
+          </Text>
+        </Bloque>
+      )}
+
       <Pressable
         accessibilityLabel={`${t('boleto.verChofer')} ${guardado.resumen.choferNombre}`}
         accessibilityRole="button"
@@ -117,6 +144,21 @@ export function VerBoleto({
           </Text>
         </Bloque>
       </Pressable>
+
+      {!puedeOperar && alReservarOtra && (
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => alReservarOtra(guardado.resumen.destino)}
+        >
+          <Bloque estiloContenido={estilos.boton} radio="pildora">
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+              {rellenar(t('boleto.reservarOtra'), {
+                destino: guardado.resumen.destino,
+              })}
+            </Text>
+          </Bloque>
+        </Pressable>
+      )}
 
       {puedeOperar && (
         <View style={estilos.acciones}>
@@ -193,6 +235,7 @@ export function VerBoleto({
 }
 
 const estilos = StyleSheet.create({
+  verificar: { gap: espacios.cuatro, padding: espacios.dieciseis },
   acciones: { flexDirection: 'row', gap: espacios.ocho },
   accion: {
     alignItems: 'center',
