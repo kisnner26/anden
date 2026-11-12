@@ -61,7 +61,7 @@ export function Avisos({ alVolver }: PropiedadesAvisos) {
       >
         <Bloque estiloContenido={estilos.interruptor}>
           <View style={estilos.textoInterruptor}>
-            <Text style={[estilos.nombre, { color: colores.tinta }]}>
+            <Text style={[tipografia.nombreFila, { color: colores.tinta }]}>
               {t('avisos.interruptor')}
             </Text>
             <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
@@ -107,7 +107,7 @@ export function Avisos({ alVolver }: PropiedadesAvisos) {
       {avisos.length === 0 ? (
         <Bloque estiloContenido={estilos.vacio}>
           <Autobus ancho={150} />
-          <Text style={[estilos.nombre, { color: colores.tinta }]}>
+          <Text style={[tipografia.nombreFila, { color: colores.tinta }]}>
             {t('avisos.vacioTitulo')}
           </Text>
           <Text
@@ -153,7 +153,12 @@ export function Avisos({ alVolver }: PropiedadesAvisos) {
                       />
                     )}
                     <View style={estilos.textoAviso}>
-                      <Text style={[estilos.nombre, { color: colores.tinta }]}>
+                      <Text
+                        style={[
+                          tipografia.nombreFila,
+                          { color: colores.tinta },
+                        ]}
+                      >
                         {titulo}
                       </Text>
                       <Text
@@ -191,7 +196,6 @@ const estilos = StyleSheet.create({
     gap: espacios.dieciseis,
     padding: espacios.dieciseis,
   },
-  nombre: { fontFamily: 'Archivo_600SemiBold', fontSize: 18, lineHeight: 22 },
   punto: { borderRadius: 5, height: 10, marginTop: 6, width: 10 },
   perilla: {
     borderRadius: radios.pildora,
