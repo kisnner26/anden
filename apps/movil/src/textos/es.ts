@@ -480,7 +480,9 @@ export const textos = {
     recorrido_va: 'Va por el',
     recorridoPorcentaje: 'del recorrido',
     simulacionNota:
-      'Posición simulada: todavía no hay datos reales de las unidades. El trazo une las terminales en línea recta.',
+      'Posición simulada: todavía no hay datos reales de las unidades. El camino es el de la carretera; el bus es un ejemplo.',
+    kmCarretera: '{{km}} km de carretera',
+    atribucionMapa: 'Trazo de la carretera: OpenStreetMap',
     mapaDescripcion: 'Mapa del corredor con un bus simulado',
     seguimientoPendiente: 'Seguimiento en vivo pendiente de datos operativos',
     enVivoNoDisponible: 'En vivo no disponible',

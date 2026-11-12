@@ -37,7 +37,10 @@ describe('DetalleRuta', () => {
     expect(pantalla.getByText(/Posición simulada/)).toBeTruthy();
     expect(pantalla.getByLabelText('Origen: Boaco')).toBeTruthy();
     expect(pantalla.getByLabelText('Destino: Managua')).toBeTruthy();
-    expect(pantalla.queryByText(/km/)).toBeNull();
+    expect(pantalla.getByText('82.9 km de carretera')).toBeTruthy();
+    expect(
+      pantalla.getByText('Trazo de la carretera: OpenStreetMap'),
+    ).toBeTruthy();
   });
 
   it('presenta paradas, tarifa de muestra y siguiente salida', async () => {

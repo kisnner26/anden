@@ -107,10 +107,23 @@ function DetalleCorredor({
             <Text style={[tipografia.cuerpo, { color: colores.sobreNegro }]}>
               {`${t('rutas.recorrido_va')} ${simulacion.porcentaje} % ${t('rutas.recorridoPorcentaje')}`}
             </Text>
+            {simulacion.distanciaKm !== null && (
+              <Text style={[tipografia.cuerpo, { color: colores.sobreNegro }]}>
+                {t('rutas.kmCarretera').replace(
+                  '{{km}}',
+                  String(simulacion.distanciaKm),
+                )}
+              </Text>
+            )}
             <Text
               style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
             >
               {t('rutas.simulacionNota')}
+            </Text>
+            <Text
+              style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
+            >
+              {t('rutas.atribucionMapa')}
             </Text>
           </BloqueNegro>
         </View>
