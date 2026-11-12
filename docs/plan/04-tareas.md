@@ -621,3 +621,48 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - depende de: T-114 · zona: `apps/movil/src/tema`, `apps/movil/src/componentes`, `apps/movil/src/pantallas` · raíz: no · estado: libre
 - hacer: el modo Sencillo agranda la letra un 25 % desde `tipografia`, pero unos 20 estilos (TalonBoleto, CabeceraPantalla, Boletos, PerfilChofer, Pago, FilaBoleto, Avisos, Pasajeros, Portada, LineaRuta, OpcionSeleccion) escriben su `fontSize` a mano dentro de `StyleSheet.create`, así que no escalan y rompen la regla de dejar los tamaños en `src/tema`. Llevarlos a tokens de tipografía que sí escalen.
 - hecho cuando: ningún `fontSize` numérico queda fuera de `src/tema`, el modo Sencillo agranda todos los textos por igual y se revisó en un iPhone de 375 puntos que ningún título grande se corta.
+
+### T-131 · botones dentro de botones en tarjetas de corredor y filas de salida
+- depende de: T-114 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/08-auditoria.md`, sección T-131.
+- hecho cuando: lo que dice esa sección en "Hecho cuando".
+
+### T-132 · Boton y Hoja ignoran el modo de uso al reducir movimiento
+- depende de: T-114 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/08-auditoria.md`, sección T-132.
+- hecho cuando: lo que dice esa sección en "Hecho cuando".
+
+### T-133 · espacios y radios escritos a mano
+- depende de: T-114 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/08-auditoria.md`, sección T-133.
+- hecho cuando: lo que dice esa sección en "Hecho cuando".
+
+### T-134 · quitar la mascota, que ya no se usa
+- depende de: T-114 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/08-auditoria.md`, sección T-134.
+- hecho cuando: lo que dice esa sección en "Hecho cuando".
+
+### T-135 · textos sin uso en es.ts
+- depende de: T-114 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/08-auditoria.md`, sección T-135.
+- hecho cuando: lo que dice esa sección en "Hecho cuando".
+
+### T-136 · archivo suelto en el plan
+- depende de: T-114 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/08-auditoria.md`, sección T-136.
+- hecho cuando: lo que dice esa sección en "Hecho cuando".
+
+### T-137 · el conductor no ve de dónde sale cada viaje
+- depende de: T-114 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/08-auditoria.md`, sección T-137.
+- hecho cuando: lo que dice esa sección en "Hecho cuando".
+
+### T-138 · el sufijo de la hora sale en mayúsculas en la línea del viaje
+- depende de: T-114 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/08-auditoria.md`, sección T-138.
+- hecho cuando: lo que dice esa sección en "Hecho cuando".
+
+### T-139 · pruebas que faltan
+- depende de: T-114 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/08-auditoria.md`, sección T-139.
+- hecho cuando: lo que dice esa sección en "Hecho cuando".
