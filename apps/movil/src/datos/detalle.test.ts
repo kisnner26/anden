@@ -36,6 +36,12 @@ describe('armarPerfilChofer', () => {
 describe('armarDetalle', () => {
   const detalle = armarDetalle(datos, VIAJE_BOACO, AHORA);
 
+  it('trae la ciudad y los códigos de las terminales del trayecto', () => {
+    expect(detalle?.origenCiudad).toBe('Managua');
+    expect(detalle?.origenCodigo).toBe('MAY');
+    expect(detalle?.destinoCodigo).toBe('BOA');
+  });
+
   it('trae la unidad con su placa, su cooperativa y sus plazas', () => {
     expect(detalle?.unidad.placa).toBe('M 222-114');
     expect(detalle?.unidad.cooperativa).toBe('Cooperativa de muestra');

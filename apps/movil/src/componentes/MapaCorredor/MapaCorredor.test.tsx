@@ -52,4 +52,17 @@ describe('MapaCorredor', () => {
       pantalla.getByText('MAY', { includeHiddenElements: true }),
     ).toBeTruthy();
   });
+
+  it('sin bus dibuja solo el camino y las terminales', async () => {
+    const { destino, origen, trazo } = SIMULACION;
+    const pantalla = await renderPantalla(
+      <MapaCorredor simulacion={{ destino, origen, trazo }} />,
+    );
+    expect(
+      pantalla.getByTestId('mapa-corredor', { includeHiddenElements: true }),
+    ).toBeTruthy();
+    expect(
+      pantalla.queryByTestId('bus-simulado', { includeHiddenElements: true }),
+    ).toBeNull();
+  });
 });
