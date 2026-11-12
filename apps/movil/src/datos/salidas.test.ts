@@ -1,13 +1,13 @@
 import { describe, expect, it } from '@jest/globals';
 
 import { crearMuestra, VIAJE_BOACO } from './muestra';
-import { armarSalidas, proximaSalida } from './salidas';
+import { armarSalidas, proximaSalida, salidasDelDia } from './salidas';
 
 const AHORA = new Date('2026-11-02T20:00:00.000Z');
 
 describe('armarSalidas', () => {
   const datos = crearMuestra(AHORA);
-  const salidas = armarSalidas(datos, AHORA);
+  const salidas = salidasDelDia(armarSalidas(datos, AHORA), AHORA);
 
   it('ordena las ocho salidas por hora', () => {
     expect(salidas).toHaveLength(8);

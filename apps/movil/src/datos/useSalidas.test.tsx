@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
 import { act, renderHook } from '@testing-library/react-native';
 
+import { inicioDelDia, mismoDia, sumarDias } from './dias';
 import { reiniciarMuestra, useAhora, useSalidas } from './useSalidas';
 
 afterEach(() => {
@@ -9,10 +10,33 @@ afterEach(() => {
 });
 
 describe('useSalidas', () => {
-  it('devuelve las ocho salidas y una próxima salida', async () => {
-    const { result } = await renderHook(() => useSalidas());
+  it('devuelve las ocho salidas de hoy desde Mayoreo y una próxima salida', async () => {
+    const hoy = inicioDelDia(new Date());
+    const { result } = await renderHook(() => useSalidas('ter_may', hoy));
     expect(result.current.salidas).toHaveLength(8);
     expect(result.current.proxima?.destino).toBe('Boaco');
+  });
+
+  it('sin día trae también los días siguientes', async () => {
+    const { result } = await renderHook(() => useSalidas('ter_may'));
+    expect(result.current.salidas.length).toBeGreaterThan(8);
+  });
+
+  it('sin terminal trae las salidas de todas, para encontrar un viaje por su id', async () => {
+    const { result } = await renderHook(() => useSalidas());
+    const deBoaco = result.current.salidas.filter(
+      (salida) => salida.origen === 'Boaco',
+    );
+    expect(deBoaco.length).toBeGreaterThan(0);
+  });
+
+  it('con un día trae solo las salidas de ese día', async () => {
+    const manana = sumarDias(new Date(), 1);
+    const { result } = await renderHook(() => useSalidas('ter_may', manana));
+    expect(result.current.salidas.length).toBeGreaterThan(0);
+    expect(
+      result.current.salidas.every((salida) => mismoDia(salida.salida, manana)),
+    ).toBe(true);
   });
 
   it('comparte la misma muestra entre llamadas', async () => {
