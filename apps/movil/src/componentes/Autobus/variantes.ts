@@ -91,22 +91,17 @@ export const VARIANTES_BUS = [
   },
   { forma: 'micro', id: 'micro-azul', nombre: 'Micro azul', paleta: 'azul' },
   {
-    forma: 'doble',
-    id: 'doble-ambar',
-    nombre: 'Dos pisos ámbar',
-    paleta: 'ambar',
-  },
-  {
-    forma: 'doble',
-    id: 'doble-grafito',
-    nombre: 'Dos pisos grafito',
+    forma: 'coaster',
+    id: 'coaster-grafito',
+    nombre: 'Coaster grafito',
     paleta: 'grafito',
   },
+  { forma: 'micro', id: 'micro-verde', nombre: 'Micro verde', paleta: 'verde' },
   {
-    forma: 'doble',
-    id: 'doble-verde',
-    nombre: 'Dos pisos verde',
-    paleta: 'verde',
+    forma: 'estandar',
+    id: 'clasico-grafito',
+    nombre: 'Clásico grafito',
+    paleta: 'grafito',
   },
 ] as const satisfies readonly VarianteBus[];
 
