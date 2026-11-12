@@ -22,6 +22,8 @@ export interface PropiedadesCampoTexto {
   etiqueta: string;
   error?: string;
   marcador?: string;
+  /** para claves: muestra puntos en vez de las letras */
+  oculto?: boolean;
   teclado?: KeyboardTypeOptions;
   valor: string;
 }
@@ -32,6 +34,7 @@ export function CampoTexto({
   etiqueta,
   error,
   marcador,
+  oculto = false,
   teclado = 'default',
   valor,
 }: PropiedadesCampoTexto) {
@@ -48,7 +51,10 @@ export function CampoTexto({
           accessibilityHint={error}
           aria-invalid={error !== undefined}
           keyboardType={teclado}
+          autoCapitalize={oculto ? 'none' : undefined}
+          autoCorrect={oculto ? false : undefined}
           onChangeText={alCambiar}
+          secureTextEntry={oculto}
           placeholder={marcador}
           placeholderTextColor={colores.tintaSuave}
           selectionColor={colores.ambarTexto}
