@@ -183,7 +183,7 @@ export function DetalleViaje({
               </Text>
             </Loseta>
             <View style={estilos.textoChofer}>
-              <Text style={[estilos.nombre, { color: colores.tinta }]}>
+              <Text style={[tipografia.nombreFila, { color: colores.tinta }]}>
                 {chofer.nombre}
               </Text>
               <View style={estilos.nota}>
@@ -331,7 +331,6 @@ const estilos = StyleSheet.create({
     zIndex: 2,
   },
   mapa: { gap: espacios.ocho },
-  nombre: { fontFamily: 'Archivo_600SemiBold', fontSize: 18, lineHeight: 22 },
   nota: { alignItems: 'center', flexDirection: 'row', gap: 6 },
   pantalla: { flex: 1 },
   pie: { left: 14, position: 'absolute', right: 14 },
