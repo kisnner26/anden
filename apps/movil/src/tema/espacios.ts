@@ -1,5 +1,6 @@
 export const espacios = {
   trazo: 1,
+  trazoDoble: 2,
   cuatro: 4,
   ocho: 8,
   doce: 12,
@@ -15,6 +16,7 @@ export const radios = {
   bloque: 26,
   bloqueNegro: 30,
   carcasa: 56,
+  casilla: 16,
   cuadrado: 4,
   loseta: 18,
   pildora: 999,
@@ -37,7 +39,9 @@ export const tamanosIcono = {
 
 export const disposicionPantalla = {
   anchoMaximo: 480,
+  espacioPie: 220,
   espacioPieReserva: 200,
+  rellenoHeroDetalle: 44,
   /** aire al final de cada pestaña; la barra nativa ya suma su alto al área segura */
   espacioFinalPestana: espacios.treintaYDos,
   rellenoInferior: espacios.cuarentaYOcho,
@@ -49,9 +53,15 @@ export const tamanosIlustracion = {
   avatarAjustes: 56,
   autobusCorredor: 116,
   autobusProximo: 262,
+  busDetalleSolape: 84,
   confirmacionReserva: 88,
   espacioAutobusProximo: 106,
   solapeAutobusProximo: 114,
+} as const;
+
+/** medidas del pase de abordar */
+export const tamanosBoleto = {
+  muesca: 28,
 } as const;
 
 export const tamanosTablero = {
