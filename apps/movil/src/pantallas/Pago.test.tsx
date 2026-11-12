@@ -107,6 +107,31 @@ describe('Pago', () => {
     expect(String(alReservado.mock.calls[0]?.[0])).toMatch(/^bol_/);
   });
 
+  it('tras confirmar muestra el pase y deja abrir el boleto sin cerrarse sola', async () => {
+    const alVerBoleto = jest.fn();
+    const pantalla = await renderPantalla(
+      <ProveedorBoletos>
+        <ProveedorReserva>
+          <Preparar pasajeros={DOS}>
+            <Pago
+              alVerBoleto={alVerBoleto}
+              alVolver={() => undefined}
+              viajeId={VIAJE_BOACO}
+            />
+          </Preparar>
+        </ProveedorReserva>
+      </ProveedorBoletos>,
+    );
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Confirmar reserva' }),
+    );
+    expect(await pantalla.findByTestId('talon-boleto')).toBeTruthy();
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Ver mi boleto' }),
+    );
+    expect(String(alVerBoleto.mock.calls[0]?.[0])).toMatch(/^bol_/);
+  });
+
   it('avisa si un asiento ya no está libre', async () => {
     const pantalla = await dibujar([{ asiento: 2, nombre: 'Ana Ruiz' }]);
     await fireEvent.press(

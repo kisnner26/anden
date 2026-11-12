@@ -20,7 +20,12 @@ import { t } from '@/textos/t';
 import { ReservaConfirmada } from './ReservaConfirmada';
 
 export interface PropiedadesPago {
-  alReservado: (boletoId: string) => void;
+  /** vuelve a la lista de boletos desde la confirmación */
+  alListo?: () => void;
+  /** la reserva quedó creada; no navega, solo avisa */
+  alReservado?: (boletoId: string) => void;
+  /** abre el boleto recién creado */
+  alVerBoleto?: (boletoId: string) => void;
   alVolver: () => void;
   viajeId: string;
 }
@@ -34,7 +39,13 @@ function mensajeDe(error: ErrorReserva): string {
 }
 
 /** cómo se paga: hoy solo en efectivo al abordar, por el monto exacto de la tarifa oficial */
-export function Pago({ alReservado, alVolver, viajeId }: PropiedadesPago) {
+export function Pago({
+  alListo,
+  alReservado,
+  alVerBoleto,
+  alVolver,
+  viajeId,
+}: PropiedadesPago) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const { borrador, limpiar } = useReserva();
@@ -43,6 +54,7 @@ export function Pago({ alReservado, alVolver, viajeId }: PropiedadesPago) {
   const [reservando, establecerReservando] = useState(false);
   const [error, establecerError] = useState<string | null>(null);
   const [confirmacion, establecerConfirmacion] = useState<{
+    boletoId: string;
     codigo: string;
   } | null>(null);
   const salida = salidas.find((candidata) => candidata.viajeId === viajeId);
@@ -52,7 +64,14 @@ export function Pago({ alReservado, alVolver, viajeId }: PropiedadesPago) {
   );
 
   if (confirmacion) {
-    return <ReservaConfirmada codigo={confirmacion.codigo} />;
+    return (
+      <ReservaConfirmada
+        alListo={alListo}
+        alVerBoleto={() => alVerBoleto?.(confirmacion.boletoId)}
+        boletoId={confirmacion.boletoId}
+        codigo={confirmacion.codigo}
+      />
+    );
   }
 
   if (!borrador || borrador.viajeId !== viajeId || !salida) {
@@ -82,9 +101,10 @@ export function Pago({ alReservado, alVolver, viajeId }: PropiedadesPago) {
       const primero = resultado.valor[0];
       if (primero) {
         establecerConfirmacion({
+          boletoId: primero.boleto.id,
           codigo: primero.boleto.codigo,
         });
-        alReservado(primero.boleto.id);
+        alReservado?.(primero.boleto.id);
       }
     } else {
       establecerError(mensajeDe(resultado.error));
@@ -148,26 +168,29 @@ export function Pago({ alReservado, alVolver, viajeId }: PropiedadesPago) {
       </ScrollView>
 
       <PieReserva estiloContenido={estilos.contenidoPie}>
-        <View style={estilos.total}>
-          <Text
-            style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
-          >
-            {t('pago.total')}
-          </Text>
-          <Text style={[tipografia.datoGrande, { color: colores.sobreNegro }]}>
+        <View style={estilos.filaTotal}>
+          <View style={estilos.total}>
+            <Text
+              style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
+            >
+              {t('pago.total')}
+            </Text>
+            <Text
+              style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
+            >
+              {total
+                ? `${t('pago.tarifaMuestra')} · C$ ${total.unitario} ${t('asientos.porPasajero')}`
+                : t('pago.errorTarifa')}
+            </Text>
+          </View>
+          <Text style={[tipografia.display, { color: colores.ambar }]}>
             {total ? `C$ ${total.total}` : '—'}
-          </Text>
-          <Text
-            style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
-          >
-            {total
-              ? `${t('pago.tarifaMuestra')} · C$ ${total.unitario} ${t('asientos.porPasajero')}`
-              : t('pago.errorTarifa')}
           </Text>
         </View>
         <BotonAccion
           alPresionar={() => void confirmar()}
-          deshabilitado={reservando || total === null}
+          cargando={reservando}
+          deshabilitado={total === null}
           etiqueta={reservando ? t('pago.reservando') : t('pago.confirmar')}
           icono="boleto"
         />
@@ -185,12 +208,15 @@ const estilos = StyleSheet.create({
   },
   contenido: { gap: espacios.dieciseis, paddingHorizontal: espacios.lateral },
   contenidoPie: {
+    gap: espacios.doce,
+    paddingHorizontal: espacios.veinticuatro,
+    paddingVertical: espacios.dieciseis,
+  },
+  filaTotal: {
     alignItems: 'center',
     flexDirection: 'row',
     gap: espacios.doce,
     justifyContent: 'space-between',
-    paddingHorizontal: espacios.veinticuatro,
-    paddingVertical: espacios.dieciseis,
   },
   metodo: { gap: espacios.ocho, padding: espacios.dieciseis },
   pantalla: { flex: 1 },
