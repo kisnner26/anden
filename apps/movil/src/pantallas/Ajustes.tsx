@@ -28,14 +28,13 @@ import { tipografia } from '@/tema/tipografia';
 import { useSesion } from '@/datos/useSesion';
 import { useModoUso } from '@/tema/useModoUso';
 import { useTema, type PreferenciaTema } from '@/tema/useTema';
-import { rellenar } from '@/textos/rellenar';
 import { t } from '@/textos/t';
 
 export interface PropiedadesAjustes {
-  /** abre el modo conductor, si ya hay una sesión de conductor */
-  alAbrirConductor?: () => void;
-  /** abre el ingreso de conductores */
+  /** abre el ingreso, para quien usa la app sin cuenta */
   alAbrirIngreso?: () => void;
+  /** se llama al cerrar la sesión, para volver al ingreso */
+  alSalir?: () => void;
   alAbrirPerfil?: () => void;
   alVolver: () => void;
 }
@@ -82,12 +81,12 @@ const OPCIONES: readonly {
 
 /** apariencia: claro, oscuro o automático según la hora */
 export function Ajustes({
-  alAbrirConductor,
   alAbrirIngreso,
+  alSalir,
   alAbrirPerfil,
   alVolver,
 }: PropiedadesAjustes) {
-  const { cerrar, rol, sesion } = useSesion();
+  const { cerrar, sesion } = useSesion();
   const { colores, establecerPreferencia, preferencia } = useTema();
   const { perfil } = usePerfil();
   const ubicacion = usePreferenciaUbicacion();
@@ -179,28 +178,24 @@ export function Ajustes({
       ))}
 
       <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-        {t('ajustes.cuentaSeccion')}
+        {t('ajustes.sesionSeccion')}
       </Text>
-      {rol === 'conductor' ? (
+      {sesion ? (
         <>
-          <Pressable accessibilityRole="button" onPress={alAbrirConductor}>
-            <Bloque estiloContenido={estilos.filaOpcion}>
-              <View style={estilos.texto}>
-                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                  {t('ajustes.abrirConductor')}
-                </Text>
-                <Text
-                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
-                >
-                  {rellenar(t('ajustes.sesionDe'), {
-                    nombre: sesion?.nombre ?? '',
-                  })}
-                </Text>
-              </View>
-              <Icono nombre="siguiente" tamano="mediano" />
-            </Bloque>
-          </Pressable>
-          <Pressable accessibilityRole="button" onPress={() => void cerrar()}>
+          <Bloque estiloContenido={estilos.filaOpcion}>
+            <View style={estilos.texto}>
+              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                {nombrePropio(sesion.nombre)}
+              </Text>
+              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+                {t('ajustes.sesionIniciada')}
+              </Text>
+            </View>
+          </Bloque>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => void cerrar().then(() => alSalir?.())}
+          >
             <Bloque estiloContenido={estilos.filaOpcion}>
               <Text
                 style={[tipografia.subtitulo, { color: colores.cancelado }]}
@@ -215,10 +210,10 @@ export function Ajustes({
           <Bloque estiloContenido={estilos.filaOpcion}>
             <View style={estilos.texto}>
               <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                {t('ajustes.conductorTitulo')}
+                {t('ajustes.ingresarTitulo')}
               </Text>
               <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-                {t('ajustes.conductorDetalle')}
+                {t('ajustes.ingresarDetalle')}
               </Text>
             </View>
             <Icono nombre="siguiente" tamano="mediano" />
