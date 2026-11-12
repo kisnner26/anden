@@ -180,6 +180,32 @@ export const textos = {
       limpio: 'Limpio',
     },
   },
+  bloqueo: {
+    titulo: 'Andén está bloqueado',
+    detalle: 'Usá Face ID para ver tus boletos.',
+    desbloquear: 'Desbloquear',
+    motivo: 'Abrí Andén para ver tus boletos',
+    motivoActivar: 'Confirmá que sos vos para activar el bloqueo',
+    motivoDesactivar: 'Confirmá que sos vos para quitar el bloqueo',
+    fallo: 'No pudimos confirmar que sos vos. Probá de nuevo.',
+  },
+  cuenta: {
+    titulo: 'Creá tu cuenta',
+    detalle:
+      'Guardamos tus datos solo en este teléfono para que reservar sea más rápido.',
+    nombre: 'Nombre',
+    apellido: 'Apellido',
+    telefono: 'Teléfono',
+    marcadorNombre: 'Tu nombre',
+    marcadorApellido: 'Tu apellido',
+    marcadorTelefono: '8888 8888',
+    nombreInvalido: 'Escribí un nombre de 2 a 80 letras.',
+    apellidoInvalido: 'Escribí tu apellido.',
+    telefonoInvalido: 'Escribí un teléfono de Nicaragua de 8 dígitos.',
+    bloqueo: 'Proteger mis boletos con Face ID',
+    crear: 'Crear cuenta',
+    omitir: 'Ahora no',
+  },
   opiniones: {
     titulo: 'Opiniones',
     vacio: 'Todavía nadie dejó un comentario. Podés ser la primera persona.',
@@ -277,6 +303,12 @@ export const textos = {
   ajustes: {
     titulo: 'Configuración',
     detalle: 'Ajustá Andén a tu forma de viajar.',
+    seguridadSeccion: 'Seguridad',
+    bloqueoTitulo: 'Bloquear con Face ID',
+    bloqueoDetalle:
+      'Pide Face ID al abrir Andén y al volver después de un minuto. Tus boletos quedan protegidos.',
+    bloqueoNoDisponible:
+      'Este teléfono no tiene Face ID ni huella configurados.',
     ubicacionSeccion: 'Viaje',
     ubicacionAutomatica: 'Ubicación automática',
     ubicacionDetalle:
