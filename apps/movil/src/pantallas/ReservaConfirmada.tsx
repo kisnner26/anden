@@ -17,7 +17,13 @@ import { PieReserva } from '@/componentes/PieReserva';
 import { TalonBoleto } from '@/componentes/TalonBoleto';
 import { reproducirSonido } from '@/datos/sonidos';
 import { useBoletos } from '@/datos/useBoletos';
-import { espacios, tamanosIlustracion } from '@/tema/espacios';
+import {
+  disposicionPantalla,
+  espacios,
+  radios,
+  tamanosControl,
+  tamanosIlustracion,
+} from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
@@ -74,7 +80,7 @@ export function ReservaConfirmada({
         contentContainerStyle={[
           estilos.contenido,
           {
-            paddingBottom: margenes.bottom + 220,
+            paddingBottom: margenes.bottom + disposicionPantalla.espacioPie,
             paddingTop: margenes.top + espacios.veinticuatro,
           },
         ]}
@@ -170,7 +176,7 @@ export function ReservaConfirmada({
 
 const estilos = StyleSheet.create({
   codigo: {
-    borderRadius: 26,
+    borderRadius: radios.bloque,
     gap: espacios.ocho,
     padding: espacios.veinticuatro,
   },
@@ -187,7 +193,7 @@ const estilos = StyleSheet.create({
   listo: {
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 44,
+    minHeight: tamanosControl.toqueMinimo,
     paddingHorizontal: espacios.dieciseis,
   },
   pantalla: { flex: 1 },
