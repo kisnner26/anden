@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { EtiquetaMuestra } from '@/componentes/EtiquetaMuestra';
+import { EnlaceTerminal } from '@/componentes/EnlaceTerminal';
 import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
@@ -57,6 +58,9 @@ export function Viajar({
         ESTADOS_PENDIENTES.includes(salida.estado),
     )
     .slice(0, 3);
+  const terminalOrigen = datos.terminales.find(
+    (terminal) => terminal.id === origenId,
+  );
   const ubicacion = useUbicacionCercana(datos.terminales, establecerOrigenId);
 
   useEffect(() => {
@@ -161,6 +165,12 @@ export function Viajar({
           salida={salida}
         />
       ))}
+
+      {terminalOrigen ? (
+        <View style={estilos.terminal}>
+          <EnlaceTerminal terminal={terminalOrigen} />
+        </View>
+      ) : null}
     </MarcoPestana>
   );
 }
@@ -192,5 +202,6 @@ const estilos = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: espacios.veinticuatro,
   },
+  terminal: { marginTop: espacios.veinticuatro },
   vacio: { marginTop: espacios.treintaYDos, textAlign: 'center' },
 });
