@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, waitFor } from '@testing-library/react-native';
-import { Share } from 'react-native';
+import { Linking, Share } from 'react-native';
 
 import { CLAVE_BOLETOS, ProveedorBoletos } from '@/datos/ProveedorBoletos';
 import { ProveedorHabituales } from '@/datos/ProveedorHabituales';
@@ -325,6 +325,66 @@ describe('VerBoleto', () => {
     await pantalla.findByTestId('talon-boleto');
     expect(
       pantalla.queryByRole('button', { name: 'Reportar un objeto olvidado' }),
+    ).toBeNull();
+  });
+
+  it('con una persona de confianza guardada abre Mensajes con el viaje ya escrito', async () => {
+    await AsyncStorage.setItem(
+      'anden.contactoConfianza',
+      JSON.stringify({ nombre: 'Mamá', telefono: '88881234' }),
+    );
+    const abrir = jest
+      .spyOn(Linking, 'openURL')
+      .mockResolvedValue(undefined as never);
+    const pantalla = await dibujar();
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Avisar a Mamá' }),
+    );
+    expect(abrir).toHaveBeenCalledTimes(1);
+    const url = String(abrir.mock.calls[0]?.[0]);
+    expect(url.startsWith('sms:+50588881234&body=')).toBe(true);
+    expect(decodeURIComponent(url)).toContain('Voy en el bus a Boaco');
+    expect(decodeURIComponent(url)).toContain('Placa M 222-114');
+    expect(decodeURIComponent(url)).not.toContain('K7RM');
+    abrir.mockRestore();
+  });
+
+  it('sin contacto pide uno, lo guarda y avisa', async () => {
+    const abrir = jest
+      .spyOn(Linking, 'openURL')
+      .mockResolvedValue(undefined as never);
+    const pantalla = await dibujar();
+    await fireEvent.press(
+      await pantalla.findByRole('button', {
+        name: 'Avisar a mi persona de confianza',
+      }),
+    );
+    await fireEvent.changeText(pantalla.getByLabelText('Nombre'), 'Mamá');
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Teléfono'),
+      '8888 1234',
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Guardar y avisar' }),
+    );
+    await waitFor(() => expect(abrir).toHaveBeenCalledTimes(1));
+    expect(await AsyncStorage.getItem('anden.contactoConfianza')).toContain(
+      '88881234',
+    );
+    abrir.mockRestore();
+  });
+
+  it('un boleto que ya no está vigente no ofrece avisar a nadie', async () => {
+    await AsyncStorage.setItem(
+      CLAVE_BOLETOS,
+      JSON.stringify([boletoDePrueba(new Date(Date.now() - 3 * 3_600_000))]),
+    );
+    const pantalla = await dibujar();
+    await pantalla.findByTestId('talon-boleto');
+    expect(
+      pantalla.queryByRole('button', {
+        name: 'Avisar a mi persona de confianza',
+      }),
     ).toBeNull();
   });
 });
