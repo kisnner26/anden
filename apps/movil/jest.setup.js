@@ -37,3 +37,17 @@ jest.mock('react-native-reanimated', () => {
     withTiming: jest.fn((valor) => valor),
   };
 });
+
+// mapa simulado: react-native-maps necesita el módulo nativo y no existe en jest
+jest.mock('react-native-maps', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  const contenedor = (props) =>
+    React.createElement(View, props, props.children);
+  return {
+    __esModule: true,
+    default: contenedor,
+    Marker: contenedor,
+    Polyline: View,
+  };
+});
