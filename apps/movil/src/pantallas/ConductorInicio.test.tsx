@@ -54,6 +54,19 @@ describe('ConductorInicio', () => {
     ).toBeGreaterThan(0);
   });
 
+  it('dice de dónde a dónde va cada viaje', async () => {
+    const pantalla = await dibujar();
+    await pantalla.findByText('Hola, Marvin Lanzas');
+    expect(
+      pantalla.getAllByText(
+        /^(Boaco|Juigalpa|Managua) → (Boaco|Juigalpa|Managua)$/,
+      ).length,
+    ).toBeGreaterThan(0);
+    expect(
+      pantalla.getAllByText(/^(Boaco|Juigalpa) → /).length,
+    ).toBeGreaterThan(0);
+  });
+
   it('abre el viaje que se toca', async () => {
     const alAbrirViaje = jest.fn();
     const pantalla = await dibujar(alAbrirViaje);
