@@ -154,6 +154,7 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
         <Text
           style={[
             tipografia.subtitulo,
+            tipografia.lema,
             estilos.textoLema,
             { color: colores.tinta },
           ]}
@@ -219,5 +220,5 @@ const estilos = StyleSheet.create({
   pantalla: { flex: 1, overflow: 'hidden' },
   pie: { alignItems: 'center', left: 0, position: 'absolute', right: 0 },
   ruta: { left: 0, position: 'absolute', top: 0 },
-  textoLema: { fontSize: 19, lineHeight: 26, marginTop: 6 },
+  textoLema: { marginTop: 6 },
 });
