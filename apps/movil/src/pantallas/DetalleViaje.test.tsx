@@ -31,6 +31,23 @@ describe('DetalleViaje', () => {
     ).toBeTruthy();
   });
 
+  it('muestra las dos horas con el camino entre las terminales', async () => {
+    const pantalla = await dibujar();
+    expect(pantalla.getByTestId('linea-viaje')).toBeTruthy();
+    expect(pantalla.getByText(/^(a\. m\.|p\. m\.) · MAY$/)).toBeTruthy();
+    expect(pantalla.getByText(/^(a\. m\.|p\. m\.) · BOA$/)).toBeTruthy();
+  });
+
+  it('dibuja el mapa del recorrido con los kilómetros de carretera', async () => {
+    const pantalla = await dibujar();
+    expect(
+      pantalla.getByLabelText('Mapa del recorrido de esta salida'),
+    ).toBeTruthy();
+    expect(
+      pantalla.getByText(/^82\.9 km de carretera · Trazo de la carretera/),
+    ).toBeTruthy();
+  });
+
   it('muestra la placa de la unidad', async () => {
     const pantalla = await dibujar();
     expect(pantalla.getByLabelText('Placa M 222-114')).toBeTruthy();
