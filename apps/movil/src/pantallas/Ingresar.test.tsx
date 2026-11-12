@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, waitFor } from '@testing-library/react-native';
+import { Keyboard } from 'react-native';
 
 import { ProveedorSesion } from '@/datos/ProveedorSesion';
 import { renderPantalla } from '@/pruebas/render';
@@ -64,5 +65,13 @@ describe('Ingresar', () => {
   it('oculta la clave mientras se escribe', async () => {
     const pantalla = await dibujar();
     expect(pantalla.getByLabelText('Clave').props.secureTextEntry).toBe(true);
+  });
+
+  it('tocar fuera de los campos cierra el teclado', async () => {
+    const cerrar = jest.spyOn(Keyboard, 'dismiss');
+    const pantalla = await dibujar();
+    await fireEvent.press(pantalla.getByTestId('ingresar-envoltura'));
+    expect(cerrar).toHaveBeenCalledTimes(1);
+    cerrar.mockRestore();
   });
 });
