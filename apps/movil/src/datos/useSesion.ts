@@ -6,8 +6,8 @@ import type { ErrorSesion, Rol, Sesion } from '@/servicios/sesion';
 export interface ValorSesion {
   cargando: boolean;
   cerrar: () => Promise<void>;
-  iniciarComoConductor: (
-    codigo: string,
+  iniciar: (
+    identificador: string,
     clave: string,
   ) => Promise<Resultado<Sesion, ErrorSesion>>;
   rol: Rol;
@@ -17,7 +17,7 @@ export interface ValorSesion {
 export const ContextoSesion = createContext<ValorSesion>({
   cargando: false,
   cerrar: async () => undefined,
-  iniciarComoConductor: async () => ({ error: 'credenciales', ok: false }),
+  iniciar: async () => ({ error: 'credenciales', ok: false }),
   rol: 'pasajero',
   sesion: null,
 });

@@ -31,7 +31,7 @@ describe('ProveedorSesion', () => {
     await waitFor(() => expect(result.current.cargando).toBe(false));
 
     await act(async () => {
-      await result.current.iniciarComoConductor('1003', '2026');
+      await result.current.iniciar('1003', '2026');
     });
     expect(result.current.rol).toBe('conductor');
     expect(result.current.sesion?.choferId).toBe('cho_3');
@@ -49,7 +49,7 @@ describe('ProveedorSesion', () => {
     await waitFor(() => expect(result.current.cargando).toBe(false));
     let resultado: unknown;
     await act(async () => {
-      resultado = await result.current.iniciarComoConductor('1003', 'mala');
+      resultado = await result.current.iniciar('1003', 'mala');
     });
     expect(resultado).toEqual({ error: 'credenciales', ok: false });
     expect(result.current.rol).toBe('pasajero');

@@ -6,7 +6,7 @@ import {
   type ReactNode,
 } from 'react';
 
-import { CUENTAS_CONDUCTOR_MUESTRA } from '@/servicios/cuentasMuestra';
+import { CUENTAS_MUESTRA } from '@/servicios/cuentasMuestra';
 import {
   crearSesionLocal,
   rolDe,
@@ -16,7 +16,7 @@ import {
 
 import { ContextoSesion, type ValorSesion } from './useSesion';
 
-const SERVICIO_LOCAL = crearSesionLocal(CUENTAS_CONDUCTOR_MUESTRA);
+const SERVICIO_LOCAL = crearSesionLocal(CUENTAS_MUESTRA);
 
 /** comparte quién está usando la app y con qué rol; sin sesión, la persona es pasajera */
 export function ProveedorSesion({
@@ -44,9 +44,9 @@ export function ProveedorSesion({
     };
   }, [servicio]);
 
-  const iniciarComoConductor = useCallback<ValorSesion['iniciarComoConductor']>(
-    async (codigo, clave) => {
-      const resultado = await servicio.iniciarComoConductor(codigo, clave);
+  const iniciar = useCallback<ValorSesion['iniciar']>(
+    async (identificador, clave) => {
+      const resultado = await servicio.iniciar(identificador, clave);
       if (resultado.ok) establecerSesion(resultado.valor);
       return resultado;
     },
@@ -62,11 +62,11 @@ export function ProveedorSesion({
     () => ({
       cargando,
       cerrar,
-      iniciarComoConductor,
+      iniciar,
       rol: rolDe(sesion),
       sesion,
     }),
-    [cargando, cerrar, iniciarComoConductor, sesion],
+    [cargando, cerrar, iniciar, sesion],
   );
 
   return (

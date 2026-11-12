@@ -21,17 +21,24 @@ export type ErrorSesion = 'credenciales';
 export interface ServicioSesion {
   actual(): Promise<Sesion | null>;
   cerrar(): Promise<void>;
-  iniciarComoConductor(
-    codigo: string,
+  /** entra con las credenciales; el rol lo decide quien guarda la cuenta, no la persona que entra */
+  iniciar(
+    identificador: string,
     clave: string,
   ): Promise<Resultado<Sesion, ErrorSesion>>;
 }
 
-export interface CuentaConductor {
-  choferId: string;
+/** una cuenta de muestra: con qué se entra y a quién corresponde */
+export interface CuentaMuestra {
   clave: string;
-  codigo: string;
-  nombre: string;
+  /** correo, teléfono o código de chofer, como lo escribe quien entra */
+  identificador: string;
+  sesion: Sesion;
+}
+
+/** minúsculas, sin espacios ni guiones, para comparar lo escrito con lo guardado */
+export function normalizarIdentificador(texto: string): string {
+  return texto.trim().toLowerCase().replace(/[\s-]/g, '');
 }
 
 /** el pasajero no necesita iniciar sesión: sin sesión se comporta como pasajero */
@@ -59,9 +66,9 @@ function leer(texto: string | null): Sesion | null {
   }
 }
 
-/** sesión guardada en el teléfono con cuentas de conductor de muestra; sirve para desarrollo, no para producción */
+/** sesión guardada en el teléfono con cuentas de muestra de los dos roles; sirve para desarrollo, no para producción */
 export function crearSesionLocal(
-  cuentas: readonly CuentaConductor[],
+  cuentas: readonly CuentaMuestra[],
 ): ServicioSesion {
   return {
     async actual() {
@@ -74,19 +81,35 @@ export function crearSesionLocal(
     async cerrar() {
       await AsyncStorage.removeItem(CLAVE_SESION);
     },
-    async iniciarComoConductor(codigo, clave) {
+    async iniciar(identificador, clave) {
+      const buscado = normalizarIdentificador(identificador);
       const cuenta = cuentas.find(
         (candidata) =>
-          candidata.codigo === codigo.trim() && candidata.clave === clave,
+          normalizarIdentificador(candidata.identificador) === buscado &&
+          candidata.clave === clave,
       );
       if (!cuenta) return error('credenciales');
-      const sesion: Sesion = {
-        choferId: cuenta.choferId,
-        nombre: cuenta.nombre,
-        rol: 'conductor',
-      };
-      await AsyncStorage.setItem(CLAVE_SESION, JSON.stringify(sesion));
-      return ok(sesion);
+      await AsyncStorage.setItem(CLAVE_SESION, JSON.stringify(cuenta.sesion));
+      return ok(cuenta.sesion);
     },
   };
+}
+
+export const CLAVE_INVITADO = 'anden.invitado';
+
+/** quien prefiere usar la app sin cuenta; se recuerda para no volver a mostrar el ingreso */
+export async function marcarInvitado(): Promise<void> {
+  await AsyncStorage.setItem(CLAVE_INVITADO, '1');
+}
+
+export async function esInvitado(): Promise<boolean> {
+  try {
+    return (await AsyncStorage.getItem(CLAVE_INVITADO)) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export async function olvidarInvitado(): Promise<void> {
+  await AsyncStorage.removeItem(CLAVE_INVITADO);
 }

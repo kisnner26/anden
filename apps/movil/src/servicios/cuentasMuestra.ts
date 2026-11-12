@@ -1,34 +1,35 @@
-import type { CuentaConductor } from './sesion';
+import type { CuentaMuestra } from './sesion';
 
 /**
- * cuentas de conductor solo para desarrollo, una por cada chofer de la muestra. Con Supabase las
- * cuentas las crea la cooperativa y estos datos desaparecen.
+ * cuentas solo para desarrollo, de los dos roles. Con Supabase las cuentas de conductor las crea
+ * la cooperativa y el rol sale de la tabla de perfiles; estos datos desaparecen.
  */
 export const CLAVE_DE_MUESTRA = '2026';
 
-export const CUENTAS_CONDUCTOR_MUESTRA: readonly CuentaConductor[] = [
+export const CUENTAS_MUESTRA: readonly CuentaMuestra[] = [
   {
-    choferId: 'cho_1',
     clave: CLAVE_DE_MUESTRA,
-    codigo: '1001',
-    nombre: 'Ernesto Calero',
+    identificador: '1001',
+    sesion: { choferId: 'cho_1', nombre: 'Ernesto Calero', rol: 'conductor' },
   },
   {
-    choferId: 'cho_2',
     clave: CLAVE_DE_MUESTRA,
-    codigo: '1002',
-    nombre: 'Marvin Lanzas',
+    identificador: '1002',
+    sesion: { choferId: 'cho_2', nombre: 'Marvin Lanzas', rol: 'conductor' },
   },
   {
-    choferId: 'cho_3',
     clave: CLAVE_DE_MUESTRA,
-    codigo: '1003',
-    nombre: 'Iván Obando',
+    identificador: '1003',
+    sesion: { choferId: 'cho_3', nombre: 'Iván Obando', rol: 'conductor' },
   },
   {
-    choferId: 'cho_4',
     clave: CLAVE_DE_MUESTRA,
-    codigo: '1004',
-    nombre: 'Rosario Téllez',
+    identificador: '1004',
+    sesion: { choferId: 'cho_4', nombre: 'Rosario Téllez', rol: 'conductor' },
+  },
+  {
+    clave: CLAVE_DE_MUESTRA,
+    identificador: 'ana@correo.com',
+    sesion: { nombre: 'Ana Ruiz', rol: 'pasajero' },
   },
 ];
