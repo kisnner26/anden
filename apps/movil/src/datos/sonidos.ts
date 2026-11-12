@@ -5,8 +5,9 @@ import arranque from '../../assets/sonidos/arranque.wav';
 import bocina from '../../assets/sonidos/bocina.wav';
 import confirmacion from '../../assets/sonidos/confirmacion.wav';
 import salida from '../../assets/sonidos/salida.wav';
+import toque from '../../assets/sonidos/toque.wav';
 
-const FUENTES = { arranque, bocina, confirmacion, salida } as const;
+const FUENTES = { arranque, bocina, confirmacion, salida, toque } as const;
 
 export type NombreSonido = keyof typeof FUENTES;
 

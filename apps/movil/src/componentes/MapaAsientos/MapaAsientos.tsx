@@ -12,6 +12,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
 import { Rebote } from '@/componentes/Rebote';
+import { reproducirSonido } from '@/datos/sonidos';
 import { radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -121,6 +122,7 @@ export function MapaAsientos({
                 key={clave}
                 onPress={() => {
                   void impactAsync(ImpactFeedbackStyle.Light);
+                  void reproducirSonido('toque');
                   alElegir(asiento.numero);
                 }}
                 style={estilos.celda}
