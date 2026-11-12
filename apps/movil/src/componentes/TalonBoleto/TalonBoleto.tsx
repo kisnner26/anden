@@ -31,7 +31,7 @@ function Casilla({ etiqueta, valor }: { etiqueta: string; valor: string }) {
       <Text style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}>
         {etiqueta}
       </Text>
-      <Text style={[estilos.casillaValor, { color: colores.ambar }]}>
+      <Text style={[tipografia.casillaBoleto, { color: colores.ambar }]}>
         {valor}
       </Text>
     </View>
@@ -115,7 +115,7 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
             <Text
               adjustsFontSizeToFit
               numberOfLines={1}
-              style={[estilos.destino, { color: colores.sobreNegro }]}
+              style={[tipografia.titularBoleto, { color: colores.sobreNegro }]}
             >
               {resumen.destino}
             </Text>
@@ -187,7 +187,7 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
           </Text>
           <Text
             accessibilityLabel={boleto.codigo}
-            style={[estilos.numero, { color: colores.tintaPapel }]}
+            style={[tipografia.codigoBoleto, { color: colores.tintaPapel }]}
           >
             {`${boleto.codigo.slice(0, 4)} ${boleto.codigo.slice(4)}`}
           </Text>
@@ -206,7 +206,12 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
       </Animated.View>
       {boleto.estado === 'usado' && (
         <Animated.Text
-          style={[estilos.sello, { color: colores.ambarTitular }, estiloSello]}
+          style={[
+            tipografia.sello,
+            estilos.sello,
+            { color: colores.ambarTitular },
+            estiloSello,
+          ]}
         >
           {t('boleto.usado')}
         </Animated.Text>
@@ -226,11 +231,6 @@ const estilos = StyleSheet.create({
     paddingVertical: espacios.doce,
   },
   casillaSalida: { flex: 1 },
-  casillaValor: {
-    fontFamily: 'JetBrainsMono_600SemiBold',
-    fontSize: 22,
-    lineHeight: 26,
-  },
   destinoColumna: { flex: 1, gap: espacios.cuatro },
   destinoYBus: {
     alignItems: 'center',
@@ -245,11 +245,6 @@ const estilos = StyleSheet.create({
   },
   codigo: { flex: 1, gap: espacios.cuatro },
   cuerpo: { gap: espacios.doce, padding: espacios.veinticuatro },
-  destino: {
-    fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
-    fontSize: 52,
-    lineHeight: 54,
-  },
   fila: {
     alignItems: 'center',
     flexDirection: 'row',
@@ -271,12 +266,6 @@ const estilos = StyleSheet.create({
   },
   muescaDerecha: { right: -14 },
   muescaIzquierda: { left: -14 },
-  numero: {
-    fontFamily: 'JetBrainsMono_600SemiBold',
-    fontSize: 26,
-    letterSpacing: 1.5,
-    lineHeight: 30,
-  },
   papel: { borderRadius: 26, overflow: 'hidden' },
   perforacion: { alignItems: 'center', flexDirection: 'row', height: 1 },
   talon: {
@@ -285,9 +274,6 @@ const estilos = StyleSheet.create({
     paddingTop: espacios.veinticuatro,
   },
   sello: {
-    fontFamily: 'Archivo_600SemiBold',
-    fontSize: 22,
-    letterSpacing: 2,
     paddingBottom: espacios.dieciseis,
     textAlign: 'center',
     textTransform: 'uppercase',
