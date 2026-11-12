@@ -206,6 +206,21 @@ export const textos = {
     crear: 'Crear cuenta',
     omitir: 'Ahora no',
   },
+  mascota: {
+    madrugada: 'Qué madrugada',
+    manana: 'Buenos días',
+    tarde: 'Buenas tardes',
+    noche: 'Buenas noches',
+    sinNombre: 'Soy Andén, tu bus',
+    sinSalidas: 'Hoy ya no quedan salidas.',
+    proximo: 'Tu próximo bus a',
+    sale: 'sale a las',
+    bocina: 'Piiin, piiin.',
+    etiqueta: 'Andén, tu bus de compañía. Tocalo y toca la bocina.',
+    ajusteTitulo: 'Mascota de bienvenida',
+    ajusteDetalle:
+      'El bus te saluda en Viajar y te avisa cuál es tu próxima salida.',
+  },
   opiniones: {
     titulo: 'Opiniones',
     vacio: 'Todavía nadie dejó un comentario. Podés ser la primera persona.',
