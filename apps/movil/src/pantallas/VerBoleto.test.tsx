@@ -219,4 +219,30 @@ describe('VerBoleto', () => {
     await pantalla.findByTestId('talon-boleto');
     expect(pantalla.queryByText('Pagado en efectivo al conductor')).toBeNull();
   });
+
+  it('un boleto cancelado no pide pagar al abordar ni muestra reglas', async () => {
+    const base = boletoDePrueba(new Date(Date.now() + 60 * 60_000));
+    await AsyncStorage.setItem(
+      CLAVE_BOLETOS,
+      JSON.stringify([
+        { ...base, boleto: { ...base.boleto, estado: 'cancelado' } },
+      ]),
+    );
+    const pantalla = await dibujar();
+    await pantalla.findByTestId('talon-boleto');
+    expect(pantalla.queryByText('Pagás al abordar')).toBeNull();
+    expect(pantalla.queryByText('Llevá el monto exacto.')).toBeNull();
+    expect(pantalla.queryByText('Reglas de muestra')).toBeNull();
+  });
+
+  it('un boleto con la salida vencida tampoco pide pagar', async () => {
+    await AsyncStorage.setItem(
+      CLAVE_BOLETOS,
+      JSON.stringify([boletoDePrueba(new Date(Date.now() - 3 * 3_600_000))]),
+    );
+    const pantalla = await dibujar();
+    await pantalla.findByTestId('talon-boleto');
+    expect(pantalla.getByText('Estado: Salida vencida')).toBeTruthy();
+    expect(pantalla.queryByText('Pagás al abordar')).toBeNull();
+  });
 });
