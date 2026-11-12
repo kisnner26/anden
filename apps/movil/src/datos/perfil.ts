@@ -30,6 +30,27 @@ export function nombreCompleto(perfil: Pick<Perfil, 'apellido' | 'nombre'>) {
   return `${perfil.nombre.trim()} ${perfil.apellido.trim()}`.trim();
 }
 
+const PARTICULAS = new Set(['de', 'del', 'la', 'las', 'los', 'y']);
+
+/**
+ * el nombre listo para mostrar: cada palabra empieza con mayúscula y el resto queda como se
+ * escribió; las partículas (de, del, la...) en medio del nombre quedan en minúscula. No se usa
+ * al guardar: lo que escribió la persona no se modifica.
+ */
+export function nombrePropio(texto: string): string {
+  return texto
+    .trim()
+    .split(/\s+/)
+    .filter((palabra) => palabra !== '')
+    .map((palabra, indice) => {
+      if (indice > 0 && PARTICULAS.has(palabra.toLocaleLowerCase('es'))) {
+        return palabra.toLocaleLowerCase('es');
+      }
+      return palabra.charAt(0).toLocaleUpperCase('es') + palabra.slice(1);
+    })
+    .join(' ');
+}
+
 /** hasta dos letras en mayúscula para el avatar sin foto */
 export function iniciales(perfil: Pick<Perfil, 'apellido' | 'nombre'>): string {
   const letras = [perfil.nombre, perfil.apellido]
