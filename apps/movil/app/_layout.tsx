@@ -22,6 +22,7 @@ import { ProveedorPerfil } from '@/datos/ProveedorPerfil';
 import { ProveedorReserva } from '@/datos/ProveedorReserva';
 import { ProveedorUbicacion } from '@/datos/ProveedorUbicacion';
 import { PuertaBloqueo } from '@/pantallas/Bloqueo';
+import { ProveedorModoUso } from '@/tema/ProveedorModoUso';
 import { ProveedorTema } from '@/tema/ProveedorTema';
 
 void SplashScreen.preventAutoHideAsync();
@@ -49,22 +50,24 @@ export default function DisenoRaiz() {
 
   return (
     <ProveedorTema>
-      <ProveedorBloqueo>
-        <ProveedorMascota>
-          <ProveedorPerfil>
-            <ProveedorBoletos>
-              <ProveedorAvisos>
-                <ProveedorUbicacion>
-                  <ProveedorReserva>
-                    <Stack screenOptions={{ headerShown: false }} />
-                  </ProveedorReserva>
-                </ProveedorUbicacion>
-              </ProveedorAvisos>
-            </ProveedorBoletos>
-          </ProveedorPerfil>
-        </ProveedorMascota>
-        <PuertaBloqueo />
-      </ProveedorBloqueo>
+      <ProveedorModoUso>
+        <ProveedorBloqueo>
+          <ProveedorMascota>
+            <ProveedorPerfil>
+              <ProveedorBoletos>
+                <ProveedorAvisos>
+                  <ProveedorUbicacion>
+                    <ProveedorReserva>
+                      <Stack screenOptions={{ headerShown: false }} />
+                    </ProveedorReserva>
+                  </ProveedorUbicacion>
+                </ProveedorAvisos>
+              </ProveedorBoletos>
+            </ProveedorPerfil>
+          </ProveedorMascota>
+          <PuertaBloqueo />
+        </ProveedorBloqueo>
+      </ProveedorModoUso>
     </ProveedorTema>
   );
 }
