@@ -13,7 +13,7 @@ import { t } from '@/textos/t';
 
 export interface PropiedadesFilaSalida {
   alPresionar?: (viajeId: string) => void;
-  /** si ya tenés boleto en esta salida se muestra el círculo negro con el check */
+  /** si ya tenés boleto en esta salida se muestra el círculo negro con el check; sin boleto no hay control extra */
   conBoleto?: boolean;
   salida: Salida;
 }
@@ -68,21 +68,13 @@ export function FilaSalida({
               tamano="grande"
             />
           </Loseta>
-        ) : (
-          <Bloque hundido radio="pildora">
-            <View style={estilos.circuloVacio} />
-          </Bloque>
-        )}
+        ) : null}
       </Bloque>
     </Pressable>
   );
 }
 
 const estilos = StyleSheet.create({
-  circuloVacio: {
-    height: tamanosControl.circuloPildora,
-    width: tamanosControl.circuloPildora,
-  },
   contenido: {
     alignItems: 'center',
     flexDirection: 'row',

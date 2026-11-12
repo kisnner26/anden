@@ -39,6 +39,19 @@ describe('FilaSalida', () => {
     expect(pantalla.getByText('2:40')).toBeTruthy();
   });
 
+  it('sin boleto la fila no suma elementos decorativos', async () => {
+    const sin = await render(<FilaSalida salida={boaco} />);
+    const con = await render(<FilaSalida conBoleto salida={boaco} />);
+    const contar = (nodo: unknown): number =>
+      typeof nodo === 'object' && nodo !== null && 'children' in nodo
+        ? 1 +
+          (
+            (nodo as { children: unknown[] | null }).children ?? []
+          ).reduce<number>((suma, hijo) => suma + contar(hijo), 0)
+        : 0;
+    expect(contar(con.toJSON())).toBeGreaterThan(contar(sin.toJSON()));
+  });
+
   it('muestra la placa en el taxi interlocal y no en el ordinario', async () => {
     const todas = armarSalidas(crearMuestra(AHORA), AHORA);
     const taxi = todas.find(
