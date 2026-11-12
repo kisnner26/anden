@@ -98,4 +98,33 @@ describe('transmisor', () => {
     detenerTodas();
     expect(TRANSMISION.activos()).toEqual([]);
   });
+
+  it('el viaje aparece activo al instante, sin esperar el permiso', async () => {
+    let responder: (v: { estado: 'otorgado' }) => void = () => undefined;
+    jest.mocked(solicitarAccesoUbicacion).mockReturnValue(
+      new Promise((resolver) => {
+        responder = resolver;
+      }),
+    );
+    const promesa = iniciarTransmision('via_1', 'cho_1');
+    expect(TRANSMISION.activos()).toContain('via_1');
+    responder({ estado: 'otorgado' });
+    expect(await promesa).toBe('ok');
+    detenerTransmision('via_1');
+  });
+
+  it('si se termina el viaje mientras arranca el GPS, suelta el GPS', async () => {
+    let responder: (v: { estado: 'otorgado' }) => void = () => undefined;
+    jest.mocked(solicitarAccesoUbicacion).mockReturnValue(
+      new Promise((resolver) => {
+        responder = resolver;
+      }),
+    );
+    const promesa = iniciarTransmision('via_1', 'cho_1');
+    detenerTransmision('via_1');
+    responder({ estado: 'otorgado' });
+    expect(await promesa).toBe('ok');
+    expect(parar).toHaveBeenCalled();
+    expect(TRANSMISION.activos()).not.toContain('via_1');
+  });
 });
