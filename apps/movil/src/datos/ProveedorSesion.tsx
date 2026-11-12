@@ -14,14 +14,25 @@ import {
   type Sesion,
 } from '@/servicios/sesion';
 
+import { obtenerCliente } from '@/servicios/supabase/cliente';
+import { crearSesionSupabase } from '@/servicios/supabase/sesionSupabase';
+
 import { ContextoSesion, type ValorSesion } from './useSesion';
 
 const SERVICIO_LOCAL = crearSesionLocal(CUENTAS_MUESTRA);
 
+/** con Supabase configurado las cuentas son reales; sin él, las de muestra del teléfono */
+function servicioPorDefecto(): ServicioSesion {
+  const cliente = obtenerCliente();
+  return cliente ? crearSesionSupabase(cliente) : SERVICIO_LOCAL;
+}
+
+const SERVICIO_PREDETERMINADO = servicioPorDefecto();
+
 /** comparte quién está usando la app y con qué rol; sin sesión, la persona es pasajera */
 export function ProveedorSesion({
   children,
-  servicio = SERVICIO_LOCAL,
+  servicio = SERVICIO_PREDETERMINADO,
 }: {
   children: ReactNode;
   servicio?: ServicioSesion;
