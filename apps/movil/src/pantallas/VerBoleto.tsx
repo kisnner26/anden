@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
+  Linking,
   Pressable,
   ScrollView,
   Share,
@@ -11,6 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
+import { HojaContacto } from '@/componentes/HojaContacto';
 import { HojaObjetoOlvidado } from '@/componentes/HojaObjetoOlvidado';
 import { TalonBoleto } from '@/componentes/TalonBoleto';
 import { estadoVisibleBoleto } from '@/datos/estadoBoleto';
@@ -18,6 +20,16 @@ import { useBoletos } from '@/datos/useBoletos';
 import { useAvisos } from '@/datos/useAvisos';
 import { usePagos } from '@/datos/usePagos';
 import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
+import {
+  guardarContacto,
+  leerContacto,
+  mensajeDeViaje,
+  urlSms,
+  type ContactoConfianza,
+} from '@/datos/contactoConfianza';
+import { armarDetalle } from '@/datos/detalle';
+import { formatoHoraCompleta } from '@/datos/formato';
+import { nombrePropio } from '@/datos/perfil';
 import {
   guardarObjeto,
   leerObjetos,
@@ -60,9 +72,14 @@ export function VerBoleto({
   const [confirmando, establecerConfirmando] = useState(false);
   const [objetos, establecerObjetos] = useState<ObjetoOlvidado[]>([]);
   const [reportando, establecerReportando] = useState(false);
+  const [contacto, establecerContacto] = useState<ContactoConfianza | null>(
+    null,
+  );
+  const [pidiendoContacto, establecerPidiendoContacto] = useState(false);
 
   useEffect(() => {
     void leerObjetos().then(establecerObjetos);
+    void leerContacto().then(establecerContacto);
   }, []);
   const guardado = boletos.find(({ boleto }) => boleto.id === boletoId);
 
@@ -112,6 +129,22 @@ export function VerBoleto({
     vencido: t('boleto.vencido'),
     vigente: t('boleto.estadoVigente'),
   }[estado];
+  async function avisarContacto(destinatario: ContactoConfianza) {
+    const detalle = armarDetalle(
+      obtenerMuestra(),
+      guardado!.boleto.viajeId,
+      ahora,
+    );
+    const mensaje = mensajeDeViaje({
+      chofer: nombrePropio(guardado!.resumen.choferNombre),
+      destino: guardado!.resumen.destino,
+      llegada: detalle ? formatoHoraCompleta(detalle.llegada) : '',
+      placa: guardado!.resumen.placa,
+      salida: formatoHoraCompleta(new Date(guardado!.resumen.salida)),
+    });
+    await Linking.openURL(urlSms(destinatario, mensaje)).catch(() => undefined);
+  }
+
   const compartir = () =>
     Share.share({
       message: `${t('boleto.titulo')} a ${guardado.resumen.destino}. ${t('boleto.sale')} ${new Date(guardado.resumen.salida).toLocaleString('es-NI')}. ${t('boleto.anden')} ${guardado.resumen.anden}. ${t('boleto.placa')} ${guardado.resumen.placa}.`,
@@ -278,6 +311,40 @@ export function VerBoleto({
       )}
 
       {puedeOperar && (
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => {
+            if (contacto) void avisarContacto(contacto);
+            else establecerPidiendoContacto(true);
+          }}
+        >
+          <Bloque estiloContenido={estilos.boton} radio="pildora">
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+              {contacto
+                ? rellenar(t('contacto.avisarA'), { nombre: contacto.nombre })
+                : t('contacto.avisar')}
+            </Text>
+          </Bloque>
+        </Pressable>
+      )}
+      {puedeOperar && contacto && (
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => establecerPidiendoContacto(true)}
+        >
+          <Text
+            style={[
+              tipografia.pequeno,
+              estilos.cambiarContacto,
+              { color: colores.tintaSuave },
+            ]}
+          >
+            {t('contacto.cambiar')}
+          </Text>
+        </Pressable>
+      )}
+
+      {puedeOperar && (
         <View style={estilos.acciones}>
           <Pressable
             accessibilityLabel={t('boleto.compartir')}
@@ -347,6 +414,16 @@ export function VerBoleto({
           </Text>
         </Pressable>
       ) : null}
+      <HojaContacto
+        abierta={pidiendoContacto}
+        alCerrar={() => establecerPidiendoContacto(false)}
+        alGuardar={(nuevo) => {
+          void guardarContacto(nuevo);
+          establecerContacto(nuevo);
+          establecerPidiendoContacto(false);
+          void avisarContacto(nuevo);
+        }}
+      />
       <HojaObjetoOlvidado
         abierta={reportando}
         alCerrar={() => establecerReportando(false)}
@@ -369,6 +446,7 @@ export function VerBoleto({
 }
 
 const estilos = StyleSheet.create({
+  cambiarContacto: { textAlign: 'center', textDecorationLine: 'underline' },
   verificar: { gap: espacios.cuatro, padding: espacios.dieciseis },
   acciones: { flexDirection: 'row', gap: espacios.ocho },
   accion: {
