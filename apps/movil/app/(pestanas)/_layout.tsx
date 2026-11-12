@@ -1,48 +1,38 @@
-import { Tabs } from 'expo-router';
+import { NativeTabs } from 'expo-router/native-tabs';
 
-import { BarraPestanas, type Pestana } from '@/componentes/BarraPestanas';
+import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
-const PESTANAS: readonly Pestana[] = [
-  { clave: 'viajar', icono: 'pestanaViajar', nombre: t('pestanas.viajar') },
-  {
-    clave: 'horarios',
-    icono: 'pestanaHorarios',
-    nombre: t('pestanas.horarios'),
-  },
-  { clave: 'rutas', icono: 'pestanaRutas', nombre: t('pestanas.rutas') },
-  { clave: 'boletos', icono: 'pestanaBoletos', nombre: t('pestanas.boletos') },
-];
-
-interface PropiedadesBarra {
-  navigateToTab: (claveRuta: string) => void;
-  state: { index: number; routes: readonly { key: string; name: string }[] };
-}
-
-function Barra({ navigateToTab, state }: PropiedadesBarra) {
-  const activa = state.routes[state.index]?.name ?? 'viajar';
-  return (
-    <BarraPestanas
-      activa={activa}
-      alSeleccionar={(clave) => {
-        const ruta = state.routes.find((candidata) => candidata.name === clave);
-        if (ruta) navigateToTab(ruta.key);
-      }}
-      pestanas={PESTANAS}
-    />
-  );
-}
-
+/** barra nativa de iOS: Liquid Glass del sistema, pegada al borde inferior */
 export default function DisenoPestanas() {
+  const { colores } = useTema();
+
   return (
-    <Tabs
-      screenOptions={{ headerShown: false }}
-      tabBar={(propiedades) => <Barra {...propiedades} />}
-    >
-      <Tabs.Screen name="viajar" />
-      <Tabs.Screen name="horarios" />
-      <Tabs.Screen name="rutas" />
-      <Tabs.Screen name="boletos" />
-    </Tabs>
+    <NativeTabs tintColor={colores.ambarTexto}>
+      <NativeTabs.Trigger name="viajar">
+        <NativeTabs.Trigger.Label>
+          {t('pestanas.viajar')}
+        </NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="bus.fill" />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="horarios">
+        <NativeTabs.Trigger.Label>
+          {t('pestanas.horarios')}
+        </NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="clock.fill" />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="rutas">
+        <NativeTabs.Trigger.Label>
+          {t('pestanas.rutas')}
+        </NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="map.fill" />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="boletos">
+        <NativeTabs.Trigger.Label>
+          {t('pestanas.boletos')}
+        </NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="ticket.fill" />
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }
