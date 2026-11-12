@@ -201,7 +201,7 @@ export function Asientos({ alSeguir, alVolver, viajeId }: PropiedadesAsientos) {
             style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
           >
             {cantidad === 0
-              ? t('asientos.sinElegir')
+              ? t('asientos.totalEtiqueta')
               : `${cantidad} ${cantidad === 1 ? t('asientos.unAsiento') : t('asientos.variosAsientos')} · ${elegidos.join(' y ')}`}
           </Text>
           <Text style={[tipografia.datoGrande, { color: colores.sobreNegro }]}>

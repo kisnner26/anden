@@ -113,6 +113,7 @@ export const textos = {
     tarifaMuestra: 'tarifa de muestra',
     volver: 'Volver',
     sinElegir: 'Elegí al menos un asiento',
+    totalEtiqueta: 'Total',
     asiento: 'Asiento',
     avisoMaximo: 'Podés elegir hasta 6 asientos.',
     avisoVentaCerrada: 'La venta de este viaje ya cerró.',
