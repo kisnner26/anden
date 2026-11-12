@@ -79,40 +79,46 @@ export function ProveedorRecordatorios({ children }: { children: ReactNode }) {
       );
       if (cuando.getTime() <= Date.now()) return 'ya-paso';
 
-      const permiso = await leerPermiso();
-      const estado = permiso === 'concedido' ? permiso : await pedirPermiso();
-      if (estado !== 'concedido') return 'permiso-negado';
+      try {
+        const permiso = await leerPermiso();
+        const estado = permiso === 'concedido' ? permiso : await pedirPermiso();
+        if (estado !== 'concedido') return 'permiso-negado';
 
-      const anterior = lista.find((r) => r.viajeId === salida.viajeId);
-      if (anterior) {
-        try {
-          await cancelarRecordatorio(anterior.identificador);
-        } catch {
-          /* ya no existía */
+        const anterior = lista.find((r) => r.viajeId === salida.viajeId);
+        if (anterior) {
+          try {
+            await cancelarRecordatorio(anterior.identificador);
+          } catch {
+            /* ya no existía */
+          }
         }
-      }
-      const identificador = await programarRecordatorio({
-        anden: salida.anden,
-        cuando,
-        destino: salida.destino,
-        texto: {
-          cuerpo: rellenar(t('recordatorios.cuerpo'), { anden: salida.anden }),
-          titulo: rellenar(t('recordatorios.titulo'), {
-            destino: salida.destino,
-            minutos: minutosAntes,
-          }),
-        },
-      });
-      await persistir(
-        conRecordatorio(lista, {
+        const identificador = await programarRecordatorio({
           anden: salida.anden,
+          cuando,
           destino: salida.destino,
-          identificador,
-          minutosAntes,
-          salida: salida.salida.toISOString(),
-          viajeId: salida.viajeId,
-        }),
-      );
+          texto: {
+            cuerpo: rellenar(t('recordatorios.cuerpo'), {
+              anden: salida.anden,
+            }),
+            titulo: rellenar(t('recordatorios.titulo'), {
+              destino: salida.destino,
+              minutos: minutosAntes,
+            }),
+          },
+        });
+        await persistir(
+          conRecordatorio(lista, {
+            anden: salida.anden,
+            destino: salida.destino,
+            identificador,
+            minutosAntes,
+            salida: salida.salida.toISOString(),
+            viajeId: salida.viajeId,
+          }),
+        );
+      } catch {
+        return 'fallo';
+      }
       return 'listo';
     },
     [lista, persistir],

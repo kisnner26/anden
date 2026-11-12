@@ -539,6 +539,8 @@ export const textos = {
     yaPaso: 'Ese aviso ya habría sonado.',
     permisoNegado:
       'Las notificaciones están desactivadas para Andén en el teléfono. Activalas en los ajustes.',
+    fallo: 'No pudimos programar el aviso. Probá de nuevo.',
+    abrirAjustes: 'Abrir ajustes',
     cerrar: 'Cerrar',
     abrir: 'Recordarme la salida a {{destino}}',
     quitarEtiqueta: 'Quitar el recordatorio de la salida a {{destino}}',

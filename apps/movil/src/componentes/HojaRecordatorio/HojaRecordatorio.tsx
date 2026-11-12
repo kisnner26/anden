@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import { BotonAccion } from '@/componentes/BotonAccion';
+import { abrirAjustesDelSistema } from '@/datos/notificaciones';
 import { Chip } from '@/componentes/Chip';
 import { Hoja } from '@/componentes/Hoja';
 import {
@@ -23,7 +24,7 @@ export interface PropiedadesHojaRecordatorio {
   alElegir: (minutos: MinutosAntes) => void;
   alQuitar: () => void;
   /** lo que salió mal la última vez, si algo salió mal */
-  error?: 'permiso-negado' | 'ya-paso' | null;
+  error?: 'fallo' | 'permiso-negado' | 'ya-paso' | null;
   salida: Salida | null;
 }
 
@@ -83,8 +84,16 @@ export function HojaRecordatorio({
             >
               {error === 'permiso-negado'
                 ? t('recordatorios.permisoNegado')
-                : t('recordatorios.yaPaso')}
+                : error === 'fallo'
+                  ? t('recordatorios.fallo')
+                  : t('recordatorios.yaPaso')}
             </Text>
+          )}
+          {error === 'permiso-negado' && (
+            <BotonAccion
+              alPresionar={() => void abrirAjustesDelSistema()}
+              etiqueta={t('recordatorios.abrirAjustes')}
+            />
           )}
           {actual && (
             <BotonAccion

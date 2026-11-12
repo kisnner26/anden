@@ -3,7 +3,8 @@ import { createContext, useContext } from 'react';
 import type { MinutosAntes, RecordatorioSalida } from './recordatorios';
 import type { Salida } from './salidas';
 
-export type ResultadoRecordatorio = 'listo' | 'permiso-negado' | 'ya-paso';
+export type ResultadoRecordatorio =
+  'fallo' | 'listo' | 'permiso-negado' | 'ya-paso';
 
 export interface ValorRecordatorios {
   /** el recordatorio pedido para una salida, si hay */
