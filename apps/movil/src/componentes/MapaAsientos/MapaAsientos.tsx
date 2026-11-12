@@ -11,6 +11,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
+import { Rebote } from '@/componentes/Rebote';
 import { radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -124,47 +125,49 @@ export function MapaAsientos({
                 }}
                 style={estilos.celda}
               >
-                {elegido ? (
-                  <LinearGradient
-                    colors={[colores.ambar, colores.ambarProfundo]}
-                    end={{ x: 1, y: 1 }}
-                    start={{ x: 0, y: 0 }}
-                    style={estilos.asiento}
-                  >
-                    <Text
-                      style={[tipografia.dato, { color: colores.sobreAmbar }]}
+                <Rebote activo={elegido}>
+                  {elegido ? (
+                    <LinearGradient
+                      colors={[colores.ambar, colores.ambarProfundo]}
+                      end={{ x: 1, y: 1 }}
+                      start={{ x: 0, y: 0 }}
+                      style={estilos.asiento}
                     >
-                      {asiento.numero}
-                    </Text>
-                  </LinearGradient>
-                ) : ocupado ? (
-                  <View
-                    style={[
-                      estilos.asiento,
-                      estado === 'retenido'
-                        ? {
-                            borderColor: colores.tintaSuave,
-                            borderStyle: 'dashed',
-                            borderWidth: 1.5,
-                          }
-                        : {
-                            backgroundColor: colores.barroOscuro,
-                          },
-                    ]}
-                  >
-                    <Text
-                      style={[tipografia.dato, { color: colores.tintaSuave }]}
+                      <Text
+                        style={[tipografia.dato, { color: colores.sobreAmbar }]}
+                      >
+                        {asiento.numero}
+                      </Text>
+                    </LinearGradient>
+                  ) : ocupado ? (
+                    <View
+                      style={[
+                        estilos.asiento,
+                        estado === 'retenido'
+                          ? {
+                              borderColor: colores.tintaSuave,
+                              borderStyle: 'dashed',
+                              borderWidth: 1.5,
+                            }
+                          : {
+                              backgroundColor: colores.barroOscuro,
+                            },
+                      ]}
                     >
-                      {asiento.numero}
-                    </Text>
-                  </View>
-                ) : (
-                  <Bloque estiloContenido={estilos.asiento} radio="asiento">
-                    <Text style={[tipografia.dato, { color: colores.tinta }]}>
-                      {asiento.numero}
-                    </Text>
-                  </Bloque>
-                )}
+                      <Text
+                        style={[tipografia.dato, { color: colores.tintaSuave }]}
+                      >
+                        {asiento.numero}
+                      </Text>
+                    </View>
+                  ) : (
+                    <Bloque estiloContenido={estilos.asiento} radio="asiento">
+                      <Text style={[tipografia.dato, { color: colores.tinta }]}>
+                        {asiento.numero}
+                      </Text>
+                    </Bloque>
+                  )}
+                </Rebote>
               </Pressable>
             );
           })}
