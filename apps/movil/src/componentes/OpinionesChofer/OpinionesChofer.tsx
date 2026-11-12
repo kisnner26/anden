@@ -2,6 +2,7 @@ import * as Haptics from 'expo-haptics';
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { Aparece } from '@/componentes/Aparece';
 import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CampoTexto } from '@/componentes/CampoTexto';
@@ -83,33 +84,30 @@ export function OpinionesChofer({ choferId }: PropiedadesOpinionesChofer) {
           {t('opiniones.vacio')}
         </Text>
       ) : (
-        propias.map((opinion) => (
-          <Bloque
-            estiloContenido={estilos.opinion}
-            hundido
-            key={opinion.id}
-            radio="loseta"
-          >
-            <View
-              accessibilityLabel={`${opinion.estrellas} ${t('opiniones.deCinco')}`}
-              accessible
-              style={estilos.fila}
-            >
-              {[1, 2, 3, 4, 5].map((n) => (
-                <Icono
-                  color={n <= opinion.estrellas ? undefined : colores.linea}
-                  key={n}
-                  nombre="estrella"
-                  tamano="mediano"
-                />
-              ))}
-            </View>
-            {opinion.comentario !== '' && (
-              <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
-                {opinion.comentario}
-              </Text>
-            )}
-          </Bloque>
+        propias.map((opinion, indice) => (
+          <Aparece indice={indice} key={opinion.id}>
+            <Bloque estiloContenido={estilos.opinion} hundido radio="loseta">
+              <View
+                accessibilityLabel={`${opinion.estrellas} ${t('opiniones.deCinco')}`}
+                accessible
+                style={estilos.fila}
+              >
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <Icono
+                    color={n <= opinion.estrellas ? undefined : colores.linea}
+                    key={n}
+                    nombre="estrella"
+                    tamano="mediano"
+                  />
+                ))}
+              </View>
+              {opinion.comentario !== '' && (
+                <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
+                  {opinion.comentario}
+                </Text>
+              )}
+            </Bloque>
+          </Aparece>
         ))
       )}
 
