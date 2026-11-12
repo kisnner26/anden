@@ -1,6 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Bloque } from '@/componentes/Bloque';
+import { Icono } from '@/componentes/Icono';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { Aparece } from '@/componentes/Aparece';
 import { TarjetaCorredor } from '@/componentes/TarjetaCorredor';
@@ -16,6 +17,8 @@ import { t } from '@/textos/t';
 
 export interface PropiedadesRutas {
   alAbrirRuta?: (id: string) => void;
+  /** abre la solicitud de una encomienda */
+  alAbrirEncomiendas?: () => void;
 }
 
 const GRUPOS_CORREDOR: readonly {
@@ -33,7 +36,7 @@ const GRUPOS_CORREDOR: readonly {
 ];
 
 /** los dos corredores que opera Andén; sin geometría falsa mientras faltan datos verificados */
-export function Rutas({ alAbrirRuta }: PropiedadesRutas) {
+export function Rutas({ alAbrirEncomiendas, alAbrirRuta }: PropiedadesRutas) {
   const { colores } = useTema();
   const { esFavorito } = useFavoritos();
 
@@ -95,11 +98,31 @@ export function Rutas({ alAbrirRuta }: PropiedadesRutas) {
           </View>
         ))}
       </View>
+      <Pressable accessibilityRole="button" onPress={alAbrirEncomiendas}>
+        <Bloque estiloContenido={estilos.encomienda}>
+          <View style={estilos.textoEncomienda}>
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+              {t('encomiendas.entrada')}
+            </Text>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {t('encomiendas.entradaDetalle')}
+            </Text>
+          </View>
+          <Icono nombre="siguiente" tamano="mediano" />
+        </Bloque>
+      </Pressable>
     </MarcoPestana>
   );
 }
 
 const estilos = StyleSheet.create({
+  encomienda: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.dieciseis,
+    padding: espacios.dieciseis,
+  },
+  textoEncomienda: { flex: 1, gap: espacios.cuatro },
   cabecera: { gap: espacios.dieciseis },
   cantidad: { alignSelf: 'flex-start', padding: espacios.doce },
   contenido: {
