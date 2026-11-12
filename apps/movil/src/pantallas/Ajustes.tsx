@@ -25,11 +25,17 @@ import {
 } from '@/tema/espacios';
 import { MODOS_USO, type ModoUso } from '@/tema/modoUso';
 import { tipografia } from '@/tema/tipografia';
+import { useSesion } from '@/datos/useSesion';
 import { useModoUso } from '@/tema/useModoUso';
 import { useTema, type PreferenciaTema } from '@/tema/useTema';
+import { rellenar } from '@/textos/rellenar';
 import { t } from '@/textos/t';
 
 export interface PropiedadesAjustes {
+  /** abre el modo conductor, si ya hay una sesión de conductor */
+  alAbrirConductor?: () => void;
+  /** abre el ingreso de conductores */
+  alAbrirIngreso?: () => void;
   alAbrirPerfil?: () => void;
   alVolver: () => void;
 }
@@ -75,7 +81,13 @@ const OPCIONES: readonly {
 ];
 
 /** apariencia: claro, oscuro o automático según la hora */
-export function Ajustes({ alAbrirPerfil, alVolver }: PropiedadesAjustes) {
+export function Ajustes({
+  alAbrirConductor,
+  alAbrirIngreso,
+  alAbrirPerfil,
+  alVolver,
+}: PropiedadesAjustes) {
+  const { cerrar, rol, sesion } = useSesion();
   const { colores, establecerPreferencia, preferencia } = useTema();
   const { perfil } = usePerfil();
   const ubicacion = usePreferenciaUbicacion();
@@ -165,6 +177,52 @@ export function Ajustes({ alAbrirPerfil, alVolver }: PropiedadesAjustes) {
           nombre={NOMBRES_MODO[modo].nombre()}
         />
       ))}
+
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+        {t('ajustes.cuentaSeccion')}
+      </Text>
+      {rol === 'conductor' ? (
+        <>
+          <Pressable accessibilityRole="button" onPress={alAbrirConductor}>
+            <Bloque estiloContenido={estilos.filaOpcion}>
+              <View style={estilos.texto}>
+                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                  {t('ajustes.abrirConductor')}
+                </Text>
+                <Text
+                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                >
+                  {rellenar(t('ajustes.sesionDe'), {
+                    nombre: sesion?.nombre ?? '',
+                  })}
+                </Text>
+              </View>
+            </Bloque>
+          </Pressable>
+          <Pressable accessibilityRole="button" onPress={() => void cerrar()}>
+            <Bloque estiloContenido={estilos.filaOpcion}>
+              <Text
+                style={[tipografia.subtitulo, { color: colores.cancelado }]}
+              >
+                {t('ajustes.cerrarSesion')}
+              </Text>
+            </Bloque>
+          </Pressable>
+        </>
+      ) : (
+        <Pressable accessibilityRole="button" onPress={alAbrirIngreso}>
+          <Bloque estiloContenido={estilos.filaOpcion}>
+            <View style={estilos.texto}>
+              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                {t('ajustes.conductorTitulo')}
+              </Text>
+              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+                {t('ajustes.conductorDetalle')}
+              </Text>
+            </View>
+          </Bloque>
+        </Pressable>
+      )}
 
       <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {t('ajustes.seguridadSeccion')}
