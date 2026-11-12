@@ -2,11 +2,14 @@ import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { AnimacionEnvio } from '@/componentes/AnimacionEnvio';
+import { Aparece } from '@/componentes/Aparece';
 import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { CampoTexto } from '@/componentes/CampoTexto';
 import { Chip } from '@/componentes/Chip';
+import { Icono } from '@/componentes/Icono';
 import { CORREDORES_INICIALES } from '@/datos/corredores';
 import {
   erroresDeEncomienda,
@@ -19,7 +22,7 @@ import {
   type TamanoEncomienda,
 } from '@/datos/encomiendas';
 import { nombrePropio } from '@/datos/perfil';
-import { espacios } from '@/tema/espacios';
+import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -49,6 +52,7 @@ export function Encomiendas({ alVolver }: PropiedadesEncomiendas) {
   const [tamano, establecerTamano] = useState<TamanoEncomienda>('pequeno');
   const [errores, establecerErrores] = useState<ErrorEncomienda[]>([]);
   const [solicitudes, establecerSolicitudes] = useState<Encomienda[]>([]);
+  const [enviando, establecerEnviando] = useState(false);
   const corredor = CORREDORES_INICIALES.find((c) => c.id === corredorId);
 
   useEffect(() => {
@@ -74,123 +78,176 @@ export function Encomiendas({ alVolver }: PropiedadesEncomiendas) {
     establecerDestinatario('');
     establecerTelefono('');
     establecerDescripcion('');
+    establecerEnviando(true);
   }
 
   const error = (campo: ErrorEncomienda) =>
     errores.includes(campo) ? MENSAJES[campo]() : undefined;
 
   return (
-    <ScrollView
-      contentContainerStyle={[
-        estilos.contenido,
-        {
-          paddingBottom: espacios.cuarentaYOcho,
-          paddingTop: margenes.top + espacios.ocho,
-        },
-      ]}
-      keyboardShouldPersistTaps="handled"
-      style={{ backgroundColor: colores.fondo }}
-    >
-      <CabeceraPantalla alVolver={alVolver} titulo={t('encomiendas.titulo')} />
-      <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
-        {t('encomiendas.detalle')}
-      </Text>
+    <View style={estilos.pantalla}>
+      <ScrollView
+        contentContainerStyle={[
+          estilos.contenido,
+          {
+            paddingBottom: espacios.cuarentaYOcho,
+            paddingTop: margenes.top + espacios.ocho,
+          },
+        ]}
+        keyboardShouldPersistTaps="handled"
+        style={{ backgroundColor: colores.fondo }}
+      >
+        <CabeceraPantalla
+          alVolver={alVolver}
+          titulo={t('encomiendas.titulo')}
+        />
+        <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
+          {t('encomiendas.detalle')}
+        </Text>
 
-      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-        {t('encomiendas.trayecto')}
-      </Text>
-      <View style={estilos.chips}>
-        {CORREDORES_INICIALES.map((candidato) => (
-          <Chip
-            alCambiar={() => establecerCorredorId(candidato.id)}
-            etiqueta={`${candidato.origen} → ${candidato.destino}`}
-            key={candidato.id}
-            seleccionado={candidato.id === corredorId}
-          />
-        ))}
-      </View>
-
-      <Bloque estiloContenido={estilos.formulario}>
-        <CampoTexto
-          alCambiar={establecerRemitente}
-          error={error('remitente')}
-          etiqueta={t('encomiendas.remitente')}
-          valor={remitente}
-        />
-        <CampoTexto
-          alCambiar={establecerDestinatario}
-          error={error('destinatario')}
-          etiqueta={t('encomiendas.destinatario')}
-          valor={destinatario}
-        />
-        <CampoTexto
-          alCambiar={establecerTelefono}
-          error={error('telefono')}
-          etiqueta={t('encomiendas.telefono')}
-          teclado="phone-pad"
-          valor={telefono}
-        />
-        <CampoTexto
-          alCambiar={establecerDescripcion}
-          error={error('descripcion')}
-          etiqueta={t('encomiendas.descripcion')}
-          marcador={t('encomiendas.marcadorDescripcion')}
-          valor={descripcion}
-        />
-        <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
-          {t('encomiendas.tamano')}
+        <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+          {t('encomiendas.trayecto')}
         </Text>
         <View style={estilos.chips}>
-          {TAMANOS.map((opcion) => (
+          {CORREDORES_INICIALES.map((candidato) => (
             <Chip
-              alCambiar={() => establecerTamano(opcion)}
-              etiqueta={t(`encomiendas.${opcion}`)}
-              key={opcion}
-              seleccionado={opcion === tamano}
+              alCambiar={() => establecerCorredorId(candidato.id)}
+              etiqueta={`${candidato.origen} → ${candidato.destino}`}
+              key={candidato.id}
+              seleccionado={candidato.id === corredorId}
             />
           ))}
         </View>
-        <BotonAccion
-          alPresionar={() => void solicitar()}
-          etiqueta={t('encomiendas.solicitar')}
-          icono="boleto"
-        />
-      </Bloque>
-      <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-        {t('encomiendas.nota')}
-      </Text>
 
-      {solicitudes.length > 0 && (
-        <View style={estilos.lista}>
-          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-            {t('encomiendas.solicitadas')}
+        <Bloque estiloContenido={estilos.formulario}>
+          <CampoTexto
+            alCambiar={establecerRemitente}
+            error={error('remitente')}
+            etiqueta={t('encomiendas.remitente')}
+            valor={remitente}
+          />
+          <CampoTexto
+            alCambiar={establecerDestinatario}
+            error={error('destinatario')}
+            etiqueta={t('encomiendas.destinatario')}
+            valor={destinatario}
+          />
+          <CampoTexto
+            alCambiar={establecerTelefono}
+            error={error('telefono')}
+            etiqueta={t('encomiendas.telefono')}
+            teclado="phone-pad"
+            valor={telefono}
+          />
+          <CampoTexto
+            alCambiar={establecerDescripcion}
+            error={error('descripcion')}
+            etiqueta={t('encomiendas.descripcion')}
+            marcador={t('encomiendas.marcadorDescripcion')}
+            valor={descripcion}
+          />
+          <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+            {t('encomiendas.tamano')}
           </Text>
-          {solicitudes.map((solicitud) => (
-            <Bloque
-              estiloContenido={estilos.solicitud}
-              hundido
-              key={solicitud.id}
-              radio="loseta"
-            >
-              <Text style={[tipografia.dato, { color: colores.tinta }]}>
-                {solicitud.codigo}
-              </Text>
-              <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
-                {`${solicitud.origen} → ${solicitud.destino} · ${t(`encomiendas.${solicitud.tamano}`)}`}
-              </Text>
-              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-                {`${solicitud.descripcion} · ${nombrePropio(solicitud.destinatario)}`}
-              </Text>
-              <Text
-                style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
-              >
-                {t('encomiendas.estadoSolicitada')}
-              </Text>
-            </Bloque>
-          ))}
-        </View>
+          <View style={estilos.chips}>
+            {TAMANOS.map((opcion) => (
+              <Chip
+                alCambiar={() => establecerTamano(opcion)}
+                etiqueta={t(`encomiendas.${opcion}`)}
+                key={opcion}
+                seleccionado={opcion === tamano}
+              />
+            ))}
+          </View>
+          <BotonAccion
+            alPresionar={() => void solicitar()}
+            etiqueta={t('encomiendas.solicitar')}
+            icono="boleto"
+          />
+        </Bloque>
+        <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+          {t('encomiendas.nota')}
+        </Text>
+
+        {solicitudes.length > 0 && (
+          <View style={estilos.lista}>
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+              {t('encomiendas.solicitadas')}
+            </Text>
+            {solicitudes.map((solicitud, indice) => (
+              <Aparece indice={indice} key={solicitud.id}>
+                <Bloque estiloContenido={estilos.solicitud}>
+                  <View style={estilos.fila}>
+                    <Text style={[tipografia.dato, { color: colores.tinta }]}>
+                      {solicitud.codigo}
+                    </Text>
+                    <View
+                      style={[
+                        estilos.pildora,
+                        { backgroundColor: colores.ambar },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          tipografia.etiqueta,
+                          { color: colores.sobreAmbar },
+                        ]}
+                      >
+                        {t('encomiendas.estadoSolicitada')}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={estilos.fila}>
+                    <Text
+                      numberOfLines={1}
+                      style={[
+                        tipografia.nombreFila,
+                        estilos.extremo,
+                        { color: colores.tinta },
+                      ]}
+                    >
+                      {solicitud.origen}
+                    </Text>
+                    <Icono
+                      color={colores.tinta}
+                      nombre="siguiente"
+                      tamano="grande"
+                    />
+                    <Text
+                      numberOfLines={1}
+                      style={[
+                        tipografia.nombreFila,
+                        estilos.extremo,
+                        estilos.extremoDerecho,
+                        { color: colores.tinta },
+                      ]}
+                    >
+                      {solicitud.destino}
+                    </Text>
+                  </View>
+                  <Text
+                    style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                  >
+                    {`${t(`encomiendas.${solicitud.tamano}`)} · ${solicitud.descripcion}`}
+                  </Text>
+                  <Text
+                    style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                  >
+                    {`${t('encomiendas.para')} ${nombrePropio(solicitud.destinatario)}`}
+                  </Text>
+                </Bloque>
+              </Aparece>
+            ))}
+          </View>
+        )}
+      </ScrollView>
+      {enviando && (
+        <AnimacionEnvio
+          alTerminar={() => establecerEnviando(false)}
+          destino={corredor?.destino ?? ''}
+        />
       )}
-    </ScrollView>
+    </View>
   );
 }
 
@@ -199,5 +256,19 @@ const estilos = StyleSheet.create({
   contenido: { gap: espacios.dieciseis, paddingHorizontal: espacios.lateral },
   formulario: { gap: espacios.dieciseis, padding: espacios.veinticuatro },
   lista: { gap: espacios.doce },
-  solicitud: { gap: espacios.cuatro, padding: espacios.dieciseis },
+  extremo: { flex: 1 },
+  extremoDerecho: { textAlign: 'right' },
+  fila: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.doce,
+    justifyContent: 'space-between',
+  },
+  pantalla: { flex: 1 },
+  pildora: {
+    borderRadius: radios.pildora,
+    paddingHorizontal: espacios.doce,
+    paddingVertical: espacios.cuatro,
+  },
+  solicitud: { gap: espacios.doce, padding: espacios.dieciseis },
 });

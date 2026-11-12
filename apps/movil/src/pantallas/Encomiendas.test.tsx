@@ -80,12 +80,11 @@ describe('Encomiendas', () => {
     expect(await pantalla.findByText('Tus solicitudes')).toBeTruthy();
     expect(pantalla.getByText(/^ENC-[A-Z2-9]{6}$/)).toBeTruthy();
     expect(
-      pantalla.getByText('Managua → Juigalpa · Paquete grande'),
+      pantalla.getByText('Paquete grande · caja con repuestos'),
     ).toBeTruthy();
-    expect(pantalla.getByText('caja con repuestos · Luis Pérez')).toBeTruthy();
-    expect(
-      pantalla.getByText('Solicitada: falta que la cooperativa la confirme'),
-    ).toBeTruthy();
+    expect(pantalla.getByText('Para Luis Pérez')).toBeTruthy();
+    expect(pantalla.getByText('Solicitada')).toBeTruthy();
+    expect(pantalla.getByText('Solicitud enviada')).toBeTruthy();
     expect(await AsyncStorage.getItem('anden.encomiendas')).toContain(
       '88881234',
     );
