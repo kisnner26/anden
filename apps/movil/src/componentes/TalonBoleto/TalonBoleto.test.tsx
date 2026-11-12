@@ -40,7 +40,8 @@ describe('TalonBoleto', () => {
   });
   it('muestra el destino y el precio', async () => {
     const pantalla = await render(<TalonBoleto guardado={GUARDADO} />);
-    expect(pantalla.getByText('Mercado Mayoreo → Boaco.')).toBeTruthy();
+    expect(pantalla.getByText('Boaco')).toBeTruthy();
+    expect(pantalla.getByText('desde Mercado Mayoreo')).toBeTruthy();
     expect(pantalla.getByText('C$ 46')).toBeTruthy();
   });
 
