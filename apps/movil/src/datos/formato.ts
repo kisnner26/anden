@@ -45,3 +45,8 @@ const MESES = [
 export function formatoFechaCorta(fecha: Date): string {
   return `${DIAS[fecha.getDay()]} ${fecha.getDate()} ${MESES[fecha.getMonth()]}`;
 }
+
+/** día de la semana y número, por ejemplo vie 14 */
+export function formatoDiaCorto(fecha: Date): string {
+  return `${DIAS[fecha.getDay()]} ${fecha.getDate()}`;
+}

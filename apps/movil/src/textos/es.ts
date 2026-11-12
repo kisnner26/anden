@@ -54,6 +54,13 @@ export const textos = {
     mapasNoAbrio: 'No pudimos abrir Apple Maps.',
     sinSalidasOrigen: 'Sin salidas de muestra desde esta terminal.',
   },
+  dias: {
+    hoy: 'Hoy',
+    manana: 'Mañana',
+    selector: 'Elegí el día del viaje',
+    primeraSalida: 'Primera salida del día',
+    sinSalidasDia: 'No hay salidas ese día.',
+  },
   horarios: {
     titulo: 'Salidas',
     terminal: 'Mercado Mayoreo',
