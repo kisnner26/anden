@@ -23,6 +23,7 @@ jest.mock('react-native-reanimated', () => {
       bezier: () => (valor) => valor,
       cubic: (valor) => valor,
       in: (curva) => curva,
+      inOut: (curva) => curva,
       out: (curva) => curva,
       quad: (valor) => valor,
     },

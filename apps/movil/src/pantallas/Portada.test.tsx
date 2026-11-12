@@ -78,4 +78,27 @@ describe('Portada', () => {
     await pantalla.unmount();
     expect(mockLiberar).toHaveBeenCalled();
   });
+
+  it('sigue sola: al terminar la escena el bus se va sin deslizar', async () => {
+    jest.useFakeTimers();
+    const alEmpezar = jest.fn();
+    await renderPantalla(<Portada alEmpezar={alEmpezar} />);
+    await act(async () => {
+      jest.advanceTimersByTime(5200 + 420 + 1300);
+    });
+    expect(mockReproducir).toHaveBeenCalledWith('bocina');
+    expect(alEmpezar).toHaveBeenCalledTimes(1);
+  });
+
+  it('con movimiento reducido avanza sola enseguida y sin velo ni barras', async () => {
+    jest.useFakeTimers();
+    reducido.mockReturnValue(true);
+    const alEmpezar = jest.fn();
+    const pantalla = await renderPantalla(<Portada alEmpezar={alEmpezar} />);
+    expect(pantalla.queryByTestId('velo-portada')).toBeNull();
+    await act(async () => {
+      jest.advanceTimersByTime(1300);
+    });
+    expect(alEmpezar).toHaveBeenCalledTimes(1);
+  });
 });
