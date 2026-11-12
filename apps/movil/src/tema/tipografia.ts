@@ -9,6 +9,20 @@ export function escalaTextoActual(): number {
   return escala;
 }
 
+/**
+ * cuánto de la escala recibe un tamaño: el texto corriente la recibe entera y los titulares casi nada,
+ * porque agrandar un titular de 46 pt un cuarto lo vuelve gigante sin ayudar a leer
+ */
+function pesoDeEscala(tamano: number): number {
+  if (tamano <= 20) return 1;
+  if (tamano >= 34) return 0.15;
+  return 1 - ((tamano - 20) / 14) * 0.85;
+}
+
+function escalado(valor: number, tamanoBase: number): number {
+  return Math.round(valor * (1 + (escala - 1) * pesoDeEscala(tamanoBase)));
+}
+
 /** devuelve el estilo con tamaño e interlínea que se multiplican por la escala vigente al leerlos */
 function escalable<T extends { fontSize: number; lineHeight: number }>(
   base: T,
@@ -16,11 +30,11 @@ function escalable<T extends { fontSize: number; lineHeight: number }>(
   const copia = { ...base };
   Object.defineProperty(copia, 'fontSize', {
     enumerable: true,
-    get: () => Math.round(base.fontSize * escala),
+    get: () => escalado(base.fontSize, base.fontSize),
   });
   Object.defineProperty(copia, 'lineHeight', {
     enumerable: true,
-    get: () => Math.round(base.lineHeight * escala),
+    get: () => escalado(base.lineHeight, base.fontSize),
   });
   return copia;
 }

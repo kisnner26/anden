@@ -34,4 +34,11 @@ describe('tipografia', () => {
     establecerEscalaTexto(1.25);
     expect({ ...tipografia.pequeno }.fontSize).toBe(16);
   });
+
+  it('el texto corriente crece entero y los titulares casi nada', () => {
+    establecerEscalaTexto(1.25);
+    expect(tipografia.cuerpo.fontSize).toBe(20);
+    expect(tipografia.titularPantalla.fontSize).toBeLessThanOrEqual(48);
+    expect(tipografia.display.fontSize).toBeLessThanOrEqual(58);
+  });
 });
