@@ -7,6 +7,7 @@ import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { PieReserva } from '@/componentes/PieReserva';
 import { ProgresoReserva } from '@/componentes/ProgresoReserva';
+import { nombrePropio } from '@/datos/perfil';
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
 import { totalReserva, type ErrorReserva } from '@/datos/reserva';
 import { useBoletos } from '@/datos/useBoletos';
@@ -140,7 +141,7 @@ export function Pago({
               key={pasajero.asiento}
               style={[tipografia.cuerpo, { color: colores.tinta }]}
             >
-              {`${t('pasajeros.asiento')} ${pasajero.asiento} · ${pasajero.nombre.trim()}`}
+              {`${t('pasajeros.asiento')} ${pasajero.asiento} · ${nombrePropio(pasajero.nombre)}`}
             </Text>
           ))}
         </Bloque>

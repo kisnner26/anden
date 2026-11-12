@@ -8,6 +8,7 @@ import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { MapaCorredor } from '@/componentes/MapaCorredor';
 import { PieReserva } from '@/componentes/PieReserva';
+import { nombrePropio } from '@/datos/perfil';
 import { formatoHoraCompleta } from '@/datos/formato';
 import { progresoSobreTrazo } from '@/datos/progresoViaje';
 import {
@@ -222,7 +223,7 @@ export function ConductorViaje({
                     >
                       {rellenar(t('conductor.asientoPasajero'), {
                         asiento: boleto.asiento,
-                        nombre: boleto.pasajero.nombre,
+                        nombre: nombrePropio(boleto.pasajero.nombre),
                       })}
                     </Text>
                     <Text
@@ -239,7 +240,7 @@ export function ConductorViaje({
                     </Text>
                   </View>
                   <Pressable
-                    accessibilityLabel={`${pagado ? t('conductor.quitarPago') : t('conductor.marcarPagado')}, ${boleto.pasajero.nombre}`}
+                    accessibilityLabel={`${pagado ? t('conductor.quitarPago') : t('conductor.marcarPagado')}, ${nombrePropio(boleto.pasajero.nombre)}`}
                     accessibilityRole="button"
                     onPress={() =>
                       void (pagado

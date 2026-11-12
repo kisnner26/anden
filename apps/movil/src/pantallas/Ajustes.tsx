@@ -13,7 +13,7 @@ import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
 import { Interruptor } from '@/componentes/Interruptor';
 import { OpcionSeleccion } from '@/componentes/OpcionSeleccion';
-import { iniciales, nombreCompleto } from '@/datos/perfil';
+import { iniciales, nombreCompleto, nombrePropio } from '@/datos/perfil';
 import { useBloqueo } from '@/datos/useBloqueo';
 import { usePerfil } from '@/datos/usePerfil';
 import { usePreferenciaUbicacion } from '@/datos/ProveedorUbicacion';
@@ -93,7 +93,7 @@ export function Ajustes({
   const ubicacion = usePreferenciaUbicacion();
   const bloqueo = useBloqueo();
   const modoUso = useModoUso();
-  const nombre = nombreCompleto(perfil);
+  const nombre = nombrePropio(nombreCompleto(perfil));
   const margenes = useSafeAreaInsets();
   const ubicacionOcupada =
     ubicacion.estado === 'cargando' || ubicacion.estado === 'consultando';

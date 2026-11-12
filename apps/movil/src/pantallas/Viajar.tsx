@@ -11,7 +11,7 @@ import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { TarjetaProximoViaje } from '@/componentes/TarjetaProximoViaje';
-import { iniciales } from '@/datos/perfil';
+import { iniciales, nombrePropio } from '@/datos/perfil';
 import { useAvisos } from '@/datos/useAvisos';
 import { usePerfil } from '@/datos/usePerfil';
 import { usePreferenciaUbicacion } from '@/datos/ProveedorUbicacion';
@@ -47,7 +47,7 @@ export function Viajar({
   const { noLeidos } = useAvisos();
   const preferenciaUbicacion = usePreferenciaUbicacion();
   const ubicacionResuelta = useRef(false);
-  const primerNombre = perfil.nombre.trim().split(/\s+/)[0] ?? '';
+  const primerNombre = nombrePropio(perfil.nombre).split(' ')[0] ?? '';
   const saludo =
     primerNombre === ''
       ? t('viajar.saludo')

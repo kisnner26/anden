@@ -9,6 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { Autobus } from '@/componentes/Autobus';
+import { nombrePropio } from '@/datos/perfil';
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
 import type { BoletoGuardado } from '@/datos/reserva';
 import { espacios, radios, tamanosBoleto } from '@/tema/espacios';
@@ -179,7 +180,7 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
         <Campo
           completo
           etiqueta={t('boleto.pasajero')}
-          valor={boleto.pasajero.nombre}
+          valor={nombrePropio(boleto.pasajero.nombre)}
         />
         <Campo etiqueta={t('boleto.placa')} valor={resumen.placa} />
         <Campo etiqueta={t('boleto.chofer')} valor={resumen.choferNombre} />

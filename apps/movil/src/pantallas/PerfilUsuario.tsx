@@ -24,7 +24,7 @@ import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { CampoTexto } from '@/componentes/CampoTexto';
 import { elegirFotoDeGaleria } from '@/datos/fotos';
-import { iniciales, nombreCompleto } from '@/datos/perfil';
+import { iniciales, nombreCompleto, nombrePropio } from '@/datos/perfil';
 import { usePerfil } from '@/datos/usePerfil';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -218,10 +218,10 @@ function FormularioPerfil({ alVolver }: PropiedadesPerfilUsuario) {
           {perfil.pasajeros.map((pasajero) => (
             <View key={pasajero.id} style={estilos.filaPasajero}>
               <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
-                {pasajero.nombre}
+                {nombrePropio(pasajero.nombre)}
               </Text>
               <Pressable
-                accessibilityLabel={`${t('perfil.quitarPasajero')} ${pasajero.nombre}`}
+                accessibilityLabel={`${t('perfil.quitarPasajero')} ${nombrePropio(pasajero.nombre)}`}
                 accessibilityRole="button"
                 onPress={() => void quitarPasajero(pasajero.id)}
                 style={estilos.toque}
