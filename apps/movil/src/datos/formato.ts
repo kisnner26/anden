@@ -7,9 +7,14 @@ export function formatoHora(fecha: Date): string {
   return `${hora}:${minutos}`;
 }
 
+/** a. m. o p. m. de una hora */
+export function sufijoHora(fecha: Date): string {
+  return fecha.getHours() < 12 ? 'a. m.' : 'p. m.';
+}
+
 /** hora en 12 horas con sufijo, por ejemplo 2:40 p. m. */
 export function formatoHoraCompleta(fecha: Date): string {
-  return `${formatoHora(fecha)} ${fecha.getHours() < 12 ? 'a. m.' : 'p. m.'}`;
+  return `${formatoHora(fecha)} ${sufijoHora(fecha)}`;
 }
 
 /** duración en horas y minutos, por ejemplo 1 h 35 min */
