@@ -1,6 +1,9 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, render } from '@testing-library/react-native';
-import { Text } from 'react-native';
+import { Animated, Text } from 'react-native';
+
+import { ajustesDeModo } from '@/tema/modoUso';
+import { ContextoModoUso } from '@/tema/useModoUso';
 
 import { Hoja } from './Hoja';
 
@@ -44,5 +47,39 @@ describe('Hoja', () => {
     expect(
       pantalla.getByRole('button', { name: 'Cerrar detalle' }),
     ).toBeTruthy();
+  });
+
+  it('al abrir sube con animación en el modo completo', async () => {
+    const mover = jest.spyOn(Animated, 'timing');
+    await render(
+      <Hoja abierta alCerrar={() => undefined} etiquetaCerrar="Cerrar detalle">
+        <Text>Detalle</Text>
+      </Hoja>,
+    );
+    expect(mover).toHaveBeenCalled();
+    mover.mockRestore();
+  });
+
+  it('al abrir no anima en el modo rápido', async () => {
+    const mover = jest.spyOn(Animated, 'timing');
+    await render(
+      <ContextoModoUso.Provider
+        value={{
+          ajustes: ajustesDeModo('rapido'),
+          establecerModo: async () => undefined,
+          modo: 'rapido',
+        }}
+      >
+        <Hoja
+          abierta
+          alCerrar={() => undefined}
+          etiquetaCerrar="Cerrar detalle"
+        >
+          <Text>Detalle</Text>
+        </Hoja>
+      </ContextoModoUso.Provider>,
+    );
+    expect(mover).not.toHaveBeenCalled();
+    mover.mockRestore();
   });
 });
