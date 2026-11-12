@@ -49,10 +49,7 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
   const marcaVisible = useSharedValue(reducirMovimiento ? 1 : 0);
   const escala = width / 520;
   const velo = useSharedValue(reducirMovimiento ? 0 : 1);
-  const barras = useSharedValue(reducirMovimiento ? 1 : 0);
-  const camara = useSharedValue(reducirMovimiento ? 1 : 0);
   const lema = useSharedValue(reducirMovimiento ? 1 : 0);
-  const altoBarra = height * 0.1;
 
   useEffect(() => {
     if (reducirMovimiento) return undefined;
@@ -86,32 +83,12 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
         easing: Easing.out(Easing.quad),
       }),
     );
-    barras.value = withDelay(
-      900,
-      withTiming(1, {
-        duration: movimiento.portadaApertura,
-        easing: Easing.inOut(Easing.cubic),
-      }),
-    );
-    camara.value = withTiming(1, {
-      duration: movimiento.portadaTravelling,
-      easing: Easing.out(Easing.cubic),
-    });
     lema.value = withDelay(
       movimiento.llegadaBus,
       withTiming(1, { duration: movimiento.revelarMarca }),
     );
     return undefined;
-  }, [
-    barras,
-    camara,
-    lema,
-    marcaVisible,
-    posicionBus,
-    reducirMovimiento,
-    vaiven,
-    velo,
-  ]);
+  }, [lema, marcaVisible, posicionBus, reducirMovimiento, vaiven, velo]);
 
   useEffect(
     () => () => {
@@ -120,16 +97,6 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
     },
     [],
   );
-
-  // la portada sigue sola: cuando termina la escena el bus se va, sin esperar a que la persona deslice
-  const empezarRef = useRef<() => void>(() => undefined);
-  useEffect(() => {
-    const espera = setTimeout(
-      () => empezarRef.current(),
-      reducirMovimiento ? movimiento.portadaBreve : movimiento.portadaDuracion,
-    );
-    return () => clearTimeout(espera);
-  }, [reducirMovimiento]);
 
   const empezar = () => {
     if (saliendo) return;
@@ -149,8 +116,6 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
     }, 420);
   };
 
-  empezarRef.current = empezar;
-
   const estiloBus = useAnimatedStyle(() => ({
     transform: [
       { translateX: posicionBus.value },
@@ -159,15 +124,6 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
     ],
   }));
   const estiloVelo = useAnimatedStyle(() => ({ opacity: velo.value }));
-  const estiloBarraArriba = useAnimatedStyle(() => ({
-    transform: [{ translateY: -barras.value * altoBarra }],
-  }));
-  const estiloBarraAbajo = useAnimatedStyle(() => ({
-    transform: [{ translateY: barras.value * altoBarra }],
-  }));
-  const estiloCamara = useAnimatedStyle(() => ({
-    transform: [{ scale: 1.07 - camara.value * 0.07 }],
-  }));
   const estiloLema = useAnimatedStyle(() => ({
     opacity: lema.value,
     transform: [{ translateY: (1 - lema.value) * 12 }],
@@ -179,7 +135,7 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
 
   return (
     <View style={estilos.pantalla}>
-      <Animated.View style={[estilos.camara, estiloCamara]}>
+      <View style={estilos.camara}>
         <LinearGradient
           colors={[colores.fondo, colores.fondoProfundo]}
           style={StyleSheet.absoluteFill}
@@ -276,51 +232,24 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
             ancho={Math.min(width - 56, 340)}
           />
         </View>
-      </Animated.View>
+      </View>
 
       {reducirMovimiento ? null : (
-        <>
-          <Animated.View
-            pointerEvents="none"
-            style={[
-              estilos.barra,
-              {
-                backgroundColor: colores.bloqueNegro,
-                height: altoBarra,
-                top: 0,
-              },
-              estiloBarraArriba,
-            ]}
-          />
-          <Animated.View
-            pointerEvents="none"
-            style={[
-              estilos.barra,
-              {
-                backgroundColor: colores.bloqueNegro,
-                bottom: 0,
-                height: altoBarra,
-              },
-              estiloBarraAbajo,
-            ]}
-          />
-          <Animated.View
-            pointerEvents="none"
-            style={[
-              StyleSheet.absoluteFill,
-              { backgroundColor: colores.bloqueNegro },
-              estiloVelo,
-            ]}
-            testID="velo-portada"
-          />
-        </>
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: colores.fondo },
+            estiloVelo,
+          ]}
+          testID="velo-portada"
+        />
       )}
     </View>
   );
 }
 
 const estilos = StyleSheet.create({
-  barra: { left: 0, position: 'absolute', right: 0 },
   camara: { flex: 1 },
   bus: { left: -4, position: 'absolute' },
   lema: { left: 28, position: 'absolute' },
