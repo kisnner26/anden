@@ -55,6 +55,20 @@ export const textos = {
     mapasNoAbrio: 'No pudimos abrir Apple Maps.',
     sinSalidasOrigen: 'Sin salidas de muestra desde esta terminal.',
   },
+  contacto: {
+    avisar: 'Avisar a mi persona de confianza',
+    avisarA: 'Avisar a {nombre}',
+    cambiar: 'Cambiar contacto',
+    titulo: 'Persona de confianza',
+    detalle:
+      'Le preparamos un mensaje con tu viaje para que lo envíes. Todavía no puede seguirte en vivo: eso llega con el servidor.',
+    nombre: 'Nombre',
+    telefono: 'Teléfono',
+    marcadorTelefono: '8888 1234',
+    guardar: 'Guardar y avisar',
+    invalido: 'Escribí un nombre y un teléfono de Nicaragua válido.',
+    cerrar: 'Cerrar',
+  },
   objetos: {
     reportar: 'Reportar un objeto olvidado',
     titulo: 'Objeto olvidado',
