@@ -16,6 +16,18 @@ describe('PerfilChofer', () => {
     expect(pantalla.getByText('Licencia verificada')).toBeTruthy();
   });
 
+  it('no repite al final la regla de quién puede opinar', async () => {
+    const pantalla = await renderPantalla(
+      <PerfilChofer alVolver={() => undefined} choferId="cho_1" />,
+    );
+    expect(
+      pantalla.queryByText(/Solo califican quienes ya hicieron/),
+    ).toBeNull();
+    expect(
+      pantalla.getAllByText(/Podés opinar cuando termine un viaje/),
+    ).toHaveLength(1);
+  });
+
   it('muestra los años, los viajes y la calificación', async () => {
     const pantalla = await renderPantalla(
       <PerfilChofer alVolver={() => undefined} choferId="cho_1" />,

@@ -42,7 +42,8 @@ function conBoletoDeViajePasado() {
 describe('OpinionesChofer', () => {
   it('avisa si todavía no hay comentarios', async () => {
     const pantalla = await renderPantalla(<OpinionesChofer choferId="cho_1" />);
-    expect(pantalla.getByText(/Todavía nadie dejó un comentario/)).toBeTruthy();
+    expect(pantalla.getByText('Todavía no hay comentarios.')).toBeTruthy();
+    expect(pantalla.queryByText(/primera persona/)).toBeNull();
   });
 
   it('explica que se opina con un boleto de un viaje ya hecho', async () => {
@@ -52,6 +53,19 @@ describe('OpinionesChofer', () => {
     ).toBeTruthy();
     expect(
       pantalla.queryByRole('button', { name: 'Enviar opinión' }),
+    ).toBeNull();
+  });
+
+  it('con un viaje hecho invita a ser la primera persona en opinar', async () => {
+    const { choferId, envolver } = conBoletoDeViajePasado();
+    const pantalla = await renderPantalla(
+      envolver(<OpinionesChofer choferId={choferId} />),
+    );
+    expect(
+      await pantalla.findByText(/Podés ser la primera persona/),
+    ).toBeTruthy();
+    expect(
+      pantalla.queryByText(/Podés opinar cuando termine un viaje/),
     ).toBeNull();
   });
 
