@@ -28,4 +28,15 @@ describe('BotonAccion', () => {
     await fireEvent.press(pantalla.getByRole('button', { name: 'Seguir' }));
     expect(alPresionar).not.toHaveBeenCalled();
   });
+
+  it('mientras carga se anuncia ocupado y no deja volver a tocarlo', async () => {
+    const alPresionar = jest.fn();
+    const pantalla = await render(
+      <BotonAccion alPresionar={alPresionar} cargando etiqueta="Reservando…" />,
+    );
+    const boton = pantalla.getByRole('button', { name: 'Reservando…' });
+    expect(boton.props.accessibilityState.busy).toBe(true);
+    await fireEvent.press(boton);
+    expect(alPresionar).not.toHaveBeenCalled();
+  });
 });
