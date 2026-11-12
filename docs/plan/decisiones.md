@@ -40,3 +40,21 @@ Registro de decisiones tomadas durante el desarrollo. Una por entrada, la más r
 Decisión: para llegar a la terminal, Viajar abre Apple Maps con un enlace de indicaciones (`daddr`, nombre y modo en auto). Apple Maps pide la ubicación por su cuenta y la app no la lee, no la guarda ni la envía. La búsqueda de la terminal más cercana sigue siendo opcional y solo en primer plano desde Ajustes.
 Por qué: integra la experiencia en el ecosistema de Apple sin ampliar el uso de la ubicación ni sumar un mapa propio. Un mapa embebido de MapKit exigiría una dependencia nativa nueva y queda como tarea futura si se pide.
 
+
+## 2026-11-12 · mejora-ux · cuenta local, Face ID, mascota, opiniones y mapa simulado
+
+Pedido explícito del dueño del proyecto: que la app se sienta completa como una app de transporte por demanda, con más funciones, animación, sonido y uso del hardware del iPhone.
+
+Decisión 1 (cuenta): la "cuenta" es local. Nombre, apellido y teléfono se guardan en el perfil del teléfono; no hay correo, contraseña ni servidor. Se ofrece al terminar la portada y se puede omitir.
+Por qué: no existe backend. Cuando exista, la cuenta local migra a una cuenta real sin cambiar las pantallas.
+
+Decisión 2 (Face ID): bloqueo opcional con `expo-local-authentication`. Se pide al abrir y al volver tras 60 segundos fuera. Si el teléfono no tiene biometría configurada, el bloqueo no se activa, para no dejar a nadie sin sus boletos. El código del teléfono queda como respaldo del sistema.
+
+Decisión 3 (mascota): la mascota es el bus de personaje de la marca. Saluda en Viajar por franja del día y se apaga en Configuración. Viene encendida.
+
+Decisión 4 (opiniones y reportes): se guardan solo en el teléfono y cualquiera puede opinar. Queda abierto atarlas al boleto usado (`puedeCalificar`) cuando exista servidor, y cambiar entonces el texto "solo califican quienes ya hicieron el viaje" de `chofer.nota`.
+
+Decisión 5 (mapa): el detalle del corredor lleva un mapa de Apple Maps con `react-native-maps`, sin clave ni permisos extra. El bus que se ve es una simulación que da vueltas al recorrido según el reloj, y la pantalla lo dice ("Simulación" y una nota). El trazo une las terminales en línea recta, no sigue la carretera. Reemplaza la nota de T-114 de dejar el mapa embebido para después.
+Por qué: el dueño lo pidió. La simulación nunca se presenta como posición real de una unidad; eso espera datos operativos y un servidor.
+
+Preguntas abiertas: modos de uso según la persona (por definir cuáles), atar opiniones al boleto, y reemplazar la simulación por posiciones reales.
