@@ -17,6 +17,7 @@ jest.mock('@/datos/transmisor', () => ({
 import { VIAJE_BOACO } from '@/datos/muestra';
 import { ProveedorBoletos } from '@/datos/ProveedorBoletos';
 import { ProveedorCierres } from '@/datos/ProveedorCierres';
+import { ProveedorAbordaje } from '@/datos/ProveedorAbordaje';
 import { ProveedorPagos } from '@/datos/ProveedorPagos';
 import { ProveedorSesion } from '@/datos/ProveedorSesion';
 import { detenerTransmision, iniciarTransmision } from '@/datos/transmisor';
@@ -51,9 +52,14 @@ function dibujar() {
     <ProveedorSesion>
       <ProveedorBoletos>
         <ProveedorPagos>
-          <ProveedorCierres>
-            <ConductorViaje alVolver={() => undefined} viajeId={VIAJE_BOACO} />
-          </ProveedorCierres>
+          <ProveedorAbordaje>
+            <ProveedorCierres>
+              <ConductorViaje
+                alVolver={() => undefined}
+                viajeId={VIAJE_BOACO}
+              />
+            </ProveedorCierres>
+          </ProveedorAbordaje>
         </ProveedorPagos>
       </ProveedorBoletos>
     </ProveedorSesion>,
@@ -191,13 +197,13 @@ describe('ConductorViaje', () => {
       JSON.stringify([boletoDePrueba(new Date(Date.now() + 3_600_000), 8)]),
     );
     const pantalla = await dibujar();
-    expect(await pantalla.findByText('Asiento 8 · Ana Ruiz')).toBeTruthy();
+    expect(await pantalla.findByText('Ana Ruiz')).toBeTruthy();
     expect(pantalla.getByText('0 de 1 pagaron')).toBeTruthy();
 
     await fireEvent.press(
       pantalla.getByRole('button', { name: /^Marcar pagado, Ana Ruiz/ }),
     );
-    expect(await pantalla.findByText('Pagado en efectivo')).toBeTruthy();
+    expect(await pantalla.findByText('Pagó')).toBeTruthy();
     expect(pantalla.getByText('1 de 1 pagaron')).toBeTruthy();
     expect(
       pantalla.getByText(/Cobrado C\$ 46 · Por cobrar C\$ 0/),
@@ -217,7 +223,7 @@ describe('ConductorViaje', () => {
       JSON.stringify([boletoDePrueba(new Date(Date.now() + 3_600_000), 8)]),
     );
     const pantalla = await dibujar();
-    await pantalla.findByText('Asiento 8 · Ana Ruiz');
+    await pantalla.findByText('Ana Ruiz');
     await act(async () => {
       TRANSMISION.iniciar(VIAJE_BOACO, 'cho_2');
     });
@@ -236,7 +242,7 @@ describe('ConductorViaje', () => {
       JSON.stringify([boletoDePrueba(new Date(Date.now() + 3_600_000), 8)]),
     );
     const pantalla = await dibujar();
-    await pantalla.findByText('Asiento 8 · Ana Ruiz');
+    await pantalla.findByText('Ana Ruiz');
     await fireEvent.press(
       pantalla.getByRole('button', {
         name: 'Cerrar el viaje y ver el resumen',
@@ -271,5 +277,21 @@ describe('ConductorViaje', () => {
     expect(
       pantalla.getByRole('button', { name: 'Iniciar viaje' }),
     ).toBeTruthy();
+  });
+
+  it('lista a los pasajeros con sus datos y deja marcar quién abordó', async () => {
+    await AsyncStorage.setItem(
+      'anden.boletos',
+      JSON.stringify([boletoDePrueba(new Date(Date.now() + 3_600_000), 8)]),
+    );
+    const pantalla = await dibujar();
+    expect(await pantalla.findByText('Pasajeros a bordo')).toBeTruthy();
+    expect(pantalla.getByText('0 de 1 a bordo')).toBeTruthy();
+    expect(pantalla.getByText('Sin cédula registrada')).toBeTruthy();
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: /^Marcar que abordó, Ana Ruiz/ }),
+    );
+    expect(await pantalla.findByText('1 de 1 a bordo')).toBeTruthy();
+    expect(pantalla.getByText('Abordó')).toBeTruthy();
   });
 });

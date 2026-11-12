@@ -6,10 +6,10 @@ import { Bloque } from '@/componentes/Bloque';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
+import { ListaPasajeros } from '@/componentes/ListaPasajeros';
 import { HojaCierreViaje } from '@/componentes/HojaCierreViaje';
 import { MapaCorredor } from '@/componentes/MapaCorredor';
 import { PieReserva } from '@/componentes/PieReserva';
-import { nombrePropio } from '@/datos/perfil';
 import { formatoHoraCompleta } from '@/datos/formato';
 import { progresoSobreTrazo } from '@/datos/progresoViaje';
 import {
@@ -17,6 +17,7 @@ import {
   iniciarTransmision,
   type ResultadoTransmision,
 } from '@/datos/transmisor';
+import { useAbordaje } from '@/datos/useAbordaje';
 import { useBoletos } from '@/datos/useBoletos';
 import { useCierres } from '@/datos/useCierres';
 import { useDetalleViaje } from '@/datos/useDetalleViaje';
@@ -64,6 +65,7 @@ export function ConductorViaje({
   const transmision = useTransmision(viajeId);
   const { boletos } = useBoletos();
   const { estadoDe, marcarPagado, registro, revertir } = usePagos();
+  const { abordo, alternar: alternarAbordaje } = useAbordaje();
   const [iniciando, establecerIniciando] = useState(false);
   const [problema, establecerProblema] = useState<string | null>(null);
   const [cerrando, establecerCerrando] = useState(false);
@@ -213,6 +215,51 @@ export function ConductorViaje({
           )}
         </BloqueNegro>
 
+        {pasajeros.length === 0 ? (
+          <>
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+              {t('conductor.pasajeros')}
+            </Text>
+            <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
+              {t('conductor.sinPasajeros')}
+            </Text>
+          </>
+        ) : (
+          <>
+            <ListaPasajeros
+              abordo={abordo}
+              alAlternarAbordaje={(id) => void alternarAbordaje(id)}
+              alAlternarPago={(id, pagado) =>
+                void (pagado ? revertir(id) : marcarPagado(id, choferId))
+              }
+              bloqueada={cierre !== undefined}
+              pagado={(id) => estadoDe(id) === 'pagado_efectivo'}
+              pasajeros={pasajeros.map(({ boleto }) => ({
+                asiento: boleto.asiento,
+                boletoId: boleto.id,
+                cedula: boleto.pasajero.cedula,
+                codigo: boleto.codigo,
+                esMenorEnBrazos: boleto.pasajero.esMenorEnBrazos,
+                nombre: boleto.pasajero.nombre,
+                precio: boleto.precio,
+              }))}
+            />
+            <Bloque estiloContenido={estilos.resumen} hundido radio="loseta">
+              <Text
+                style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
+              >
+                {rellenar(t('conductor.pagadosDe'), {
+                  pagados: cobro.pagados,
+                  total: pasajeros.length,
+                })}
+              </Text>
+              <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
+                {`${t('conductor.cobrado')} C$ ${cobro.cobrado} · ${t('conductor.pendiente')} C$ ${cobro.pendiente}`}
+              </Text>
+            </Bloque>
+          </>
+        )}
+
         {recorrido && (
           <MapaCorredor
             simulacion={{
@@ -244,80 +291,6 @@ export function ConductorViaje({
               })}
             </Text>
           </Bloque>
-        )}
-
-        <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-          {t('conductor.pasajeros')}
-        </Text>
-        {pasajeros.length === 0 ? (
-          <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
-            {t('conductor.sinPasajeros')}
-          </Text>
-        ) : (
-          <>
-            <Bloque estiloContenido={estilos.resumen} hundido radio="loseta">
-              <Text
-                style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
-              >
-                {rellenar(t('conductor.pagadosDe'), {
-                  pagados: cobro.pagados,
-                  total: pasajeros.length,
-                })}
-              </Text>
-              <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
-                {`${t('conductor.cobrado')} C$ ${cobro.cobrado} · ${t('conductor.pendiente')} C$ ${cobro.pendiente}`}
-              </Text>
-            </Bloque>
-            {pasajeros.map(({ boleto }) => {
-              const pagado = estadoDe(boleto.id) === 'pagado_efectivo';
-              return (
-                <Bloque estiloContenido={estilos.pasajero} key={boleto.id}>
-                  <View style={estilos.texto}>
-                    <Text
-                      style={[tipografia.subtitulo, { color: colores.tinta }]}
-                    >
-                      {rellenar(t('conductor.asientoPasajero'), {
-                        asiento: boleto.asiento,
-                        nombre: nombrePropio(boleto.pasajero.nombre),
-                      })}
-                    </Text>
-                    <Text
-                      style={[
-                        tipografia.pequeno,
-                        {
-                          color: pagado ? colores.aTiempo : colores.tintaSuave,
-                        },
-                      ]}
-                    >
-                      {pagado
-                        ? t('conductor.pagado')
-                        : `${t('conductor.pendiente')} · C$ ${boleto.precio}`}
-                    </Text>
-                  </View>
-                  <Pressable
-                    disabled={cierre !== undefined}
-                    accessibilityLabel={`${pagado ? t('conductor.quitarPago') : t('conductor.marcarPagado')}, ${nombrePropio(boleto.pasajero.nombre)}`}
-                    accessibilityRole="button"
-                    onPress={() =>
-                      void (pagado
-                        ? revertir(boleto.id)
-                        : marcarPagado(boleto.id, choferId))
-                    }
-                  >
-                    <Bloque estiloContenido={estilos.boton} radio="pildora">
-                      <Text
-                        style={[tipografia.etiqueta, { color: colores.tinta }]}
-                      >
-                        {pagado
-                          ? t('conductor.quitarPago')
-                          : t('conductor.marcarPagado')}
-                      </Text>
-                    </Bloque>
-                  </Pressable>
-                </Bloque>
-              );
-            })}
-          </>
         )}
 
         {problema && (
