@@ -66,7 +66,7 @@ describe('crearMuestra', () => {
       expect.objectContaining({
         coordenadas: { lat: 12.46901, lng: -85.65587 },
         id: 'ter_boa',
-        nombre: 'Terminal de Buses de Managua',
+        nombre: 'Terminal de Buses de Boaco',
       }),
       expect.objectContaining({
         coordenadas: { lat: 12.09172, lng: -85.36106 },

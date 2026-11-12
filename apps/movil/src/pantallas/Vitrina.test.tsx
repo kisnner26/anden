@@ -81,9 +81,9 @@ describe('Vitrina', () => {
 
   it('expone CampoLugar para elegir una terminal', async () => {
     const pantalla = await render(<Vitrina />);
-    await fireEvent.changeText(pantalla.getByLabelText('Origen'), 'Managua');
+    await fireEvent.changeText(pantalla.getByLabelText('Origen'), 'Boaco');
     expect(
-      pantalla.getByRole('button', { name: 'Terminal de Buses de Managua' }),
+      pantalla.getByRole('button', { name: 'Terminal de Buses de Boaco' }),
     ).toBeTruthy();
   });
 });
