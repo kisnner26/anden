@@ -9,8 +9,6 @@ jest.mock('@/datos/ubicacion', () => ({
 
 import { CLAVE_MODO_USO } from '@/tema/modoUso';
 import { ProveedorModoUso } from '@/tema/ProveedorModoUso';
-import { CLAVE_MASCOTA } from '@/datos/mascota';
-import { ProveedorMascota } from '@/datos/ProveedorMascota';
 import { ProveedorUbicacion } from '@/datos/ProveedorUbicacion';
 import { CLAVE_UBICACION_AUTOMATICA } from '@/datos/preferenciaUbicacion';
 import {
@@ -52,24 +50,6 @@ describe('Ajustes', () => {
       pantalla.getByRole('radio', { name: 'Sencillo' }).props
         .accessibilityState,
     ).toMatchObject({ checked: true });
-  });
-
-  it('apaga la mascota y lo recuerda', async () => {
-    const pantalla = await renderPantalla(
-      <ProveedorMascota>
-        <Ajustes alVolver={() => undefined} />
-      </ProveedorMascota>,
-    );
-    await fireEvent.press(
-      pantalla.getByRole('switch', { name: 'Mascota de bienvenida' }),
-    );
-    await waitFor(async () =>
-      expect(await AsyncStorage.getItem(CLAVE_MASCOTA)).toBe('0'),
-    );
-    expect(
-      pantalla.getByRole('switch', { name: 'Mascota de bienvenida' }).props
-        .accessibilityState,
-    ).toMatchObject({ checked: false });
   });
 
   it('muestra las tres opciones con el claro elegido por defecto', async () => {

@@ -15,7 +15,6 @@ import { Interruptor } from '@/componentes/Interruptor';
 import { OpcionSeleccion } from '@/componentes/OpcionSeleccion';
 import { iniciales, nombreCompleto } from '@/datos/perfil';
 import { useBloqueo } from '@/datos/useBloqueo';
-import { useMascota } from '@/datos/useMascota';
 import { usePerfil } from '@/datos/usePerfil';
 import { usePreferenciaUbicacion } from '@/datos/ProveedorUbicacion';
 import {
@@ -81,7 +80,6 @@ export function Ajustes({ alAbrirPerfil, alVolver }: PropiedadesAjustes) {
   const { perfil } = usePerfil();
   const ubicacion = usePreferenciaUbicacion();
   const bloqueo = useBloqueo();
-  const mascota = useMascota();
   const modoUso = useModoUso();
   const nombre = nombreCompleto(perfil);
   const margenes = useSafeAreaInsets();
@@ -167,22 +165,6 @@ export function Ajustes({ alAbrirPerfil, alVolver }: PropiedadesAjustes) {
           nombre={NOMBRES_MODO[modo].nombre()}
         />
       ))}
-
-      <Bloque estiloContenido={estilos.filaOpcion}>
-        <View style={estilos.texto}>
-          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-            {t('mascota.ajusteTitulo')}
-          </Text>
-          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {t('mascota.ajusteDetalle')}
-          </Text>
-        </View>
-        <Interruptor
-          activo={mascota.activa}
-          alCambiar={(encender) => void mascota.establecerActiva(encender)}
-          etiqueta={t('mascota.ajusteTitulo')}
-        />
-      </Bloque>
 
       <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {t('ajustes.seguridadSeccion')}
