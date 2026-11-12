@@ -65,4 +65,30 @@ describe('FilaSalida', () => {
     const ordinario = await render(<FilaSalida salida={boaco} />);
     expect(ordinario.queryByText(new RegExp(boaco.placa))).toBeNull();
   });
+
+  it('muestra los asientos libres solo si se pide', async () => {
+    const sin = await render(<FilaSalida salida={boaco} />);
+    expect(sin.queryByText(/libres|Pocos asientos|Agotado/)).toBeNull();
+    const con = await render(
+      <FilaSalida mostrarDisponibilidad salida={boaco} />,
+    );
+    expect(con.getByText(/libres|Pocos asientos|Agotado/)).toBeTruthy();
+  });
+
+  it('avisa cuando quedan pocos asientos o ninguno', async () => {
+    const pocos = await render(
+      <FilaSalida
+        mostrarDisponibilidad
+        salida={{ ...boaco, asientosLibres: 3 }}
+      />,
+    );
+    expect(pocos.getByText('Pocos asientos · 3')).toBeTruthy();
+    const ninguno = await render(
+      <FilaSalida
+        mostrarDisponibilidad
+        salida={{ ...boaco, asientosLibres: 0 }}
+      />,
+    );
+    expect(ninguno.getByText('Agotado')).toBeTruthy();
+  });
 });

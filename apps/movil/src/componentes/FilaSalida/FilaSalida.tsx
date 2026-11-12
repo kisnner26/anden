@@ -4,6 +4,7 @@ import { Autobus } from '@/componentes/Autobus';
 import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
+import { nivelDisponibilidad } from '@/datos/disponibilidad';
 import { formatoHora, formatoHoraCompleta, sufijoHora } from '@/datos/formato';
 import type { Salida } from '@/datos/salidas';
 import { espacios, tamanosControl } from '@/tema/espacios';
@@ -15,6 +16,8 @@ export interface PropiedadesFilaSalida {
   alPresionar?: (viajeId: string) => void;
   /** si ya tenés boleto en esta salida se muestra el círculo negro con el check; sin boleto no hay control extra */
   conBoleto?: boolean;
+  /** agrega cuántos asientos quedan, con aviso si son pocos o ninguno */
+  mostrarDisponibilidad?: boolean;
   salida: Salida;
 }
 
@@ -31,11 +34,19 @@ function IconoServicio({ servicio }: { servicio: Salida['servicio'] }) {
 export function FilaSalida({
   alPresionar,
   conBoleto = false,
+  mostrarDisponibilidad = false,
   salida,
 }: PropiedadesFilaSalida) {
   const { colores } = useTema();
   const servicio = t(`servicios.${salida.servicio}`);
   const anden = `${t('viajar.andenMayusculas').toLowerCase()} ${salida.anden}`;
+  const nivel = nivelDisponibilidad(salida.asientosLibres);
+  const textoDisponibilidad =
+    nivel === 'agotado'
+      ? t('horarios.agotado')
+      : nivel === 'pocos'
+        ? `${t('horarios.pocosAsientos')} · ${salida.asientosLibres}`
+        : `${salida.asientosLibres} ${t('horarios.libres')}`;
 
   return (
     <Pressable
@@ -56,6 +67,19 @@ export function FilaSalida({
               ? `${servicio} · ${anden} · ${salida.placa}`
               : `${servicio} · ${anden}`}
           </Text>
+          {mostrarDisponibilidad ? (
+            <Text
+              style={[
+                tipografia.etiqueta,
+                {
+                  color:
+                    nivel === 'hay' ? colores.tintaSuave : colores.ambarTexto,
+                },
+              ]}
+            >
+              {textoDisponibilidad}
+            </Text>
+          ) : null}
         </View>
         <View style={estilos.hora}>
           <Text style={[tipografia.dato, { color: colores.ambarTexto }]}>
