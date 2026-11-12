@@ -16,6 +16,7 @@ jest.mock('@/datos/transmisor', () => ({
 
 import { VIAJE_BOACO } from '@/datos/muestra';
 import { ProveedorBoletos } from '@/datos/ProveedorBoletos';
+import { ProveedorCierres } from '@/datos/ProveedorCierres';
 import { ProveedorPagos } from '@/datos/ProveedorPagos';
 import { ProveedorSesion } from '@/datos/ProveedorSesion';
 import { detenerTransmision, iniciarTransmision } from '@/datos/transmisor';
@@ -50,7 +51,9 @@ function dibujar() {
     <ProveedorSesion>
       <ProveedorBoletos>
         <ProveedorPagos>
-          <ConductorViaje alVolver={() => undefined} viajeId={VIAJE_BOACO} />
+          <ProveedorCierres>
+            <ConductorViaje alVolver={() => undefined} viajeId={VIAJE_BOACO} />
+          </ProveedorCierres>
         </ProveedorPagos>
       </ProveedorBoletos>
     </ProveedorSesion>,
@@ -206,5 +209,67 @@ describe('ConductorViaje', () => {
     await waitFor(() =>
       expect(pantalla.getByText('0 de 1 pagaron')).toBeTruthy(),
     );
+  });
+
+  it('al terminar el viaje muestra el resumen del cobro antes de cerrar', async () => {
+    await AsyncStorage.setItem(
+      'anden.boletos',
+      JSON.stringify([boletoDePrueba(new Date(Date.now() + 3_600_000), 8)]),
+    );
+    const pantalla = await dibujar();
+    await pantalla.findByText('Asiento 8 · Ana Ruiz');
+    await act(async () => {
+      TRANSMISION.iniciar(VIAJE_BOACO, 'cho_2');
+    });
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Terminar viaje' }),
+    );
+    expect(detenerTransmision).toHaveBeenCalledWith(VIAJE_BOACO);
+    expect(await pantalla.findByText('Cerrar el viaje')).toBeTruthy();
+    expect(pantalla.getByText('0 de 1 pasajeros pagaron')).toBeTruthy();
+    expect(pantalla.getByText('Asiento 8 · Ana Ruiz · C$ 46')).toBeTruthy();
+  });
+
+  it('cerrar el viaje lo deja de solo lectura con su resumen guardado', async () => {
+    await AsyncStorage.setItem(
+      'anden.boletos',
+      JSON.stringify([boletoDePrueba(new Date(Date.now() + 3_600_000), 8)]),
+    );
+    const pantalla = await dibujar();
+    await pantalla.findByText('Asiento 8 · Ana Ruiz');
+    await fireEvent.press(
+      pantalla.getByRole('button', {
+        name: 'Cerrar el viaje y ver el resumen',
+      }),
+    );
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Cerrar viaje' }),
+    );
+    expect(await pantalla.findByText('Viaje cerrado')).toBeTruthy();
+    expect(
+      pantalla.queryByRole('button', { name: 'Iniciar viaje' }),
+    ).toBeNull();
+    expect(
+      pantalla.getByRole('button', { name: /^Marcar pagado, Ana Ruiz/ }).props
+        .accessibilityState.disabled,
+    ).toBe(true);
+    expect(await AsyncStorage.getItem('anden.cierres')).toContain(VIAJE_BOACO);
+  });
+
+  it('seguir cobrando cierra la hoja sin cerrar el viaje', async () => {
+    const pantalla = await dibujar();
+    await pantalla.findByText('Todavía no compartís tu ubicación');
+    await fireEvent.press(
+      pantalla.getByRole('button', {
+        name: 'Cerrar el viaje y ver el resumen',
+      }),
+    );
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Seguir cobrando' }),
+    );
+    expect(pantalla.queryByText('Viaje cerrado')).toBeNull();
+    expect(
+      pantalla.getByRole('button', { name: 'Iniciar viaje' }),
+    ).toBeTruthy();
   });
 });
