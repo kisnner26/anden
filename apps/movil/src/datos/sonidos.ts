@@ -1,11 +1,11 @@
 import { createAudioPlayer, setAudioModeAsync } from 'expo-audio';
 import type { AudioPlayer } from 'expo-audio';
 
-const FUENTES = {
-  arranque: require('../../assets/sonidos/arranque.wav') as number,
-  bocina: require('../../assets/sonidos/bocina.wav') as number,
-  salida: require('../../assets/sonidos/salida.wav') as number,
-} as const;
+import arranque from '../../assets/sonidos/arranque.wav';
+import bocina from '../../assets/sonidos/bocina.wav';
+import salida from '../../assets/sonidos/salida.wav';
+
+const FUENTES = { arranque, bocina, salida } as const;
 
 export type NombreSonido = keyof typeof FUENTES;
 
