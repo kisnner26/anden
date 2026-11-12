@@ -2,6 +2,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { Rebote } from '@/componentes/Rebote';
 import { espacios, radios, tamanosControl } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
@@ -28,49 +29,51 @@ export function Chip({
   }
 
   return (
-    <Pressable
-      accessibilityLabel={etiqueta}
-      accessibilityRole="button"
-      accessibilityState={{ disabled: deshabilitado, selected: seleccionado }}
-      disabled={deshabilitado}
-      onPress={cambiar}
-      style={({ pressed }) => [
-        estilos.base,
-        {
-          backgroundColor: seleccionado
-            ? colores.bloqueNegro
-            : colores.barroClaro,
-          borderColor: seleccionado ? colores.bloqueNegro : colores.linea,
-        },
-        deshabilitado && estilos.deshabilitado,
-        pressed && estilos.presionado,
-      ]}
-    >
-      {!seleccionado && (
-        <LinearGradient
-          colors={[colores.barroClaro, colores.barroOscuro]}
-          end={{ x: 1, y: 1 }}
-          pointerEvents="none"
-          start={{ x: 0, y: 0 }}
-          style={[StyleSheet.absoluteFill, estilos.fondoBarro]}
-          testID="chip-fondo-barro"
-        />
-      )}
-      {seleccionado && (
-        <View
-          style={[estilos.indicador, { backgroundColor: colores.ambar }]}
-          testID="chip-seleccionado-indicador"
-        />
-      )}
-      <Text
-        style={[
-          tipografia.pequeno,
-          { color: seleccionado ? colores.sobreNegro : colores.tinta },
+    <Rebote activo={seleccionado} estilo={estilos.envoltura}>
+      <Pressable
+        accessibilityLabel={etiqueta}
+        accessibilityRole="button"
+        accessibilityState={{ disabled: deshabilitado, selected: seleccionado }}
+        disabled={deshabilitado}
+        onPress={cambiar}
+        style={({ pressed }) => [
+          estilos.base,
+          {
+            backgroundColor: seleccionado
+              ? colores.bloqueNegro
+              : colores.barroClaro,
+            borderColor: seleccionado ? colores.bloqueNegro : colores.linea,
+          },
+          deshabilitado && estilos.deshabilitado,
+          pressed && estilos.presionado,
         ]}
       >
-        {etiqueta}
-      </Text>
-    </Pressable>
+        {!seleccionado && (
+          <LinearGradient
+            colors={[colores.barroClaro, colores.barroOscuro]}
+            end={{ x: 1, y: 1 }}
+            pointerEvents="none"
+            start={{ x: 0, y: 0 }}
+            style={[StyleSheet.absoluteFill, estilos.fondoBarro]}
+            testID="chip-fondo-barro"
+          />
+        )}
+        {seleccionado && (
+          <View
+            style={[estilos.indicador, { backgroundColor: colores.ambar }]}
+            testID="chip-seleccionado-indicador"
+          />
+        )}
+        <Text
+          style={[
+            tipografia.pequeno,
+            { color: seleccionado ? colores.sobreNegro : colores.tinta },
+          ]}
+        >
+          {etiqueta}
+        </Text>
+      </Pressable>
+    </Rebote>
   );
 }
 
@@ -88,6 +91,7 @@ const estilos = StyleSheet.create({
     paddingHorizontal: espacios.dieciseis,
   },
   deshabilitado: { opacity: 0.45 },
+  envoltura: { alignSelf: 'flex-start' },
   fondoBarro: { borderRadius: radios.pildora },
   indicador: {
     borderRadius: radios.pildora,
