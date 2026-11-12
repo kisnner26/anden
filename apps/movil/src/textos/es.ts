@@ -8,6 +8,8 @@ export const textos = {
     lugar: 'Managua · Nicaragua',
     lema: 'Tu viaje en bus,\nsin hacer fila.',
     empezar: 'Empezar',
+    deslizar: 'Deslizar para empezar',
+    deslizarAyuda: 'Desliza hacia la derecha o activa el control para empezar',
   },
   pestanas: {
     viajar: 'Viajar',
