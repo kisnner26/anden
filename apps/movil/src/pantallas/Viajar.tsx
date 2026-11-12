@@ -5,6 +5,7 @@ import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { EtiquetaMuestra } from '@/componentes/EtiquetaMuestra';
 import { EnlaceTerminal } from '@/componentes/EnlaceTerminal';
+import { Campaneo } from '@/componentes/Campaneo';
 import { Aparece } from '@/componentes/Aparece';
 import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
@@ -114,7 +115,9 @@ export function Viajar({
           style={({ pressed }) => pressed && estilos.presionado}
         >
           <Bloque estiloContenido={estilos.campana} radio="pildora">
-            <Icono nombre="campana" tamano="ilustracion" />
+            <Campaneo activo={noLeidos > 0}>
+              <Icono nombre="campana" tamano="ilustracion" />
+            </Campaneo>
           </Bloque>
           {noLeidos > 0 && (
             <View
