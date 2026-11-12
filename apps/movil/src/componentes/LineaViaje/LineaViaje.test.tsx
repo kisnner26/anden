@@ -16,8 +16,9 @@ describe('LineaViaje', () => {
     );
     expect(pantalla.getByText('12:56')).toBeTruthy();
     expect(pantalla.getByText('3:26')).toBeTruthy();
-    expect(pantalla.getByText('p. m. · MAY')).toBeTruthy();
-    expect(pantalla.getByText('p. m. · JUI')).toBeTruthy();
+    expect(pantalla.getAllByText('p. m.')).toHaveLength(2);
+    expect(pantalla.getByText('MAY')).toBeTruthy();
+    expect(pantalla.getByText('JUI')).toBeTruthy();
     expect(pantalla.getByText('Sale')).toBeTruthy();
     expect(pantalla.getByText('Llega')).toBeTruthy();
   });

@@ -39,8 +39,9 @@ describe('DetalleViaje', () => {
   it('muestra las dos horas con el camino entre las terminales', async () => {
     const pantalla = await dibujar();
     expect(pantalla.getByTestId('linea-viaje')).toBeTruthy();
-    expect(pantalla.getByText(/^(a\. m\.|p\. m\.) · MAY$/)).toBeTruthy();
-    expect(pantalla.getByText(/^(a\. m\.|p\. m\.) · BOA$/)).toBeTruthy();
+    expect(pantalla.getByText('MAY')).toBeTruthy();
+    expect(pantalla.getByText('BOA')).toBeTruthy();
+    expect(pantalla.getAllByText(/^(a\. m\.|p\. m\.)$/)).toHaveLength(2);
   });
 
   it('dibuja el mapa del recorrido con los kilómetros de carretera', async () => {

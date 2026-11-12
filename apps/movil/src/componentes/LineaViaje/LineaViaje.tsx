@@ -35,9 +35,14 @@ function Extremo({
       <Text style={[tipografia.display, { color: colores.sobreNegro }]}>
         {formatoHora(hora)}
       </Text>
-      <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
-        {`${sufijoHora(hora)} · ${codigo}`}
-      </Text>
+      <View style={estilos.sufijo}>
+        <Text style={[tipografia.pequeno, { color: colores.ambar }]}>
+          {sufijoHora(hora)}
+        </Text>
+        <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+          {codigo}
+        </Text>
+      </View>
     </View>
   );
 }
@@ -114,5 +119,6 @@ const estilos = StyleSheet.create({
     height: espacios.doce,
     width: espacios.doce,
   },
+  sufijo: { alignItems: 'center', flexDirection: 'row', gap: espacios.ocho },
   trazo: { flex: 1, height: espacios.trazoDoble },
 });
