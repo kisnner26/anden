@@ -17,7 +17,8 @@ import {
 } from '@/datos/ubicacion';
 import { ContextoAvisos, type ValorAvisos } from '@/datos/useAvisos';
 import { ContextoPerfil } from '@/datos/usePerfil';
-import { reiniciarMuestra } from '@/datos/useSalidas';
+import { ContextoHabituales } from '@/datos/useHabituales';
+import { obtenerMuestra, reiniciarMuestra } from '@/datos/useSalidas';
 import { renderPantalla } from '@/pruebas/render';
 
 import { Viajar } from './Viajar';
@@ -187,6 +188,43 @@ describe('Viajar', () => {
       pantalla.getByRole('button', { name: 'Reservar para otro día' }),
     );
     expect(alReservarOtroDia).toHaveBeenCalledTimes(1);
+  });
+
+  it('muestra el viaje habitual con su próxima salida y la abre para reservar', async () => {
+    const viaje = obtenerMuestra().viajes.find((v) => v.id === 'via_d1_0_0')!;
+    const salida = new Date(viaje.salida);
+    const hora = `${String(salida.getHours()).padStart(2, '0')}:${String(salida.getMinutes()).padStart(2, '0')}`;
+    const alAbrirViaje = jest.fn();
+    const pantalla = await renderPantalla(
+      <ContextoHabituales.Provider
+        value={{
+          agregar: async () => undefined,
+          habituales: [
+            {
+              destino: 'Boaco',
+              dias: [0, 1, 2, 3, 4, 5, 6],
+              hora,
+              id: 'hab_x',
+              origen: 'Managua',
+            },
+          ],
+          quitar: async () => undefined,
+        }}
+      >
+        <Viajar alAbrirViaje={alAbrirViaje} alElegirAsiento={() => undefined} />
+      </ContextoHabituales.Provider>,
+    );
+    expect(pantalla.getByText('Mi viaje habitual')).toBeTruthy();
+    expect(pantalla.getByText('Managua → Boaco')).toBeTruthy();
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: /^Reservar la salida de/ }),
+    );
+    expect(alAbrirViaje).toHaveBeenCalledTimes(1);
+  });
+
+  it('sin viaje habitual no muestra esa tarjeta', async () => {
+    const pantalla = await dibujar();
+    expect(pantalla.queryByTestId('tarjeta-habitual')).toBeNull();
   });
 
   it('abre configuración desde el avatar', async () => {
