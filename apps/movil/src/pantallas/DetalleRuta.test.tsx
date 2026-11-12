@@ -60,8 +60,9 @@ describe('DetalleRuta', () => {
     );
 
     expect(
-      pantalla.getByRole('header', { name: 'Boaco → Managua' }),
+      pantalla.getByRole('header', { name: 'Boaco → Managua.' }),
     ).toBeTruthy();
+    expect(pantalla.queryByRole('header', { name: 'Rutas.' })).toBeNull();
     expect(
       pantalla.getByLabelText('Mapa del corredor con un bus simulado'),
     ).toBeTruthy();
