@@ -11,6 +11,7 @@ import type {
   TipoServicio,
   Viaje,
 } from '@anden/dominio';
+import { TRAZOS } from './trazos';
 
 export interface DatosMuestra {
   buses: Bus[];
@@ -52,8 +53,16 @@ export const TERMINALES: Terminal[] = [
 
 /** destino, kilómetros y minutos de cada ruta que sale de Mercado Mayoreo */
 const RECORRIDOS = [
-  { codigo: 'boa', distanciaKm: 90, duracionMin: 100 },
-  { codigo: 'jui', distanciaKm: 139, duracionMin: 150 },
+  {
+    codigo: 'boa',
+    distanciaKm: TRAZOS.boa.distanciaKm,
+    duracionMin: TRAZOS.boa.duracionMin,
+  },
+  {
+    codigo: 'jui',
+    distanciaKm: TRAZOS.jui.distanciaKm,
+    duracionMin: TRAZOS.jui.duracionMin,
+  },
 ] as const;
 
 export const RUTAS: Ruta[] = RECORRIDOS.flatMap((recorrido) => [
