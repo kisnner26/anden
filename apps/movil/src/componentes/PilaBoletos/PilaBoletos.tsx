@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Aparece } from '@/componentes/Aparece';
 import { Autobus, varianteDeClave } from '@/componentes/Autobus';
+import { BarridoDeLuz } from '@/componentes/BarridoDeLuz';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { minutosHastaSalida } from '@/datos/estadoBoleto';
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
@@ -47,6 +48,7 @@ export function PilaBoletos({
       onPress={() => alAbrirBoleto(id)}
     >
       <BloqueNegro estiloContenido={estilos.tarjeta}>
+        <BarridoDeLuz radio={radios.bloqueNegro} retraso={400} />
         <View style={estilos.fila}>
           <View style={estilos.textos}>
             <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
