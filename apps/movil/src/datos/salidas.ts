@@ -100,3 +100,15 @@ export function proximaSalida(salidas: Salida[]): Salida | null {
     );
   return pendientes[0] ?? null;
 }
+
+/** todas las salidas de un chofer, de cualquier terminal, por hora */
+export function salidasDeChofer(
+  datos: DatosMuestra,
+  ahora: Date,
+  choferId: string,
+): Salida[] {
+  return datos.terminales
+    .flatMap((terminal) => armarSalidas(datos, ahora, terminal.id))
+    .filter((salida) => salida.choferId === choferId)
+    .sort((a, b) => a.salida.getTime() - b.salida.getTime());
+}
