@@ -95,7 +95,6 @@ export const textos = {
     sinResultadosDetalle:
       'Probá con otro destino, quitá algún filtro o revisá la placa.',
     limpiar: 'Quitar filtros',
-    abrirViaje: 'Ver salida a',
   },
   asientos: {
     tituloInicio: 'Elegí tu',
