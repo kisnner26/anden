@@ -39,7 +39,7 @@ export function OpcionSeleccion({
     >
       <Bloque estiloContenido={estilos.fila} hundido={elegida}>
         <View style={estilos.texto}>
-          <Text style={[estilos.nombre, { color: colores.tinta }]}>
+          <Text style={[tipografia.nombreFila, { color: colores.tinta }]}>
             {nombre}
           </Text>
           <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
@@ -73,6 +73,5 @@ const estilos = StyleSheet.create({
     gap: espacios.dieciseis,
     padding: espacios.dieciseis,
   },
-  nombre: { fontFamily: 'Archivo_600SemiBold', fontSize: 18, lineHeight: 22 },
   texto: { flex: 1, gap: 2 },
 });
