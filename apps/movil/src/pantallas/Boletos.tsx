@@ -42,7 +42,7 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
 
   return (
     <MarcoPestana>
-      <Text style={[estilos.titulo, { color: colores.tinta }]}>
+      <Text style={[tipografia.titularPantalla, { color: colores.tinta }]}>
         {t('boletos.titulo')}
         <Text style={{ color: colores.ambarTitular }}>.</Text>
       </Text>
@@ -55,7 +55,13 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
             </Loseta>
           </View>
           <View style={estilos.textos}>
-            <Text style={[estilos.vacioTitulo, { color: colores.tinta }]}>
+            <Text
+              style={[
+                tipografia.subtitulo,
+                estilos.vacioTitulo,
+                { color: colores.tinta },
+              ]}
+            >
               {t('boletos.vacioTitulo')}
             </Text>
             <Text
@@ -93,7 +99,10 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
                     {`${t('boletos.saleEn')} ${minutosHastaSalida(proximos[0]!, ahora)} ${t('viajar.minutos')}`}
                   </Text>
                   <Text
-                    style={[estilos.destinoProximo, { color: colores.fondo }]}
+                    style={[
+                      tipografia.titularProximo,
+                      { color: colores.fondo },
+                    ]}
                   >
                     {proximos[0]?.resumen.destino}
                   </Text>
@@ -163,26 +172,11 @@ const estilos = StyleSheet.create({
     marginTop: espacios.veinticuatro,
     marginBottom: espacios.ocho,
   },
-  destinoProximo: {
-    fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
-    fontSize: 42,
-    lineHeight: 44,
-  },
   textos: { alignItems: 'center', gap: espacios.ocho },
-  titulo: {
-    fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
-    fontSize: 46,
-    lineHeight: 48,
-  },
   vacio: {
     alignItems: 'stretch',
     gap: espacios.veinticuatro,
     padding: espacios.veinticuatro,
   },
-  vacioTitulo: {
-    fontFamily: 'Archivo_600SemiBold',
-    fontSize: 20,
-    lineHeight: 26,
-    textAlign: 'center',
-  },
+  vacioTitulo: { textAlign: 'center' },
 });
