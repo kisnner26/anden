@@ -7,6 +7,7 @@ jest.mock('@/datos/ubicacion', () => ({
   solicitarAccesoUbicacion: jest.fn(),
 }));
 
+import { ProveedorSesion } from '@/datos/ProveedorSesion';
 import { CLAVE_MODO_USO } from '@/tema/modoUso';
 import { ProveedorModoUso } from '@/tema/ProveedorModoUso';
 import { ProveedorUbicacion } from '@/datos/ProveedorUbicacion';
@@ -32,6 +33,55 @@ beforeEach(async () => {
 });
 
 describe('Ajustes', () => {
+  it('ofrece entrar como conductor a quien no tiene sesión', async () => {
+    const alAbrirIngreso = jest.fn();
+    const pantalla = await renderPantalla(
+      <ProveedorSesion>
+        <Ajustes alAbrirIngreso={alAbrirIngreso} alVolver={() => undefined} />
+      </ProveedorSesion>,
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: /Soy conductor/ }),
+    );
+    expect(alAbrirIngreso).toHaveBeenCalledTimes(1);
+    expect(pantalla.queryByText('Cerrar sesión')).toBeNull();
+  });
+
+  it('con sesión de conductor abre su modo y deja cerrar la sesión', async () => {
+    await AsyncStorage.setItem(
+      'anden.sesion',
+      JSON.stringify({
+        choferId: 'cho_1',
+        nombre: 'Ernesto Calero',
+        rol: 'conductor',
+      }),
+    );
+    const alAbrirConductor = jest.fn();
+    const pantalla = await renderPantalla(
+      <ProveedorSesion>
+        <Ajustes
+          alAbrirConductor={alAbrirConductor}
+          alVolver={() => undefined}
+        />
+      </ProveedorSesion>,
+    );
+    expect(
+      await pantalla.findByText('Sesión de conductor: Ernesto Calero'),
+    ).toBeTruthy();
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: /Abrir modo conductor/ }),
+    );
+    expect(alAbrirConductor).toHaveBeenCalledTimes(1);
+
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Cerrar sesión' }),
+    );
+    await waitFor(async () =>
+      expect(await AsyncStorage.getItem('anden.sesion')).toBeNull(),
+    );
+    expect(await pantalla.findByText(/Soy conductor/)).toBeTruthy();
+  });
+
   it('cambia al modo sencillo y lo guarda', async () => {
     const pantalla = await renderPantalla(
       <ProveedorModoUso>
