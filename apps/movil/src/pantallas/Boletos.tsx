@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Bloque } from '@/componentes/Bloque';
-import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { Aparece } from '@/componentes/Aparece';
 import { FilaBoleto } from '@/componentes/FilaBoleto';
+import { PilaBoletos } from '@/componentes/PilaBoletos';
+import { agruparBoletos } from '@/datos/gruposBoletos';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
-import { minutosHastaSalida } from '@/datos/estadoBoleto';
 import type { BoletoGuardado } from '@/datos/reserva';
 import { useBoletos } from '@/datos/useBoletos';
 import { useAhora } from '@/datos/useSalidas';
@@ -44,6 +44,8 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
   const pasados = boletos
     .filter(({ resumen }) => new Date(resumen.salida) < ahora)
     .sort((a, b) => porSalida(b, a));
+
+  const gruposProximos = agruparBoletos(proximos);
 
   return (
     <MarcoPestana>
@@ -94,29 +96,12 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
               >
                 {t('boletos.proximo')}
               </Text>
-              <Pressable
-                accessibilityLabel={`${t('boletos.proximo')} ${proximos[0]?.resumen.destino ?? ''}`}
-                accessibilityRole="button"
-                onPress={() => alAbrirBoleto(proximos[0]?.boleto.id ?? '')}
-              >
-                <BloqueNegro estiloContenido={estilos.proximo}>
-                  <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
-                    {`${t('boletos.saleEn')} ${minutosHastaSalida(proximos[0]!, ahora)} ${t('viajar.minutos')}`}
-                  </Text>
-                  <Text
-                    style={[
-                      tipografia.titularProximo,
-                      { color: colores.fondo },
-                    ]}
-                  >
-                    {proximos[0]?.resumen.destino}
-                  </Text>
-                  <Text style={[tipografia.dato, { color: colores.fondo }]}>
-                    {`${t('boleto.anden')} ${proximos[0]?.resumen.anden} · ${t('boletos.asientoCorto')} ${proximos[0]?.boleto.asiento}`}
-                  </Text>
-                </BloqueNegro>
-              </Pressable>
-              {proximos.length > 1 && (
+              <PilaBoletos
+                ahora={ahora}
+                alAbrirBoleto={alAbrirBoleto}
+                grupo={gruposProximos[0]!}
+              />
+              {gruposProximos.length > 1 && (
                 <>
                   <Text
                     style={[
@@ -127,13 +112,15 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
                   >
                     {t('boletos.proximos')}
                   </Text>
-                  {proximos.slice(1).map((guardado, indice) => (
-                    <Aparece indice={indice} key={guardado.boleto.id}>
-                      <FilaBoleto
-                        alPresionar={alAbrirBoleto}
-                        ahora={ahora}
-                        guardado={guardado}
-                      />
+                  {gruposProximos.slice(1).map((grupo, indice) => (
+                    <Aparece indice={indice} key={grupo.clave}>
+                      <View style={estilos.pila}>
+                        <PilaBoletos
+                          ahora={ahora}
+                          alAbrirBoleto={alAbrirBoleto}
+                          grupo={grupo}
+                        />
+                      </View>
                     </Aparece>
                   ))}
                 </>
@@ -201,7 +188,7 @@ const estilos = StyleSheet.create({
   centrada: { alignItems: 'center' },
   detalle: { textAlign: 'center' },
   seccion: { marginTop: espacios.veinticuatro },
-  proximo: { gap: espacios.ocho, padding: espacios.veinticuatro },
+  pila: { marginTop: espacios.doce },
   proximoEtiqueta: {
     marginTop: espacios.veinticuatro,
     marginBottom: espacios.ocho,

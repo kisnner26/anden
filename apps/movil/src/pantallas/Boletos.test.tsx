@@ -51,7 +51,7 @@ describe('Boletos', () => {
     );
     const pantalla = await dibujar();
     expect(await pantalla.findByText('Tu próximo viaje')).toBeTruthy();
-    expect(pantalla.getByText('Andén 4 · Asiento 8')).toBeTruthy();
+    expect(pantalla.getByText('Asiento 8')).toBeTruthy();
     expect(pantalla.queryByText('Próximos')).toBeNull();
     expect(pantalla.queryByText('Pasados')).toBeNull();
   });
@@ -66,7 +66,7 @@ describe('Boletos', () => {
     );
     const pantalla = await dibujar();
     expect(await pantalla.findByText('Tu próximo viaje')).toBeTruthy();
-    expect(pantalla.getByLabelText('Tu próximo viaje Boaco')).toBeTruthy();
+    expect(pantalla.getByLabelText(/^Boaco, .*Asiento 9$/)).toBeTruthy();
     expect(pantalla.getByText('Próximos')).toBeTruthy();
   });
 
