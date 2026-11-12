@@ -37,6 +37,7 @@ describe('FilaSalida', () => {
     const pantalla = await render(<FilaSalida salida={boaco} />);
     expect(pantalla.getByText('Boaco')).toBeTruthy();
     expect(pantalla.getByText('2:40')).toBeTruthy();
+    expect(pantalla.getByText('p. m.')).toBeTruthy();
   });
 
   it('sin boleto la fila no suma elementos decorativos', async () => {

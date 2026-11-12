@@ -4,7 +4,7 @@ import { Autobus } from '@/componentes/Autobus';
 import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
-import { formatoHora, formatoHoraCompleta } from '@/datos/formato';
+import { formatoHora, formatoHoraCompleta, sufijoHora } from '@/datos/formato';
 import type { Salida } from '@/datos/salidas';
 import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -57,9 +57,14 @@ export function FilaSalida({
               : `${servicio} · ${anden}`}
           </Text>
         </View>
-        <Text style={[tipografia.dato, { color: colores.ambarTexto }]}>
-          {formatoHora(salida.salida)}
-        </Text>
+        <View style={estilos.hora}>
+          <Text style={[tipografia.dato, { color: colores.ambarTexto }]}>
+            {formatoHora(salida.salida)}
+          </Text>
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {sufijoHora(salida.salida)}
+          </Text>
+        </View>
         {conBoleto ? (
           <Loseta tamano={44} variante="negra">
             <Icono
@@ -83,5 +88,6 @@ const estilos = StyleSheet.create({
     paddingVertical: espacios.doce,
   },
   fila: { marginTop: espacios.doce },
+  hora: { alignItems: 'flex-end' },
   texto: { flex: 1 },
 });
