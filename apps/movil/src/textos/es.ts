@@ -88,6 +88,7 @@ export const textos = {
     columnaAnden: 'Andén',
     columnaEstado: 'Estado',
     buscar: 'Buscar',
+    proximas: 'Próximas',
     sinSalidas: 'No hay salidas con este filtro.',
   },
   buscador: {

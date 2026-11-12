@@ -25,20 +25,31 @@ const FILTROS: readonly { clave: Filtro; etiqueta: () => string }[] = [
 
 export interface PropiedadesHorarios {
   alAbrirBuscador?: () => void;
+  alAbrirViaje?: (viajeId: string) => void;
 }
 
 /** el tablero de salidas de la terminal, con filtro por servicio */
-export function Horarios({ alAbrirBuscador }: PropiedadesHorarios) {
+export function Horarios({
+  alAbrirBuscador,
+  alAbrirViaje,
+}: PropiedadesHorarios) {
   const { colores } = useTema();
-  const { datos, salidas } = useSalidas();
+  const [terminalId, establecerTerminalId] = useState('ter_may');
+  const { datos, salidas } = useSalidas(terminalId);
   const terminal = datos.terminales.find(
-    (candidata) => candidata.id === 'ter_may',
+    (candidata) => candidata.id === terminalId,
   );
   const [filtro, establecerFiltro] = useState<Filtro>('todos');
-  const visibles =
+  const [soloProximas, establecerSoloProximas] = useState(false);
+  const porServicio =
     filtro === 'todos'
       ? salidas
       : salidas.filter((salida) => salida.servicio === filtro);
+  const visibles = soloProximas
+    ? porServicio.filter(
+        (salida) => salida.estado !== 'en-ruta' && salida.estado !== 'llego',
+      )
+    : porServicio;
 
   return (
     <MarcoPestana>
@@ -79,6 +90,25 @@ export function Horarios({ alAbrirBuscador }: PropiedadesHorarios) {
         horizontal
         showsHorizontalScrollIndicator={false}
       >
+        {datos.terminales.map((candidata) => (
+          <Chip
+            alCambiar={() => establecerTerminalId(candidata.id)}
+            etiqueta={candidata.ciudad}
+            key={candidata.id}
+            seleccionado={terminalId === candidata.id}
+          />
+        ))}
+      </ScrollView>
+      <ScrollView
+        contentContainerStyle={estilos.filtros}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      >
+        <Chip
+          alCambiar={() => establecerSoloProximas(!soloProximas)}
+          etiqueta={t('horarios.proximas')}
+          seleccionado={soloProximas}
+        />
         {FILTROS.map(({ clave, etiqueta }) => (
           <Chip
             alCambiar={() => establecerFiltro(clave)}
@@ -90,7 +120,12 @@ export function Horarios({ alAbrirBuscador }: PropiedadesHorarios) {
       </ScrollView>
 
       <View style={estilos.tablero}>
-        <TableroSalidas salidas={visibles} />
+        <TableroSalidas
+          alElegir={
+            alAbrirViaje ? (salida) => alAbrirViaje(salida.viajeId) : undefined
+          }
+          salidas={visibles}
+        />
       </View>
     </MarcoPestana>
   );
@@ -116,7 +151,7 @@ const estilos = StyleSheet.create({
     paddingHorizontal: espacios.doce,
     paddingVertical: espacios.doce,
   },
-  filtros: { gap: espacios.ocho, paddingVertical: espacios.dieciseis },
+  filtros: { gap: espacios.ocho, paddingVertical: espacios.ocho },
   tablero: { marginTop: espacios.cuatro },
   terminal: { marginTop: espacios.dieciseis },
 });
