@@ -57,4 +57,10 @@ Decisión 4 (opiniones y reportes): se guardan solo en el teléfono y cualquiera
 Decisión 5 (mapa): el detalle del corredor lleva un mapa de Apple Maps con `react-native-maps`, sin clave ni permisos extra. El bus que se ve es una simulación que da vueltas al recorrido según el reloj, y la pantalla lo dice ("Simulación" y una nota). El trazo une las terminales en línea recta, no sigue la carretera. Reemplaza la nota de T-114 de dejar el mapa embebido para después.
 Por qué: el dueño lo pidió. La simulación nunca se presenta como posición real de una unidad; eso espera datos operativos y un servidor.
 
-Preguntas abiertas: modos de uso según la persona (por definir cuáles), atar opiniones al boleto, y reemplazar la simulación por posiciones reales.
+Decisión 6 (modos de uso): tres modos en Configuración. Completo (todo igual), Sencillo (letra 25 % más grande, sin animaciones) y Rápido (sin animaciones ni mascota). La escala se aplica desde los tokens de tipografía, sin tocar cada pantalla. Respetan además "reducir movimiento" del sistema.
+
+Decisión 7 (opiniones atadas al boleto): se opina con un boleto no cancelado de un viaje del chofer que ya salió, una vez por boleto, y la opinión queda marcada "Viajó con este chofer". Se usa la hora de salida en vez del estado `usado` porque ese estado lo marca la terminal y todavía no hay servidor. Cuando exista, pasa a `puedeCalificar`. La nota del chofer suma las opiniones de este teléfono a la base. Sustituye lo abierto en la decisión 4.
+
+Decisión 8 (favoritos y disponibilidad): los corredores se marcan con estrella y se guardan en el teléfono. "Pocos asientos" son cinco o menos. La tarjeta de corredor muestra la próxima salida de los datos de muestra, no horas escritas a mano.
+
+Preguntas abiertas: reemplazar la simulación del bus por posiciones reales y mover opiniones, favoritos y cuenta a un servidor.
