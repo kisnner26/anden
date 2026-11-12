@@ -30,7 +30,7 @@ describe('destinosDeHoy', () => {
   it('ignora las que ya salieron o se cancelaron', () => {
     expect(
       destinosDeHoy([
-        salida('Boaco', 5, 'salio'),
+        salida('Boaco', 5, 'llego'),
         salida('Boaco', 6, 'cancelado'),
       ]),
     ).toEqual([]);
