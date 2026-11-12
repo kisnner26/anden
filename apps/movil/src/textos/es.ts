@@ -476,6 +476,8 @@ export const textos = {
     titulo: 'Tus boletos',
     proximos: 'Próximos',
     pasados: 'Pasados',
+    verAnteriores: 'Ver los {{cantidad}} anteriores',
+    verMenos: 'Ver menos',
     asientoCorto: 'Asiento',
     vacioTitulo: 'Todavía no tenés boletos',
     vacioDetalle:

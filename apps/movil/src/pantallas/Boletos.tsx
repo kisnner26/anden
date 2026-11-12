@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Bloque } from '@/componentes/Bloque';
@@ -12,10 +13,13 @@ import { minutosHastaSalida } from '@/datos/estadoBoleto';
 import type { BoletoGuardado } from '@/datos/reserva';
 import { useBoletos } from '@/datos/useBoletos';
 import { useAhora } from '@/datos/useSalidas';
-import { espacios } from '@/tema/espacios';
+import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
+
+/** cuántos boletos pasados se ven sin desplegar el resto */
+const PASADOS_VISIBLES = 3;
 
 export interface PropiedadesBoletos {
   alAbrirBoleto: (boletoId: string) => void;
@@ -33,6 +37,7 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
   const { colores } = useTema();
   const ahora = useAhora();
   const { boletos } = useBoletos();
+  const [verTodos, establecerVerTodos] = useState(false);
   const proximos = boletos
     .filter(({ resumen }) => new Date(resumen.salida) >= ahora)
     .sort(porSalida);
@@ -146,14 +151,37 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
               >
                 {t('boletos.pasados')}
               </Text>
-              {pasados.map((guardado) => (
-                <FilaBoleto
-                  alPresionar={alAbrirBoleto}
-                  ahora={ahora}
-                  guardado={guardado}
-                  key={guardado.boleto.id}
-                />
-              ))}
+              {(verTodos ? pasados : pasados.slice(0, PASADOS_VISIBLES)).map(
+                (guardado) => (
+                  <FilaBoleto
+                    alPresionar={alAbrirBoleto}
+                    ahora={ahora}
+                    guardado={guardado}
+                    key={guardado.boleto.id}
+                  />
+                ),
+              )}
+              {pasados.length > PASADOS_VISIBLES && (
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => establecerVerTodos(!verTodos)}
+                  style={estilos.verMas}
+                >
+                  <Text
+                    style={[
+                      tipografia.subtitulo,
+                      { color: colores.ambarTexto },
+                    ]}
+                  >
+                    {verTodos
+                      ? t('boletos.verMenos')
+                      : t('boletos.verAnteriores').replace(
+                          '{{cantidad}}',
+                          String(pasados.length - PASADOS_VISIBLES),
+                        )}
+                  </Text>
+                </Pressable>
+              )}
             </View>
           )}
         </>
@@ -163,6 +191,12 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
 }
 
 const estilos = StyleSheet.create({
+  verMas: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: espacios.doce,
+    minHeight: tamanosControl.toqueMinimo,
+  },
   bloque: { marginTop: espacios.veinticuatro },
   centrada: { alignItems: 'center' },
   detalle: { textAlign: 'center' },
