@@ -130,7 +130,7 @@ export function Pago({
         </Text>
         <Bloque estiloContenido={estilos.resumen}>
           <Text
-            style={[estilos.viaje, { color: colores.tinta }]}
+            style={[tipografia.titularResumen, { color: colores.tinta }]}
           >{`${origen?.nombre ?? ''} → ${salida.destino}`}</Text>
           <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
             {`${formatoFechaCorta(salida.salida)}, ${formatoHoraCompleta(salida.salida)} · ${t(`servicios.${salida.servicio}`)} · ${salida.placa}`}
@@ -222,9 +222,4 @@ const estilos = StyleSheet.create({
   pantalla: { flex: 1 },
   resumen: { gap: espacios.ocho, padding: espacios.veinticuatro },
   total: { flex: 1 },
-  viaje: {
-    fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
-    fontSize: 32,
-    lineHeight: 34,
-  },
 });
