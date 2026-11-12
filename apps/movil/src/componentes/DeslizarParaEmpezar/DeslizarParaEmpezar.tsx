@@ -73,7 +73,7 @@ export function DeslizarParaEmpezar({
     void impactAsync(ImpactFeedbackStyle.Light);
     avance.value = withSequence(
       withTiming(EMPUJE_PISTA, { duration: movimiento.toque }),
-      withSpring(0, { damping: 14, stiffness: 240 }),
+      withSpring(0, { damping: 14, overshootClamping: true, stiffness: 240 }),
     );
   };
 
@@ -106,11 +106,19 @@ export function DeslizarParaEmpezar({
             completar();
             return;
           }
-          avance.value = withSpring(0, { damping: 16, stiffness: 220 });
+          avance.value = withSpring(0, {
+            damping: 16,
+            overshootClamping: true,
+            stiffness: 220,
+          });
         },
         onPanResponderTerminate: () => {
           if (!completado.current) {
-            avance.value = withSpring(0, { damping: 16, stiffness: 220 });
+            avance.value = withSpring(0, {
+              damping: 16,
+              overshootClamping: true,
+              stiffness: 220,
+            });
           }
         },
         onStartShouldSetPanResponder: () => true,
@@ -123,7 +131,7 @@ export function DeslizarParaEmpezar({
     transform: [{ translateX: avance.value }],
   }));
   const estiloRelleno = useAnimatedStyle(() => ({
-    width: avance.value + MANIJA + MARGEN,
+    width: avance.value > 1 ? avance.value + MANIJA + MARGEN : 0,
   }));
   const estiloTexto = useAnimatedStyle(() => ({
     opacity: maximo > 0 ? Math.max(0, 1 - (avance.value / maximo) * 1.6) : 1,

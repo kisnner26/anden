@@ -47,7 +47,7 @@ function Bocanada({ arranque, indice, tamano }: PropiedadesBocanada) {
   }, [avance, ciclo, indice]);
 
   const estilo = useAnimatedStyle(() => ({
-    opacity: (1 - avance.value) * (arranque ? 0.7 : 0.5),
+    opacity: (1 - avance.value) * (arranque ? 0.85 : 0.7),
     transform: [
       { translateX: -avance.value * tamano * (arranque ? 5.5 : 3.4) },
       { translateY: -avance.value * tamano * (arranque ? 1.4 : 2.2) },
@@ -61,7 +61,7 @@ function Bocanada({ arranque, indice, tamano }: PropiedadesBocanada) {
       style={[
         estilos.bocanada,
         {
-          backgroundColor: arranque ? colores.tintaSuave : colores.linea,
+          backgroundColor: colores.tintaSuave,
           borderRadius: tamano,
           height: tamano,
           width: tamano,
