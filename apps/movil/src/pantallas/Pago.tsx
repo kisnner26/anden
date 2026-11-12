@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
+import { Icono } from '@/componentes/Icono';
 import { PieReserva } from '@/componentes/PieReserva';
 import { ProgresoReserva } from '@/componentes/ProgresoReserva';
 import { nombrePropio } from '@/datos/perfil';
@@ -130,32 +131,77 @@ export function Pago({
           {t('pago.resumen')}
         </Text>
         <Bloque estiloContenido={estilos.resumen}>
+          <View style={estilos.extremos}>
+            <View style={estilos.extremo}>
+              <Text
+                style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
+              >
+                {t('pago.de')}
+              </Text>
+              <Text
+                style={[tipografia.titularResumen, { color: colores.tinta }]}
+              >
+                {origen?.nombre ?? ''}
+              </Text>
+            </View>
+            <Icono color={colores.tinta} nombre="siguiente" tamano="grande" />
+            <View style={[estilos.extremo, estilos.extremoDerecho]}>
+              <Text
+                style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
+              >
+                {t('pago.a')}
+              </Text>
+              <Text
+                style={[tipografia.titularResumen, { color: colores.tinta }]}
+              >
+                {salida.destino}
+              </Text>
+            </View>
+          </View>
+          <View style={estilos.datos}>
+            {(
+              [
+                [t('pago.fecha'), formatoFechaCorta(salida.salida)],
+                [t('pago.hora'), formatoHoraCompleta(salida.salida)],
+                [
+                  t('pago.asientos'),
+                  borrador.pasajeros.map((p) => p.asiento).join(', '),
+                ],
+              ] as const
+            ).map(([etiqueta, valor]) => (
+              <View key={etiqueta} style={estilos.dato}>
+                <Text
+                  style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
+                >
+                  {etiqueta}
+                </Text>
+                <Text style={[tipografia.nombreFila, { color: colores.tinta }]}>
+                  {valor}
+                </Text>
+              </View>
+            ))}
+          </View>
           <Text
-            style={[tipografia.titularResumen, { color: colores.tinta }]}
-          >{`${origen?.nombre ?? ''} → ${salida.destino}`}</Text>
-          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {`${formatoFechaCorta(salida.salida)}, ${formatoHoraCompleta(salida.salida)} · ${t(`servicios.${salida.servicio}`)} · ${salida.placa}`}
+            style={[
+              tipografia.pequeno,
+              estilos.centrado,
+              { color: colores.tintaSuave },
+            ]}
+          >
+            {`${borrador.pasajeros.map((p) => nombrePropio(p.nombre)).join(' · ')} · ${t(`servicios.${salida.servicio}`)} · ${salida.placa}`}
           </Text>
-          {borrador.pasajeros.map((pasajero) => (
-            <Text
-              key={pasajero.asiento}
-              style={[tipografia.cuerpo, { color: colores.tinta }]}
-            >
-              {`${t('pasajeros.asiento')} ${pasajero.asiento} · ${nombrePropio(pasajero.nombre)}`}
-            </Text>
-          ))}
         </Bloque>
 
         <Bloque estiloContenido={estilos.metodo} hundido radio="loseta">
-          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-            {t('pago.efectivo')}
-          </Text>
-          <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
-            {t('pago.efectivoDetalle')}
-          </Text>
-          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {t('pago.avisoEfectivo')}
-          </Text>
+          <Icono nombre="boleto" tamano="ilustracion" />
+          <View style={estilos.metodoTexto}>
+            <Text style={[tipografia.nombreFila, { color: colores.tinta }]}>
+              {t('pago.efectivo')}
+            </Text>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {`${t('pago.efectivoDetalle')} ${t('pago.avisoEfectivo')}`}
+            </Text>
+          </View>
         </Bloque>
 
         {error && (
@@ -219,8 +265,20 @@ const estilos = StyleSheet.create({
     gap: espacios.doce,
     justifyContent: 'space-between',
   },
-  metodo: { gap: espacios.ocho, padding: espacios.dieciseis },
+  centrado: { textAlign: 'center' },
+  dato: { alignItems: 'center', flex: 1, gap: espacios.cuatro },
+  datos: { flexDirection: 'row' },
+  extremo: { flex: 1, gap: espacios.cuatro },
+  extremoDerecho: { alignItems: 'flex-end' },
+  extremos: { alignItems: 'center', flexDirection: 'row', gap: espacios.doce },
+  metodo: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.doce,
+    padding: espacios.dieciseis,
+  },
+  metodoTexto: { flex: 1, gap: espacios.cuatro },
   pantalla: { flex: 1 },
-  resumen: { gap: espacios.ocho, padding: espacios.veinticuatro },
+  resumen: { gap: espacios.dieciseis, padding: espacios.veinticuatro },
   total: { flex: 1 },
 });
