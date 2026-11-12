@@ -1,5 +1,8 @@
 export const movimiento = {
+  anguloCampaneo: 16,
+  campaneo: 160,
   cambioEstado: 240,
+  pausaCampaneo: 2400,
   escalon: 70,
   maximoEscalon: 6,
   amplitudMascota: 4,
