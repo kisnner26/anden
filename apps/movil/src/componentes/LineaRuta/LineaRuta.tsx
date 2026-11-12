@@ -58,7 +58,13 @@ export function LineaRuta({ paradas }: PropiedadesLineaRuta) {
                 />
               )}
             </View>
-            <Text style={[estilos.nombre, { color: colores.tinta }]}>
+            <Text
+              style={[
+                tipografia.nombreLinea,
+                estilos.nombre,
+                { color: colores.tinta },
+              ]}
+            >
               {parada.nombre}
             </Text>
           </View>
@@ -77,12 +83,7 @@ const estilos = StyleSheet.create({
   },
   hora: { paddingTop: 1, width: 58 },
   nodo: { borderRadius: 999, borderWidth: 3, height: 16, width: 16 },
-  nombre: {
-    flex: 1,
-    fontFamily: 'Archivo_600SemiBold',
-    fontSize: 16,
-    lineHeight: 20,
-  },
+  nombre: { flex: 1 },
   riel: { alignItems: 'center', alignSelf: 'stretch', width: 16 },
   tramo: { flex: 1, width: 3 },
 });
