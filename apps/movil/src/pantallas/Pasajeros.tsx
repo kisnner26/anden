@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { Aparece } from '@/componentes/Aparece';
 import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
@@ -122,38 +123,40 @@ export function Pasajeros({
           </View>
         )}
 
-        {asientos.map((asiento) => (
-          <Bloque estiloContenido={estilos.bloque} key={asiento}>
-            <Text style={[estilos.asiento, { color: colores.tinta }]}>
-              {`${t('pasajeros.asiento')} ${asiento}`}
-            </Text>
-            <CampoTexto
-              alCambiar={(valor) =>
-                establecerNombres({ ...nombres, [asiento]: valor })
-              }
-              etiqueta={`${t('pasajeros.nombre')} · ${t('pasajeros.asiento')} ${asiento}`}
-              error={
-                validar && !nombrePersonaValido(nombres[asiento] ?? '')
-                  ? t('pasajeros.nombreInvalido')
-                  : undefined
-              }
-              marcador={t('pasajeros.marcadorNombre')}
-              valor={nombres[asiento] ?? ''}
-            />
-            <CampoTexto
-              alCambiar={(valor) =>
-                establecerCedulas({ ...cedulas, [asiento]: valor })
-              }
-              etiqueta={`${t('pasajeros.cedula')} · ${t('pasajeros.asiento')} ${asiento}`}
-              error={
-                validar && !cedulaOpcionalValida(cedulas[asiento] ?? '')
-                  ? t('pasajeros.cedulaInvalida')
-                  : undefined
-              }
-              marcador={t('pasajeros.marcadorCedula')}
-              valor={cedulas[asiento] ?? ''}
-            />
-          </Bloque>
+        {asientos.map((asiento, indice) => (
+          <Aparece indice={indice} key={asiento}>
+            <Bloque estiloContenido={estilos.bloque}>
+              <Text style={[estilos.asiento, { color: colores.tinta }]}>
+                {`${t('pasajeros.asiento')} ${asiento}`}
+              </Text>
+              <CampoTexto
+                alCambiar={(valor) =>
+                  establecerNombres({ ...nombres, [asiento]: valor })
+                }
+                etiqueta={`${t('pasajeros.nombre')} · ${t('pasajeros.asiento')} ${asiento}`}
+                error={
+                  validar && !nombrePersonaValido(nombres[asiento] ?? '')
+                    ? t('pasajeros.nombreInvalido')
+                    : undefined
+                }
+                marcador={t('pasajeros.marcadorNombre')}
+                valor={nombres[asiento] ?? ''}
+              />
+              <CampoTexto
+                alCambiar={(valor) =>
+                  establecerCedulas({ ...cedulas, [asiento]: valor })
+                }
+                etiqueta={`${t('pasajeros.cedula')} · ${t('pasajeros.asiento')} ${asiento}`}
+                error={
+                  validar && !cedulaOpcionalValida(cedulas[asiento] ?? '')
+                    ? t('pasajeros.cedulaInvalida')
+                    : undefined
+                }
+                marcador={t('pasajeros.marcadorCedula')}
+                valor={cedulas[asiento] ?? ''}
+              />
+            </Bloque>
+          </Aparece>
         ))}
 
         {faltan && (
