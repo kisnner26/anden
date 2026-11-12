@@ -87,6 +87,14 @@ describe('Viajar', () => {
     ).toBeNull();
   });
 
+  it('ofrece cómo llegar a la terminal de salida en Apple Maps', async () => {
+    const pantalla = await dibujar();
+
+    expect(
+      pantalla.getByRole('link', { name: 'Cómo llegar, Mercado Mayoreo' }),
+    ).toBeTruthy();
+  });
+
   it('propone el origen al abrir si la preferencia estaba activada', async () => {
     await AsyncStorage.setItem(CLAVE_UBICACION_AUTOMATICA, '1');
     jest
