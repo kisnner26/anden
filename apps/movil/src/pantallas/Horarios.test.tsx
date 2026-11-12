@@ -1,5 +1,15 @@
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
-import { fireEvent } from '@testing-library/react-native';
+import { fireEvent, waitFor } from '@testing-library/react-native';
+
+jest.mock('@/datos/notificaciones', () => ({
+  cancelarRecordatorio: jest.fn(async () => undefined),
+  leerPermiso: jest.fn(async () => 'concedido'),
+  pedirPermiso: jest.fn(async () => 'concedido'),
+  programarRecordatorio: jest.fn(async () => 'notif_1'),
+}));
+
+import { programarRecordatorio } from '@/datos/notificaciones';
+import { ProveedorRecordatorios } from '@/datos/ProveedorRecordatorios';
 
 import { ProveedorFavoritos } from '@/datos/ProveedorFavoritos';
 import { reiniciarMuestra } from '@/datos/useSalidas';
@@ -80,5 +90,46 @@ describe('Horarios', () => {
     expect(
       pantalla.getByText('Marcá una ruta con la estrella para verla acá.'),
     ).toBeTruthy();
+  });
+
+  it('pide un aviso para una salida desde la campana y lo quita después', async () => {
+    const pantalla = await renderPantalla(
+      <ProveedorRecordatorios>
+        <Horarios />
+      </ProveedorRecordatorios>,
+    );
+    const campanas = pantalla.getAllByRole('button', {
+      name: /^Recordarme la salida a/,
+    });
+    await fireEvent.press(campanas[0] as never);
+    expect(pantalla.getByText('Avisarme antes de la salida')).toBeTruthy();
+
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: '15 min antes' }),
+    );
+    await waitFor(() => expect(programarRecordatorio).toHaveBeenCalledTimes(1));
+    await waitFor(() =>
+      expect(
+        pantalla.getAllByRole('button', {
+          name: /^Quitar el recordatorio de la salida a/,
+        }),
+      ).toHaveLength(1),
+    );
+
+    await fireEvent.press(
+      pantalla.getByRole('button', {
+        name: /^Quitar el recordatorio de la salida a/,
+      }),
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Quitar recordatorio' }),
+    );
+    await waitFor(() =>
+      expect(
+        pantalla.queryByRole('button', {
+          name: /^Quitar el recordatorio de la salida a/,
+        }),
+      ).toBeNull(),
+    );
   });
 });
