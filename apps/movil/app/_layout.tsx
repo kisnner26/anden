@@ -17,6 +17,7 @@ import { useEffect } from 'react';
 import { ProveedorAvisos } from '@/datos/ProveedorAvisos';
 import { ProveedorBloqueo } from '@/datos/ProveedorBloqueo';
 import { ProveedorBoletos } from '@/datos/ProveedorBoletos';
+import { ProveedorFavoritos } from '@/datos/ProveedorFavoritos';
 import { ProveedorMascota } from '@/datos/ProveedorMascota';
 import { ProveedorPerfil } from '@/datos/ProveedorPerfil';
 import { ProveedorReserva } from '@/datos/ProveedorReserva';
@@ -58,7 +59,9 @@ export default function DisenoRaiz() {
                 <ProveedorAvisos>
                   <ProveedorUbicacion>
                     <ProveedorReserva>
-                      <Stack screenOptions={{ headerShown: false }} />
+                      <ProveedorFavoritos>
+                        <Stack screenOptions={{ headerShown: false }} />
+                      </ProveedorFavoritos>
                     </ProveedorReserva>
                   </ProveedorUbicacion>
                 </ProveedorAvisos>
