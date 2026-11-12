@@ -666,3 +666,93 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - depende de: T-114 · zona: `apps/movil` · raíz: no · estado: hecha
 - hacer: ver `docs/plan/08-auditoria.md`, sección T-139.
 - hecho cuando: lo que dice esa sección en "Hecho cuando".
+
+### T-140 · los viajes que no salen de Managua dan "No encontramos este viaje"
+- depende de: T-139 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/09-auditoria-video.md`, sección T-140.
+- hecho cuando: lo que dice esa sección.
+
+### T-141 · las pantallas de "no encontrado" no tienen salida
+- depende de: T-139 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/09-auditoria-video.md`, sección T-141.
+- hecho cuando: lo que dice esa sección.
+
+### T-142 · la terminal de Boaco se llama "Terminal de Buses de Managua"
+- depende de: T-139 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/09-auditoria-video.md`, sección T-142.
+- hecho cuando: lo que dice esa sección.
+
+### T-143 · la duración y los kilómetros no coinciden entre pantallas
+- depende de: T-139 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/09-auditoria-video.md`, sección T-143.
+- hecho cuando: lo que dice esa sección.
+
+### T-144 · "Cómo llegar" abre Apple Maps con coordenadas en vez del nombre
+- depende de: T-139 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/09-auditoria-video.md`, sección T-144.
+- hecho cuando: lo que dice esa sección.
+
+### T-145 · el boleto vencido sigue diciendo "Pagás al abordar"
+- depende de: T-139 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/09-auditoria-video.md`, sección T-145.
+- hecho cuando: lo que dice esa sección.
+
+### T-146 · los avisos se repiten
+- depende de: T-139 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/09-auditoria-video.md`, sección T-146.
+- hecho cuando: lo que dice esa sección.
+
+### T-147 · Rutas: el detalle del corredor se titula "Rutas"
+- depende de: T-139 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/09-auditoria-video.md`, sección T-147.
+- hecho cuando: lo que dice esa sección.
+
+### T-148 · la barra de pestañas casi no se lee
+- depende de: T-139 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/09-auditoria-video.md`, sección T-148.
+- hecho cuando: lo que dice esa sección.
+
+### T-149 · Horarios mezcla filtros que se suman con filtros que se excluyen
+- depende de: T-139 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/09-auditoria-video.md`, sección T-149.
+- hecho cuando: lo que dice esa sección.
+
+### T-150 · el pie de asientos repite "Elegí al menos un asiento"
+- depende de: T-139 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/09-auditoria-video.md`, sección T-150.
+- hecho cuando: lo que dice esa sección.
+
+### T-151 · en la leyenda de asientos, "Libre" y "Vendido" se ven iguales
+- depende de: T-139 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/09-auditoria-video.md`, sección T-151.
+- hecho cuando: lo que dice esa sección.
+
+### T-152 · la salida en el boleto se corta en dos líneas raras
+- depende de: T-139 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/09-auditoria-video.md`, sección T-152.
+- hecho cuando: lo que dice esa sección.
+
+### T-153 · el perfil del chofer se contradice sobre quién puede opinar
+- depende de: T-139 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/09-auditoria-video.md`, sección T-153.
+- hecho cuando: lo que dice esa sección.
+
+### T-154 · los boletos pasados llenan la lista
+- depende de: T-139 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/09-auditoria-video.md`, sección T-154.
+- hecho cuando: lo que dice esa sección.
+
+### T-155 · las filas tocables de Configuración no parecen tocables
+- depende de: T-139 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/09-auditoria-video.md`, sección T-155.
+- hecho cuando: lo que dice esa sección.
+
+### T-156 · el teclado numérico del ingreso no se puede cerrar
+- depende de: T-139 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/09-auditoria-video.md`, sección T-156.
+- hecho cuando: lo que dice esa sección.
+
+### T-157 · los nombres se muestran como se escribieron, en minúsculas
+- depende de: T-139 · zona: `apps/movil` · raíz: no · estado: libre
+- hacer: ver `docs/plan/09-auditoria-video.md`, sección T-157.
+- hecho cuando: lo que dice esa sección.
