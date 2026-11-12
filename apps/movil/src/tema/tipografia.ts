@@ -1,54 +1,81 @@
+let escala = 1;
+
+/** cambia el tamaño de todas las letras; lo usa el modo de uso "sencillo" */
+export function establecerEscalaTexto(nueva: number): void {
+  escala = nueva;
+}
+
+export function escalaTextoActual(): number {
+  return escala;
+}
+
+/** devuelve el estilo con tamaño e interlínea que se multiplican por la escala vigente al leerlos */
+function escalable<T extends { fontSize: number; lineHeight: number }>(
+  base: T,
+): T {
+  const copia = { ...base };
+  Object.defineProperty(copia, 'fontSize', {
+    enumerable: true,
+    get: () => Math.round(base.fontSize * escala),
+  });
+  Object.defineProperty(copia, 'lineHeight', {
+    enumerable: true,
+    get: () => Math.round(base.lineHeight * escala),
+  });
+  return copia;
+}
+
 export const tipografia = {
-  cuerpo: {
+  cuerpo: escalable({
     fontFamily: 'Archivo_400Regular',
     fontSize: 16,
     lineHeight: 24,
-  },
-  dato: {
+  }),
+  dato: escalable({
     fontFamily: 'JetBrainsMono_500Medium',
     fontSize: 15,
     lineHeight: 20,
-  },
-  datoGrande: {
+  }),
+  datoGrande: escalable({
     fontFamily: 'JetBrainsMono_600SemiBold',
     fontSize: 28,
     lineHeight: 32,
-  },
-  display: {
+  }),
+  display: escalable({
     fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
     fontSize: 56,
     lineHeight: 52,
-  },
-  etiqueta: {
+  }),
+  etiqueta: escalable({
     fontFamily: 'JetBrainsMono_500Medium',
     fontSize: 11,
     letterSpacing: 0.88,
     lineHeight: 14,
     textTransform: 'uppercase' as const,
-  },
-  pequeno: {
+  }),
+  pequeno: escalable({
     fontFamily: 'Archivo_500Medium',
     fontSize: 13,
     lineHeight: 18,
-  },
-  subtitulo: {
+  }),
+  subtitulo: escalable({
     fontFamily: 'Archivo_600SemiBold',
     fontSize: 20,
     lineHeight: 26,
-  },
-  tableroDestino: {
+  }),
+  tableroDestino: escalable({
     fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
     fontSize: 24,
     lineHeight: 24,
-  },
-  tableroHora: {
+  }),
+  tableroHora: escalable({
     fontFamily: 'JetBrainsMono_600SemiBold',
     fontSize: 17,
     lineHeight: 20,
-  },
-  titulo: {
+  }),
+  titulo: escalable({
     fontFamily: 'ArchivoCondensed_700Bold',
     fontSize: 34,
     lineHeight: 36,
-  },
-} as const;
+  }),
+};
