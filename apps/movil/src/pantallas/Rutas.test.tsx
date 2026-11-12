@@ -31,6 +31,17 @@ describe('Rutas', () => {
     expect(nombres()[1]).toBe('Abrir Boaco a Managua');
   });
 
+  it('ofrece enviar una encomienda y lleva a pedirla', async () => {
+    const alAbrirEncomiendas = jest.fn();
+    const pantalla = await renderPantalla(
+      <Rutas alAbrirEncomiendas={alAbrirEncomiendas} />,
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: /Enviar una encomienda/ }),
+    );
+    expect(alAbrirEncomiendas).toHaveBeenCalledTimes(1);
+  });
+
   it('sin favoritos mantiene el orden de siempre', async () => {
     const pantalla = await renderPantalla(
       <ProveedorFavoritos>
