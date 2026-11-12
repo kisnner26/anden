@@ -1,3 +1,4 @@
+import { TRAZOS } from './trazos';
 import { describe, expect, it } from '@jest/globals';
 
 import { crearMuestra } from './muestra';
@@ -16,7 +17,10 @@ describe('armarRutas', () => {
   });
 
   it('trae kilómetros y duración de cada ruta', () => {
-    expect(de('Boaco')).toMatchObject({ distanciaKm: 90, duracionMin: 100 });
+    expect(de('Boaco')).toMatchObject({
+      distanciaKm: TRAZOS.boa.distanciaKm,
+      duracionMin: TRAZOS.boa.duracionMin,
+    });
   });
 
   it('lista los servicios que la recorren con su tarifa de muestra', () => {

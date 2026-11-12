@@ -2,6 +2,7 @@ import { describe, expect, it } from '@jest/globals';
 
 import { armarDetalle, armarPerfilChofer } from './detalle';
 import { crearMuestra, VIAJE_BOACO } from './muestra';
+import { TRAZOS } from './trazos';
 
 const AHORA = new Date('2026-11-02T20:00:00.000Z');
 const datos = crearMuestra(AHORA);
@@ -64,7 +65,9 @@ describe('armarDetalle', () => {
 
   it('calcula la llegada con la duración de la ruta', () => {
     const salida = detalle?.salida.salida.getTime() ?? 0;
-    expect(detalle?.llegada.getTime()).toBe(salida + 100 * 60_000);
+    expect(detalle?.llegada.getTime()).toBe(
+      salida + TRAZOS.boa.duracionMin * 60_000,
+    );
   });
 
   it('lista las dos paradas con su hora', () => {
@@ -74,7 +77,7 @@ describe('armarDetalle', () => {
     ]);
     const primera = detalle?.paradas[0]?.hora.getTime() ?? 0;
     const ultima = detalle?.paradas[1]?.hora.getTime() ?? 0;
-    expect(ultima - primera).toBe(100 * 60_000);
+    expect(ultima - primera).toBe(TRAZOS.boa.duracionMin * 60_000);
   });
 
   it('devuelve nulo si el viaje no existe', () => {

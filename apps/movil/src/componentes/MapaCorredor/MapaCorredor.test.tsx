@@ -13,7 +13,7 @@ const SIMULACION: BusSimulado = {
     nombre: 'Mercado Mayoreo',
   },
   distanciaKm: 83,
-  duracionMin: 100,
+  duracionMin: 79,
   origen: {
     codigo: 'BOA',
     coordenadas: { lat: 12.47, lng: -85.66 },
