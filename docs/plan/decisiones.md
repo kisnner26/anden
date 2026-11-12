@@ -34,3 +34,9 @@ Registro de decisiones tomadas durante el desarrollo. Una por entrada, la más r
 | 2026-11-03 | notificaciones | las notificaciones son locales (recordatorios y avisos del viaje); no hay push remotas | la cuenta gratuita de Apple no firma esa capacidad |
 
 | 2026-11-03 | T-103 | el corredor inicial son Boaco–Managua y Juigalpa–Managua (departamentos reales), no Wácwala ni Chagüilpa; coordenadas de muestra: Boaco 12.4719, -85.6590; Juigalpa 12.1064, -85.3647 | el dueño corrigió los nombres que Codex había tomado del plan |
+
+## 2026-11-12 · T-114 · la ubicación para llegar la pide Apple Maps
+
+Decisión: para llegar a la terminal, Viajar abre Apple Maps con un enlace de indicaciones (`daddr`, nombre y modo en auto). Apple Maps pide la ubicación por su cuenta y la app no la lee, no la guarda ni la envía. La búsqueda de la terminal más cercana sigue siendo opcional y solo en primer plano desde Ajustes.
+Por qué: integra la experiencia en el ecosistema de Apple sin ampliar el uso de la ubicación ni sumar un mapa propio. Un mapa embebido de MapKit exigiría una dependencia nativa nueva y queda como tarea futura si se pide.
+
