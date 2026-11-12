@@ -96,4 +96,35 @@ describe('Boletos', () => {
     );
     expect(alAbrirBoleto).toHaveBeenCalledWith('bol_K7RM4QX9');
   });
+
+  it('muestra solo los 3 pasados más recientes y deja desplegar el resto', async () => {
+    const pasados = [1, 2, 3, 4, 5].map((horas) =>
+      boletoDePrueba(
+        new Date(Date.now() - horas * 3_600_000),
+        horas,
+        `PASADO${horas}X`,
+      ),
+    );
+    await AsyncStorage.setItem(CLAVE_BOLETOS, JSON.stringify(pasados));
+    const pantalla = await dibujar();
+    expect(await pantalla.findAllByText('Boaco')).toHaveLength(3);
+
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Ver los 2 anteriores' }),
+    );
+    expect(pantalla.getAllByText('Boaco')).toHaveLength(5);
+
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Ver menos' }));
+    expect(pantalla.getAllByText('Boaco')).toHaveLength(3);
+  });
+
+  it('con 3 pasados o menos no ofrece desplegar nada', async () => {
+    await AsyncStorage.setItem(
+      CLAVE_BOLETOS,
+      JSON.stringify([boletoDePrueba(HACE_UNA_HORA())]),
+    );
+    const pantalla = await dibujar();
+    await pantalla.findAllByText('Boaco');
+    expect(pantalla.queryByText(/anteriores/)).toBeNull();
+  });
 });
