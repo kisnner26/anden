@@ -140,8 +140,13 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
             >
               {t('boleto.sale')}
             </Text>
+            <Text
+              style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
+            >
+              {formatoFechaCorta(salida)}
+            </Text>
             <Text style={[tipografia.dato, { color: colores.sobreNegro }]}>
-              {`${formatoFechaCorta(salida)}, ${formatoHoraCompleta(salida)}`}
+              {formatoHoraCompleta(salida)}
             </Text>
           </View>
           <Casilla etiqueta={t('boleto.anden')} valor={String(resumen.anden)} />

@@ -47,7 +47,8 @@ describe('TalonBoleto', () => {
 
   it('muestra fecha, hora, andén, asiento, pasajero, placa y chofer', async () => {
     const pantalla = await render(<TalonBoleto guardado={GUARDADO} />);
-    expect(pantalla.getByText('lun 2 nov, 2:40 p. m.')).toBeTruthy();
+    expect(pantalla.getByText('lun 2 nov')).toBeTruthy();
+    expect(pantalla.getByText('2:40 p. m.')).toBeTruthy();
     expect(pantalla.getByText('4')).toBeTruthy();
     expect(pantalla.getByText('8')).toBeTruthy();
     expect(pantalla.getByText('Ana Ruiz')).toBeTruthy();
