@@ -1,6 +1,7 @@
 import type { EstadoAsiento } from '@anden/dominio';
 import { describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, render } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 
 import { MapaAsientos } from './MapaAsientos';
 
@@ -80,5 +81,21 @@ describe('MapaAsientos', () => {
       />,
     );
     expect(pantalla.getAllByText('Puerta')).toHaveLength(1);
+  });
+
+  it('el número de un asiento vendido va tachado y el de uno apartado no', async () => {
+    const pantalla = await render(
+      <MapaAsientos
+        alElegir={() => undefined}
+        configuracion="coaster26"
+        elegidos={[]}
+        estados={ESTADOS}
+      />,
+    );
+    const estiloDe = (numero: string) =>
+      StyleSheet.flatten(pantalla.getByText(numero).props.style);
+    expect(estiloDe('2').textDecorationLine).toBe('line-through');
+    expect(estiloDe('6').textDecorationLine).toBeUndefined();
+    expect(estiloDe('8').textDecorationLine).toBeUndefined();
   });
 });
