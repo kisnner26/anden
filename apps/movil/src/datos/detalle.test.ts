@@ -36,6 +36,16 @@ describe('armarPerfilChofer', () => {
 describe('armarDetalle', () => {
   const detalle = armarDetalle(datos, VIAJE_BOACO, AHORA);
 
+  it('encuentra un viaje que sale de Boaco', () => {
+    const viaje = datos.viajes.find(
+      (candidato) => candidato.rutaId === 'rut_boa_may',
+    );
+    const deBoaco = armarDetalle(datos, viaje!.id, AHORA);
+    expect(deBoaco).not.toBeNull();
+    expect(deBoaco?.origenCiudad).toBe('Boaco');
+    expect(deBoaco?.destinoCodigo).toBe('MAY');
+  });
+
   it('trae la ciudad y los códigos de las terminales del trayecto', () => {
     expect(detalle?.origenCiudad).toBe('Managua');
     expect(detalle?.origenCodigo).toBe('MAY');

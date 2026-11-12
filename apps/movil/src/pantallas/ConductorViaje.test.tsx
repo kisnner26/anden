@@ -20,7 +20,7 @@ import { ProveedorPagos } from '@/datos/ProveedorPagos';
 import { ProveedorSesion } from '@/datos/ProveedorSesion';
 import { detenerTransmision, iniciarTransmision } from '@/datos/transmisor';
 import { trazoEntre } from '@/datos/trazoCorredor';
-import { reiniciarMuestra } from '@/datos/useSalidas';
+import { obtenerMuestra, reiniciarMuestra } from '@/datos/useSalidas';
 import { boletoDePrueba } from '@/pruebas/boletos';
 import { renderPantalla } from '@/pruebas/render';
 import { TRANSMISION } from '@/servicios/transmision';
@@ -58,6 +58,34 @@ function dibujar() {
 }
 
 describe('ConductorViaje', () => {
+  it('abre un viaje de vuelta que sale de Boaco en vez de decir que no existe', async () => {
+    const vuelta = obtenerMuestra().viajes.find(
+      (viaje) => viaje.rutaId === 'rut_boa_may',
+    );
+    expect(vuelta).toBeDefined();
+    await AsyncStorage.setItem(
+      'anden.sesion',
+      JSON.stringify({
+        choferId: vuelta!.choferId,
+        nombre: 'Chofer de vuelta',
+        rol: 'conductor',
+      }),
+    );
+    const pantalla = await renderPantalla(
+      <ProveedorSesion>
+        <ProveedorBoletos>
+          <ProveedorPagos>
+            <ConductorViaje alVolver={() => undefined} viajeId={vuelta!.id} />
+          </ProveedorPagos>
+        </ProveedorBoletos>
+      </ProveedorSesion>,
+    );
+    expect(
+      await pantalla.findByRole('button', { name: 'Iniciar viaje' }),
+    ).toBeTruthy();
+    expect(pantalla.queryByText('No encontramos este viaje.')).toBeNull();
+  });
+
   it('antes de empezar explica qué se comparte y ofrece iniciar el viaje', async () => {
     const pantalla = await dibujar();
     expect(
