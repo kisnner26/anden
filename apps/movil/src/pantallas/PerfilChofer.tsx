@@ -84,13 +84,17 @@ export function PerfilChofer({ alVolver, choferId }: PropiedadesPerfilChofer) {
 
       <Bloque estiloContenido={estilos.hero}>
         <Loseta tamano={96} variante="negra">
-          <Text style={[estilos.iniciales, { color: colores.sobreNegro }]}>
+          <Text style={[tipografia.iniciales, { color: colores.sobreNegro }]}>
             {perfil.iniciales}
           </Text>
         </Loseta>
         <Text
           accessibilityRole="header"
-          style={[estilos.nombre, { color: colores.tinta }]}
+          style={[
+            tipografia.nombrePerfil,
+            estilos.nombre,
+            { color: colores.tinta },
+          ]}
         >
           {perfil.nombre}
         </Text>
@@ -150,7 +154,7 @@ export function PerfilChofer({ alVolver, choferId }: PropiedadesPerfilChofer) {
             key={etiqueta}
             radio="loseta"
           >
-            <Text style={[estilos.nombreEtiqueta, { color: colores.tinta }]}>
+            <Text style={[tipografia.nombreLinea, { color: colores.tinta }]}>
               {t(`chofer.etiquetas.${etiqueta}`)}
             </Text>
             <Text style={[tipografia.dato, { color: colores.ambarTexto }]}>
@@ -185,22 +189,7 @@ const estilos = StyleSheet.create({
     gap: espacios.doce,
     padding: espacios.veinticuatro,
   },
-  iniciales: {
-    fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
-    fontSize: 44,
-    lineHeight: 48,
-  },
   licencia: { alignItems: 'center', flexDirection: 'row', gap: 6 },
-  nombre: {
-    fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
-    fontSize: 34,
-    lineHeight: 36,
-    textAlign: 'center',
-  },
-  nombreEtiqueta: {
-    fontFamily: 'Archivo_600SemiBold',
-    fontSize: 16,
-    lineHeight: 20,
-  },
+  nombre: { textAlign: 'center' },
   valor: { alignItems: 'center', flexDirection: 'row', gap: 6 },
 });
