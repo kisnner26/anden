@@ -82,10 +82,38 @@ describe('avisosDeBoletos', () => {
     const avisos = avisosDeBoletos([boleto()], [salida()], AHORA);
     expect(avisos).toHaveLength(1);
     expect(avisos[0]).toMatchObject({
-      id: 'bol_1:pronto',
+      id: 'via_1:pronto',
       minutos: 45,
       tipo: 'pronto',
     });
+  });
+
+  it('varios asientos del mismo viaje dan un solo aviso', () => {
+    const primero = boleto();
+    const segundo = {
+      ...primero,
+      boleto: { ...primero.boleto, asiento: 9, id: 'bol_2' },
+    };
+    const avisos = avisosDeBoletos([primero, segundo], [salida()], AHORA);
+    expect(avisos).toHaveLength(1);
+    expect(avisos[0]?.boletoId).toBe('bol_1');
+  });
+
+  it('viajes distintos siguen dando un aviso cada uno', () => {
+    const primero = boleto();
+    const otro = {
+      ...primero,
+      boleto: { ...primero.boleto, id: 'bol_2', viajeId: 'via_2' },
+    };
+    const avisos = avisosDeBoletos(
+      [primero, otro],
+      [salida(), salida({ viajeId: 'via_2' })],
+      AHORA,
+    );
+    expect(avisos.map((aviso) => aviso.id).sort()).toEqual([
+      'via_1:pronto',
+      'via_2:pronto',
+    ]);
   });
 
   it('no avisa si la salida está lejos', () => {
