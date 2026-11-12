@@ -9,7 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
-import { Autobus } from '@/componentes/Autobus';
+import { Autobus, varianteDeClave } from '@/componentes/Autobus';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { EtiquetaMuestra } from '@/componentes/EtiquetaMuestra';
 import { MapaCorredor } from '@/componentes/MapaCorredor';
@@ -192,6 +192,7 @@ function DetalleCorredor({
               <Autobus
                 ancho={tamanosIlustracion.autobusCorredor}
                 letrero={corredor.destino.toUpperCase()}
+                variante={varianteDeClave(corredor.destino)}
               />
             </Animated.View>
           </View>

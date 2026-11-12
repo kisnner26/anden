@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Autobus } from '@/componentes/Autobus';
+import { Autobus, varianteDeClave } from '@/componentes/Autobus';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { formatoHoraCompleta } from '@/datos/formato';
@@ -35,6 +35,7 @@ export function TarjetaProximoViaje({
         <Autobus
           ancho={tamanosIlustracion.autobusProximo}
           letrero={salida.destino.toUpperCase()}
+          variante={varianteDeClave(salida.destino)}
         />
       </View>
       <BloqueNegro estiloContenido={estilos.tarjeta} testID="proximo-viaje">

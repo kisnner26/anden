@@ -8,7 +8,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { Autobus } from '@/componentes/Autobus';
+import { Autobus, varianteDeClave } from '@/componentes/Autobus';
 import { nombrePropio } from '@/datos/perfil';
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
 import type { BoletoGuardado } from '@/datos/reserva';
@@ -126,7 +126,11 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
               {`${t('boleto.desde')} ${resumen.origen ?? t('horarios.terminal')}`}
             </Text>
           </View>
-          <Autobus ancho={118} letrero={resumen.destino.toUpperCase()} />
+          <Autobus
+            ancho={118}
+            letrero={resumen.destino.toUpperCase()}
+            variante={varianteDeClave(resumen.destino)}
+          />
         </View>
         <View style={estilos.fila}>
           <View

@@ -1,7 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Autobus } from '@/componentes/Autobus';
+import { Autobus, varianteDeClave } from '@/componentes/Autobus';
 import { Bloque } from '@/componentes/Bloque';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
@@ -115,7 +115,11 @@ export function DetalleViaje({
 
         <View style={estilos.contenedorHero}>
           <View pointerEvents="none" style={estilos.heroBus}>
-            <Autobus ancho={200} letrero={salida.destino.toUpperCase()} />
+            <Autobus
+              ancho={200}
+              letrero={salida.destino.toUpperCase()}
+              variante={varianteDeClave(salida.destino)}
+            />
           </View>
           <BloqueNegro estiloContenido={estilos.hero}>
             <LineaViaje
