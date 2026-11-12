@@ -56,6 +56,21 @@ describe('TalonBoleto', () => {
     expect(pantalla.getByText('Marvin Lanzas')).toBeTruthy();
   });
 
+  it('muestra el nombre del pasajero con mayúscula inicial', async () => {
+    const pantalla = await render(
+      <TalonBoleto
+        guardado={{
+          ...GUARDADO,
+          boleto: {
+            ...GUARDADO.boleto,
+            pasajero: { esMenorEnBrazos: false, nombre: 'kisnner obando' },
+          },
+        }}
+      />,
+    );
+    expect(pantalla.getByText('Kisnner Obando')).toBeTruthy();
+  });
+
   it('muestra el código de abordaje en dos grupos y su QR accesible', async () => {
     const pantalla = await render(<TalonBoleto guardado={GUARDADO} />);
     expect(pantalla.getByText('K7RM 4QX9')).toBeTruthy();

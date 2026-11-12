@@ -66,6 +66,26 @@ describe('Viajar', () => {
     expect(pantalla.getByText('AR')).toBeTruthy();
   });
 
+  it('saluda con la mayúscula inicial aunque el nombre se escribió en minúsculas', async () => {
+    const pantalla = await renderPantalla(
+      <ContextoPerfil.Provider
+        value={{
+          agregarPasajero: async () => undefined,
+          cargando: false,
+          guardar: async () => undefined,
+          perfil: { ...PERFIL_VACIO, apellido: 'obando', nombre: 'kisnner' },
+          quitarPasajero: async () => undefined,
+        }}
+      >
+        <Viajar
+          alAbrirViaje={() => undefined}
+          alElegirAsiento={() => undefined}
+        />
+      </ContextoPerfil.Provider>,
+    );
+    expect(pantalla.getByText('Hola, Kisnner')).toBeTruthy();
+  });
+
   it('muestra el próximo viaje a Boaco', async () => {
     const pantalla = await dibujar();
     expect(pantalla.getByTestId('proximo-viaje')).toBeTruthy();
