@@ -1,6 +1,7 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { Autobus, varianteDeClave } from '@/componentes/Autobus';
 import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { EtiquetaMuestra } from '@/componentes/EtiquetaMuestra';
@@ -12,6 +13,8 @@ import { Icono } from '@/componentes/Icono';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { TarjetaHabitual } from '@/componentes/TarjetaHabitual';
 import { TarjetaProximoViaje } from '@/componentes/TarjetaProximoViaje';
+import { destinosDeHoy } from '@/datos/destinosDeHoy';
+import { formatoHoraCompleta } from '@/datos/formato';
 import { iniciales, nombrePropio } from '@/datos/perfil';
 import { useAvisos } from '@/datos/useAvisos';
 import { usePerfil } from '@/datos/usePerfil';
@@ -35,6 +38,8 @@ export interface PropiedadesViajar {
   alElegirAsiento: (viajeId: string) => void;
   /** lleva a Horarios, donde se elige otro día */
   alReservarOtroDia?: () => void;
+  /** salta a otra pestaña desde los atajos */
+  alIrA?: (pestana: 'boletos' | 'horarios' | 'rutas') => void;
 }
 
 const ESTADOS_PENDIENTES = ['abordando', 'atrasado', 'programado'];
@@ -46,6 +51,7 @@ export function Viajar({
   alAbrirViaje,
   alElegirAsiento,
   alReservarOtroDia,
+  alIrA,
 }: PropiedadesViajar) {
   const { colores } = useTema();
   const { perfil } = usePerfil();
@@ -70,6 +76,7 @@ export function Viajar({
         ESTADOS_PENDIENTES.includes(salida.estado),
     )
     .slice(0, 3);
+  const destinos = destinosDeHoy(salidas);
   const terminalOrigen = datos.terminales.find(
     (terminal) => terminal.id === origenId,
   );
@@ -189,6 +196,96 @@ export function Viajar({
         </Aparece>
       ))}
 
+      {destinos.length > 0 && (
+        <View>
+          <Text
+            style={[
+              tipografia.subtitulo,
+              estilos.seccionSola,
+              { color: colores.tinta },
+            ]}
+          >
+            {t('viajar.destinosDesde')}
+          </Text>
+          <ScrollView
+            contentContainerStyle={estilos.destinos}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          >
+            {destinos.map((salida, indice) => (
+              <Aparece indice={indice} key={salida.destino}>
+                <Pressable
+                  accessibilityLabel={`${salida.destino}, ${formatoHoraCompleta(salida.salida)}`}
+                  accessibilityRole="button"
+                  onPress={() => alAbrirViaje(salida.viajeId)}
+                  style={({ pressed }) => pressed && estilos.presionado}
+                >
+                  <Bloque estiloContenido={estilos.destino}>
+                    <Autobus
+                      ancho={96}
+                      variante={varianteDeClave(salida.destino)}
+                    />
+                    <Text
+                      style={[tipografia.nombreFila, { color: colores.tinta }]}
+                    >
+                      {salida.destino}
+                    </Text>
+                    <Text
+                      style={[
+                        tipografia.etiqueta,
+                        { color: colores.ambarTexto },
+                      ]}
+                    >
+                      {formatoHoraCompleta(salida.salida)}
+                    </Text>
+                  </Bloque>
+                </Pressable>
+              </Aparece>
+            ))}
+          </ScrollView>
+        </View>
+      )}
+
+      {alIrA && (
+        <View>
+          <Text
+            style={[
+              tipografia.subtitulo,
+              estilos.seccionSola,
+              { color: colores.tinta },
+            ]}
+          >
+            {t('viajar.atajos')}
+          </Text>
+          <View style={estilos.atajos}>
+            {(
+              [
+                ['boletos', 'viajar.atajoBoletos', 'boleto'],
+                ['horarios', 'viajar.atajoHorarios', 'reloj'],
+                ['rutas', 'viajar.atajoRutas', 'pestanaRutas'],
+              ] as const
+            ).map(([destino, texto, icono]) => (
+              <Pressable
+                accessibilityRole="button"
+                key={destino}
+                onPress={() => alIrA(destino)}
+                style={({ pressed }) => [
+                  estilos.atajo,
+                  pressed && estilos.presionado,
+                ]}
+              >
+                <Bloque estiloContenido={estilos.atajoContenido}>
+                  <Icono nombre={icono} tamano="ilustracion" />
+                  <Text style={[tipografia.pequeno, { color: colores.tinta }]}>
+                    {t(texto)}
+                  </Text>
+                </Bloque>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      )}
+
       <Pressable
         accessibilityHint={t('dias.selector')}
         accessibilityRole="button"
@@ -211,6 +308,24 @@ export function Viajar({
 }
 
 const estilos = StyleSheet.create({
+  atajo: { flex: 1 },
+  atajoContenido: {
+    alignItems: 'center',
+    gap: espacios.ocho,
+    padding: espacios.doce,
+  },
+  atajos: { flexDirection: 'row', gap: espacios.doce },
+  destino: {
+    alignItems: 'center',
+    gap: espacios.cuatro,
+    padding: espacios.doce,
+    width: 132,
+  },
+  destinos: { gap: espacios.doce, paddingVertical: espacios.cuatro },
+  seccionSola: {
+    marginBottom: espacios.doce,
+    marginTop: espacios.veinticuatro,
+  },
   otroDia: {
     alignItems: 'center',
     flexDirection: 'row',
