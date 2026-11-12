@@ -1,11 +1,12 @@
 import type { TipoServicio } from '@anden/dominio';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Aparece } from '@/componentes/Aparece';
 import { Bloque } from '@/componentes/Bloque';
 import { HojaRecordatorio } from '@/componentes/HojaRecordatorio';
 import { Chip } from '@/componentes/Chip';
+import { SelectorDia } from '@/componentes/SelectorDia';
 import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
@@ -22,6 +23,8 @@ import {
   type ResultadoRecordatorio,
 } from '@/datos/useRecordatorios';
 import { useSalidas } from '@/datos/useSalidas';
+import { diasDeReserva, inicioDelDia, mismoDia } from '@/datos/dias';
+import { proximaSalida } from '@/datos/salidas';
 import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -48,7 +51,12 @@ export function Horarios({
 }: PropiedadesHorarios) {
   const { colores } = useTema();
   const [terminalId, establecerTerminalId] = useState('ter_may');
-  const { ahora, datos, proxima, salidas } = useSalidas(terminalId);
+  const hoy = useMemo(() => inicioDelDia(new Date()), []);
+  const [dia, establecerDia] = useState(hoy);
+  const { ahora, datos, salidas } = useSalidas(terminalId, dia);
+  const proxima = proximaSalida(salidas);
+  const esHoy = mismoDia(dia, ahora);
+  const dias = useMemo(() => diasDeReserva(hoy), [hoy]);
   const { favoritos } = useFavoritos();
   const [soloFavoritas, establecerSoloFavoritas] = useState(false);
   const recordatorios = useRecordatorios();
@@ -142,7 +150,7 @@ export function Horarios({
         <Aparece>
           <Bloque estilo={estilos.terminal} estiloContenido={estilos.proxima}>
             <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-              {t('horarios.proximaSalida')}
+              {esHoy ? t('horarios.proximaSalida') : t('dias.primeraSalida')}
             </Text>
             <View style={estilos.filaProxima}>
               <Text style={[tipografia.titulo, { color: colores.tinta }]}>
@@ -153,7 +161,7 @@ export function Horarios({
               </Text>
             </View>
             <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-              {`${t('horarios.saleEn')} ${minutosParaSalir(proxima, ahora)} ${t('horarios.minutos')} · ${
+              {`${esHoy ? `${t('horarios.saleEn')} ${minutosParaSalir(proxima, ahora)} ${t('horarios.minutos')} · ` : ''}${
                 nivelProxima === 'pocos'
                   ? t('horarios.pocosAsientos')
                   : `${proxima.asientosLibres} ${t('horarios.libres')}`
@@ -163,6 +171,12 @@ export function Horarios({
         </Aparece>
       ) : null}
 
+      <SelectorDia
+        ahora={ahora}
+        alElegir={establecerDia}
+        dias={dias}
+        seleccionado={dia}
+      />
       <ScrollView
         contentContainerStyle={estilos.filtros}
         horizontal
