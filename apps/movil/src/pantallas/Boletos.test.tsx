@@ -55,7 +55,7 @@ describe('Boletos', () => {
     expect(pantalla.queryByText('Pasados')).toBeNull();
   });
 
-  it('junta varios boletos en un montón que se despliega', async () => {
+  it('muestra varios boletos próximos en un carrusel y abre el que se toca', async () => {
     await AsyncStorage.setItem(
       CLAVE_BOLETOS,
       JSON.stringify([
@@ -66,13 +66,10 @@ describe('Boletos', () => {
     const alAbrirBoleto = jest.fn();
     const pantalla = await dibujar({ alAbrirBoleto });
     await fireEvent.press(
-      await pantalla.findByRole('button', { name: 'Ver los 2 boletos' }),
+      await pantalla.findByLabelText(/^Boaco, .*Asiento 9$/),
     );
-    expect(
-      await pantalla.findByRole('button', { name: 'Recoger las tarjetas' }),
-    ).toBeTruthy();
-    await fireEvent.press(pantalla.getByLabelText(/^Boaco, .*Asiento 9$/));
     expect(alAbrirBoleto).toHaveBeenCalledWith('bol_K7RM4QX9');
+    expect(pantalla.getByLabelText(/^Boaco, .*Asiento 8$/)).toBeTruthy();
   });
 
   it('separa los boletos pasados', async () => {
@@ -85,7 +82,7 @@ describe('Boletos', () => {
     );
     const pantalla = await dibujar();
     expect(await pantalla.findByText('Próximos')).toBeTruthy();
-    expect(pantalla.getByText('Pasados')).toBeTruthy();
+    expect(pantalla.getByText('Tu historial')).toBeTruthy();
   });
 
   it('abre el boleto que se presiona', async () => {
@@ -99,5 +96,22 @@ describe('Boletos', () => {
       await pantalla.findByRole('button', { name: /Boaco/ }),
     );
     expect(alAbrirBoleto).toHaveBeenCalledWith('bol_K7RM4QX9');
+  });
+
+  it('agrupa los viajes hechos por destino y deja ver cada uno', async () => {
+    const alAbrirBoleto = jest.fn();
+    await AsyncStorage.setItem(
+      CLAVE_BOLETOS,
+      JSON.stringify([
+        boletoDePrueba(HACE_UNA_HORA(), 3, 'AAAA1111'),
+        boletoDePrueba(new Date(Date.now() - 5 * 3_600_000), 4, 'BBBB2222'),
+      ]),
+    );
+    const pantalla = await dibujar({ alAbrirBoleto });
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: /^Boaco, 2 viajes$/ }),
+    );
+    await fireEvent.press(pantalla.getByRole('button', { name: /Asiento 3$/ }));
+    expect(alAbrirBoleto).toHaveBeenCalledWith('bol_AAAA1111');
   });
 });

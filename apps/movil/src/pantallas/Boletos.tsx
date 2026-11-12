@@ -2,7 +2,8 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
-import { TarjeteroBoletos } from '@/componentes/TarjeteroBoletos';
+import { CarruselBoletos } from '@/componentes/CarruselBoletos';
+import { HistorialViajes } from '@/componentes/HistorialViajes';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
@@ -81,7 +82,7 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
               >
                 {t('boletos.proximos')}
               </Text>
-              <TarjeteroBoletos
+              <CarruselBoletos
                 ahora={ahora}
                 alAbrirBoleto={alAbrirBoleto}
                 boletos={proximos}
@@ -93,13 +94,11 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
               <Text
                 style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
               >
-                {t('boletos.pasados')}
+                {t('boletos.historial')}
               </Text>
-              <TarjeteroBoletos
-                ahora={ahora}
+              <HistorialViajes
                 alAbrirBoleto={alAbrirBoleto}
                 boletos={pasados}
-                pasados
               />
             </View>
           )}
