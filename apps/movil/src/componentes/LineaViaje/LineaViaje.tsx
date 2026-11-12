@@ -114,5 +114,5 @@ const estilos = StyleSheet.create({
     height: espacios.doce,
     width: espacios.doce,
   },
-  trazo: { flex: 1, height: 2 },
+  trazo: { flex: 1, height: espacios.trazoDoble },
 });
