@@ -89,4 +89,17 @@ describe('Asientos', () => {
     );
     expect(pantalla.getByText('No encontramos este viaje.')).toBeTruthy();
   });
+
+  it('sin asientos el pie dice una sola vez que hay que elegir', async () => {
+    const pantalla = await renderPantalla(
+      <Asientos
+        alSeguir={() => undefined}
+        alVolver={() => undefined}
+        viajeId={VIAJE_BOACO}
+      />,
+    );
+    expect(pantalla.getAllByText('Elegí al menos un asiento')).toHaveLength(1);
+    expect(pantalla.getByText('Total')).toBeTruthy();
+    expect(pantalla.getByText('C$ 0')).toBeTruthy();
+  });
 });
