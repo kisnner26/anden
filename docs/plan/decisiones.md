@@ -63,4 +63,6 @@ Decisión 7 (opiniones atadas al boleto): se opina con un boleto no cancelado de
 
 Decisión 8 (favoritos y disponibilidad): los corredores se marcan con estrella y se guardan en el teléfono. "Pocos asientos" son cinco o menos. La tarjeta de corredor muestra la próxima salida de los datos de muestra, no horas escritas a mano.
 
+Decisión 9 (carretera real en el mapa): el trazo de Managua a Boaco (82,9 km) y a Juigalpa (133,5 km) sale de OpenStreetMap vía OSRM, se consultó una sola vez con `herramientas/generar-trazos.py` y vive en `src/datos/trazos.ts`; la app no consulta nada en línea. El bus ejemplo sigue ese camino y su ciclo dura lo que dura el viaje por carretera. Sigue marcado "Simulación" y el detalle cita la fuente (licencia ODbL). Reemplaza la línea recta de la decisión 5.
+
 Preguntas abiertas: reemplazar la simulación del bus por posiciones reales y mover opiniones, favoritos y cuenta a un servidor.
