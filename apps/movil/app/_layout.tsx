@@ -18,6 +18,7 @@ import { ProveedorAvisos } from '@/datos/ProveedorAvisos';
 import { ProveedorBloqueo } from '@/datos/ProveedorBloqueo';
 import { ProveedorBoletos } from '@/datos/ProveedorBoletos';
 import { ProveedorFavoritos } from '@/datos/ProveedorFavoritos';
+import { ProveedorRecordatorios } from '@/datos/ProveedorRecordatorios';
 import { ProveedorMascota } from '@/datos/ProveedorMascota';
 import { ProveedorPerfil } from '@/datos/ProveedorPerfil';
 import { ProveedorReserva } from '@/datos/ProveedorReserva';
@@ -60,7 +61,9 @@ export default function DisenoRaiz() {
                   <ProveedorUbicacion>
                     <ProveedorReserva>
                       <ProveedorFavoritos>
-                        <Stack screenOptions={{ headerShown: false }} />
+                        <ProveedorRecordatorios>
+                          <Stack screenOptions={{ headerShown: false }} />
+                        </ProveedorRecordatorios>
                       </ProveedorFavoritos>
                     </ProveedorReserva>
                   </ProveedorUbicacion>

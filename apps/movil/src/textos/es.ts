@@ -395,6 +395,21 @@ export const textos = {
       'Andén {anden}. Llevá la tarifa exacta para pagar al abordar.',
     abrir: 'Abrir tus avisos',
   },
+  recordatorios: {
+    titulo: 'Tu bus a {destino} sale en {minutos} min',
+    cuerpo: 'Andén {anden}. Andá llegando a la terminal.',
+    recordarme: 'Recordarme',
+    quitar: 'Quitar recordatorio',
+    hojaTitulo: 'Avisarme antes de la salida',
+    minutosAntes: '{minutos} min antes',
+    activo: 'Te avisamos {minutos} min antes',
+    yaPaso: 'Ese aviso ya habría sonado.',
+    permisoNegado:
+      'Las notificaciones están desactivadas para Andén en el teléfono. Activalas en los ajustes.',
+    cerrar: 'Cerrar',
+    abrir: 'Recordarme la salida a {destino}',
+    quitarEtiqueta: 'Quitar el recordatorio de la salida a {destino}',
+  },
   perfil: {
     titulo: 'Tu perfil',
     cargando: 'Cargando tu perfil',
