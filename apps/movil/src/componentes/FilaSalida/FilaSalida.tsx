@@ -53,12 +53,13 @@ export function FilaSalida({
         : `${salida.asientosLibres} ${t('horarios.libres')}`;
 
   return (
-    <Pressable
-      accessibilityLabel={`${salida.destino}, ${formatoHoraCompleta(salida.salida)}, ${servicio}, ${anden}`}
-      accessibilityRole="button"
-      onPress={() => alPresionar?.(salida.viajeId)}
-    >
-      <Bloque estilo={estilos.fila} estiloContenido={estilos.contenido}>
+    <Bloque estilo={estilos.fila} estiloContenido={estilos.contenido}>
+      <Pressable
+        accessibilityLabel={`${salida.destino}, ${formatoHoraCompleta(salida.salida)}, ${servicio}, ${anden}`}
+        accessibilityRole="button"
+        onPress={() => alPresionar?.(salida.viajeId)}
+        style={estilos.principal}
+      >
         <Loseta>
           <IconoServicio servicio={salida.servicio} />
         </Loseta>
@@ -93,13 +94,6 @@ export function FilaSalida({
             {sufijoHora(salida.salida)}
           </Text>
         </View>
-        {recordatorio ? (
-          <BotonRecordatorio
-            activo={recordatorio.activo}
-            alPresionar={recordatorio.alPresionar}
-            etiqueta={recordatorio.etiqueta}
-          />
-        ) : null}
         {conBoleto ? (
           <Loseta tamano={44} variante="negra">
             <Icono
@@ -109,8 +103,15 @@ export function FilaSalida({
             />
           </Loseta>
         ) : null}
-      </Bloque>
-    </Pressable>
+      </Pressable>
+      {recordatorio ? (
+        <BotonRecordatorio
+          activo={recordatorio.activo}
+          alPresionar={recordatorio.alPresionar}
+          etiqueta={recordatorio.etiqueta}
+        />
+      ) : null}
+    </Bloque>
   );
 }
 
@@ -124,5 +125,11 @@ const estilos = StyleSheet.create({
   },
   fila: { marginTop: espacios.doce },
   hora: { alignItems: 'flex-end' },
+  principal: {
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+    gap: espacios.doce,
+  },
   texto: { flex: 1 },
 });
