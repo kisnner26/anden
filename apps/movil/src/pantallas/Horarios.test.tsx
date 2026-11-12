@@ -138,4 +138,29 @@ describe('Horarios', () => {
     expect(pantalla.getByText('Mostrar')).toBeTruthy();
     expect(pantalla.getByText('Servicio')).toBeTruthy();
   });
+
+  it('deja elegir otro día y muestra las salidas de ese día', async () => {
+    const pantalla = await renderPantalla(<Horarios />);
+    expect(pantalla.getByText('Próxima salida')).toBeTruthy();
+
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Mañana' }));
+
+    expect(pantalla.getByText('Primera salida del día')).toBeTruthy();
+    expect(pantalla.queryByText('Próxima salida')).toBeNull();
+    // 6 salidas al día hacia Boaco y 6 hacia Juigalpa
+    expect(
+      pantalla.getAllByLabelText(/, (Salió|Abordando|A tiempo|\+\d+ min)$/),
+    ).toHaveLength(12);
+    // no se ofrece "sale en N min" para un día que todavía no llegó
+    expect(pantalla.queryByText(/^Sale en \d+ min/)).toBeNull();
+  });
+
+  it('al volver a Hoy muestra otra vez las ocho salidas de hoy', async () => {
+    const pantalla = await renderPantalla(<Horarios />);
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Mañana' }));
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Hoy' }));
+    expect(
+      pantalla.getAllByLabelText(/, (Salió|Abordando|A tiempo|\+\d+ min)$/),
+    ).toHaveLength(8);
+  });
 });
