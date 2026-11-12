@@ -20,7 +20,7 @@ beforeEach(() => {
 });
 
 describe('DetalleRuta', () => {
-  it('presenta el corredor sin inventar posición ni eta', async () => {
+  it('presenta el corredor con un bus simulado marcado como tal', async () => {
     const pantalla = await renderPantalla(
       <DetalleRuta alVolver={() => undefined} rutaId="cor_boa_man" />,
     );
@@ -29,17 +29,15 @@ describe('DetalleRuta', () => {
       pantalla.getByRole('header', { name: 'Boaco → Managua' }),
     ).toBeTruthy();
     expect(
-      pantalla.getByText('Seguimiento en vivo pendiente de datos operativos'),
+      pantalla.getByLabelText('Mapa del corredor con un bus simulado'),
     ).toBeTruthy();
-    expect(
-      pantalla.getByLabelText(
-        'En vivo no disponible. Seguimiento en vivo pendiente de datos operativos',
-      ),
-    ).toBeTruthy();
+    expect(pantalla.getByText('Simulación')).toBeTruthy();
+    expect(pantalla.getByText(/^Llega en \d+ min$/)).toBeTruthy();
+    expect(pantalla.getByText(/^Va por el \d+ % del recorrido$/)).toBeTruthy();
+    expect(pantalla.getByText(/Posición simulada/)).toBeTruthy();
     expect(pantalla.getByLabelText('Origen: Boaco')).toBeTruthy();
     expect(pantalla.getByLabelText('Destino: Managua')).toBeTruthy();
     expect(pantalla.queryByText(/km/)).toBeNull();
-    expect(pantalla.queryByText(/min/)).toBeNull();
   });
 
   it('presenta paradas, tarifa de muestra y siguiente salida', async () => {
