@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Pressable,
   ScrollView,
@@ -11,12 +11,20 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
+import { HojaObjetoOlvidado } from '@/componentes/HojaObjetoOlvidado';
 import { TalonBoleto } from '@/componentes/TalonBoleto';
 import { estadoVisibleBoleto } from '@/datos/estadoBoleto';
 import { useBoletos } from '@/datos/useBoletos';
 import { useAvisos } from '@/datos/useAvisos';
 import { usePagos } from '@/datos/usePagos';
 import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
+import {
+  guardarObjeto,
+  leerObjetos,
+  nuevoObjeto,
+  objetosDeBoleto,
+  type ObjetoOlvidado,
+} from '@/datos/objetosOlvidados';
 import { habitualDeSalida, horaTexto, idHabitual } from '@/datos/habituales';
 import { useHabituales } from '@/datos/useHabituales';
 import { espacios, tamanosControl } from '@/tema/espacios';
@@ -50,6 +58,12 @@ export function VerBoleto({
   const { estadoDe } = usePagos();
   const { agregar: agregarHabitual, habituales } = useHabituales();
   const [confirmando, establecerConfirmando] = useState(false);
+  const [objetos, establecerObjetos] = useState<ObjetoOlvidado[]>([]);
+  const [reportando, establecerReportando] = useState(false);
+
+  useEffect(() => {
+    void leerObjetos().then(establecerObjetos);
+  }, []);
   const guardado = boletos.find(({ boleto }) => boleto.id === boletoId);
 
   if (!guardado) {
@@ -213,6 +227,41 @@ export function VerBoleto({
         </Pressable>
       )}
 
+      {(estado === 'usado' || estado === 'vencido') && (
+        <>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => establecerReportando(true)}
+          >
+            <Bloque estiloContenido={estilos.boton} radio="pildora">
+              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                {t('objetos.reportar')}
+              </Text>
+            </Bloque>
+          </Pressable>
+          {objetosDeBoleto(objetos, guardado.boleto.id).length > 0 && (
+            <View style={estilos.verificar}>
+              <Text
+                style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
+              >
+                {t('objetos.previos')}
+              </Text>
+              {objetosDeBoleto(objetos, guardado.boleto.id).map((objeto) => (
+                <Text
+                  key={objeto.id}
+                  style={[tipografia.cuerpo, { color: colores.tinta }]}
+                >
+                  {objeto.descripcion}
+                </Text>
+              ))}
+              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+                {t('objetos.enviado')}
+              </Text>
+            </View>
+          )}
+        </>
+      )}
+
       {!puedeOperar && alReservarOtra && (
         <Pressable
           accessibilityRole="button"
@@ -298,6 +347,23 @@ export function VerBoleto({
           </Text>
         </Pressable>
       ) : null}
+      <HojaObjetoOlvidado
+        abierta={reportando}
+        alCerrar={() => establecerReportando(false)}
+        alEnviar={(descripcion) => {
+          void guardarObjeto(
+            nuevoObjeto(
+              {
+                boletoId: guardado.boleto.id,
+                destino: guardado.resumen.destino,
+                viajeId: guardado.boleto.viajeId,
+              },
+              descripcion,
+            ),
+          ).then(establecerObjetos);
+          establecerReportando(false);
+        }}
+      />
     </ScrollView>
   );
 }
