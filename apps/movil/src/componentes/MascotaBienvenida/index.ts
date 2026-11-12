@@ -1,0 +1,1 @@
+export { MascotaBienvenida } from './MascotaBienvenida';
