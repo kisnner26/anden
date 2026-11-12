@@ -3,9 +3,10 @@ import type { AudioPlayer } from 'expo-audio';
 
 import arranque from '../../assets/sonidos/arranque.wav';
 import bocina from '../../assets/sonidos/bocina.wav';
+import confirmacion from '../../assets/sonidos/confirmacion.wav';
 import salida from '../../assets/sonidos/salida.wav';
 
-const FUENTES = { arranque, bocina, salida } as const;
+const FUENTES = { arranque, bocina, confirmacion, salida } as const;
 
 export type NombreSonido = keyof typeof FUENTES;
 
