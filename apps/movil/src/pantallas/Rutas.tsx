@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { Bloque } from '@/componentes/Bloque';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
+import { Aparece } from '@/componentes/Aparece';
 import { TarjetaCorredor } from '@/componentes/TarjetaCorredor';
 import {
   CORREDORES_INICIALES,
@@ -76,12 +77,13 @@ export function Rutas({ alAbrirRuta }: PropiedadesRutas) {
             <View style={estilos.sentidos}>
               {CORREDORES_INICIALES.filter((corredor) =>
                 grupo.ids.includes(corredor.id),
-              ).map((corredor) => (
-                <TarjetaCorredor
-                  alPresionar={(id) => alAbrirRuta?.(id)}
-                  corredor={corredor}
-                  key={corredor.id}
-                />
+              ).map((corredor, indice) => (
+                <Aparece indice={indice} key={corredor.id}>
+                  <TarjetaCorredor
+                    alPresionar={(id) => alAbrirRuta?.(id)}
+                    corredor={corredor}
+                  />
+                </Aparece>
               ))}
             </View>
           </View>

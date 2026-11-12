@@ -5,6 +5,7 @@ import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { EtiquetaMuestra } from '@/componentes/EtiquetaMuestra';
 import { EnlaceTerminal } from '@/componentes/EnlaceTerminal';
+import { Aparece } from '@/componentes/Aparece';
 import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
@@ -170,12 +171,10 @@ export function Viajar({
           {t('viajar.sinSalidasOrigen')}
         </Text>
       )}
-      {pendientes.map((salida) => (
-        <FilaSalida
-          alPresionar={alAbrirViaje}
-          key={salida.viajeId}
-          salida={salida}
-        />
+      {pendientes.map((salida, indice) => (
+        <Aparece indice={indice} key={salida.viajeId}>
+          <FilaSalida alPresionar={alAbrirViaje} salida={salida} />
+        </Aparece>
       ))}
 
       {terminalOrigen ? (

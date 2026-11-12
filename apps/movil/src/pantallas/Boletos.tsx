@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Bloque } from '@/componentes/Bloque';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
+import { Aparece } from '@/componentes/Aparece';
 import { FilaBoleto } from '@/componentes/FilaBoleto';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
@@ -112,13 +113,14 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
                   >
                     {t('boletos.proximos')}
                   </Text>
-                  {proximos.slice(1).map((guardado) => (
-                    <FilaBoleto
-                      alPresionar={alAbrirBoleto}
-                      ahora={ahora}
-                      guardado={guardado}
-                      key={guardado.boleto.id}
-                    />
+                  {proximos.slice(1).map((guardado, indice) => (
+                    <Aparece indice={indice} key={guardado.boleto.id}>
+                      <FilaBoleto
+                        alPresionar={alAbrirBoleto}
+                        ahora={ahora}
+                        guardado={guardado}
+                      />
+                    </Aparece>
                   ))}
                 </>
               )}
