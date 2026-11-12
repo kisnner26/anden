@@ -55,6 +55,12 @@
         }
       ],
       "expo-notifications",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Andén usa Face ID solo para abrir la app y mostrar tus boletos."
+        }
+      ],
       ["expo-audio", { "microphonePermission": false }]
     ],
     "experiments": {
