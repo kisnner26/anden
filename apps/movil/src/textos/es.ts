@@ -45,6 +45,7 @@ export const textos = {
     saleEn: 'sale en',
     minutos: 'min',
     salidasDeHoy: 'Salidas de hoy',
+    otroDia: 'Reservar para otro día',
     sinSalidas: 'No quedan salidas por hoy.',
     tarifasMuestra: 'Tarifas de muestra',
     sinTerminales: 'No encontramos terminales.',

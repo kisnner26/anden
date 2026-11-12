@@ -180,6 +180,15 @@ describe('Viajar', () => {
     expect(alAbrirViaje).toHaveBeenCalledWith('via_3');
   });
 
+  it('ofrece reservar para otro día y lleva a elegirlo', async () => {
+    const alReservarOtroDia = jest.fn();
+    const pantalla = await dibujar({ alReservarOtroDia });
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Reservar para otro día' }),
+    );
+    expect(alReservarOtroDia).toHaveBeenCalledTimes(1);
+  });
+
   it('abre configuración desde el avatar', async () => {
     const alAbrirAjustes = jest.fn();
     const pantalla = await dibujar({ alAbrirAjustes });

@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
@@ -17,8 +17,9 @@ import { usePerfil } from '@/datos/usePerfil';
 import { usePreferenciaUbicacion } from '@/datos/ProveedorUbicacion';
 import { useUbicacionCercana } from '@/datos/useUbicacionCercana';
 import { useSalidas } from '@/datos/useSalidas';
+import { inicioDelDia } from '@/datos/dias';
 import { proximaSalida } from '@/datos/salidas';
-import { espacios } from '@/tema/espacios';
+import { espacios, tamanosControl } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -29,6 +30,8 @@ export interface PropiedadesViajar {
   alAbrirAvisos?: () => void;
   alAbrirViaje: (viajeId: string) => void;
   alElegirAsiento: (viajeId: string) => void;
+  /** lleva a Horarios, donde se elige otro día */
+  alReservarOtroDia?: () => void;
 }
 
 const ESTADOS_PENDIENTES = ['abordando', 'atrasado', 'programado'];
@@ -39,11 +42,13 @@ export function Viajar({
   alAbrirAvisos,
   alAbrirViaje,
   alElegirAsiento,
+  alReservarOtroDia,
 }: PropiedadesViajar) {
   const { colores } = useTema();
   const { perfil } = usePerfil();
   const [origenId, establecerOrigenId] = useState('ter_may');
-  const { ahora, datos, salidas } = useSalidas(origenId);
+  const hoy = useMemo(() => inicioDelDia(new Date()), []);
+  const { ahora, datos, salidas } = useSalidas(origenId, hoy);
   const { noLeidos } = useAvisos();
   const preferenciaUbicacion = usePreferenciaUbicacion();
   const ubicacionResuelta = useRef(false);
@@ -168,6 +173,18 @@ export function Viajar({
         </Aparece>
       ))}
 
+      <Pressable
+        accessibilityHint={t('dias.selector')}
+        accessibilityRole="button"
+        onPress={alReservarOtroDia}
+        style={estilos.otroDia}
+      >
+        <Text style={[tipografia.subtitulo, { color: colores.ambarTexto }]}>
+          {t('viajar.otroDia')}
+        </Text>
+        <Icono color={colores.ambarTexto} nombre="siguiente" tamano="mediano" />
+      </Pressable>
+
       {terminalOrigen ? (
         <View style={estilos.terminal}>
           <EnlaceTerminal terminal={terminalOrigen} />
@@ -178,6 +195,13 @@ export function Viajar({
 }
 
 const estilos = StyleSheet.create({
+  otroDia: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.ocho,
+    justifyContent: 'center',
+    minHeight: tamanosControl.toqueMinimo,
+  },
   puntoCampana: {
     borderRadius: 6,
     height: 12,
