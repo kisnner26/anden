@@ -50,3 +50,12 @@ export function formatoFechaCorta(fecha: Date): string {
 export function formatoDiaCorto(fecha: Date): string {
   return `${DIAS[fecha.getDay()]} ${fecha.getDate()}`;
 }
+
+/** los días de la semana abreviados, por ejemplo lun, mié */
+export function formatoDiasSemana(dias: readonly number[]): string {
+  return [...dias]
+    .sort((a, b) => a - b)
+    .map((dia) => DIAS[dia] ?? '')
+    .filter((nombre) => nombre !== '')
+    .join(', ');
+}

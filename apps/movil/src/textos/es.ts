@@ -55,6 +55,18 @@ export const textos = {
     mapasNoAbrio: 'No pudimos abrir Apple Maps.',
     sinSalidasOrigen: 'Sin salidas de muestra desde esta terminal.',
   },
+  habitual: {
+    titulo: 'Mi viaje habitual',
+    proxima: 'Próxima: {cuando}',
+    reservar: 'Reservar la salida de {cuando}',
+    reservarHoy: 'Tocá para ver la salida de hoy',
+    reservarAhora: 'Tocá para reservar con anticipación',
+    sinSalida: 'No hay una salida parecida en los próximos días.',
+    quitar: 'Quitar el viaje habitual de {origen} a {destino}',
+    quitarCorto: 'Quitar',
+    guardar: 'Guardar como mi viaje habitual',
+    guardado: 'Guardado como tu viaje habitual',
+  },
   dias: {
     hoy: 'Hoy',
     manana: 'Mañana',
