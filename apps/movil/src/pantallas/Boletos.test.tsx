@@ -50,9 +50,8 @@ describe('Boletos', () => {
       JSON.stringify([boletoDePrueba(EN_UNA_HORA())]),
     );
     const pantalla = await dibujar();
-    expect(await pantalla.findByText('Próximos')).toBeTruthy();
-    expect(pantalla.getByText('Asiento')).toBeTruthy();
-    expect(pantalla.queryByText('Pasados')).toBeNull();
+    expect(await pantalla.findByText('Asiento')).toBeTruthy();
+    expect(pantalla.queryByRole('tab')).toBeNull();
   });
 
   it('muestra varios boletos próximos en un carrusel y abre el que se toca', async () => {
@@ -72,7 +71,7 @@ describe('Boletos', () => {
     expect(pantalla.getByLabelText(/^Boaco, .*Asiento 8$/)).toBeTruthy();
   });
 
-  it('separa los boletos pasados', async () => {
+  it('con próximos y pasados ofrece alternar entre los dos', async () => {
     await AsyncStorage.setItem(
       CLAVE_BOLETOS,
       JSON.stringify([
@@ -81,8 +80,10 @@ describe('Boletos', () => {
       ]),
     );
     const pantalla = await dibujar();
-    expect(await pantalla.findByText('Próximos')).toBeTruthy();
-    expect(pantalla.getByText('Tu historial')).toBeTruthy();
+    expect(await pantalla.findByRole('tab', { name: 'Próximos' })).toBeTruthy();
+    await fireEvent.press(pantalla.getByRole('tab', { name: 'Historial' }));
+    expect(await pantalla.findByText('último')).toBeTruthy();
+    expect(pantalla.queryByText('Sale en')).toBeNull();
   });
 
   it('abre el boleto que se presiona', async () => {

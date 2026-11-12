@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CarruselBoletos } from '@/componentes/CarruselBoletos';
+import { ControlSegmentado } from '@/componentes/ControlSegmentado';
 import { HistorialViajes } from '@/componentes/HistorialViajes';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
@@ -31,12 +33,18 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
   const { colores } = useTema();
   const ahora = useAhora();
   const { boletos } = useBoletos();
+  const [vista, establecerVista] = useState<'historial' | 'proximos'>(
+    'proximos',
+  );
   const proximos = boletos
     .filter(({ resumen }) => new Date(resumen.salida) >= ahora)
     .sort(porSalida);
   const pasados = boletos
     .filter(({ resumen }) => new Date(resumen.salida) < ahora)
     .sort((a, b) => porSalida(b, a));
+
+  const mostrandoHistorial =
+    proximos.length === 0 || (vista === 'historial' && pasados.length > 0);
 
   return (
     <MarcoPestana>
@@ -75,32 +83,24 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
         </Bloque>
       ) : (
         <>
-          {proximos.length > 0 && (
-            <View style={estilos.grupo}>
-              <Text
-                style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
-              >
-                {t('boletos.proximos')}
-              </Text>
-              <CarruselBoletos
-                ahora={ahora}
-                alAbrirBoleto={alAbrirBoleto}
-                boletos={proximos}
-              />
-            </View>
+          {proximos.length > 0 && pasados.length > 0 && (
+            <ControlSegmentado
+              alCambiar={establecerVista}
+              opciones={[
+                { clave: 'proximos', etiqueta: t('boletos.pestanaProximos') },
+                { clave: 'historial', etiqueta: t('boletos.historial') },
+              ]}
+              valor={mostrandoHistorial ? 'historial' : 'proximos'}
+            />
           )}
-          {pasados.length > 0 && (
-            <View style={estilos.grupo}>
-              <Text
-                style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
-              >
-                {t('boletos.historial')}
-              </Text>
-              <HistorialViajes
-                alAbrirBoleto={alAbrirBoleto}
-                boletos={pasados}
-              />
-            </View>
+          {!mostrandoHistorial ? (
+            <CarruselBoletos
+              ahora={ahora}
+              alAbrirBoleto={alAbrirBoleto}
+              boletos={proximos}
+            />
+          ) : (
+            <HistorialViajes alAbrirBoleto={alAbrirBoleto} boletos={pasados} />
           )}
         </>
       )}
