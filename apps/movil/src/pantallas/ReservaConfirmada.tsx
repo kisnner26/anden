@@ -1,16 +1,19 @@
+import * as Haptics from 'expo-haptics';
 import { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
-  withTiming,
+  withSpring,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BloqueNegro } from '@/componentes/BloqueNegro';
+import { ExplosionConfirmacion } from '@/componentes/ExplosionConfirmacion';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
+import { reproducirSonido } from '@/datos/sonidos';
 import { espacios, tamanosIlustracion } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
@@ -38,10 +41,16 @@ export function ReservaConfirmada({ codigo }: PropiedadesReservaConfirmada) {
       entrada.value = 1;
       return;
     }
-    entrada.value = withTiming(1, {
-      duration: movimiento.confirmacionReserva,
-    });
+    entrada.value = withSpring(1, { damping: 7, stiffness: 120 });
   }, [entrada, reducirMovimiento]);
+
+  // al llegar la confirmación: vibración de éxito y el sello sonoro
+  useEffect(() => {
+    void Haptics.notificationAsync(
+      Haptics.NotificationFeedbackType.Success,
+    ).catch(() => undefined);
+    void reproducirSonido('confirmacion');
+  }, []);
 
   return (
     <View
@@ -58,18 +67,21 @@ export function ReservaConfirmada({ codigo }: PropiedadesReservaConfirmada) {
       ]}
     >
       <View style={estilos.contenido}>
-        <Animated.View style={estiloEntrada}>
-          <Loseta
-            tamano={tamanosIlustracion.confirmacionReserva}
-            variante="ambar"
-          >
-            <Icono
-              color={colores.sobreAmbar}
-              nombre="confirmar"
-              tamano="ilustracion"
-            />
-          </Loseta>
-        </Animated.View>
+        <View style={estilos.insignia}>
+          <ExplosionConfirmacion />
+          <Animated.View style={estiloEntrada}>
+            <Loseta
+              tamano={tamanosIlustracion.confirmacionReserva}
+              variante="ambar"
+            >
+              <Icono
+                color={colores.sobreAmbar}
+                nombre="confirmar"
+                tamano="ilustracion"
+              />
+            </Loseta>
+          </Animated.View>
+        </View>
         <View style={estilos.textos}>
           <Text style={[tipografia.display, { color: colores.tinta }]}>
             {t('pago.confirmadaTitulo')}
@@ -106,6 +118,11 @@ const estilos = StyleSheet.create({
     alignItems: 'stretch',
     gap: espacios.veinticuatro,
     width: '100%',
+  },
+  insignia: {
+    alignItems: 'center',
+    height: tamanosIlustracion.confirmacionReserva,
+    justifyContent: 'center',
   },
   pantalla: {
     flex: 1,

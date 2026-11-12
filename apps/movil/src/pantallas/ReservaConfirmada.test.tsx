@@ -1,9 +1,9 @@
-import { beforeEach, describe, expect, it } from '@jest/globals';
-import { useReducedMotion, withTiming } from 'react-native-reanimated';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { useReducedMotion, withSpring } from 'react-native-reanimated';
+
+import { reproducirSonido } from '@/datos/sonidos';
 
 import { renderPantalla } from '@/pruebas/render';
-import { movimiento } from '@/tema/movimiento';
-
 import { ReservaConfirmada } from './ReservaConfirmada';
 
 interface MockSimulado {
@@ -11,11 +11,16 @@ interface MockSimulado {
   mockReturnValue: (valor: boolean) => void;
 }
 
-const animar = withTiming as unknown as MockSimulado;
+jest.mock('@/datos/sonidos', () => ({
+  reproducirSonido: jest.fn(async () => undefined),
+}));
+
+const animar = withSpring as unknown as MockSimulado;
 const reducir = useReducedMotion as unknown as MockSimulado;
 
 beforeEach(() => {
   animar.mockClear();
+  jest.mocked(reproducirSonido).mockClear();
   reducir.mockReturnValue(false);
 });
 
@@ -42,12 +47,16 @@ describe('ReservaConfirmada', () => {
     expect(resumen.props.accessible).toBe(true);
   });
 
-  it('anima el sello con la duración del tema', async () => {
+  it('hace rebotar el sello al llegar', async () => {
     await renderPantalla(<ReservaConfirmada codigo="P3NS6TW4" />);
 
-    expect(animar).toHaveBeenCalledWith(1, {
-      duration: movimiento.confirmacionReserva,
-    });
+    expect(animar).toHaveBeenCalledWith(1, expect.objectContaining({}));
+  });
+
+  it('suena el sello de confirmación', async () => {
+    await renderPantalla(<ReservaConfirmada codigo="P3NS6TW4" />);
+
+    expect(reproducirSonido).toHaveBeenCalledWith('confirmacion');
   });
 
   it('no anima el sello al reducir movimiento', async () => {
