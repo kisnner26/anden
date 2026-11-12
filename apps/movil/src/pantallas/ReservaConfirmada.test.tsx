@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { fireEvent } from '@testing-library/react-native';
 import { useReducedMotion, withSpring } from 'react-native-reanimated';
 
 import { reproducirSonido } from '@/datos/sonidos';
@@ -25,16 +26,45 @@ beforeEach(() => {
 });
 
 describe('ReservaConfirmada', () => {
-  it('muestra el código guardado antes de abrir Boletos', async () => {
+  it('muestra el código de abordaje y no se cierra sola', async () => {
     const pantalla = await renderPantalla(
       <ReservaConfirmada codigo="K7RM4QX9" />,
     );
 
     expect(
-      pantalla.getByLabelText(
-        'Reserva lista. Código de abordaje: K7RM4QX9. Abriendo tus boletos…',
-      ),
+      pantalla.getByLabelText('Reserva lista. Código de abordaje: K7RM4QX9'),
     ).toBeTruthy();
+    expect(pantalla.getByText('K7RM4QX9')).toBeTruthy();
+    expect(
+      pantalla.getByRole('button', { name: 'Ver mi boleto' }),
+    ).toBeTruthy();
+  });
+
+  it('explica cómo usar el boleto al subir', async () => {
+    const pantalla = await renderPantalla(
+      <ReservaConfirmada codigo="K7RM4QX9" />,
+    );
+    expect(
+      pantalla.getByText(/Mostrá el código o el QR al subir/),
+    ).toBeTruthy();
+  });
+
+  it('abre el boleto o vuelve a la lista según el botón', async () => {
+    const alVerBoleto = jest.fn();
+    const alListo = jest.fn();
+    const pantalla = await renderPantalla(
+      <ReservaConfirmada
+        alListo={alListo}
+        alVerBoleto={alVerBoleto}
+        codigo="K7RM4QX9"
+      />,
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Ver mi boleto' }),
+    );
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Listo' }));
+    expect(alVerBoleto).toHaveBeenCalledTimes(1);
+    expect(alListo).toHaveBeenCalledTimes(1);
   });
 
   it('anuncia inmediatamente el resultado completo', async () => {

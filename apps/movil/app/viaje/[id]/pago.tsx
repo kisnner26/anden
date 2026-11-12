@@ -1,7 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { Pago } from '@/pantallas/Pago';
-import { movimiento } from '@/tema/movimiento';
 
 export default function RutaPago() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -9,12 +8,15 @@ export default function RutaPago() {
 
   return (
     <Pago
-      alReservado={() =>
-        setTimeout(() => {
-          router.dismissAll();
-          router.replace('/boletos');
-        }, movimiento.confirmacionReserva)
-      }
+      alListo={() => {
+        router.dismissAll();
+        router.replace('/boletos');
+      }}
+      alVerBoleto={(boletoId) => {
+        router.dismissAll();
+        router.replace('/boletos');
+        router.push({ params: { id: boletoId }, pathname: '/boleto/[id]' });
+      }}
       alVolver={() => router.back()}
       viajeId={id ?? ''}
     />

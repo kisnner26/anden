@@ -293,7 +293,10 @@ export const textos = {
     confirmadaTitulo: 'Reserva lista',
     confirmadaDetalle: 'Tu boleto ya está guardado en este teléfono.',
     codigoAbordaje: 'Código de abordaje',
-    abriendoBoletos: 'Abriendo tus boletos…',
+    confirmadaNota:
+      'Mostrá el código o el QR al subir. Funciona sin internet y pagás en efectivo al abordar.',
+    verBoleto: 'Ver mi boleto',
+    listo: 'Listo',
   },
   boleto: {
     titulo: 'Tu boleto',
