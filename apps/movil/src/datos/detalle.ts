@@ -100,10 +100,12 @@ export function armarDetalle(
   const viaje = datos.viajes.find((candidato) => candidato.id === viajeId);
   const ruta = datos.rutas.find((candidata) => candidata.id === viaje?.rutaId);
   const bus = datos.buses.find((candidato) => candidato.id === viaje?.busId);
-  const salida = armarSalidas(datos, ahora).find(
+  if (!viaje || !ruta || !bus) return null;
+  // las salidas se arman por terminal de origen: la del viaje, no solo Mercado Mayoreo
+  const salida = armarSalidas(datos, ahora, ruta.origenId).find(
     (candidata) => candidata.viajeId === viajeId,
   );
-  if (!viaje || !ruta || !bus || !salida) return null;
+  if (!salida) return null;
 
   const chofer = armarPerfilChofer(datos, viaje.choferId);
   if (!chofer) return null;
