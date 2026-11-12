@@ -292,4 +292,39 @@ describe('VerBoleto', () => {
       }),
     ).toBeNull();
   });
+
+  it('en un boleto cuya salida ya pasó deja reportar un objeto olvidado y lo muestra', async () => {
+    await AsyncStorage.setItem(
+      CLAVE_BOLETOS,
+      JSON.stringify([boletoDePrueba(new Date(Date.now() - 3 * 3_600_000))]),
+    );
+    const pantalla = await dibujar();
+    await fireEvent.press(
+      await pantalla.findByRole('button', {
+        name: 'Reportar un objeto olvidado',
+      }),
+    );
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Qué dejaste'),
+      'mochila azul',
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Guardar reporte' }),
+    );
+    expect(
+      await pantalla.findByText('Tus reportes de este viaje'),
+    ).toBeTruthy();
+    expect(await pantalla.findByText('mochila azul')).toBeTruthy();
+    expect(await AsyncStorage.getItem('anden.objetosOlvidados')).toContain(
+      'mochila azul',
+    );
+  });
+
+  it('en un boleto vigente no ofrece reportar un objeto olvidado', async () => {
+    const pantalla = await dibujar();
+    await pantalla.findByTestId('talon-boleto');
+    expect(
+      pantalla.queryByRole('button', { name: 'Reportar un objeto olvidado' }),
+    ).toBeNull();
+  });
 });
