@@ -41,11 +41,15 @@ export function avisosDeBoletos(
   ahora: Date,
 ): Aviso[] {
   const avisos: Aviso[] = [];
+  // un aviso por viaje: varios asientos del mismo viaje no lo repiten
+  const viajesAvisados = new Set<string>();
 
   for (const { boleto, resumen } of boletos) {
     if (boleto.estado !== 'vigente') continue;
+    if (viajesAvisados.has(boleto.viajeId)) continue;
     const salida = salidas.find((s) => s.viajeId === boleto.viajeId);
     if (!salida) continue;
+    viajesAvisados.add(boleto.viajeId);
 
     const base = {
       anden: salida.anden,
@@ -55,7 +59,7 @@ export function avisosDeBoletos(
     if (salida.estado === 'cancelado') {
       avisos.push({
         ...base,
-        id: `${boleto.id}:cancelado`,
+        id: `${boleto.viajeId}:cancelado`,
         minutos: 0,
         tipo: 'cancelado',
       });
@@ -72,7 +76,7 @@ export function avisosDeBoletos(
     if (salida.estado === 'atrasado') {
       avisos.push({
         ...base,
-        id: `${boleto.id}:atraso`,
+        id: `${boleto.viajeId}:atraso`,
         minutos: salida.minutosAtraso,
         tipo: 'atraso',
       });
@@ -80,7 +84,7 @@ export function avisosDeBoletos(
     if (salida.anden !== resumen.anden) {
       avisos.push({
         ...base,
-        id: `${boleto.id}:anden`,
+        id: `${boleto.viajeId}:anden`,
         minutos: minutosParaSalir,
         tipo: 'anden',
       });
@@ -88,7 +92,7 @@ export function avisosDeBoletos(
     if (minutosParaSalir <= MINUTOS_AVISO_PRONTO) {
       avisos.push({
         ...base,
-        id: `${boleto.id}:pronto`,
+        id: `${boleto.viajeId}:pronto`,
         minutos: minutosParaSalir,
         tipo: 'pronto',
       });
