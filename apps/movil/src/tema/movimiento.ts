@@ -18,6 +18,7 @@ export const movimiento = {
   vaivenBus: 560,
   escalaConfirmacion: 0.88,
   escalaPresion: 0.98,
+  escalaRebote: 1.18,
   entradaPantalla: 320,
   recorridoCorredor: 360,
   reducir: 120,
