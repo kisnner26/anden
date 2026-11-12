@@ -105,9 +105,11 @@ export function VerBoleto({
 
       <TalonBoleto guardado={guardado} />
 
-      <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-        {t('boleto.muestra')}
-      </Text>
+      {puedeOperar && (
+        <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+          {t('boleto.muestra')}
+        </Text>
+      )}
       <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {`${t('boletos.estado')}: ${etiquetaEstado}`}
       </Text>
@@ -120,17 +122,19 @@ export function VerBoleto({
         </Text>
       )}
 
-      <Bloque estiloContenido={estilos.pago} hundido radio="loseta">
-        <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
-          {t('boleto.totalAbordar')}
-        </Text>
-        <Text
-          style={[tipografia.datoGrande, { color: colores.tinta }]}
-        >{`C$ ${guardado.boleto.precio}`}</Text>
-        <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-          {t('boleto.exacto')}
-        </Text>
-      </Bloque>
+      {puedeOperar && (
+        <Bloque estiloContenido={estilos.pago} hundido radio="loseta">
+          <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+            {t('boleto.totalAbordar')}
+          </Text>
+          <Text
+            style={[tipografia.datoGrande, { color: colores.tinta }]}
+          >{`C$ ${guardado.boleto.precio}`}</Text>
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {t('boleto.exacto')}
+          </Text>
+        </Bloque>
+      )}
 
       {puedeOperar && (
         <Bloque estiloContenido={estilos.verificar} hundido radio="loseta">
