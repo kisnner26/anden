@@ -30,6 +30,10 @@ export interface ParadaVista {
 
 export interface DetalleViaje {
   chofer: PerfilChofer;
+  /** ciudad y código de las terminales de la ruta, para el mapa y la línea del viaje */
+  destinoCodigo: string;
+  origenCiudad: string;
+  origenCodigo: string;
   distanciaKm: number;
   duracionMin: number;
   llegada: Date;
@@ -119,14 +123,20 @@ export function armarDetalle(
     };
   });
 
+  const terminalOrigen = datos.terminales.find((x) => x.id === ruta.origenId);
+  const terminalDestino = datos.terminales.find((x) => x.id === ruta.destinoId);
+
   return {
     chofer,
+    destinoCodigo: terminalDestino?.codigo ?? salida.codigoDestino,
     distanciaKm: ruta.distanciaKm,
     duracionMin: ruta.duracionMin,
     llegada: new Date(
       new Date(viaje.salida).getTime() +
         (viaje.minutosAtraso + ruta.duracionMin) * 60_000,
     ),
+    origenCiudad: terminalOrigen?.ciudad ?? '',
+    origenCodigo: terminalOrigen?.codigo ?? '',
     paradas,
     salida,
     unidad: {
