@@ -147,6 +147,7 @@ export const textos = {
   detalle: {
     sale: 'Sale',
     llega: 'Llega',
+    mapaDescripcion: 'Mapa del recorrido de esta salida',
     duracion: 'Duración',
     distancia: 'Distancia',
     km: 'km',

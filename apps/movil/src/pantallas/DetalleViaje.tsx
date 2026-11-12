@@ -8,9 +8,12 @@ import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { Icono } from '@/componentes/Icono';
 import { LineaRuta } from '@/componentes/LineaRuta';
+import { LineaViaje } from '@/componentes/LineaViaje';
+import { MapaCorredor } from '@/componentes/MapaCorredor';
 import { Loseta } from '@/componentes/Loseta';
 import { estadoTablero } from '@/componentes/TableroSalidas';
-import { formatoDuracion, formatoHoraCompleta } from '@/datos/formato';
+import { formatoDuracion } from '@/datos/formato';
+import { useRecorrido } from '@/datos/useRecorrido';
 import { useDetalleViaje } from '@/datos/useDetalleViaje';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -24,20 +27,6 @@ export interface PropiedadesDetalleViaje {
   viajeId: string;
 }
 
-function Dato({ etiqueta, valor }: { etiqueta: string; valor: string }) {
-  const { colores } = useTema();
-  return (
-    <View style={estilos.dato}>
-      <Text style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}>
-        {etiqueta}
-      </Text>
-      <Text style={[tipografia.datoGrande, { color: colores.sobreNegro }]}>
-        {valor}
-      </Text>
-    </View>
-  );
-}
-
 /** el viaje completo: horas, unidad con su placa, chofer, recorrido y la tarifa antes de elegir asiento */
 export function DetalleViaje({
   alElegirAsiento,
@@ -48,6 +37,10 @@ export function DetalleViaje({
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const detalle = useDetalleViaje(viajeId);
+  const recorrido = useRecorrido(
+    detalle?.origenCiudad ?? '',
+    detalle?.salida.destino ?? '',
+  );
 
   if (!detalle) {
     return (
@@ -94,16 +87,12 @@ export function DetalleViaje({
             <Autobus ancho={200} letrero={salida.destino.toUpperCase()} />
           </View>
           <BloqueNegro estiloContenido={estilos.hero}>
-            <View style={estilos.fila}>
-              <Dato
-                etiqueta={t('detalle.sale')}
-                valor={formatoHoraCompleta(salida.salida)}
-              />
-              <Dato
-                etiqueta={t('detalle.llega')}
-                valor={formatoHoraCompleta(detalle.llegada)}
-              />
-            </View>
+            <LineaViaje
+              destinoCodigo={detalle.destinoCodigo}
+              llegada={detalle.llegada}
+              origenCodigo={detalle.origenCodigo}
+              salida={salida.salida}
+            />
             <View style={estilos.fila}>
               <Text
                 style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
@@ -230,6 +219,22 @@ export function DetalleViaje({
         >
           {t('detalle.recorrido')}
         </Text>
+        {recorrido && (
+          <View style={estilos.mapa}>
+            <View
+              accessibilityLabel={t('detalle.mapaDescripcion')}
+              accessibilityRole="image"
+              accessible
+            >
+              <MapaCorredor simulacion={recorrido} />
+            </View>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {recorrido.distanciaKm === null
+                ? t('rutas.atribucionMapa')
+                : `${t('rutas.kmCarretera').replace('{{km}}', String(recorrido.distanciaKm))} · ${t('rutas.atribucionMapa')}`}
+            </Text>
+          </View>
+        )}
         <Bloque estiloContenido={estilos.recorrido}>
           <LineaRuta paradas={detalle.paradas} />
         </Bloque>
@@ -307,6 +312,7 @@ const estilos = StyleSheet.create({
     top: -84,
     zIndex: 2,
   },
+  mapa: { gap: espacios.ocho },
   nombre: { fontFamily: 'Archivo_600SemiBold', fontSize: 18, lineHeight: 22 },
   nota: { alignItems: 'center', flexDirection: 'row', gap: 6 },
   pantalla: { flex: 1 },
