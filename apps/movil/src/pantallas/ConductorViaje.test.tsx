@@ -58,6 +58,23 @@ function dibujar() {
 }
 
 describe('ConductorViaje', () => {
+  it('en un viaje inexistente hay una flecha para volver', async () => {
+    const alVolver = jest.fn();
+    const pantalla = await renderPantalla(
+      <ProveedorSesion>
+        <ProveedorBoletos>
+          <ProveedorPagos>
+            <ConductorViaje alVolver={alVolver} viajeId="via_inexistente" />
+          </ProveedorPagos>
+        </ProveedorBoletos>
+      </ProveedorSesion>,
+    );
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Volver' }),
+    );
+    expect(alVolver).toHaveBeenCalledTimes(1);
+  });
+
   it('abre un viaje de vuelta que sale de Boaco en vez de decir que no existe', async () => {
     const vuelta = obtenerMuestra().viajes.find(
       (viaje) => viaje.rutaId === 'rut_boa_may',

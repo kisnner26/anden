@@ -127,6 +127,13 @@ describe('DetalleViaje', () => {
     ).toBeTruthy();
   });
 
+  it('en un viaje inexistente hay una flecha para volver', async () => {
+    const alVolver = jest.fn();
+    const pantalla = await dibujar({ alVolver, viajeId: 'via_inexistente' });
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Volver' }));
+    expect(alVolver).toHaveBeenCalledTimes(1);
+  });
+
   it('dice que no encontró un viaje inexistente', async () => {
     const pantalla = await dibujar({ viajeId: 'via_inexistente' });
     expect(pantalla.getByText('No encontramos este viaje.')).toBeTruthy();

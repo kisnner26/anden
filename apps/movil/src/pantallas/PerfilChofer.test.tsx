@@ -42,6 +42,15 @@ describe('PerfilChofer', () => {
     expect(alVolver).toHaveBeenCalledTimes(1);
   });
 
+  it('en un chofer inexistente hay una flecha para volver', async () => {
+    const alVolver = jest.fn();
+    const pantalla = await renderPantalla(
+      <PerfilChofer alVolver={alVolver} choferId="cho_x" />,
+    );
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Volver' }));
+    expect(alVolver).toHaveBeenCalledTimes(1);
+  });
+
   it('dice que no encontró un chofer inexistente', async () => {
     const pantalla = await renderPantalla(
       <PerfilChofer alVolver={() => undefined} choferId="cho_x" />,

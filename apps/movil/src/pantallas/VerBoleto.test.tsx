@@ -124,6 +124,15 @@ describe('VerBoleto', () => {
     );
   });
 
+  it('en un boleto inexistente hay una flecha para volver', async () => {
+    const alVolver = jest.fn();
+    const pantalla = await dibujar({ alVolver, boletoId: 'bol_x' });
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Volver' }),
+    );
+    expect(alVolver).toHaveBeenCalledTimes(1);
+  });
+
   it('dice que no encontró un boleto inexistente', async () => {
     const pantalla = await dibujar({ boletoId: 'bol_x' });
     expect(
