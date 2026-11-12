@@ -3,7 +3,7 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 
 import { Autobus } from '@/componentes/Autobus';
 import { Loseta } from '@/componentes/Loseta';
-import { regionQueEncierra } from '@/datos/busSimulado';
+import { regionQueEncierraTrazo } from '@/datos/busSimulado';
 import type { BusSimulado } from '@/datos/useBusSimulado';
 import { radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -31,7 +31,7 @@ function Terminal({ codigo }: { codigo: string }) {
 /** mapa del corredor: trazo entre las dos terminales y el bus simulado encima */
 export function MapaCorredor({ simulacion }: PropiedadesMapaCorredor) {
   const { colores, modo } = useTema();
-  const { bus, destino, origen } = simulacion;
+  const { bus, destino, origen, trazo } = simulacion;
 
   return (
     <View
@@ -41,10 +41,7 @@ export function MapaCorredor({ simulacion }: PropiedadesMapaCorredor) {
       testID="mapa-corredor"
     >
       <MapView
-        initialRegion={regionQueEncierra(
-          { lat: origen.coordenadas.lat, lng: origen.coordenadas.lng },
-          { lat: destino.coordenadas.lat, lng: destino.coordenadas.lng },
-        )}
+        initialRegion={regionQueEncierraTrazo(trazo)}
         pitchEnabled={false}
         rotateEnabled={false}
         style={estilos.mapa}
@@ -52,16 +49,10 @@ export function MapaCorredor({ simulacion }: PropiedadesMapaCorredor) {
         userInterfaceStyle={modo === 'oscuro' ? 'dark' : 'light'}
       >
         <Polyline
-          coordinates={[
-            {
-              latitude: origen.coordenadas.lat,
-              longitude: origen.coordenadas.lng,
-            },
-            {
-              latitude: destino.coordenadas.lat,
-              longitude: destino.coordenadas.lng,
-            },
-          ]}
+          coordinates={trazo.map((punto) => ({
+            latitude: punto.lat,
+            longitude: punto.lng,
+          }))}
           lineCap="round"
           strokeColor={colores.ambar}
           strokeWidth={5}

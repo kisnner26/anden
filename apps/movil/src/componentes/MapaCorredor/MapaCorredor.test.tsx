@@ -12,6 +12,7 @@ const SIMULACION: BusSimulado = {
     coordenadas: { lat: 12.13, lng: -86.19 },
     nombre: 'Mercado Mayoreo',
   },
+  distanciaKm: 83,
   duracionMin: 100,
   origen: {
     codigo: 'BOA',
@@ -20,6 +21,11 @@ const SIMULACION: BusSimulado = {
   },
   porcentaje: 50,
   restantes: 50,
+  trazo: [
+    { lat: 12.47, lng: -85.66 },
+    { lat: 12.3, lng: -85.9 },
+    { lat: 12.13, lng: -86.19 },
+  ],
 };
 
 describe('MapaCorredor', () => {
