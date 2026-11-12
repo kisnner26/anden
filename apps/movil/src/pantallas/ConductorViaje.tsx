@@ -336,7 +336,7 @@ export function ConductorViaje({
             alPresionar={() =>
               transmision.activa ? terminar() : void iniciar()
             }
-            cargando={iniciando}
+            cargando={iniciando && !transmision.activa}
             etiqueta={
               transmision.activa
                 ? t('conductor.terminar')

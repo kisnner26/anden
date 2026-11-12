@@ -10,6 +10,8 @@ export type ResultadoTransmision =
 
 const ETIQUETA_PANTALLA = 'anden-transmision';
 const dejarDeEscuchar = new Map<string, () => void>();
+/** viajes que ya aparecen como activos pero todavía esperan el permiso o el primer GPS */
+const arrancando = new Set<string>();
 
 /**
  * empieza a compartir la posición de un viaje: pide el permiso, escucha el GPS y lo publica;
@@ -19,26 +21,39 @@ export async function iniciarTransmision(
   viajeId: string,
   choferId: string,
 ): Promise<ResultadoTransmision> {
-  if (dejarDeEscuchar.has(viajeId)) return 'ok';
-
-  const acceso = await solicitarAccesoUbicacion();
-  if (acceso.estado === 'desactivado') return 'desactivado';
-  if (acceso.estado === 'denegado' || acceso.estado === 'pendiente') {
-    return 'permiso-negado';
-  }
-  if (acceso.estado !== 'otorgado') return 'error';
+  if (dejarDeEscuchar.has(viajeId) || arrancando.has(viajeId)) return 'ok';
+  arrancando.add(viajeId);
+  // el estado cambia al instante, antes de pedir permisos y de que el GPS dé su primera lectura;
+  // si algo falla se revierte
+  TRANSMISION.iniciar(viajeId, choferId);
 
   try {
-    TRANSMISION.iniciar(viajeId, choferId);
+    const acceso = await solicitarAccesoUbicacion();
+    if (acceso.estado !== 'otorgado') {
+      TRANSMISION.detener(viajeId);
+      if (acceso.estado === 'desactivado') return 'desactivado';
+      if (acceso.estado === 'denegado' || acceso.estado === 'pendiente') {
+        return 'permiso-negado';
+      }
+      return 'error';
+    }
+
     const parar = await seguirUbicacion((posicion) =>
       TRANSMISION.publicar(viajeId, posicion),
     );
+    // si la persona terminó el viaje mientras arrancaba el GPS, se suelta lo que se acaba de abrir
+    if (!TRANSMISION.activos().includes(viajeId)) {
+      parar();
+      return 'ok';
+    }
     dejarDeEscuchar.set(viajeId, parar);
     void activateKeepAwakeAsync(ETIQUETA_PANTALLA).catch(() => undefined);
     return 'ok';
   } catch {
     TRANSMISION.detener(viajeId);
     return 'error';
+  } finally {
+    arrancando.delete(viajeId);
   }
 }
 
