@@ -1,10 +1,15 @@
 import { StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 
-import { Autobus } from '@/componentes/Autobus';
+import {
+  Autobus,
+  varianteDeClave,
+  type IdVarianteBus,
+} from '@/componentes/Autobus';
 import { Loseta } from '@/componentes/Loseta';
 import { regionQueEncierraTrazo } from '@/datos/busSimulado';
 import type { Punto } from '@/datos/busSimulado';
+import { orientacionBus } from '@/datos/orientacionBus';
 import type { BusSimulado } from '@/datos/useBusSimulado';
 import { radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -19,6 +24,8 @@ export interface PropiedadesMapaCorredor {
   simulacion: Pick<BusSimulado, 'destino' | 'origen' | 'trazo'> & {
     bus?: Punto;
   };
+  /** modelo del bus; sin indicar se reparte por corredor, así cada camino tiene el suyo */
+  variante?: IdVarianteBus;
 }
 
 function Terminal({ codigo }: { codigo: string }) {
@@ -33,9 +40,15 @@ function Terminal({ codigo }: { codigo: string }) {
 }
 
 /** mapa del corredor: trazo entre las dos terminales y el bus simulado encima */
-export function MapaCorredor({ simulacion }: PropiedadesMapaCorredor) {
+export function MapaCorredor({
+  simulacion,
+  variante,
+}: PropiedadesMapaCorredor) {
   const { colores, modo } = useTema();
   const { bus, destino, origen, trazo } = simulacion;
+  const orientacion = bus ? orientacionBus(trazo, bus) : null;
+  const modelo =
+    variante ?? varianteDeClave(`${origen.codigo}-${destino.codigo}`);
 
   return (
     <View
@@ -87,7 +100,19 @@ export function MapaCorredor({ simulacion }: PropiedadesMapaCorredor) {
             tracksViewChanges
             zIndex={10}
           >
-            <Autobus ancho={ANCHO_BUS_MAPA} letrero={ANCHO_BUS_LETRERO} />
+            <View
+              style={{
+                transform: [{ rotate: `${orientacion?.inclinacion ?? 0}deg` }],
+              }}
+              testID="orientacion-bus"
+            >
+              <Autobus
+                ancho={ANCHO_BUS_MAPA}
+                espejo={orientacion?.haciaElOeste}
+                letrero={ANCHO_BUS_LETRERO}
+                variante={modelo}
+              />
+            </View>
           </Marker>
         )}
       </MapView>

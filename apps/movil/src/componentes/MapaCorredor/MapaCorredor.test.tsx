@@ -65,4 +65,29 @@ describe('MapaCorredor', () => {
       pantalla.queryByTestId('bus-simulado', { includeHiddenElements: true }),
     ).toBeNull();
   });
+
+  it('el bus que va hacia el oeste se dibuja espejado y baja el frente', async () => {
+    const pantalla = await renderPantalla(
+      <MapaCorredor simulacion={SIMULACION} />,
+    );
+    const giro = pantalla.getByTestId('orientacion-bus', {
+      includeHiddenElements: true,
+    });
+    expect(giro.props.style.transform[0].rotate).toMatch(/^-\d+deg$/);
+  });
+
+  it('el mismo camino en sentido contrario no se espeja y sube el frente', async () => {
+    const alReves = {
+      ...SIMULACION,
+      trazo: [...SIMULACION.trazo].reverse(),
+    };
+    const pantalla = await renderPantalla(
+      <MapaCorredor simulacion={alReves} />,
+    );
+    const giro = pantalla.getByTestId('orientacion-bus', {
+      includeHiddenElements: true,
+    });
+    expect(giro.props.style.transform[0].rotate).toMatch(/^-?\d+deg$/);
+    expect(giro.props.style.transform[0].rotate.startsWith('-')).toBe(true);
+  });
 });
