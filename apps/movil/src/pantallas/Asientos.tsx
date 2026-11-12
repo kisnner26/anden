@@ -7,7 +7,7 @@ import { Icono } from '@/componentes/Icono';
 import { MapaAsientos } from '@/componentes/MapaAsientos';
 import { PieReserva } from '@/componentes/PieReserva';
 import { ProgresoReserva } from '@/componentes/ProgresoReserva';
-import { formatoHoraCompleta } from '@/datos/formato';
+import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
 import { formatoCuenta, useCuentaRegresiva } from '@/datos/useCuentaRegresiva';
 import { useMapaAsientos } from '@/datos/useMapaAsientos';
 import { useSalidas } from '@/datos/useSalidas';
@@ -128,7 +128,7 @@ export function Asientos({ alSeguir, alVolver, viajeId }: PropiedadesAsientos) {
             { color: colores.tintaSuave },
           ]}
         >
-          {`${origen?.nombre ?? ''} → ${salida.destino} · ${formatoHoraCompleta(salida.salida)} · ${t(`servicios.${salida.servicio}`)}`}
+          {`${origen?.nombre ?? ''} → ${salida.destino} · ${formatoFechaCorta(salida.salida)}, ${formatoHoraCompleta(salida.salida)} · ${t(`servicios.${salida.servicio}`)}`}
         </Text>
 
         <View style={estilos.leyendas}>

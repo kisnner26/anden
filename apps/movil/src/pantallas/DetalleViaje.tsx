@@ -13,7 +13,7 @@ import { MapaCorredor } from '@/componentes/MapaCorredor';
 import { SeguimientoEnVivo } from '@/componentes/SeguimientoEnVivo';
 import { Loseta } from '@/componentes/Loseta';
 import { estadoTablero } from '@/componentes/TableroSalidas';
-import { formatoDuracion } from '@/datos/formato';
+import { formatoDuracion, formatoFechaCorta } from '@/datos/formato';
 import { useAvanceViaje } from '@/datos/useAvanceViaje';
 import { useRecorrido } from '@/datos/useRecorrido';
 import { useDetalleViaje } from '@/datos/useDetalleViaje';
@@ -102,7 +102,7 @@ export function DetalleViaje({
             { color: colores.tintaSuave },
           ]}
         >
-          {`${origen} → ${salida.destino} · ${t(`servicios.${salida.servicio}`)}`}
+          {`${origen} → ${salida.destino} · ${t(`servicios.${salida.servicio}`)} · ${formatoFechaCorta(salida.salida)}`}
         </Text>
 
         <View style={estilos.contenedorHero}>
