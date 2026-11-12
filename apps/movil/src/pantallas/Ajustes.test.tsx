@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, waitFor } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 
 jest.mock('@/datos/ubicacion', () => ({
   consultarAccesoUbicacion: jest.fn(),
@@ -16,6 +17,7 @@ import {
   consultarAccesoUbicacion,
   solicitarAccesoUbicacion,
 } from '@/datos/ubicacion';
+import { tamanosIcono } from '@/tema/espacios';
 import { renderPantalla } from '@/pruebas/render';
 import { CLAVE_PREFERENCIA_TEMA, ProveedorTema } from '@/tema/ProveedorTema';
 
@@ -32,7 +34,61 @@ beforeEach(async () => {
     .mockResolvedValue({ estado: 'otorgado' });
 });
 
+type Nodo = {
+  children?: (Nodo | string)[] | null;
+  props?: { style?: unknown };
+};
+
+function textoDe(nodo: Nodo | string): string {
+  if (typeof nodo === 'string') return nodo;
+  return (nodo.children ?? []).map(textoDe).join('');
+}
+
+/** ¿hay un ícono mediano (el de la flecha) en este nodo o debajo? */
+function tieneFlecha(nodo: Nodo | string): boolean {
+  if (typeof nodo === 'string') return false;
+  const estilo = StyleSheet.flatten(nodo.props?.style as never) as
+    { height?: number; width?: number } | undefined;
+  if (
+    estilo?.height === tamanosIcono.mediano &&
+    estilo.width === tamanosIcono.mediano
+  ) {
+    return true;
+  }
+  return (nodo.children ?? []).some(tieneFlecha);
+}
+
+/** el nodo más chico que contiene el texto, subiendo hasta el botón que lo envuelve */
+function botonCon(raiz: Nodo | null, texto: string): Nodo | undefined {
+  if (!raiz) return undefined;
+  const hijos = raiz.children ?? [];
+  for (const hijo of hijos) {
+    if (typeof hijo === 'string') continue;
+    const dentro = botonCon(hijo, texto);
+    if (dentro) return dentro;
+  }
+  return textoDe(raiz).includes(texto) &&
+    (raiz.props as { accessibilityRole?: string } | undefined)
+      ?.accessibilityRole === 'button'
+    ? raiz
+    : undefined;
+}
+
 describe('Ajustes', () => {
+  it('la fila de entrar como conductor lleva la flecha de las filas que abren otra pantalla', async () => {
+    const pantalla = await renderPantalla(
+      <ProveedorSesion>
+        <Ajustes alVolver={() => undefined} />
+      </ProveedorSesion>,
+    );
+    const fila = botonCon(pantalla.toJSON() as Nodo, 'Soy conductor');
+    expect(fila).toBeDefined();
+    expect(tieneFlecha(fila!)).toBe(true);
+    expect(
+      pantalla.queryByRole('button', { name: 'Cerrar sesión' }),
+    ).toBeNull();
+  });
+
   it('ofrece entrar como conductor a quien no tiene sesión', async () => {
     const alAbrirIngreso = jest.fn();
     const pantalla = await renderPantalla(
