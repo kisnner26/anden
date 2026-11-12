@@ -88,7 +88,7 @@ export function ConductorInicio({
                   <Text
                     style={[tipografia.subtitulo, { color: colores.tinta }]}
                   >
-                    {viaje.destino}
+                    {`${viaje.origen} → ${viaje.destino}`}
                   </Text>
                   <Text
                     style={[tipografia.pequeno, { color: colores.tintaSuave }]}
