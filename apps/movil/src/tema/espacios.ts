@@ -35,22 +35,11 @@ export const tamanosIcono = {
   ilustracion: 34,
 } as const;
 
-export const tamanosBarraPestanas = {
-  alto: 74,
-  altoPestana: 58,
-  margenInferior: 26,
-  margenLateral: 14,
-  rellenoHorizontal: 10,
-  anchoPestana: 74,
-} as const;
-
 export const disposicionPantalla = {
   anchoMaximo: 480,
   espacioPieReserva: 200,
-  espacioBarraPestanas:
-    tamanosBarraPestanas.alto +
-    tamanosBarraPestanas.margenInferior +
-    espacios.treintaYDos,
+  /** aire al final de cada pestaña; la barra nativa ya suma su alto al área segura */
+  espacioFinalPestana: espacios.treintaYDos,
   rellenoInferior: espacios.cuarentaYOcho,
   rellenoSuperior: espacios.ocho,
   margenFlotante: 14,

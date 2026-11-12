@@ -30,7 +30,7 @@ function contieneRellenoSeguro(nodo: unknown): boolean {
   const estilo = StyleSheet.flatten(elemento.props?.style);
   if (
     estilo?.paddingBottom ===
-      disposicionPantalla.espacioBarraPestanas +
+      disposicionPantalla.espacioFinalPestana +
         MEDIDAS_IPHONE_PRUEBA.insets.bottom &&
     estilo.paddingHorizontal === espacios.lateral &&
     estilo.paddingTop ===

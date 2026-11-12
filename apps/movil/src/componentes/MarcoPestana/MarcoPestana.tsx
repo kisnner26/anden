@@ -47,7 +47,7 @@ export function MarcoPestana({
             estilos.contenido,
             {
               paddingBottom:
-                disposicionPantalla.espacioBarraPestanas + margenes.bottom,
+                disposicionPantalla.espacioFinalPestana + margenes.bottom,
               paddingHorizontal:
                 espacios.lateral + Math.max(margenes.left, margenes.right),
               paddingTop: disposicionPantalla.rellenoSuperior + margenes.top,
