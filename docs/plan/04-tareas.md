@@ -603,6 +603,6 @@ Zona: `supabase/` y `packages/datos/src/supabase/`.
 - hecho cuando: la reserva se completa sin callejones, el boleto queda como pieza dominante, ajustes deja de parecer una lista y el recorrido completo se verifica visualmente en iphone.
 
 ### T-112 · pulido de uso en salidas
-- depende de: T-110 · zona: `apps/movil/src/componentes`, `apps/movil/src/pantallas` · raíz: no · estado: en curso
+- depende de: T-110 · zona: `apps/movil/src/componentes`, `apps/movil/src/pantallas` · raíz: no · estado: hecha
 - hacer: revisar Viajar, Horarios y Buscador en pantalla de 375 puntos y retirar lo que no informa ni se puede usar: el círculo vacío de cada salida sin boleto y la hora sin indicar mañana o tarde.
 - hecho cuando: cada fila de salida muestra solo controles con función, la hora dice a. m. o p. m. sin ambigüedad y las pruebas de los componentes lo cubren.
