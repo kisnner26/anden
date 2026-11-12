@@ -157,7 +157,11 @@ export function MapaAsientos({
                       ]}
                     >
                       <Text
-                        style={[tipografia.dato, { color: colores.tintaSuave }]}
+                        style={[
+                          tipografia.dato,
+                          { color: colores.tintaSuave },
+                          estado !== 'retenido' && estilos.vendido,
+                        ]}
                       >
                         {asiento.numero}
                       </Text>
@@ -201,6 +205,7 @@ const estilos = StyleSheet.create({
     height: LADO,
     justifyContent: 'center',
   },
+  vendido: { textDecorationLine: 'line-through' },
   plano: {
     gap: SEPARACION,
     paddingBottom: 18,

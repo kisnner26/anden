@@ -165,9 +165,17 @@ export function Asientos({ alSeguir, alVolver, viajeId }: PropiedadesAsientos) {
               <View
                 style={[
                   estilos.muestra,
+                  estilos.muestraVendido,
                   { backgroundColor: colores.barroOscuro },
                 ]}
-              />
+              >
+                <View
+                  style={[
+                    estilos.tachon,
+                    { backgroundColor: colores.tintaSuave },
+                  ]}
+                />
+              </View>
             }
           />
         </View>
@@ -253,6 +261,12 @@ const estilos = StyleSheet.create({
     marginTop: 14,
   },
   muestra: { borderRadius: 5, height: 16, width: 16 },
+  muestraVendido: { alignItems: 'center', justifyContent: 'center' },
+  tachon: {
+    height: espacios.trazoDoble,
+    transform: [{ rotate: '-45deg' }],
+    width: espacios.dieciseis,
+  },
   pantalla: { flex: 1 },
   plano: { marginTop: espacios.dieciseis },
   resumen: { flex: 1 },
