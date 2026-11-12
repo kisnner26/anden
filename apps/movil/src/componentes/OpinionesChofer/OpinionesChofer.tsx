@@ -10,6 +10,7 @@ import { CampoTexto } from '@/componentes/CampoTexto';
 import { Chip } from '@/componentes/Chip';
 import { Icono } from '@/componentes/Icono';
 import {
+  boletoParaOpinar,
   guardarOpinion,
   guardarReporte,
   leerOpiniones,
@@ -19,12 +20,16 @@ import {
   type MotivoReporte,
   type Opinion,
 } from '@/datos/opiniones';
+import { useBoletos } from '@/datos/useBoletos';
+import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
 export interface PropiedadesOpinionesChofer {
+  /** avisa con las opiniones de este chofer cada vez que cambian */
+  alActualizar?: (propias: Opinion[]) => void;
   choferId: string;
 }
 
@@ -33,8 +38,13 @@ function vibrar() {
 }
 
 /** opiniones de la gente, formulario para dejar la tuya y reporte de un chofer */
-export function OpinionesChofer({ choferId }: PropiedadesOpinionesChofer) {
+export function OpinionesChofer({
+  alActualizar,
+  choferId,
+}: PropiedadesOpinionesChofer) {
   const { colores } = useTema();
+  const { boletos } = useBoletos();
+  const ahora = useAhora();
   const [todas, establecerTodas] = useState<Opinion[]>([]);
   const [estrellas, establecerEstrellas] = useState(0);
   const [comentario, establecerComentario] = useState('');
@@ -48,6 +58,17 @@ export function OpinionesChofer({ choferId }: PropiedadesOpinionesChofer) {
   }, []);
 
   const propias = opinionesDe(todas, choferId);
+  const boletoId = boletoParaOpinar(
+    boletos.map(({ boleto }) => boleto),
+    obtenerMuestra().viajes,
+    choferId,
+    todas,
+    ahora,
+  );
+
+  useEffect(() => {
+    alActualizar?.(opinionesDe(todas, choferId));
+  }, [alActualizar, choferId, todas]);
 
   async function enviar() {
     if (!opinionValida(estrellas, comentario)) {
@@ -55,7 +76,13 @@ export function OpinionesChofer({ choferId }: PropiedadesOpinionesChofer) {
       return;
     }
     establecerError(false);
-    const lista = await guardarOpinion({ choferId, comentario, estrellas });
+    if (boletoId === null) return;
+    const lista = await guardarOpinion({
+      boletoId,
+      choferId,
+      comentario,
+      estrellas,
+    });
     establecerTodas(lista);
     establecerEstrellas(0);
     establecerComentario('');
@@ -102,6 +129,13 @@ export function OpinionesChofer({ choferId }: PropiedadesOpinionesChofer) {
                   />
                 ))}
               </View>
+              {opinion.boletoId !== undefined && (
+                <Text
+                  style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
+                >
+                  {t('opiniones.viajoConEl')}
+                </Text>
+              )}
               {opinion.comentario !== '' && (
                 <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
                   {opinion.comentario}
@@ -112,60 +146,67 @@ export function OpinionesChofer({ choferId }: PropiedadesOpinionesChofer) {
         ))
       )}
 
-      <Bloque estiloContenido={estilos.formulario}>
-        <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
-          {t('opiniones.dejar')}
-        </Text>
-        <View style={estilos.fila}>
-          {[1, 2, 3, 4, 5].map((n) => (
-            <Pressable
-              accessibilityLabel={`${n} ${t('opiniones.estrellas')}`}
-              accessibilityRole="button"
-              accessibilityState={{ selected: estrellas === n }}
-              hitSlop={6}
-              key={n}
-              onPress={() => {
-                vibrar();
-                establecerEstrellas(n);
-              }}
-              style={estilos.estrella}
-            >
-              <Rebote activo={n <= estrellas}>
-                <Icono
-                  color={n <= estrellas ? undefined : colores.linea}
-                  nombre="estrella"
-                  tamano="ilustracion"
-                />
-              </Rebote>
-            </Pressable>
-          ))}
-        </View>
-        <CampoTexto
-          alCambiar={establecerComentario}
-          error={
-            error
-              ? estrellas === 0
-                ? t('opiniones.faltaEstrellas')
-                : t('opiniones.muyLargo')
-              : undefined
-          }
-          etiqueta={t('opiniones.comentario')}
-          marcador={t('opiniones.marcador')}
-          valor={comentario}
-        />
-        <BotonAccion
-          alPresionar={() => void enviar()}
-          etiqueta={t('opiniones.enviar')}
-        />
-        {enviada && (
+      {boletoId === null ? (
+        enviada ? (
           <Text
             accessibilityLiveRegion="polite"
             style={[tipografia.pequeno, { color: colores.aTiempo }]}
           >
             {t('opiniones.gracias')}
           </Text>
-        )}
-      </Bloque>
+        ) : (
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {t('opiniones.soloConBoleto')}
+          </Text>
+        )
+      ) : (
+        <Bloque estiloContenido={estilos.formulario}>
+          <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+            {t('opiniones.dejar')}
+          </Text>
+          <View style={estilos.fila}>
+            {[1, 2, 3, 4, 5].map((n) => (
+              <Pressable
+                accessibilityLabel={`${n} ${t('opiniones.estrellas')}`}
+                accessibilityRole="button"
+                accessibilityState={{ selected: estrellas === n }}
+                hitSlop={6}
+                key={n}
+                onPress={() => {
+                  vibrar();
+                  establecerEstrellas(n);
+                }}
+                style={estilos.estrella}
+              >
+                <Rebote activo={n <= estrellas}>
+                  <Icono
+                    color={n <= estrellas ? undefined : colores.linea}
+                    nombre="estrella"
+                    tamano="ilustracion"
+                  />
+                </Rebote>
+              </Pressable>
+            ))}
+          </View>
+          <CampoTexto
+            alCambiar={establecerComentario}
+            error={
+              error
+                ? estrellas === 0
+                  ? t('opiniones.faltaEstrellas')
+                  : t('opiniones.muyLargo')
+                : undefined
+            }
+            etiqueta={t('opiniones.comentario')}
+            marcador={t('opiniones.marcador')}
+            valor={comentario}
+          />
+          <BotonAccion
+            alPresionar={() => void enviar()}
+            etiqueta={t('opiniones.enviar')}
+          />
+        </Bloque>
+      )}
 
       {reportado ? (
         <Text

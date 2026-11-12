@@ -242,6 +242,9 @@ export const textos = {
     faltaEstrellas: 'Elegí de 1 a 5 estrellas.',
     muyLargo: 'El comentario puede tener hasta 280 letras.',
     gracias: 'Gracias, tu opinión quedó guardada en este teléfono.',
+    viajoConEl: 'Viajó con este chofer',
+    soloConBoleto:
+      'Podés opinar cuando termine un viaje con este chofer, una vez por boleto.',
     reportar: 'Reportar a este chofer',
     motivo: 'Motivo del reporte',
     reporteEnviado:

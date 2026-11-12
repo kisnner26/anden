@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -6,6 +7,7 @@ import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
 import { OpinionesChofer } from '@/componentes/OpinionesChofer';
+import { notaConOpiniones, type Opinion } from '@/datos/opiniones';
 import { usePerfilChofer } from '@/datos/useDetalleViaje';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -53,6 +55,7 @@ export function PerfilChofer({ alVolver, choferId }: PropiedadesPerfilChofer) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const perfil = usePerfilChofer(choferId);
+  const [propias, establecerPropias] = useState<Opinion[]>([]);
 
   if (!perfil) {
     return (
@@ -63,6 +66,11 @@ export function PerfilChofer({ alVolver, choferId }: PropiedadesPerfilChofer) {
       </View>
     );
   }
+
+  const nota = notaConOpiniones(
+    { promedio: perfil.promedio, total: perfil.totalCalificaciones },
+    propias,
+  );
 
   return (
     <ScrollView
@@ -122,8 +130,8 @@ export function PerfilChofer({ alVolver, choferId }: PropiedadesPerfilChofer) {
         />
         <Cifra
           etiqueta={t('chofer.calificacion')}
-          icono={perfil.promedio !== null}
-          valor={perfil.promedio === null ? '—' : String(perfil.promedio)}
+          icono={nota.promedio !== null}
+          valor={nota.promedio === null ? '—' : String(nota.promedio)}
         />
       </View>
 
@@ -151,7 +159,7 @@ export function PerfilChofer({ alVolver, choferId }: PropiedadesPerfilChofer) {
           </Bloque>
         ))
       )}
-      <OpinionesChofer choferId={choferId} />
+      <OpinionesChofer alActualizar={establecerPropias} choferId={choferId} />
       <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
         {t('chofer.nota')}
       </Text>
