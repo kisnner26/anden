@@ -270,7 +270,7 @@ export function Buscador({
         {buscando && resultados.length === 0 && (
           <Bloque estiloContenido={estilos.vacio}>
             <Autobus ancho={150} />
-            <Text style={[estilos.vacioTitulo, { color: colores.tinta }]}>
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
               {t('buscador.sinResultadosTitulo')}
             </Text>
             <Text
@@ -318,10 +318,5 @@ const estilos = StyleSheet.create({
     alignItems: 'center',
     gap: espacios.dieciseis,
     padding: espacios.treintaYDos,
-  },
-  vacioTitulo: {
-    fontFamily: 'Archivo_600SemiBold',
-    fontSize: 20,
-    lineHeight: 26,
   },
 });
