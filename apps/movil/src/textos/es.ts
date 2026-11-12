@@ -67,6 +67,8 @@ export const textos = {
     proximas: 'Próximas',
     sinSalidas: 'No hay salidas con este filtro.',
     proximaSalida: 'Próxima salida',
+    mostrar: 'Mostrar',
+    servicio: 'Servicio',
     saleEn: 'Sale en',
     minutos: 'min',
     favoritas: 'Mis rutas',

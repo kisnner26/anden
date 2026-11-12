@@ -177,6 +177,9 @@ export function Horarios({
           />
         ))}
       </ScrollView>
+      <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+        {t('horarios.mostrar')}
+      </Text>
       <ScrollView
         contentContainerStyle={estilos.filtros}
         horizontal
@@ -192,6 +195,15 @@ export function Horarios({
           etiqueta={t('horarios.proximas')}
           seleccionado={soloProximas}
         />
+      </ScrollView>
+      <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+        {t('horarios.servicio')}
+      </Text>
+      <ScrollView
+        contentContainerStyle={estilos.filtros}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      >
         {FILTROS.map(({ clave, etiqueta }) => (
           <Chip
             alCambiar={() => establecerFiltro(clave)}
