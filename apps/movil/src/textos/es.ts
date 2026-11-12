@@ -422,6 +422,7 @@ export const textos = {
     cierreSeguir: 'Seguir cobrando',
     cerrarSinCompartir: 'Cerrar el viaje y ver el resumen',
     cerrado: 'Viaje cerrado',
+    cerradoCorto: 'Cerrado · cobrado C$ {cobrado}',
     cerradoEl: 'Cerrado a las {hora}',
     cerrarHoja: 'Cerrar resumen',
     saludo: 'Hola, {nombre}',

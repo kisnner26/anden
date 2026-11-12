@@ -7,6 +7,7 @@ import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
 import { formatoHora, sufijoHora } from '@/datos/formato';
 import { salidasDeChofer, salidasDelDia } from '@/datos/salidas';
+import { useCierres } from '@/datos/useCierres';
 import { useSesion } from '@/datos/useSesion';
 import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
 import { useViajesEnVivo } from '@/datos/useTransmision';
@@ -32,6 +33,7 @@ export function ConductorInicio({
   const { cerrar, sesion } = useSesion();
   const ahora = useAhora();
   const enVivo = useViajesEnVivo();
+  const { cierreDe } = useCierres();
   const viajes = sesion?.choferId
     ? salidasDelDia(
         salidasDeChofer(obtenerMuestra(), ahora, sesion.choferId),
@@ -98,6 +100,15 @@ export function ConductorInicio({
                   >
                     {`${t(`servicios.${viaje.servicio}`)} · ${t('viajar.andenMayusculas').toLowerCase()} ${viaje.anden} · ${viaje.placa}`}
                   </Text>
+                  {cierreDe(viaje.viajeId) && (
+                    <Text
+                      style={[tipografia.etiqueta, { color: colores.aTiempo }]}
+                    >
+                      {rellenar(t('conductor.cerradoCorto'), {
+                        cobrado: cierreDe(viaje.viajeId)?.cobrado ?? 0,
+                      })}
+                    </Text>
+                  )}
                   {transmitiendo && (
                     <Text
                       style={[
