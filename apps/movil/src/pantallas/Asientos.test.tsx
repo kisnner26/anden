@@ -2,7 +2,8 @@ import { afterEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent } from '@testing-library/react-native';
 
 import { VIAJE_BOACO } from '@/datos/muestra';
-import { reiniciarMuestra } from '@/datos/useSalidas';
+import { formatoFechaCorta } from '@/datos/formato';
+import { obtenerMuestra, reiniciarMuestra } from '@/datos/useSalidas';
 import { renderPantalla } from '@/pruebas/render';
 
 import { Asientos } from './Asientos';
@@ -101,5 +102,30 @@ describe('Asientos', () => {
     expect(pantalla.getAllByText('Elegí al menos un asiento')).toHaveLength(1);
     expect(pantalla.getByText('Total')).toBeTruthy();
     expect(pantalla.getByText('C$ 0')).toBeTruthy();
+  });
+
+  it('permite reservar un viaje de otro día y dice qué día es', async () => {
+    const manana = obtenerMuestra().viajes.find(
+      (viaje) => viaje.id === 'via_d1_0_0',
+    );
+    expect(manana).toBeDefined();
+    const pantalla = await renderPantalla(
+      <Asientos
+        alSeguir={() => undefined}
+        alVolver={() => undefined}
+        viajeId={manana!.id}
+      />,
+    );
+    expect(
+      pantalla.getByText(
+        new RegExp(formatoFechaCorta(new Date(manana!.salida))),
+      ),
+    ).toBeTruthy();
+    // un viaje de mañana tiene todos los asientos libres
+    await fireEvent.press(pantalla.getByLabelText(/^Asiento 2, .*libre$/));
+    expect(pantalla.getByText('C$ 70')).toBeTruthy();
+    expect(
+      pantalla.getByRole('button', { name: 'Seguir' }).props.accessibilityState,
+    ).toMatchObject({ disabled: false });
   });
 });

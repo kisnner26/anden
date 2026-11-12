@@ -43,6 +43,23 @@ describe('ProveedorBoletos', () => {
     expect(guardado).toContain('Ana Ruiz');
   });
 
+  it('reserva un viaje de otro día y guarda su fecha y su hora', async () => {
+    const { result } = await renderHook(() => useBoletos(), {
+      wrapper: Envoltorio,
+    });
+    await waitFor(() => expect(result.current.cargando).toBe(false));
+    const manana = obtenerMuestra().viajes.find(
+      (viaje) => viaje.id === 'via_d1_0_0',
+    )!;
+    let resultado;
+    await act(async () => {
+      resultado = await result.current.reservar(manana.id, PASAJEROS);
+    });
+    expect(resultado).toMatchObject({ ok: true });
+    expect(result.current.boletos[0]?.resumen.salida).toBe(manana.salida);
+    expect(result.current.boletos[0]?.boleto.viajeId).toBe(manana.id);
+  });
+
   it('marca el asiento reservado como vendido en la muestra', async () => {
     const { result } = await renderHook(() => useBoletos(), {
       wrapper: Envoltorio,
