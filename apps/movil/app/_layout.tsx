@@ -21,7 +21,6 @@ import { ProveedorFavoritos } from '@/datos/ProveedorFavoritos';
 import { ProveedorPagos } from '@/datos/ProveedorPagos';
 import { ProveedorSesion } from '@/datos/ProveedorSesion';
 import { ProveedorRecordatorios } from '@/datos/ProveedorRecordatorios';
-import { ProveedorMascota } from '@/datos/ProveedorMascota';
 import { ProveedorPerfil } from '@/datos/ProveedorPerfil';
 import { ProveedorReserva } from '@/datos/ProveedorReserva';
 import { ProveedorUbicacion } from '@/datos/ProveedorUbicacion';
@@ -57,25 +56,23 @@ export default function DisenoRaiz() {
       <ProveedorModoUso>
         <ProveedorSesion>
           <ProveedorBloqueo>
-            <ProveedorMascota>
-              <ProveedorPerfil>
-                <ProveedorBoletos>
-                  <ProveedorAvisos>
-                    <ProveedorUbicacion>
-                      <ProveedorReserva>
-                        <ProveedorFavoritos>
-                          <ProveedorRecordatorios>
-                            <ProveedorPagos>
-                              <Stack screenOptions={{ headerShown: false }} />
-                            </ProveedorPagos>
-                          </ProveedorRecordatorios>
-                        </ProveedorFavoritos>
-                      </ProveedorReserva>
-                    </ProveedorUbicacion>
-                  </ProveedorAvisos>
-                </ProveedorBoletos>
-              </ProveedorPerfil>
-            </ProveedorMascota>
+            <ProveedorPerfil>
+              <ProveedorBoletos>
+                <ProveedorAvisos>
+                  <ProveedorUbicacion>
+                    <ProveedorReserva>
+                      <ProveedorFavoritos>
+                        <ProveedorRecordatorios>
+                          <ProveedorPagos>
+                            <Stack screenOptions={{ headerShown: false }} />
+                          </ProveedorPagos>
+                        </ProveedorRecordatorios>
+                      </ProveedorFavoritos>
+                    </ProveedorReserva>
+                  </ProveedorUbicacion>
+                </ProveedorAvisos>
+              </ProveedorBoletos>
+            </ProveedorPerfil>
             <PuertaBloqueo />
           </ProveedorBloqueo>
         </ProveedorSesion>
