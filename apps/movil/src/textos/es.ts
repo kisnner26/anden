@@ -61,6 +61,10 @@ export const textos = {
     agregarPasajero: 'Agregar pasajero',
     quitarPasajero: 'Quitar pasajero',
     usarUbicacion: 'Usar mi ubicación',
+    comoLlegar: 'Cómo llegar',
+    comoLlegarAyuda: 'Abre Apple Maps con indicaciones hacia {{terminal}}',
+    terminalEtiqueta: 'Terminal de salida',
+    mapasNoAbrio: 'No pudimos abrir Apple Maps.',
     ubicacionCercana: 'Terminal más cercana',
     ubicacionDistancia: 'a {{km}} km de vos',
     ubicacionDenegada:
