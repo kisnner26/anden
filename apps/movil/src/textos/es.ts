@@ -60,6 +60,22 @@ export const textos = {
     mapasNoAbrio: 'No pudimos abrir Apple Maps.',
     sinSalidasOrigen: 'Sin salidas de muestra desde esta terminal.',
   },
+  plus: {
+    entrada: 'Andén Plus',
+    entradaActivo: 'Plus activo',
+    entradaDetalle: 'US$ 5 al mes',
+    titulo: 'Andén Plus',
+    precio: 'US$ 5',
+    periodo: 'al mes',
+    detalle:
+      'Una suscripción para sacarle más a Andén. Los beneficios los vamos sumando; quien se suscribe los recibe todos.',
+    estadoGratis: 'Estás en el plan gratis.',
+    estadoPlus: 'Tenés Plus desde {{fecha}}.',
+    activar: 'Activar Plus',
+    cancelar: 'Cancelar Plus',
+    notaPrueba:
+      'Por ahora Plus se activa sin cobro: el pago dentro de la app llega antes de publicarla.',
+  },
   encomiendas: {
     titulo: 'Encomiendas',
     detalle:
