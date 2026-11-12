@@ -122,7 +122,6 @@ export const textos = {
     llega: 'Llega',
     mapaDescripcion: 'Mapa del recorrido de esta salida',
     duracion: 'Duración',
-    distancia: 'Distancia',
     km: 'km',
     unidad: 'Unidad',
     placa: 'Placa',
