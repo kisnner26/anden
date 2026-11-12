@@ -55,6 +55,20 @@ export const textos = {
     mapasNoAbrio: 'No pudimos abrir Apple Maps.',
     sinSalidasOrigen: 'Sin salidas de muestra desde esta terminal.',
   },
+  objetos: {
+    reportar: 'Reportar un objeto olvidado',
+    titulo: 'Objeto olvidado',
+    detalle:
+      'Contá qué dejaste en el bus y dónde. Lo guardamos para avisar al conductor.',
+    campo: 'Qué dejaste',
+    marcador: 'Por ejemplo: mochila azul debajo del asiento 8',
+    enviar: 'Guardar reporte',
+    invalido: 'Escribí qué dejaste, en pocas palabras.',
+    enviado:
+      'Reporte guardado. Todavía no hay servidor: lo vas a ver acá y se lo avisaremos al conductor cuando haya conexión.',
+    previos: 'Tus reportes de este viaje',
+    cerrar: 'Cerrar',
+  },
   habitual: {
     titulo: 'Mi viaje habitual',
     proxima: 'Próxima: {cuando}',
