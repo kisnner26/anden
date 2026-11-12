@@ -50,8 +50,7 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
   return (
     <MarcoPestana>
       <Text style={[tipografia.titularPantalla, { color: colores.tinta }]}>
-        {t('boletos.titulo')}
-        <Text style={{ color: colores.ambarTitular }}>.</Text>
+        {t('boletos.titulo')}.
       </Text>
 
       {boletos.length === 0 ? (

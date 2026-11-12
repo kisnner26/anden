@@ -56,8 +56,7 @@ export function ConductorInicio({
         {rellenar(t('conductor.saludo'), { nombre: sesion?.nombre ?? '' })}
       </Text>
       <Text style={[tipografia.display, { color: colores.tinta }]}>
-        {t('conductor.titulo')}
-        <Text style={{ color: colores.ambarTitular }}>.</Text>
+        {t('conductor.titulo')}.
       </Text>
       <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
         {t('conductor.detalle')}

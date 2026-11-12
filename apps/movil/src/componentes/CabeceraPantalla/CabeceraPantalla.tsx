@@ -42,7 +42,7 @@ export function CabeceraPantalla({
         style={[tipografia.titularPantalla, { color: colores.tinta }]}
       >
         {titulo}
-        <Text style={{ color: colores.ambarTitular }}>{resalte}</Text>
+        {resalte}
       </Text>
     </View>
   );

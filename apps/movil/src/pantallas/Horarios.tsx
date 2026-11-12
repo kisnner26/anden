@@ -116,8 +116,7 @@ export function Horarios({
     <MarcoPestana>
       <View style={estilos.cabecera}>
         <Text style={[tipografia.display, { color: colores.tinta }]}>
-          {t('horarios.titulo')}
-          <Text style={{ color: colores.ambarTitular }}>.</Text>
+          {t('horarios.titulo')}.
         </Text>
         <Pressable
           accessibilityLabel={t('horarios.buscar')}

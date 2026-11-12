@@ -78,8 +78,7 @@ export function Ingresar({
           accessibilityRole="header"
           style={[tipografia.titularPantalla, { color: colores.tinta }]}
         >
-          {t('ingresar.titulo')}
-          <Text style={{ color: colores.ambarTitular }}>.</Text>
+          {t('ingresar.titulo')}.
         </Text>
         <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
           {t('ingresar.detalle')}

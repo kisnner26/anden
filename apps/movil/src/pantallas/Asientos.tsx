@@ -117,9 +117,7 @@ export function Asientos({ alSeguir, alVolver, viajeId }: PropiedadesAsientos) {
           ]}
         >
           {`${t('asientos.tituloInicio')} `}
-          <Text style={{ color: colores.ambarTitular }}>
-            {t('asientos.tituloResalte')}
-          </Text>
+          {t('asientos.tituloResalte')}
         </Text>
         <Text
           style={[

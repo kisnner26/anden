@@ -84,8 +84,7 @@ export function CrearCuenta({ alTerminar }: PropiedadesCrearCuenta) {
           <Autobus ancho={ANCHO_BUS} letrero="ANDÉN" />
         </View>
         <Text style={[tipografia.display, { color: colores.tinta }]}>
-          {t('cuenta.titulo')}
-          <Text style={{ color: colores.ambarTitular }}>.</Text>
+          {t('cuenta.titulo')}.
         </Text>
         <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
           {t('cuenta.detalle')}

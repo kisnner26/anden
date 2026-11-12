@@ -45,8 +45,7 @@ export function Rutas({ alAbrirEncomiendas, alAbrirRuta }: PropiedadesRutas) {
       <View style={estilos.cabecera}>
         <View style={estilos.titular}>
           <Text style={[tipografia.display, { color: colores.tinta }]}>
-            {t('rutas.titulo')}
-            <Text style={{ color: colores.ambarTitular }}>.</Text>
+            {t('rutas.titulo')}.
           </Text>
           <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
             {t('rutas.detalle')}

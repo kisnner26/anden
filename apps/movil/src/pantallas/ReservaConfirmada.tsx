@@ -109,8 +109,7 @@ export function ReservaConfirmada({
           </View>
           <Aparece indice={2}>
             <Text style={[tipografia.display, { color: colores.tinta }]}>
-              {t('pago.confirmadaTitulo')}
-              <Text style={{ color: colores.ambarTitular }}>.</Text>
+              {t('pago.confirmadaTitulo')}.
             </Text>
           </Aparece>
           <Aparece indice={3}>

@@ -133,8 +133,7 @@ export function Ajustes({
       </Pressable>
 
       <Text style={[tipografia.display, { color: colores.tinta }]}>
-        {t('ajustes.titulo')}
-        <Text style={{ color: colores.ambarTitular }}>.</Text>
+        {t('ajustes.titulo')}.
       </Text>
       <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
         {t('ajustes.detalle')}
