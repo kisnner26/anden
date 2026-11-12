@@ -126,7 +126,7 @@ export function Pasajeros({
         {asientos.map((asiento, indice) => (
           <Aparece indice={indice} key={asiento}>
             <Bloque estiloContenido={estilos.bloque}>
-              <Text style={[estilos.asiento, { color: colores.tinta }]}>
+              <Text style={[tipografia.nombreFila, { color: colores.tinta }]}>
                 {`${t('pasajeros.asiento')} ${asiento}`}
               </Text>
               <CampoTexto
@@ -179,7 +179,6 @@ export function Pasajeros({
 }
 
 const estilos = StyleSheet.create({
-  asiento: { fontFamily: 'Archivo_600SemiBold', fontSize: 18, lineHeight: 22 },
   bloque: { gap: espacios.dieciseis, padding: espacios.veinticuatro },
   boton: { alignItems: 'flex-end' },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: espacios.ocho },
