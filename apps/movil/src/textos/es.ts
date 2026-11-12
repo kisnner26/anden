@@ -180,6 +180,29 @@ export const textos = {
       limpio: 'Limpio',
     },
   },
+  opiniones: {
+    titulo: 'Opiniones',
+    vacio: 'Todavía nadie dejó un comentario. Podés ser la primera persona.',
+    dejar: 'Dejá tu opinión',
+    estrellas: 'estrellas',
+    deCinco: 'de 5 estrellas',
+    comentario: 'Comentario (opcional)',
+    marcador: 'Contá cómo fue el viaje',
+    enviar: 'Enviar opinión',
+    faltaEstrellas: 'Elegí de 1 a 5 estrellas.',
+    muyLargo: 'El comentario puede tener hasta 280 letras.',
+    gracias: 'Gracias, tu opinión quedó guardada en este teléfono.',
+    reportar: 'Reportar a este chofer',
+    motivo: 'Motivo del reporte',
+    reporteEnviado:
+      'Reporte guardado. Lo vamos a revisar cuando haya conexión con el servidor.',
+    motivos: {
+      'manejo-peligroso': 'Manejo peligroso',
+      'cobro-indebido': 'Cobro indebido',
+      maltrato: 'Maltrato',
+      otro: 'Otro',
+    },
+  },
   pasajeros: {
     titulo: 'Pasajeros',
     detalle:
