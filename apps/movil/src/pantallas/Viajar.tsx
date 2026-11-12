@@ -10,6 +10,7 @@ import { Aparece } from '@/componentes/Aparece';
 import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
+import { TarjetaHabitual } from '@/componentes/TarjetaHabitual';
 import { TarjetaProximoViaje } from '@/componentes/TarjetaProximoViaje';
 import { iniciales, nombrePropio } from '@/datos/perfil';
 import { useAvisos } from '@/datos/useAvisos';
@@ -18,6 +19,8 @@ import { usePreferenciaUbicacion } from '@/datos/ProveedorUbicacion';
 import { useUbicacionCercana } from '@/datos/useUbicacionCercana';
 import { useSalidas } from '@/datos/useSalidas';
 import { inicioDelDia } from '@/datos/dias';
+import { proximaDelHabitual } from '@/datos/habituales';
+import { useHabituales } from '@/datos/useHabituales';
 import { proximaSalida } from '@/datos/salidas';
 import { espacios, tamanosControl } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
@@ -49,6 +52,8 @@ export function Viajar({
   const [origenId, establecerOrigenId] = useState('ter_may');
   const hoy = useMemo(() => inicioDelDia(new Date()), []);
   const { ahora, datos, salidas } = useSalidas(origenId, hoy);
+  const { habituales, quitar: quitarHabitual } = useHabituales();
+  const { salidas: todasLasSalidas } = useSalidas();
   const { noLeidos } = useAvisos();
   const preferenciaUbicacion = usePreferenciaUbicacion();
   const ubicacionResuelta = useRef(false);
@@ -148,6 +153,17 @@ export function Viajar({
           {t('viajar.sinSalidas')}
         </Text>
       )}
+
+      {habituales.map((habitual) => (
+        <TarjetaHabitual
+          ahora={ahora}
+          alQuitar={() => void quitarHabitual(habitual.id)}
+          alReservar={alAbrirViaje}
+          habitual={habitual}
+          key={habitual.id}
+          proxima={proximaDelHabitual(habitual, todasLasSalidas, ahora)}
+        />
+      ))}
 
       <View style={estilos.seccion}>
         <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
