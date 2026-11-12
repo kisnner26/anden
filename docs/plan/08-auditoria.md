@@ -200,6 +200,8 @@ Agregá una prueba por cada caso, en un commit `test:` propio:
 3. `src/pantallas/Rutas.tsx`: con un favorito guardado en `anden.favoritos`, ese corredor sale primero en su grupo.
 4. `src/componentes/Campaneo` y `src/componentes/Rebote`: con modo Rápido no animan (mismo patrón que T-132).
 
+**Hecho cuando.** Las cuatro pruebas existen, pasan, y cada una falla si se rompe a propósito lo que prueba.
+
 ---
 
 ## no hacer en esta lista
