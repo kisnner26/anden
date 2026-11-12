@@ -5,8 +5,13 @@ import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
-/** aviso de que las tarifas son de muestra mientras no esté cargado el tarifario oficial del MTI */
-export function EtiquetaMuestra() {
+export interface PropiedadesEtiquetaMuestra {
+  /** texto del aviso; por defecto el de las tarifas de muestra */
+  texto?: string;
+}
+
+/** aviso de que un dato es de muestra; por defecto, que las tarifas lo son mientras no esté el tarifario oficial del MTI */
+export function EtiquetaMuestra({ texto }: PropiedadesEtiquetaMuestra = {}) {
   const { colores } = useTema();
 
   return (
@@ -18,7 +23,7 @@ export function EtiquetaMuestra() {
     >
       <View style={[estilos.punto, { backgroundColor: colores.ambar }]} />
       <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
-        {t('viajar.tarifasMuestra')}
+        {texto ?? t('viajar.tarifasMuestra')}
       </Text>
     </Bloque>
   );
