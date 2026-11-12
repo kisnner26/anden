@@ -11,6 +11,7 @@ import {
 } from '@expo-google-fonts/jetbrains-mono';
 import { useFonts } from 'expo-font';
 import { AdaptacionPorEdad } from '@/datos/AdaptacionPorEdad';
+import { ProveedorSuscripcion } from '@/datos/ProveedorSuscripcion';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
@@ -59,51 +60,55 @@ export default function DisenoRaiz() {
     <ProveedorTema>
       <ProveedorModoUso>
         <ProveedorSesion>
-          <ProveedorBloqueo>
-            <ProveedorPerfil>
-              <AdaptacionPorEdad />
-              <ProveedorBoletos>
-                <ProveedorEspera>
-                  <ProveedorAvisos>
-                    <ProveedorUbicacion>
-                      <ProveedorReserva>
-                        <ProveedorFavoritos>
-                          <ProveedorHabituales>
-                            <ProveedorRecordatorios>
-                              <ProveedorPagos>
-                                <ProveedorCierres>
-                                  <Stack screenOptions={{ headerShown: false }}>
-                                    <Stack.Screen
-                                      name="boleto/[id]"
-                                      options={{
-                                        animation: 'fade_from_bottom',
-                                        animationDuration: 420,
-                                      }}
-                                    />
-                                    <Stack.Screen
-                                      name="ingresar"
-                                      options={{ animation: 'fade' }}
-                                    />
-                                    <Stack.Screen
-                                      name="buscar"
-                                      options={{
-                                        animation: 'fade_from_bottom',
-                                      }}
-                                    />
-                                  </Stack>
-                                </ProveedorCierres>
-                              </ProveedorPagos>
-                            </ProveedorRecordatorios>
-                          </ProveedorHabituales>
-                        </ProveedorFavoritos>
-                      </ProveedorReserva>
-                    </ProveedorUbicacion>
-                  </ProveedorAvisos>
-                </ProveedorEspera>
-              </ProveedorBoletos>
-            </ProveedorPerfil>
-            <PuertaBloqueo />
-          </ProveedorBloqueo>
+          <ProveedorSuscripcion>
+            <ProveedorBloqueo>
+              <ProveedorPerfil>
+                <AdaptacionPorEdad />
+                <ProveedorBoletos>
+                  <ProveedorEspera>
+                    <ProveedorAvisos>
+                      <ProveedorUbicacion>
+                        <ProveedorReserva>
+                          <ProveedorFavoritos>
+                            <ProveedorHabituales>
+                              <ProveedorRecordatorios>
+                                <ProveedorPagos>
+                                  <ProveedorCierres>
+                                    <Stack
+                                      screenOptions={{ headerShown: false }}
+                                    >
+                                      <Stack.Screen
+                                        name="boleto/[id]"
+                                        options={{
+                                          animation: 'fade_from_bottom',
+                                          animationDuration: 420,
+                                        }}
+                                      />
+                                      <Stack.Screen
+                                        name="ingresar"
+                                        options={{ animation: 'fade' }}
+                                      />
+                                      <Stack.Screen
+                                        name="buscar"
+                                        options={{
+                                          animation: 'fade_from_bottom',
+                                        }}
+                                      />
+                                    </Stack>
+                                  </ProveedorCierres>
+                                </ProveedorPagos>
+                              </ProveedorRecordatorios>
+                            </ProveedorHabituales>
+                          </ProveedorFavoritos>
+                        </ProveedorReserva>
+                      </ProveedorUbicacion>
+                    </ProveedorAvisos>
+                  </ProveedorEspera>
+                </ProveedorBoletos>
+              </ProveedorPerfil>
+              <PuertaBloqueo />
+            </ProveedorBloqueo>
+          </ProveedorSuscripcion>
         </ProveedorSesion>
       </ProveedorModoUso>
     </ProveedorTema>

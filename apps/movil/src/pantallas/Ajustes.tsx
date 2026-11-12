@@ -26,6 +26,7 @@ import {
 import { MODOS_USO, type ModoUso } from '@/tema/modoUso';
 import { tipografia } from '@/tema/tipografia';
 import { useSesion } from '@/datos/useSesion';
+import { useSuscripcion } from '@/datos/useSuscripcion';
 import { useModoUso } from '@/tema/useModoUso';
 import { useTema, type PreferenciaTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
@@ -36,6 +37,7 @@ export interface PropiedadesAjustes {
   /** se llama al cerrar la sesión, para volver al ingreso */
   alSalir?: () => void;
   alAbrirPerfil?: () => void;
+  alAbrirPlus?: () => void;
   alVolver: () => void;
 }
 
@@ -84,9 +86,11 @@ export function Ajustes({
   alAbrirIngreso,
   alSalir,
   alAbrirPerfil,
+  alAbrirPlus,
   alVolver,
 }: PropiedadesAjustes) {
   const { cerrar, sesion } = useSesion();
+  const { plus } = useSuscripcion();
   const { colores, establecerPreferencia, preferencia } = useTema();
   const { perfil } = usePerfil();
   const ubicacion = usePreferenciaUbicacion();
@@ -157,6 +161,24 @@ export function Ajustes({
             </Text>
             <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
               {t('perfil.entrada')}
+            </Text>
+          </View>
+          <Icono nombre="siguiente" tamano="mediano" />
+        </Bloque>
+      </Pressable>
+
+      <Pressable
+        accessibilityLabel={t('plus.entrada')}
+        accessibilityRole="button"
+        onPress={alAbrirPlus}
+      >
+        <Bloque estiloContenido={estilos.filaOpcion}>
+          <View style={estilos.texto}>
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+              {plus ? t('plus.entradaActivo') : t('plus.entrada')}
+            </Text>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {t('plus.entradaDetalle')}
             </Text>
           </View>
           <Icono nombre="siguiente" tamano="mediano" />
