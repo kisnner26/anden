@@ -15,10 +15,12 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 
 import { ProveedorAvisos } from '@/datos/ProveedorAvisos';
+import { ProveedorBloqueo } from '@/datos/ProveedorBloqueo';
 import { ProveedorBoletos } from '@/datos/ProveedorBoletos';
 import { ProveedorPerfil } from '@/datos/ProveedorPerfil';
 import { ProveedorReserva } from '@/datos/ProveedorReserva';
 import { ProveedorUbicacion } from '@/datos/ProveedorUbicacion';
+import { PuertaBloqueo } from '@/pantallas/Bloqueo';
 import { ProveedorTema } from '@/tema/ProveedorTema';
 
 void SplashScreen.preventAutoHideAsync();
@@ -46,17 +48,20 @@ export default function DisenoRaiz() {
 
   return (
     <ProveedorTema>
-      <ProveedorPerfil>
-        <ProveedorBoletos>
-          <ProveedorAvisos>
-            <ProveedorUbicacion>
-              <ProveedorReserva>
-                <Stack screenOptions={{ headerShown: false }} />
-              </ProveedorReserva>
-            </ProveedorUbicacion>
-          </ProveedorAvisos>
-        </ProveedorBoletos>
-      </ProveedorPerfil>
+      <ProveedorBloqueo>
+        <ProveedorPerfil>
+          <ProveedorBoletos>
+            <ProveedorAvisos>
+              <ProveedorUbicacion>
+                <ProveedorReserva>
+                  <Stack screenOptions={{ headerShown: false }} />
+                </ProveedorReserva>
+              </ProveedorUbicacion>
+            </ProveedorAvisos>
+          </ProveedorBoletos>
+        </ProveedorPerfil>
+        <PuertaBloqueo />
+      </ProveedorBloqueo>
     </ProveedorTema>
   );
 }
