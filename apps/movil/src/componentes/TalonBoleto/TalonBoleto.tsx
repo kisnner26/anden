@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { Autobus } from '@/componentes/Autobus';
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
 import type { BoletoGuardado } from '@/datos/reserva';
 import { espacios } from '@/tema/espacios';
@@ -21,10 +22,34 @@ export interface PropiedadesTalonBoleto {
   guardado: BoletoGuardado;
 }
 
-function Campo({ etiqueta, valor }: { etiqueta: string; valor: string }) {
+function Casilla({ etiqueta, valor }: { etiqueta: string; valor: string }) {
   const { colores } = useTema();
   return (
-    <View style={estilos.campo}>
+    <View
+      style={[estilos.casilla, { backgroundColor: colores.bloqueNegroClaro }]}
+    >
+      <Text style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}>
+        {etiqueta}
+      </Text>
+      <Text style={[estilos.casillaValor, { color: colores.ambar }]}>
+        {valor}
+      </Text>
+    </View>
+  );
+}
+
+function Campo({
+  completo = false,
+  etiqueta,
+  valor,
+}: {
+  completo?: boolean;
+  etiqueta: string;
+  valor: string;
+}) {
+  const { colores } = useTema();
+  return (
+    <View style={[estilos.campo, completo && estilos.campoCompleto]}>
       <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
         {etiqueta}
       </Text>
@@ -69,34 +94,61 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
       style={[estilos.papel, { backgroundColor: colores.papel }]}
       testID="talon-boleto"
     >
-      <View style={estilos.cuerpo}>
+      <View
+        style={[estilos.cabecera, { backgroundColor: colores.bloqueNegro }]}
+      >
         <View style={estilos.fila}>
-          <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+          <Text
+            style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
+          >
             {`${t('boleto.titulo')} · ${t('boleto.reservado')}`}
           </Text>
-          <Text
-            style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
-          >{`C$ ${boleto.precio}`}</Text>
+          <Text style={[tipografia.dato, { color: colores.ambar }]}>
+            {`C$ ${boleto.precio}`}
+          </Text>
         </View>
-        <Text style={[estilos.destino, { color: colores.tintaPapel }]}>
-          {`${resumen.origen ?? t('horarios.terminal')} → ${resumen.destino}.`}
-        </Text>
-        <View style={estilos.campos}>
-          <Campo
-            etiqueta={t('boleto.sale')}
-            valor={`${formatoFechaCorta(salida)}, ${formatoHoraCompleta(salida)}`}
-          />
-          <Campo etiqueta={t('boleto.anden')} valor={String(resumen.anden)} />
-          <Campo
+        <View style={estilos.destinoYBus}>
+          <View style={estilos.destinoColumna}>
+            <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+              {t('boleto.hacia')}
+            </Text>
+            <Text
+              adjustsFontSizeToFit
+              numberOfLines={1}
+              style={[estilos.destino, { color: colores.sobreNegro }]}
+            >
+              {resumen.destino}
+            </Text>
+            <Text
+              style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
+            >
+              {`${t('boleto.desde')} ${resumen.origen ?? t('horarios.terminal')}`}
+            </Text>
+          </View>
+          <Autobus ancho={118} letrero={resumen.destino.toUpperCase()} />
+        </View>
+        <View style={estilos.fila}>
+          <View
+            style={[
+              estilos.casilla,
+              estilos.casillaSalida,
+              { backgroundColor: colores.bloqueNegroClaro },
+            ]}
+          >
+            <Text
+              style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
+            >
+              {t('boleto.sale')}
+            </Text>
+            <Text style={[tipografia.dato, { color: colores.sobreNegro }]}>
+              {`${formatoFechaCorta(salida)}, ${formatoHoraCompleta(salida)}`}
+            </Text>
+          </View>
+          <Casilla etiqueta={t('boleto.anden')} valor={String(resumen.anden)} />
+          <Casilla
             etiqueta={t('boleto.asiento')}
             valor={String(boleto.asiento)}
           />
-          <Campo
-            etiqueta={t('boleto.pasajero')}
-            valor={boleto.pasajero.nombre}
-          />
-          <Campo etiqueta={t('boleto.placa')} valor={resumen.placa} />
-          <Campo etiqueta={t('boleto.chofer')} valor={resumen.choferNombre} />
         </View>
       </View>
 
@@ -116,6 +168,16 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
             { backgroundColor: colores.fondo },
           ]}
         />
+      </View>
+
+      <View style={[estilos.cuerpo, estilos.pasajeroFila]}>
+        <Campo
+          completo
+          etiqueta={t('boleto.pasajero')}
+          valor={boleto.pasajero.nombre}
+        />
+        <Campo etiqueta={t('boleto.placa')} valor={resumen.placa} />
+        <Campo etiqueta={t('boleto.chofer')} valor={resumen.choferNombre} />
       </View>
 
       <Animated.View style={[estilos.cuerpo, estilos.talon, estiloTalon]}>
@@ -154,21 +216,46 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
 }
 
 const estilos = StyleSheet.create({
-  campo: { gap: 2, width: '48%' },
-  campos: {
+  cabecera: { gap: espacios.dieciseis, padding: espacios.veinticuatro },
+  campo: { flex: 1, gap: 2, minWidth: '40%' },
+  campoCompleto: { flexBasis: '100%', flexGrow: 0 },
+  casilla: {
+    borderRadius: 16,
+    gap: espacios.cuatro,
+    paddingHorizontal: espacios.doce,
+    paddingVertical: espacios.doce,
+  },
+  casillaSalida: { flex: 1 },
+  casillaValor: {
+    fontFamily: 'JetBrainsMono_600SemiBold',
+    fontSize: 22,
+    lineHeight: 26,
+  },
+  destinoColumna: { flex: 1, gap: espacios.cuatro },
+  destinoYBus: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.doce,
+  },
+  pasajeroFila: {
+    columnGap: espacios.doce,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: espacios.doce,
     rowGap: espacios.dieciseis,
   },
   codigo: { flex: 1, gap: espacios.cuatro },
   cuerpo: { gap: espacios.doce, padding: espacios.veinticuatro },
   destino: {
     fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
-    fontSize: 44,
-    lineHeight: 46,
+    fontSize: 52,
+    lineHeight: 54,
   },
-  fila: { flexDirection: 'row', justifyContent: 'space-between' },
+  fila: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.doce,
+    justifyContent: 'space-between',
+  },
   linea: {
     borderStyle: 'dashed',
     borderTopWidth: 2,

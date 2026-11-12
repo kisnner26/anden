@@ -298,6 +298,8 @@ export const textos = {
   boleto: {
     titulo: 'Tu boleto',
     reservado: 'Reservado',
+    hacia: 'Hacia',
+    desde: 'desde',
     pagoAbordar: 'Pagás al abordar',
     sale: 'Sale',
     anden: 'Andén',
