@@ -15,6 +15,8 @@ export const MOTIVOS_REPORTE = [
 export type MotivoReporte = (typeof MOTIVOS_REPORTE)[number];
 
 export interface Opinion {
+  /** el boleto del viaje que respalda la opinión; falta en las guardadas antes de pedirlo */
+  boletoId?: string;
   choferId: string;
   comentario: string;
   creadaEn: string;
@@ -49,6 +51,68 @@ export function opinionesDe(
   return opiniones
     .filter((opinion) => opinion.choferId === choferId)
     .sort((a, b) => b.creadaEn.localeCompare(a.creadaEn));
+}
+
+export interface BoletoParaOpinar {
+  estado: string;
+  id: string;
+  viajeId: string;
+}
+
+export interface ViajeParaOpinar {
+  choferId: string;
+  id: string;
+  salida: string;
+}
+
+/**
+ * el boleto con el que se puede opinar sobre un chofer: no cancelado, de un viaje suyo que ya
+ * salió, y sin opinión previa; una opinión por boleto. nulo si no hay ninguno.
+ */
+export function boletoParaOpinar(
+  boletos: readonly BoletoParaOpinar[],
+  viajes: readonly ViajeParaOpinar[],
+  choferId: string,
+  opiniones: readonly Opinion[],
+  ahora: Date,
+): string | null {
+  const usados = new Set(opiniones.map((opinion) => opinion.boletoId));
+  const elegible = boletos.find((boleto) => {
+    if (boleto.estado === 'cancelado' || usados.has(boleto.id)) return false;
+    const viaje = viajes.find((candidato) => candidato.id === boleto.viajeId);
+    return (
+      viaje !== undefined &&
+      viaje.choferId === choferId &&
+      new Date(viaje.salida).getTime() <= ahora.getTime()
+    );
+  });
+  return elegible?.id ?? null;
+}
+
+export interface NotaChofer {
+  promedio: number | null;
+  total: number;
+}
+
+/**
+ * suma las opiniones de este teléfono a la nota del chofer; sin nota base solo se muestra una
+ * nota si hay al menos cinco, igual que en el dominio
+ */
+export function notaConOpiniones(
+  base: NotaChofer,
+  propias: readonly Opinion[],
+): NotaChofer {
+  const total = base.total + propias.length;
+  const sumaPropias = propias.reduce((suma, o) => suma + o.estrellas, 0);
+  if (base.promedio !== null) {
+    const media = (base.promedio * base.total + sumaPropias) / total;
+    return { promedio: Math.round(media * 10) / 10, total };
+  }
+  if (propias.length < 5) return { promedio: null, total };
+  return {
+    promedio: Math.round((sumaPropias / propias.length) * 10) / 10,
+    total,
+  };
 }
 
 async function leerLista<T>(clave: string): Promise<T[]> {
