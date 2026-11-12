@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
   withRepeat,
   withSequence,
@@ -19,6 +18,8 @@ import { useMascota } from '@/datos/useMascota';
 import { espacios } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
+import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
+import { useModoUso } from '@/tema/useModoUso';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
@@ -39,8 +40,10 @@ export function MascotaBienvenida({
   proximaSalida,
 }: PropiedadesMascotaBienvenida) {
   const { colores } = useTema();
-  const { activa } = useMascota();
-  const reducir = useReducedMotion();
+  const { activa: encendida } = useMascota();
+  const { ajustes } = useModoUso();
+  const activa = encendida && ajustes.mostrarMascota;
+  const reducir = useMovimientoReducido();
   const meceo = useSharedValue(0);
   const rebote = useSharedValue(1);
   const [tocada, establecerTocada] = useState(false);
