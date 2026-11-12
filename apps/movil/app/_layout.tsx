@@ -19,6 +19,7 @@ import { ProveedorBloqueo } from '@/datos/ProveedorBloqueo';
 import { ProveedorBoletos } from '@/datos/ProveedorBoletos';
 import { ProveedorHabituales } from '@/datos/ProveedorHabituales';
 import { ProveedorFavoritos } from '@/datos/ProveedorFavoritos';
+import { ProveedorCierres } from '@/datos/ProveedorCierres';
 import { ProveedorPagos } from '@/datos/ProveedorPagos';
 import { ProveedorSesion } from '@/datos/ProveedorSesion';
 import { ProveedorRecordatorios } from '@/datos/ProveedorRecordatorios';
@@ -66,7 +67,9 @@ export default function DisenoRaiz() {
                         <ProveedorHabituales>
                           <ProveedorRecordatorios>
                             <ProveedorPagos>
-                              <Stack screenOptions={{ headerShown: false }} />
+                              <ProveedorCierres>
+                                <Stack screenOptions={{ headerShown: false }} />
+                              </ProveedorCierres>
                             </ProveedorPagos>
                           </ProveedorRecordatorios>
                         </ProveedorHabituales>
