@@ -593,7 +593,9 @@ export const textos = {
     proximo: 'Tu próximo viaje',
     saleEn: 'Sale en',
     estado: 'Estado',
-    cantidad: '{{cantidad}} boletos',
+    cantidad: 'Ver los {{cantidad}} boletos',
+    codigoCorto: 'Código',
+    solo: 'Tus boletos guardados',
     recoger: 'Recoger las tarjetas',
   },
   rutas: {
