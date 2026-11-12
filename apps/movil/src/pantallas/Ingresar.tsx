@@ -1,5 +1,11 @@
 import { useState } from 'react';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import {
+  Keyboard,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bloque } from '@/componentes/Bloque';
@@ -49,53 +55,62 @@ export function Ingresar({ alIngresar, alVolver }: PropiedadesIngresar) {
       keyboardShouldPersistTaps="handled"
       style={{ backgroundColor: colores.fondo }}
     >
-      <CabeceraPantalla alVolver={alVolver} titulo={t('ingresar.titulo')} />
-      <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
-        {t('ingresar.detalle')}
-      </Text>
-
-      <Bloque estiloContenido={estilos.formulario}>
-        <CampoTexto
-          alCambiar={(valor) => {
-            establecerCodigo(valor);
-            establecerError(false);
-          }}
-          etiqueta={t('ingresar.codigo')}
-          teclado="number-pad"
-          valor={codigo}
-        />
-        <CampoTexto
-          alCambiar={(valor) => {
-            establecerClave(valor);
-            establecerError(false);
-          }}
-          error={error ? t('ingresar.error') : undefined}
-          etiqueta={t('ingresar.clave')}
-          oculto
-          valor={clave}
-        />
-        <BotonAccion
-          alPresionar={() => void entrar()}
-          cargando={ingresando}
-          deshabilitado={codigo.trim() === '' || clave === ''}
-          etiqueta={t('ingresar.entrar')}
-        />
-      </Bloque>
-
-      <Bloque estiloContenido={estilos.prueba} hundido radio="loseta">
-        <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-          {t('ingresar.pruebaTitulo')}
+      {/* tocar fuera de los campos cierra el teclado numérico, que no tiene tecla para cerrarse */}
+      <Pressable
+        accessible={false}
+        onPress={Keyboard.dismiss}
+        style={estilos.envoltura}
+        testID="ingresar-envoltura"
+      >
+        <CabeceraPantalla alVolver={alVolver} titulo={t('ingresar.titulo')} />
+        <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
+          {t('ingresar.detalle')}
         </Text>
-        <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-          {t('ingresar.pruebaDetalle')}
-        </Text>
-      </Bloque>
+
+        <Bloque estiloContenido={estilos.formulario}>
+          <CampoTexto
+            alCambiar={(valor) => {
+              establecerCodigo(valor);
+              establecerError(false);
+            }}
+            etiqueta={t('ingresar.codigo')}
+            teclado="number-pad"
+            valor={codigo}
+          />
+          <CampoTexto
+            alCambiar={(valor) => {
+              establecerClave(valor);
+              establecerError(false);
+            }}
+            error={error ? t('ingresar.error') : undefined}
+            etiqueta={t('ingresar.clave')}
+            oculto
+            valor={clave}
+          />
+          <BotonAccion
+            alPresionar={() => void entrar()}
+            cargando={ingresando}
+            deshabilitado={codigo.trim() === '' || clave === ''}
+            etiqueta={t('ingresar.entrar')}
+          />
+        </Bloque>
+
+        <Bloque estiloContenido={estilos.prueba} hundido radio="loseta">
+          <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+            {t('ingresar.pruebaTitulo')}
+          </Text>
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {t('ingresar.pruebaDetalle')}
+          </Text>
+        </Bloque>
+      </Pressable>
     </ScrollView>
   );
 }
 
 const estilos = StyleSheet.create({
-  contenido: { gap: espacios.dieciseis, paddingHorizontal: espacios.lateral },
+  contenido: { paddingHorizontal: espacios.lateral },
+  envoltura: { gap: espacios.dieciseis },
   formulario: { gap: espacios.dieciseis, padding: espacios.veinticuatro },
   prueba: { gap: espacios.cuatro, padding: espacios.dieciseis },
 });
