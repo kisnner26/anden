@@ -1,7 +1,6 @@
 import { BlurView } from 'expo-blur';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import {
-  AccessibilityInfo,
   Animated,
   Modal,
   PanResponder,
@@ -12,6 +11,7 @@ import {
 
 import { espacios, radios } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
+import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import { useTema } from '@/tema/useTema';
 
 export interface PropiedadesHoja {
@@ -29,19 +29,8 @@ export function Hoja({
   etiquetaCerrar,
 }: PropiedadesHoja) {
   const { colores } = useTema();
-  const [reducirMovimiento, establecerReducirMovimiento] = useState(false);
+  const reducirMovimiento = useMovimientoReducido();
   const desplazamiento = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    void AccessibilityInfo.isReduceMotionEnabled().then(
-      establecerReducirMovimiento,
-    );
-    const suscripcion = AccessibilityInfo.addEventListener(
-      'reduceMotionChanged',
-      establecerReducirMovimiento,
-    );
-    return () => suscripcion.remove();
-  }, []);
 
   useEffect(() => {
     if (!abierta || reducirMovimiento) {
