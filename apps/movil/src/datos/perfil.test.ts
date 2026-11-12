@@ -6,6 +6,7 @@ import {
   iniciales,
   leerPerfil,
   nombreCompleto,
+  nombrePropio,
   perfilVacio,
 } from './perfil';
 
@@ -76,5 +77,28 @@ describe('leerPerfil', () => {
     expect(perfil.pasajeros).toEqual([
       { cedula: undefined, id: 'p1', nombre: 'Luis' },
     ]);
+  });
+});
+
+describe('nombrePropio', () => {
+  it('pone en mayúscula la primera letra de cada palabra', () => {
+    expect(nombrePropio('kisnner obando')).toBe('Kisnner Obando');
+  });
+
+  it('deja en minúscula las partículas en medio del nombre', () => {
+    expect(nombrePropio('maría de los ángeles')).toBe('María de los Ángeles');
+  });
+
+  it('no toca el resto de las letras', () => {
+    expect(nombrePropio('ana McDonald')).toBe('Ana McDonald');
+  });
+
+  it('un texto vacío o con solo espacios da vacío', () => {
+    expect(nombrePropio('')).toBe('');
+    expect(nombrePropio('   ')).toBe('');
+  });
+
+  it('colapsa espacios repetidos', () => {
+    expect(nombrePropio('  ana   ruiz ')).toBe('Ana Ruiz');
   });
 });
