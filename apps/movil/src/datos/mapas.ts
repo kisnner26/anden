@@ -8,9 +8,10 @@ export interface LugarMapa {
 /** enlace universal de Apple Maps con indicaciones hacia el lugar; Maps pide la ubicación por su cuenta */
 export function urlIndicacionesAppleMaps(lugar: LugarMapa): string {
   const { lat, lng } = lugar.coordenadas;
+  // el nombre va como destino para que Maps lo muestre; las coordenadas fijan el lugar exacto
   const parametros = [
-    `daddr=${lat},${lng}`,
-    `q=${encodeURIComponent(lugar.nombre)}`,
+    `daddr=${encodeURIComponent(lugar.nombre)}`,
+    `ll=${lat},${lng}`,
     'dirflg=d',
   ];
   return `https://maps.apple.com/?${parametros.join('&')}`;

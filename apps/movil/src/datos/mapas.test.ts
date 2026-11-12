@@ -12,7 +12,8 @@ describe('urlIndicacionesAppleMaps', () => {
   it('apunta al dominio de Apple Maps con destino y modo en auto', () => {
     const url = new URL(urlIndicacionesAppleMaps(MAYOREO));
     expect(url.origin).toBe('https://maps.apple.com');
-    expect(url.searchParams.get('daddr')).toBe('12.13413,-86.1933');
+    expect(url.searchParams.get('daddr')).toBe('Mercado Mayoreo');
+    expect(url.searchParams.get('ll')).toBe('12.13413,-86.1933');
     expect(url.searchParams.get('dirflg')).toBe('d');
   });
 
@@ -21,11 +22,12 @@ describe('urlIndicacionesAppleMaps', () => {
       coordenadas: { lat: 12.09172, lng: -85.36106 },
       nombre: 'Terminal Mayales & Anexo',
     });
-    expect(url).toContain('q=Terminal%20Mayales%20%26%20Anexo');
+    expect(url).toContain('daddr=Terminal%20Mayales%20%26%20Anexo');
   });
 
   it('no incluye la posición de la persona', () => {
-    expect(urlIndicacionesAppleMaps(MAYOREO)).not.toMatch(/saddr|ll=/);
+    // ll son las coordenadas del destino, no las de la persona
+    expect(urlIndicacionesAppleMaps(MAYOREO)).not.toMatch(/saddr/);
   });
 });
 
