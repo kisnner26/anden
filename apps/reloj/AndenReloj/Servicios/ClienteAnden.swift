@@ -1,12 +1,5 @@
 import Foundation
 
-struct SesionGuardada: Codable {
-    var accessToken: String
-    var refreshToken: String
-    var usuarioId: String
-    var expira: Date
-}
-
 /// habla con Supabase por REST: sin el SDK, que el reloj no necesita para leer unas pocas tablas
 final class ClienteAnden {
     private let sesionURL = URLSession(configuration: .ephemeral)
