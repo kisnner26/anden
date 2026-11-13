@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import WatchKit
+import WidgetKit
 
 /// el estado que ven todas las pantallas: la sesión, las reservas y dónde va el bus
 @MainActor
@@ -47,6 +48,8 @@ final class ModeloApp: ObservableObject {
         cliente.salir()
         reservas = []
         salidas = []
+        Instantanea().guardar()
+        WidgetCenter.shared.reloadAllTimelines()
         avanceBus = nil
         fase = .ingreso
     }
@@ -57,6 +60,7 @@ final class ModeloApp: ObservableObject {
             reservas = try await cliente.reservas()
             salidas = (try? await cliente.salidas()) ?? salidas
             avisarSiEstaPorSalir()
+            actualizarComplicacion()
             mensaje = nil
             await actualizarBus()
             fase = .listo
@@ -76,6 +80,21 @@ final class ModeloApp: ObservableObject {
         if falta > 0 && falta <= 600 {
             avisados.insert(r.viaje.id)
             WKInterfaceDevice.current().play(.notification)
+        }
+    }
+
+    /// deja el próximo viaje en el llavero compartido y le pide a la esfera que lo vuelva a leer
+    private func actualizarComplicacion() {
+        var i = Instantanea()
+        if let r = proxima {
+            let ruta = Ruta(id: r.viaje.rutaId)
+            i = Instantanea(
+                ruta: ruta?.nombre ?? "", destino: ruta?.destino.nombre ?? "", salida: r.viaje.salida,
+                salio: r.viaje.salioEn != nil, anden: r.viaje.anden, asiento: r.boleto.asiento, actualizada: Date())
+        }
+        if i != Instantanea.cargar() {
+            i.guardar()
+            WidgetCenter.shared.reloadAllTimelines()
         }
     }
 
