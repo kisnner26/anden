@@ -57,3 +57,38 @@ export function formatearCedula(texto: string): string {
   const [a, b, c, d] = partes;
   return [a, b, `${c ?? ''}${d ?? ''}`].filter((p) => p !== '').join('-');
 }
+
+const USUARIO = /^[a-z0-9][a-z0-9._]{2,19}$/;
+
+/** minúsculas y sin espacios en los bordes: así se guarda y así se compara */
+export function normalizarUsuario(texto: string): string {
+  return texto.trim().toLowerCase();
+}
+
+/** de 3 a 20 caracteres: letras sin tilde, números, punto y guion bajo; empieza con letra o número */
+export function usuarioValido(texto: string): boolean {
+  return USUARIO.test(normalizarUsuario(texto));
+}
+
+const LARGO_MINIMO_CLAVE = 8;
+const LARGO_MAXIMO_CLAVE = 72;
+
+/** al menos 8 caracteres con una letra y un número; hasta 72, el límite del cifrado del servidor */
+export function claveValida(texto: string): boolean {
+  return (
+    texto.length >= LARGO_MINIMO_CLAVE &&
+    texto.length <= LARGO_MAXIMO_CLAVE &&
+    /[A-Za-z]/.test(texto) &&
+    /\d/.test(texto)
+  );
+}
+
+/** los 8 dígitos del teléfono sin prefijo, para comparar lo escrito con lo guardado; vacío si no es de Nicaragua */
+export function telefonoClave(texto: string): string {
+  const digitos = texto.replace(/\D/g, '');
+  const local =
+    digitos.length === 11 && digitos.startsWith('505')
+      ? digitos.slice(3)
+      : digitos;
+  return /^[2578]\d{7}$/.test(local) ? local : '';
+}

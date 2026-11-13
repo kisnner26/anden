@@ -5,7 +5,11 @@ import {
   cedulaValida,
   formatearCedula,
   correoOpcionalValido,
+  claveValida,
   nombrePersonaValido,
+  normalizarUsuario,
+  telefonoClave,
+  usuarioValido,
 } from './validacion';
 
 describe('nombrePersonaValido', () => {
@@ -87,5 +91,49 @@ describe('formatearCedula', () => {
   it('ignora lo que no es letra ni número y no pasa de la longitud', () => {
     expect(formatearCedula('001-010190-0001A99')).toBe('001-010190-0001A');
     expect(formatearCedula('00 1.01')).toBe('001-01');
+  });
+});
+
+describe('usuarioValido', () => {
+  it('acepta de 3 a 20 caracteres en minúscula, con punto y guion bajo', () => {
+    expect(usuarioValido('kis')).toBe(true);
+    expect(usuarioValido(' Kisnner_26 ')).toBe(true);
+    expect(usuarioValido('ana.ruiz')).toBe(true);
+  });
+
+  it('rechaza cortos, largos, con espacios, tildes, símbolos o arroba', () => {
+    expect(usuarioValido('ab')).toBe(false);
+    expect(usuarioValido('a'.repeat(21))).toBe(false);
+    expect(usuarioValido('ana ruiz')).toBe(false);
+    expect(usuarioValido('josé')).toBe(false);
+    expect(usuarioValido('ana@correo.com')).toBe(false);
+    expect(usuarioValido('_ana')).toBe(false);
+  });
+
+  it('normaliza a minúsculas', () => {
+    expect(normalizarUsuario('  AnaRuiz ')).toBe('anaruiz');
+  });
+});
+
+describe('claveValida', () => {
+  it('pide 8 caracteres con letra y número', () => {
+    expect(claveValida('andén2026')).toBe(true);
+    expect(claveValida('corta1')).toBe(false);
+    expect(claveValida('sinnumeros')).toBe(false);
+    expect(claveValida('12345678')).toBe(false);
+    expect(claveValida('a1'.repeat(37))).toBe(false);
+  });
+});
+
+describe('telefonoClave', () => {
+  it('deja los 8 dígitos con o sin prefijo y separadores', () => {
+    expect(telefonoClave('8888 8888')).toBe('88888888');
+    expect(telefonoClave('+505 8888-8888')).toBe('88888888');
+  });
+
+  it('devuelve vacío si no es un teléfono de Nicaragua', () => {
+    expect(telefonoClave('1234')).toBe('');
+    expect(telefonoClave('ana')).toBe('');
+    expect(telefonoClave('1001')).toBe('');
   });
 });
