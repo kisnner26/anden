@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
+import { OrbeIA } from '@/componentes/OrbeIA';
 import { EtiquetaMuestra } from '@/componentes/EtiquetaMuestra';
 import { EnlaceTerminal } from '@/componentes/EnlaceTerminal';
 import { Campaneo } from '@/componentes/Campaneo';
@@ -196,6 +197,7 @@ export function Viajar({
             style={({ pressed }) => pressed && estilos.presionado}
           >
             <Bloque estiloContenido={estilos.dondeViene}>
+              <OrbeIA tamano={28} />
               <View style={estilos.textoDondeViene}>
                 <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
                   {t('ia.entrada')}
