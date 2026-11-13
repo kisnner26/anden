@@ -33,6 +33,7 @@ import { ProveedorFavoritos } from '@/datos/ProveedorFavoritos';
 import { ProveedorCierres } from '@/datos/ProveedorCierres';
 import { ProveedorAbordaje } from '@/datos/ProveedorAbordaje';
 import { ProveedorPagos } from '@/datos/ProveedorPagos';
+import { ProveedorSeguridad } from '@/datos/ProveedorSeguridad';
 import { ProveedorSesion } from '@/datos/ProveedorSesion';
 import { ProveedorViajes } from '@/datos/ProveedorViajes';
 import { ProveedorRecordatorios } from '@/datos/ProveedorRecordatorios';
@@ -92,34 +93,36 @@ export default function DisenoRaiz() {
                                               <ProveedorAbordaje>
                                                 <ProveedorCierres>
                                                   <ProveedorEncomiendas>
-                                                    <GuardiaDeSesion />
-                                                    <Stack
-                                                      screenOptions={{
-                                                        headerShown: false,
-                                                      }}
-                                                    >
-                                                      <Stack.Screen
-                                                        name="boleto/[id]"
-                                                        options={{
-                                                          animation:
-                                                            'fade_from_bottom',
-                                                          animationDuration: 420,
+                                                    <ProveedorSeguridad>
+                                                      <GuardiaDeSesion />
+                                                      <Stack
+                                                        screenOptions={{
+                                                          headerShown: false,
                                                         }}
-                                                      />
-                                                      <Stack.Screen
-                                                        name="ingresar"
-                                                        options={{
-                                                          animation: 'fade',
-                                                        }}
-                                                      />
-                                                      <Stack.Screen
-                                                        name="buscar"
-                                                        options={{
-                                                          animation:
-                                                            'fade_from_bottom',
-                                                        }}
-                                                      />
-                                                    </Stack>
+                                                      >
+                                                        <Stack.Screen
+                                                          name="boleto/[id]"
+                                                          options={{
+                                                            animation:
+                                                              'fade_from_bottom',
+                                                            animationDuration: 420,
+                                                          }}
+                                                        />
+                                                        <Stack.Screen
+                                                          name="ingresar"
+                                                          options={{
+                                                            animation: 'fade',
+                                                          }}
+                                                        />
+                                                        <Stack.Screen
+                                                          name="buscar"
+                                                          options={{
+                                                            animation:
+                                                              'fade_from_bottom',
+                                                          }}
+                                                        />
+                                                      </Stack>
+                                                    </ProveedorSeguridad>
                                                   </ProveedorEncomiendas>
                                                 </ProveedorCierres>
                                               </ProveedorAbordaje>
