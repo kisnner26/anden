@@ -13,6 +13,8 @@ export interface Encomienda {
   destinatario: string;
   destino: string;
   estado: 'solicitada';
+  /** se marca para que lo cuiden más; los envíos guardados antes de este campo no lo tienen */
+  fragil: boolean;
   id: string;
   origen: string;
   remitente: string;
@@ -25,6 +27,7 @@ export interface DatosEncomienda {
   descripcion: string;
   destinatario: string;
   destino: string;
+  fragil?: boolean;
   origen: string;
   remitente: string;
   tamano: TamanoEncomienda;
@@ -70,6 +73,7 @@ export function nuevaEncomienda(
     destinatario: datos.destinatario.trim(),
     destino: datos.destino,
     estado: 'solicitada',
+    fragil: datos.fragil === true,
     id: `enc_${ahora.getTime()}`,
     origen: datos.origen,
     remitente: datos.remitente.trim(),
@@ -100,7 +104,11 @@ export async function leerEncomiendas(): Promise<Encomienda[]> {
     const valor: unknown = JSON.parse(
       (await AsyncStorage.getItem(CLAVE_ENCOMIENDAS)) ?? '[]',
     );
-    return Array.isArray(valor) ? valor.filter(esEncomienda) : [];
+    return Array.isArray(valor)
+      ? valor
+          .filter(esEncomienda)
+          .map((e) => ({ ...e, fragil: e.fragil === true }))
+      : [];
   } catch {
     return [];
   }
@@ -113,4 +121,15 @@ export async function guardarEncomienda(
   const lista = [encomienda, ...(await leerEncomiendas())];
   await AsyncStorage.setItem(CLAVE_ENCOMIENDAS, JSON.stringify(lista));
   return lista;
+}
+
+/** el texto del comprobante para compartir: código, trayecto y qué lleva */
+export function mensajeComprobante(e: Encomienda): string {
+  return `Encomienda ${e.codigo} por bus de ${e.origen} a ${e.destino}. De ${e.remitente} para ${e.destinatario}: ${e.descripcion}${e.fragil ? ' (frágil)' : ''}. Con este código se reclama el paquete.`;
+}
+
+/** enlace para abrir Mensajes con el aviso a quien recibe ya escrito; la persona lo revisa y lo envía */
+export function urlSmsDestinatario(e: Encomienda): string {
+  const mensaje = `Hola ${e.destinatario}, te mando una encomienda por bus de ${e.origen} a ${e.destino}. Código ${e.codigo}.`;
+  return `sms:+505${e.telefonoDestinatario}&body=${encodeURIComponent(mensaje)}`;
 }

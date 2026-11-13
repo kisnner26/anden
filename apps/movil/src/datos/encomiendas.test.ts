@@ -7,7 +7,9 @@ import {
   erroresDeEncomienda,
   guardarEncomienda,
   leerEncomiendas,
+  mensajeComprobante,
   nuevaEncomienda,
+  urlSmsDestinatario,
   type DatosEncomienda,
 } from './encomiendas';
 
@@ -86,5 +88,44 @@ describe('guardado', () => {
       JSON.stringify([{ id: 'x' }]),
     );
     expect(await leerEncomiendas()).toEqual([]);
+  });
+});
+
+describe('comprobante', () => {
+  const e = nuevaEncomienda(
+    {
+      descripcion: 'caja con repuestos',
+      destinatario: 'Luis Pérez',
+      destino: 'Boaco',
+      fragil: true,
+      origen: 'Managua',
+      remitente: 'Ana Ruiz',
+      tamano: 'pequeno',
+      telefonoDestinatario: '8888 1234',
+    },
+    new Date(2026, 10, 12, 10, 0),
+  );
+
+  it('el mensaje trae código, trayecto, personas y si es frágil', () => {
+    const texto = mensajeComprobante(e);
+    expect(texto).toContain(e.codigo);
+    expect(texto).toContain('Managua a Boaco');
+    expect(texto).toContain('Ana Ruiz');
+    expect(texto).toContain('Luis Pérez');
+    expect(texto).toContain('frágil');
+  });
+
+  it('el aviso a quien recibe va por mensaje de texto con el código', () => {
+    const url = urlSmsDestinatario(e);
+    expect(url.startsWith('sms:+50588881234&body=')).toBe(true);
+    expect(decodeURIComponent(url)).toContain(e.codigo);
+  });
+
+  it('los envíos guardados sin el campo frágil se leen como no frágiles', async () => {
+    const { fragil: _omitido, ...sinCampo } = e;
+    void _omitido;
+    await AsyncStorage.setItem(CLAVE_ENCOMIENDAS, JSON.stringify([sinCampo]));
+    const [leida] = await leerEncomiendas();
+    expect(leida?.fragil).toBe(false);
   });
 });
