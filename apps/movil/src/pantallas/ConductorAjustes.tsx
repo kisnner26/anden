@@ -42,10 +42,11 @@ export function ConductorAjustes({
 
   return (
     <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={[
         estilos.contenido,
         {
-          paddingBottom: espacios.cuarentaYOcho,
+          paddingBottom: 120,
           paddingTop: margenes.top + espacios.veinticuatro,
         },
       ]}
@@ -54,7 +55,7 @@ export function ConductorAjustes({
       <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {nombrePropio(sesion?.nombre ?? '')}
       </Text>
-      <Text style={[tipografia.display, { color: colores.tinta }]}>
+      <Text style={[tipografia.titulo, { color: colores.tinta }]}>
         {t('conductorAjustes.titulo')}.
       </Text>
       <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
