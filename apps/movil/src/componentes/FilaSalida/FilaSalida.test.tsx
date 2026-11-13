@@ -24,6 +24,15 @@ describe('FilaSalida', () => {
     ).toBeTruthy();
   });
 
+  it('muestra la marca de sugerida solo si se la dan', async () => {
+    const con = await render(
+      <FilaSalida salida={boaco} sugerida="Para vos: tu destino de siempre" />,
+    );
+    expect(con.getByText('Para vos: tu destino de siempre')).toBeTruthy();
+    const sin = await render(<FilaSalida salida={boaco} />);
+    expect(sin.queryByText(/Para vos/)).toBeNull();
+  });
+
   it('avisa el viaje al presionarla', async () => {
     const alPresionar = jest.fn();
     const pantalla = await render(
