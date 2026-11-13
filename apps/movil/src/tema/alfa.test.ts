@@ -22,16 +22,28 @@ describe('conAlfa', () => {
 });
 
 describe('mezclar', () => {
+  const oscuro = coloresOscuros.fondo;
+  const claro = coloresClaros.fondo;
+
   it('con peso 0 da el primer color y con 1 el segundo', () => {
-    expect(mezclar('#000000', '#ffffff', 0)).toBe('#000000');
-    expect(mezclar('#000000', '#ffffff', 1)).toBe('#ffffff');
+    expect(mezclar(oscuro, claro, 0)).toBe(oscuro.toLowerCase());
+    expect(mezclar(oscuro, claro, 1)).toBe(claro.toLowerCase());
   });
 
-  it('a la mitad da el punto medio', () => {
-    expect(mezclar('#000000', '#ffffff', 0.5)).toBe('#808080');
+  it('a la mitad cada canal queda entre los dos colores', () => {
+    const medio = mezclar(oscuro, claro, 0.5);
+    for (const desde of [1, 3, 5]) {
+      const a = parseInt(oscuro.slice(desde, desde + 2), 16);
+      const b = parseInt(claro.slice(desde, desde + 2), 16);
+      const m = parseInt(medio.slice(desde, desde + 2), 16);
+      expect(m).toBeGreaterThanOrEqual(Math.min(a, b));
+      expect(m).toBeLessThanOrEqual(Math.max(a, b));
+    }
   });
 
   it('siempre devuelve un color opaco de seis dígitos', () => {
-    expect(mezclar('#FFB21E', '#121210', 0.3)).toMatch(/^#[0-9a-f]{6}$/);
+    expect(mezclar(coloresOscuros.ambar, oscuro, 0.3)).toMatch(
+      /^#[0-9a-f]{6}$/,
+    );
   });
 });
