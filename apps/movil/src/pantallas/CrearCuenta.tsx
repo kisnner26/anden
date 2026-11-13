@@ -8,7 +8,6 @@ import {
 import { useCallback, useState } from 'react';
 import {
   KeyboardAvoidingView,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -116,7 +115,6 @@ export function CrearCuenta({
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={[estilos.pantalla, { backgroundColor: colores.fondo }]}
     >
       <ScrollView
@@ -127,6 +125,8 @@ export function CrearCuenta({
             paddingTop: margenes.top + espacios.veinticuatro,
           },
         ]}
+        automaticallyAdjustKeyboardInsets
+        keyboardDismissMode="interactive"
         keyboardShouldPersistTaps="handled"
       >
         <View style={estilos.bus}>

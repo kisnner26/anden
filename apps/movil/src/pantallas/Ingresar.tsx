@@ -57,6 +57,8 @@ export function Ingresar({ alCrearCuenta, alIngresar }: PropiedadesIngresar) {
           paddingTop: margenes.top + espacios.veinticuatro,
         },
       ]}
+      automaticallyAdjustKeyboardInsets
+      keyboardDismissMode="interactive"
       keyboardShouldPersistTaps="handled"
       style={{ backgroundColor: colores.fondo }}
     >
