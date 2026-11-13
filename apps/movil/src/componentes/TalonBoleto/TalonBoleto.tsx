@@ -2,6 +2,8 @@ import * as Haptics from 'expo-haptics';
 import { useEffect, useRef } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
+
+import { BarridoDeLuz } from '@/componentes/BarridoDeLuz';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -98,6 +100,7 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
       <View
         style={[estilos.cabecera, { backgroundColor: colores.bloqueNegro }]}
       >
+        <BarridoDeLuz radio={0} retraso={600} />
         <View style={estilos.fila}>
           <Text
             style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
@@ -231,7 +234,11 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
 }
 
 const estilos = StyleSheet.create({
-  cabecera: { gap: espacios.dieciseis, padding: espacios.veinticuatro },
+  cabecera: {
+    gap: espacios.dieciseis,
+    overflow: 'hidden',
+    padding: espacios.veinticuatro,
+  },
   campo: { flex: 1, gap: 2, minWidth: '40%' },
   campoCompleto: { flexBasis: '100%', flexGrow: 0 },
   casilla: {
