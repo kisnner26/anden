@@ -79,6 +79,8 @@ export function Viajar({
     )
     .slice(0, 3);
   const destinos = destinosDeHoy(salidas);
+  // con pocos destinos se reparten a lo ancho y quedan simétricos; con muchos se desliza
+  const repartidos = destinos.length <= 3;
   const terminalOrigen = datos.terminales.find(
     (terminal) => terminal.id === origenId,
   );
@@ -210,18 +212,26 @@ export function Viajar({
             {t('viajar.destinosDesde')}
           </Text>
           <ScrollView
-            contentContainerStyle={estilos.destinos}
+            contentContainerStyle={[
+              estilos.destinos,
+              repartidos && estilos.repartidos,
+            ]}
             horizontal
+            scrollEnabled={!repartidos}
             showsHorizontalScrollIndicator={false}
           >
             {destinos.map((salida, indice) => (
-              <Aparece indice={indice} key={salida.destino}>
-                <Pressable
-                  accessibilityLabel={`${salida.destino}, ${formatoHoraCompleta(salida.salida)}`}
-                  accessibilityRole="button"
-                  onPress={() => alAbrirViaje(salida.viajeId)}
-                  style={({ pressed }) => pressed && estilos.presionado}
-                >
+              <Pressable
+                accessibilityLabel={`${salida.destino}, ${formatoHoraCompleta(salida.salida)}`}
+                accessibilityRole="button"
+                key={salida.destino}
+                onPress={() => alAbrirViaje(salida.viajeId)}
+                style={({ pressed }) => [
+                  repartidos ? estilos.destinoRepartido : estilos.destinoFijo,
+                  pressed && estilos.presionado,
+                ]}
+              >
+                <Aparece indice={indice}>
                   <Bloque estiloContenido={estilos.destino}>
                     <Autobus
                       ancho={96}
@@ -241,8 +251,8 @@ export function Viajar({
                       {formatoHoraCompleta(salida.salida)}
                     </Text>
                   </Bloque>
-                </Pressable>
-              </Aparece>
+                </Aparece>
+              </Pressable>
             ))}
           </ScrollView>
         </View>
@@ -321,8 +331,10 @@ const estilos = StyleSheet.create({
     alignItems: 'center',
     gap: espacios.cuatro,
     padding: espacios.doce,
-    width: 132,
   },
+  destinoFijo: { width: 132 },
+  destinoRepartido: { flex: 1 },
+  repartidos: { flexGrow: 1 },
   destinos: { gap: espacios.doce, paddingVertical: espacios.cuatro },
   seccionSola: {
     marginBottom: espacios.doce,
