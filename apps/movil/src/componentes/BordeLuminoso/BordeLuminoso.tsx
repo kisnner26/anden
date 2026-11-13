@@ -13,18 +13,25 @@ export interface PropiedadesBordeLuminoso {
   modo: ModoBorde;
 }
 
-const GROSOR = 46;
+const GROSOR = 58;
+const FILO = 10;
+const LADOS = ['arriba', 'abajo', 'izquierda', 'derecha'] as const;
 const AURA_A = [coloresAura[0], coloresAura[2], coloresAura[1]] as const;
-const AURA_B = [coloresAura[4], coloresAura[5], coloresAura[3]] as const;
+// la segunda capa lleva el ámbar de Andén, para que el aura sea de la app y no una copia
+const AURA_B = [coloresOro[1], coloresAura[4], coloresAura[3]] as const;
 const ORO_A = [coloresOro[0], coloresOro[1], coloresOro[2]] as const;
 const ORO_B = [coloresOro[3], coloresOro[4], coloresOro[5]] as const;
 
 function Borde({
   colores,
+  grosor = GROSOR,
   lado,
+  opacidades = ['CC', '66', '00'],
 }: {
   colores: readonly [string, string, string];
+  grosor?: number;
   lado: 'abajo' | 'arriba' | 'derecha' | 'izquierda';
+  opacidades?: readonly [string, string, string];
 }) {
   const vertical = lado === 'arriba' || lado === 'abajo';
   const inicio =
@@ -45,14 +52,18 @@ function Borde({
           : { x: 0, y: 0.5 };
   return (
     <LinearGradient
-      colors={[`${colores[0]}CC`, `${colores[1]}66`, `${colores[2]}00`]}
+      colors={[
+        `${colores[0]}${opacidades[0]}`,
+        `${colores[1]}${opacidades[1]}`,
+        `${colores[2]}${opacidades[2]}`,
+      ]}
       end={fin}
       start={inicio}
       style={[
         estilos.borde,
         vertical
-          ? { height: GROSOR, left: 0, right: 0 }
-          : { bottom: 0, top: 0, width: GROSOR },
+          ? { height: grosor, left: 0, right: 0 }
+          : { bottom: 0, top: 0, width: grosor },
         lado === 'arriba' && { top: 0 },
         lado === 'abajo' && { bottom: 0 },
         lado === 'izquierda' && { left: 0 },
@@ -65,10 +76,19 @@ function Borde({
 function Capa({ colores }: { colores: readonly [string, string, string] }) {
   return (
     <View pointerEvents="none" style={StyleSheet.absoluteFill}>
-      <Borde colores={colores} lado="arriba" />
-      <Borde colores={colores} lado="abajo" />
-      <Borde colores={colores} lado="izquierda" />
-      <Borde colores={colores} lado="derecha" />
+      {LADOS.map((lado) => (
+        <Borde colores={colores} key={lado} lado={lado} />
+      ))}
+      {/* un filo fino y brillante pegado al borde, encima del resplandor ancho */}
+      {LADOS.map((lado) => (
+        <Borde
+          colores={colores}
+          grosor={FILO}
+          key={`filo-${lado}`}
+          lado={lado}
+          opacidades={['FF', 'AA', '00']}
+        />
+      ))}
     </View>
   );
 }
