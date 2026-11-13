@@ -303,4 +303,31 @@ describe('Asistente', () => {
       ).toBeNull(),
     );
   });
+
+  it('lleva a otra pantalla cuando se lo piden', async () => {
+    const alAbrirPantalla = jest.fn();
+    const contexto = valor();
+    const pantalla = await renderPantalla(
+      <ContextoIA.Provider value={contexto}>
+        <ContextoVoz.Provider value={vozFalsa().voz}>
+          <Asistente
+            alAbrirPantalla={alAbrirPantalla}
+            alVolver={() => undefined}
+          />
+        </ContextoVoz.Provider>
+      </ContextoIA.Provider>,
+    );
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Tu pregunta'),
+      'Quiero enviar una encomienda',
+    );
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Preguntar' }));
+    await waitFor(() =>
+      expect(alAbrirPantalla).toHaveBeenCalledWith('encomienda'),
+    );
+    expect(
+      await pantalla.findByText('Te llevo a enviar una encomienda.'),
+    ).toBeTruthy();
+    expect(contexto.preguntar).not.toHaveBeenCalled();
+  });
 });
