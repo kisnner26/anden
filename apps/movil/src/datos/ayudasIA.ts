@@ -57,3 +57,58 @@ export function salidaMasBarata(
   );
   return candidatas[0] ?? null;
 }
+
+export interface ConsejoIA {
+  /** el texto corto que se muestra */
+  texto: string;
+  /** la salida a la que lleva, si el consejo habla de una */
+  viajeId: string | null;
+}
+
+/**
+ * un consejo corto para la pantalla de inicio, armado con datos reales: el boleto que se acerca o
+ * la próxima salida al destino habitual; nulo si no hay nada útil que decir
+ */
+export function consejoDelMomento(
+  salidas: readonly Salida[],
+  boletoProximo: {
+    anden: number;
+    destino: string;
+    salida: Date;
+    viajeId: string;
+  } | null,
+  destinoHabitual: string | null,
+  ahora: Date,
+): ConsejoIA | null {
+  if (boletoProximo) {
+    const minutos = Math.round(
+      (boletoProximo.salida.getTime() - ahora.getTime()) / 60_000,
+    );
+    if (minutos >= 0 && minutos <= 120) {
+      return {
+        texto:
+          minutos <= 1
+            ? `Tu bus a ${boletoProximo.destino} sale ya, andén ${boletoProximo.anden}.`
+            : `Tu bus a ${boletoProximo.destino} sale en ${minutos} min, andén ${boletoProximo.anden}.`,
+        viajeId: boletoProximo.viajeId,
+      };
+    }
+  }
+  if (destinoHabitual) {
+    const siguiente = salidas
+      .filter(
+        (salida) =>
+          salida.destino === destinoHabitual &&
+          salida.salida.getTime() >= ahora.getTime() &&
+          salida.asientosLibres > 0,
+      )
+      .sort((a, b) => a.salida.getTime() - b.salida.getTime())[0];
+    if (siguiente) {
+      return {
+        texto: `Tu próximo bus habitual a ${destinoHabitual} sale a las ${siguiente.salida.getHours() % 12 || 12}:${String(siguiente.salida.getMinutes()).padStart(2, '0')} ${siguiente.salida.getHours() >= 12 ? 'p. m.' : 'a. m.'}, quedan ${siguiente.asientosLibres} asientos.`,
+        viajeId: siguiente.viajeId,
+      };
+    }
+  }
+  return null;
+}
