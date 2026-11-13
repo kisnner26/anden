@@ -107,6 +107,10 @@ export const textos = {
     vozNatural: 'Voz natural',
     vozNaturalDetalle:
       'Suena más humana, pero usa internet: el texto de la respuesta se envía a Google para convertirlo en voz. Apagada, se usa la voz del teléfono.',
+    resumirConductor: 'Resumir este viaje con IA',
+    pedidoResumenConductor: 'Resumí este viaje en dos frases y decime qué debería hacer ahora como conductor: pasajeros por subir, cobros pendientes y encomiendas.',
+    analizarConductor: 'Explicame cómo me fue con IA',
+    pedidoAnalisisConductor: 'Explicame en tres frases cómo me fue en este período y dame una sugerencia concreta para ganar más o llenar mejor el bus. Usá solo estos números.',
     resumirViaje: 'Resumir este viaje con IA',
     pedidoResumenViaje:
       'Resumí este viaje en dos frases: hora, andén, tarifa y una recomendación útil para quien va a viajar.',
@@ -333,6 +337,19 @@ export const textos = {
     cancelar: 'Cancelar Plus',
     notaPrueba:
       'Por ahora Plus se activa sin cobro: el pago dentro de la app llega antes de publicarla.',
+  },
+  guiaConductor: {
+    titulo: 'Tus primeros pasos como conductor',
+    cerrar: 'Ocultar',
+    avance: '{hechos} de {total} listos',
+    perfil: 'Completá tu perfil',
+    perfilDetalle: 'Poné tu foto y tu nombre en la pestaña Perfil: así te reconocen los pasajeros.',
+    primerViaje: 'Publicá tu primer viaje',
+    primerViajeDetalle: 'Elegí la ruta, la hora en que ponés el bus en andén y la placa.',
+    pasajeros: 'Mirá quién viaja y qué encomiendas hay',
+    pasajerosDetalle: 'En la pestaña A bordo ves a tus pasajeros y aceptás o rechazás encomiendas.',
+    cerrarViaje: 'Cerrá tu primer viaje',
+    cerrarViajeDetalle: 'Marcá Ya salió cuando arranque y cerrá el cobro al terminar: alimenta tu Análisis.',
   },
   conductorEncomiendas: {
     segmento: 'Encomiendas',
