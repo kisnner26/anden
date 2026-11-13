@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { afterEach, describe, expect, it } from '@jest/globals';
 
 import {
+  crearAcumulador,
   elegirVoz,
   guardarRespuestaHablada,
   leerRespuestaHablada,
@@ -43,5 +44,25 @@ describe('respuesta hablada', () => {
     expect(await leerRespuestaHablada()).toBe(false);
     await guardarRespuestaHablada(true);
     expect(await leerRespuestaHablada()).toBe(true);
+  });
+});
+
+describe('crearAcumulador', () => {
+  it('conserva los tramos cerrados y reemplaza el que está en curso', () => {
+    const acumulado = crearAcumulador();
+    expect(acumulado.resultado('hola', false)).toBe('hola');
+    expect(acumulado.resultado('hola bus', false)).toBe('hola bus');
+    expect(acumulado.resultado('hola bus a Boaco', true)).toBe(
+      'hola bus a Boaco',
+    );
+    // tras una pausa larga empieza otro tramo y lo anterior no se pierde
+    expect(acumulado.resultado('y a Juigalpa', false)).toBe(
+      'hola bus a Boaco y a Juigalpa',
+    );
+    expect(acumulado.texto()).toBe('hola bus a Boaco y a Juigalpa');
+  });
+
+  it('sin nada dictado queda vacío', () => {
+    expect(crearAcumulador().texto()).toBe('');
   });
 });
