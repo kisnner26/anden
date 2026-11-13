@@ -2,6 +2,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Autobus, varianteDeClave } from '@/componentes/Autobus';
+import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
@@ -16,6 +17,7 @@ import { estadoTablero } from '@/componentes/TableroSalidas';
 import { formatoDuracion, formatoFechaCorta } from '@/datos/formato';
 import { useAvanceViaje } from '@/datos/useAvanceViaje';
 import { useRecorrido } from '@/datos/useRecorrido';
+import { useChoferPublico } from '@/datos/useChoferPublico';
 import { useDetalleViaje } from '@/datos/useDetalleViaje';
 import { useEspera } from '@/datos/useEspera';
 import {
@@ -58,6 +60,8 @@ export function DetalleViaje({
     detalle?.origenCiudad ?? '',
     detalle?.salida.destino ?? '',
   );
+
+  const publico = useChoferPublico(detalle?.chofer.id ?? '');
 
   if (!detalle) {
     return (
@@ -202,16 +206,25 @@ export function DetalleViaje({
           onPress={() => alVerChofer(chofer.id)}
         >
           <Bloque estiloContenido={estilos.chofer}>
-            <Loseta tamano={56} variante="negra">
-              <Text
-                style={[tipografia.datoGrande, { color: colores.sobreNegro }]}
-              >
-                {chofer.iniciales}
-              </Text>
-            </Loseta>
+            {publico?.fotoUrl ? (
+              <Avatar
+                descripcion={publico.nombre}
+                iniciales={chofer.iniciales}
+                tamano={56}
+                uri={publico.fotoUrl}
+              />
+            ) : (
+              <Loseta tamano={56} variante="negra">
+                <Text
+                  style={[tipografia.datoGrande, { color: colores.sobreNegro }]}
+                >
+                  {chofer.iniciales}
+                </Text>
+              </Loseta>
+            )}
             <View style={estilos.textoChofer}>
               <Text style={[tipografia.nombreFila, { color: colores.tinta }]}>
-                {chofer.nombre}
+                {publico?.nombre ?? chofer.nombre}
               </Text>
               <View style={estilos.nota}>
                 <Icono

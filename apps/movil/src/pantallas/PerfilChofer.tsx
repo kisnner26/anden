@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
 import { OpinionesChofer } from '@/componentes/OpinionesChofer';
 import { notaConOpiniones, type Opinion } from '@/datos/opiniones';
+import { useChoferPublico } from '@/datos/useChoferPublico';
 import { usePerfilChofer } from '@/datos/useDetalleViaje';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -55,6 +57,7 @@ export function PerfilChofer({ alVolver, choferId }: PropiedadesPerfilChofer) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const perfil = usePerfilChofer(choferId);
+  const publico = useChoferPublico(choferId);
   const [propias, establecerPropias] = useState<Opinion[]>([]);
 
   if (!perfil) {
@@ -95,11 +98,20 @@ export function PerfilChofer({ alVolver, choferId }: PropiedadesPerfilChofer) {
       <CabeceraPantalla alVolver={alVolver} titulo={t('chofer.titulo')} />
 
       <Bloque estiloContenido={estilos.hero}>
-        <Loseta tamano={96} variante="negra">
-          <Text style={[tipografia.iniciales, { color: colores.sobreNegro }]}>
-            {perfil.iniciales}
-          </Text>
-        </Loseta>
+        {publico?.fotoUrl ? (
+          <Avatar
+            descripcion={publico.nombre}
+            iniciales={perfil.iniciales}
+            tamano={96}
+            uri={publico.fotoUrl}
+          />
+        ) : (
+          <Loseta tamano={96} variante="negra">
+            <Text style={[tipografia.iniciales, { color: colores.sobreNegro }]}>
+              {perfil.iniciales}
+            </Text>
+          </Loseta>
+        )}
         <Text
           accessibilityRole="header"
           style={[
@@ -108,7 +120,7 @@ export function PerfilChofer({ alVolver, choferId }: PropiedadesPerfilChofer) {
             { color: colores.tinta },
           ]}
         >
-          {perfil.nombre}
+          {publico?.nombre ?? perfil.nombre}
         </Text>
         <View style={estilos.licencia}>
           <Icono
