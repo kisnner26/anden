@@ -17,6 +17,7 @@ import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { rellenar } from '@/textos/rellenar';
+import { VehiculoPlus, VEHICULOS_PLUS } from '@/componentes/VehiculoPlus';
 import { t } from '@/textos/t';
 
 export interface PropiedadesPlus {
@@ -123,6 +124,42 @@ export function Plus({ alVolver }: PropiedadesPlus) {
               )}
             </Bloque>
           ))}
+        </View>
+
+        <View style={estilos.seccion}>
+          <Text style={[tipografia.titulo, { color: colores.tinta }]}>
+            {t('plus.vehiculosTitulo')}
+          </Text>
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {t('plus.vehiculosDetalle')}
+          </Text>
+          <View style={estilos.rejilla}>
+            {VEHICULOS_PLUS.map((vehiculo) => {
+              const activo = elegido === vehiculo.id;
+              return (
+                <Pressable
+                  accessibilityLabel={vehiculo.nombre}
+                  accessibilityRole="button"
+                  accessibilityState={{ disabled: !plus, selected: activo }}
+                  disabled={!plus}
+                  key={vehiculo.id}
+                  onPress={() => void elegir(activo ? null : vehiculo.id)}
+                  style={[
+                    estilos.bus,
+                    {
+                      backgroundColor: activo
+                        ? colores.barroOscuro
+                        : colores.barroClaro,
+                      borderColor: activo ? colores.ambar : colores.linea,
+                      opacity: plus ? 1 : 0.5,
+                    },
+                  ]}
+                >
+                  <VehiculoPlus ancho={78} id={vehiculo.id} />
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
 
         <View style={estilos.seccion}>
