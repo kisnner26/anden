@@ -17,6 +17,11 @@ import { HojaObjetoOlvidado } from '@/componentes/HojaObjetoOlvidado';
 import { TalonBoleto } from '@/componentes/TalonBoleto';
 import { estadoVisibleBoleto } from '@/datos/estadoBoleto';
 import { useBoletos } from '@/datos/useBoletos';
+import {
+  actividadesDisponibles,
+  iniciarActividad,
+  terminarActividad,
+} from '../../modules/anden-actividad';
 import { HojaRecordatorio } from '@/componentes/HojaRecordatorio';
 import type { MinutosAntes } from '@/datos/recordatorios';
 import type { Salida } from '@/datos/salidas';
@@ -74,6 +79,18 @@ export function VerBoleto({
   const ahora = useAhora();
   const { boletos, cancelar } = useBoletos();
   const recordatorios = useRecordatorios();
+  const [actividadDisponible, establecerActividadDisponible] = useState(false);
+  const [actividadId, establecerActividadId] = useState<string | null>(null);
+
+  useEffect(() => {
+    let activo = true;
+    void actividadesDisponibles().then((si) => {
+      if (activo) establecerActividadDisponible(si);
+    });
+    return () => {
+      activo = false;
+    };
+  }, []);
   const { salidas } = useSalidas();
   const [eligiendoRecordatorio, establecerEligiendoRecordatorio] =
     useState(false);
@@ -158,6 +175,25 @@ export function VerBoleto({
     viajeId: guardado.boleto.viajeId,
   } as unknown as Salida;
   const recordatorioActivo = recordatorios.de(guardado.boleto.viajeId);
+
+  async function alternarActividad() {
+    if (actividadId) {
+      await terminarActividad(actividadId);
+      establecerActividadId(null);
+      return;
+    }
+    establecerActividadId(
+      await iniciarActividad({
+        anden: guardado!.resumen.anden,
+        destino: guardado!.resumen.destino,
+        estado: rellenar(t('boleto.actividadEstado'), {
+          anden: guardado!.resumen.anden,
+          hora: horaTexto(salidaGuardada),
+        }),
+        salida: salidaGuardada,
+      }),
+    );
+  }
 
   async function elegirRecordatorio(minutos: MinutosAntes) {
     const resultado = await recordatorios.programar(salidaDelBoleto, minutos);
@@ -432,6 +468,25 @@ export function VerBoleto({
               </Text>
             </Bloque>
           </Pressable>
+          {actividadDisponible ? (
+            <Pressable
+              accessibilityLabel={
+                actividadId
+                  ? t('boleto.actividadActiva')
+                  : t('boleto.actividad')
+              }
+              accessibilityRole="button"
+              accessibilityState={{ selected: actividadId !== null }}
+              onPress={() => void alternarActividad()}
+              style={estilos.accionEnFila}
+            >
+              <Bloque estiloContenido={estilos.accion} radio="pildora">
+                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                  {t('boleto.actividad')}
+                </Text>
+              </Bloque>
+            </Pressable>
+          ) : null}
         </View>
       )}
 
