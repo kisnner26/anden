@@ -14,6 +14,14 @@ targets:
     platform: watchOS
     sources:
       - AndenReloj
+      - Shared
+    dependencies:
+      - target: AndenRelojWidgets
+    entitlements:
+      path: AndenReloj/AndenReloj.entitlements
+      properties:
+        keychain-access-groups:
+          - $(AppIdentifierPrefix)com.kisnner.anden.shared
     info:
       path: AndenReloj/Info.plist
       properties:
@@ -34,3 +42,32 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         GENERATE_INFOPLIST_FILE: NO
         CODE_SIGN_STYLE: Automatic
+  AndenRelojWidgets:
+    type: app-extension
+    platform: watchOS
+    sources:
+      - AndenRelojWidgets
+      - Shared
+    entitlements:
+      path: AndenRelojWidgets/AndenRelojWidgets.entitlements
+      properties:
+        keychain-access-groups:
+          - $(AppIdentifierPrefix)com.kisnner.anden.shared
+    info:
+      path: AndenRelojWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: Andén
+        CFBundleDevelopmentRegion: es
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.kisnner.anden.reloj.widgets
+        SWIFT_VERSION: "5.0"
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        GENERATE_INFOPLIST_FILE: NO
+        CODE_SIGN_STYLE: Automatic
+        SKIP_INSTALL: YES
