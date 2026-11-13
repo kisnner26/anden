@@ -104,12 +104,13 @@ function DetalleCorredor({
           >
             <MapaCorredor
               simulacion={
-                viajeEnVivo
-                  ? {
-                      ...simulacion,
-                      bus: avance.transmision.posicion ?? undefined,
-                    }
-                  : simulacion
+                // solo se dibuja un bus si hay un viaje real transmitiendo; si no, solo el camino
+                {
+                  ...simulacion,
+                  bus: viajeEnVivo
+                    ? (avance.transmision.posicion ?? undefined)
+                    : undefined,
+                }
               }
             />
           </View>
@@ -119,50 +120,32 @@ function DetalleCorredor({
               sinSenal={avance.transmision.sinSenal}
             />
           ) : (
-            <>
-              <View style={estilos.filaSimulacion}>
-                <EtiquetaMuestra texto={t('rutas.simulacion')} />
-              </View>
-              <BloqueNegro estiloContenido={estilos.seguimiento}>
-                <Text
-                  accessibilityLiveRegion="polite"
-                  style={[tipografia.display, { color: colores.ambar }]}
-                >
-                  {`${t('rutas.llegaEn')} ${simulacion.restantes} ${t('rutas.minutosCorto')}`}
-                </Text>
+            <BloqueNegro estiloContenido={estilos.seguimiento}>
+              <Text
+                accessibilityLiveRegion="polite"
+                style={[tipografia.subtitulo, { color: colores.ambar }]}
+              >
+                {t('rutas.sinBusEnCamino')}
+              </Text>
+              <Text style={[tipografia.cuerpo, { color: colores.sobreNegro }]}>
+                {t('rutas.sinBusEnCaminoDetalle')}
+              </Text>
+              {simulacion.distanciaKm !== null && (
                 <Text
                   style={[tipografia.cuerpo, { color: colores.sobreNegro }]}
                 >
-                  {`${t('rutas.recorrido_va')} ${simulacion.porcentaje} % ${t('rutas.recorridoPorcentaje')}`}
+                  {t('rutas.kmCarretera').replace(
+                    '{{km}}',
+                    String(simulacion.distanciaKm),
+                  )}
                 </Text>
-                {simulacion.distanciaKm !== null && (
-                  <Text
-                    style={[tipografia.cuerpo, { color: colores.sobreNegro }]}
-                  >
-                    {t('rutas.kmCarretera').replace(
-                      '{{km}}',
-                      String(simulacion.distanciaKm),
-                    )}
-                  </Text>
-                )}
-                <Text
-                  style={[
-                    tipografia.pequeno,
-                    { color: colores.sobreNegroSuave },
-                  ]}
-                >
-                  {t('rutas.simulacionNota')}
-                </Text>
-                <Text
-                  style={[
-                    tipografia.pequeno,
-                    { color: colores.sobreNegroSuave },
-                  ]}
-                >
-                  {t('rutas.atribucionMapa')}
-                </Text>
-              </BloqueNegro>
-            </>
+              )}
+              <Text
+                style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
+              >
+                {t('rutas.atribucionMapa')}
+              </Text>
+            </BloqueNegro>
           )}
         </View>
       ) : (

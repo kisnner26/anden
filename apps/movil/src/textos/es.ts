@@ -1138,6 +1138,8 @@ export const textos = {
     km: 'km',
   },
   rutas: {
+    sinBusEnCamino: 'No hay un bus en camino ahora',
+    sinBusEnCaminoDetalle: 'Cuando un conductor salga en este trayecto, vas a ver el bus moverse acá en tiempo real.',
     titulo: 'Rutas',
     detalle: 'Interlocales entre Managua, Boaco y Juigalpa.',
     boacoManagua: 'Boaco · Managua',

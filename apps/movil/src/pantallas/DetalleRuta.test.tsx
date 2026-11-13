@@ -33,7 +33,7 @@ describe('DetalleRuta', () => {
     const pantalla = await renderPantalla(
       <DetalleRuta alVolver={() => undefined} rutaId="cor_man_boa" />,
     );
-    expect(pantalla.getByText('Simulación')).toBeTruthy();
+    expect(pantalla.getByText('No hay un bus en camino ahora')).toBeTruthy();
 
     const viaje = obtenerMuestra().viajes.find(
       (candidato) => candidato.rutaId === 'rut_may_boa',
@@ -50,11 +50,11 @@ describe('DetalleRuta', () => {
     });
 
     expect(await pantalla.findByText('En vivo')).toBeTruthy();
-    expect(pantalla.queryByText('Simulación')).toBeNull();
+    expect(pantalla.queryByText('No hay un bus en camino ahora')).toBeNull();
     expect(pantalla.getByText(/^Llega en unos \d+ min \(ETA\)$/)).toBeTruthy();
   });
 
-  it('presenta el corredor con un bus simulado marcado como tal', async () => {
+  it('sin un viaje real presenta solo el camino, sin bus ni ETA inventados', async () => {
     const pantalla = await renderPantalla(
       <DetalleRuta alVolver={() => undefined} rutaId="cor_boa_man" />,
     );
@@ -63,13 +63,11 @@ describe('DetalleRuta', () => {
       pantalla.getByRole('header', { name: 'Boaco → Managua.' }),
     ).toBeTruthy();
     expect(pantalla.queryByRole('header', { name: 'Rutas.' })).toBeNull();
-    expect(
-      pantalla.getByLabelText('Mapa del corredor con un bus simulado'),
-    ).toBeTruthy();
-    expect(pantalla.getByText('Simulación')).toBeTruthy();
-    expect(pantalla.getByText(/^ETA \d+ min$/)).toBeTruthy();
-    expect(pantalla.getByText(/^Va por el \d+ % del recorrido$/)).toBeTruthy();
-    expect(pantalla.getByText(/Posición simulada/)).toBeTruthy();
+    expect(pantalla.getByText('No hay un bus en camino ahora')).toBeTruthy();
+    expect(pantalla.queryByText('Simulación')).toBeNull();
+    expect(pantalla.queryByText(/^ETA \d+ min$/)).toBeNull();
+    expect(pantalla.queryByText(/del recorrido/)).toBeNull();
+    expect(pantalla.queryByTestId('bus-simulado')).toBeNull();
     expect(pantalla.getByLabelText('Origen: Boaco')).toBeTruthy();
     expect(pantalla.getByLabelText('Destino: Managua')).toBeTruthy();
     expect(pantalla.getByText('82.6 km de carretera')).toBeTruthy();
