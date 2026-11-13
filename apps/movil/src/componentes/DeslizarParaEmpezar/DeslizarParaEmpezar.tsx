@@ -38,12 +38,21 @@ export interface PropiedadesDeslizarParaEmpezar {
   alCompletar: () => void;
   /** ancho total del control */
   ancho: number;
+  /** texto del control; sin indicar dice "Deslizar para empezar" */
+  etiqueta?: string;
+  /** lo que lee el lector de pantalla para explicar el gesto */
+  ayuda?: string;
+  /** nombre de la acción de accesibilidad al completar */
+  accion?: string;
 }
 
 /** control para empezar: se arrastra la manija ámbar hasta el final; un toque solo insinúa el gesto (o completa si se redujo el movimiento) */
 export function DeslizarParaEmpezar({
+  accion = t('portada.empezar'),
   alCompletar,
   ancho,
+  ayuda = t('portada.deslizarAyuda'),
+  etiqueta = t('portada.deslizar'),
 }: PropiedadesDeslizarParaEmpezar) {
   const { colores } = useTema();
   const reducirMovimiento = useMovimientoReducido();
@@ -139,9 +148,9 @@ export function DeslizarParaEmpezar({
 
   return (
     <View
-      accessibilityActions={[{ label: t('portada.empezar'), name: 'activate' }]}
-      accessibilityHint={t('portada.deslizarAyuda')}
-      accessibilityLabel={t('portada.deslizar')}
+      accessibilityActions={[{ label: accion, name: 'activate' }]}
+      accessibilityHint={ayuda}
+      accessibilityLabel={etiqueta}
       accessibilityRole="button"
       accessible
       onAccessibilityAction={(evento) => {
@@ -161,7 +170,7 @@ export function DeslizarParaEmpezar({
           />
           <Animated.View style={[estilos.centro, estiloTexto]}>
             <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-              {t('portada.deslizar')}
+              {etiqueta}
             </Text>
           </Animated.View>
           <Animated.View style={[estilos.manija, estiloManija]}>
