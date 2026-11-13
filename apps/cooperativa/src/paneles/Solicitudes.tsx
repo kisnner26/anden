@@ -1,19 +1,21 @@
 import { useState } from 'react';
 
+import { Cajon } from '../componentes/Cajon';
+import { Etiqueta } from '../componentes/Etiqueta';
+import { Tabla, type Columna, type Filtro } from '../componentes/Tabla';
+import { useDatos } from '../DatosContexto';
+import { fechaHora, hace } from '../lib/formato';
 import { supabase } from '../supabase';
-import { useLista } from '../useDatos';
+import type { Solicitud } from '../tipos';
 
-interface Solicitud {
-  apellido: string;
-  cedula: string;
-  creada_en: string;
-  estado: string;
-  foto_dorso: string;
-  foto_frente: string;
-  nombre: string;
-  telefono: string;
-  usuario_id: string;
-}
+const ESTADOS: Record<
+  string,
+  { texto: string; tono: 'aviso' | 'error' | 'ok' }
+> = {
+  aprobada: { texto: 'Aprobada', tono: 'ok' },
+  en_revision: { texto: 'En revisión', tono: 'aviso' },
+  rechazada: { texto: 'Rechazada', tono: 'error' },
+};
 
 function Foto({ ruta, titulo }: { ruta: string; titulo: string }) {
   const [url, establecerUrl] = useState<string | null>(null);
@@ -28,137 +30,203 @@ function Foto({ ruta, titulo }: { ruta: string; titulo: string }) {
   if (url) return <img alt={titulo} className="cedula" src={url} />;
   return (
     <button className="ranura" onClick={() => void ver()} type="button">
-      <span className="micro">{titulo.toUpperCase()}</span>
+      <span className="micro">{titulo}</span>
       <span>{fallo ? 'No se pudo abrir' : 'Revelar ↗'}</span>
     </button>
   );
 }
 
 export function Solicitudes() {
-  const { cargando, filas, recargar } = useLista<Solicitud>(
-    'solicitudes_conductor',
-    'usuario_id, nombre, apellido, telefono, cedula, foto_frente, foto_dorso, estado, creada_en',
-    { columna: 'creada_en' },
-  );
-  const [sello, establecerSello] = useState<Record<string, string>>({});
+  const d = useDatos();
+  const [abierta, establecerAbierta] = useState<Solicitud | null>(null);
+  const [sello, establecerSello] = useState<string | null>(null);
   const [mensaje, establecerMensaje] = useState<string | null>(null);
 
-  async function resolver(s: Solicitud, aprobar: boolean) {
-    const { data, error } = await supabase!.rpc('resolver_solicitud', {
-      p_aprobar: aprobar,
-      p_usuario_id: s.usuario_id,
-    });
-    if (error) return establecerMensaje(`No se pudo guardar: ${error.message}`);
-    establecerSello((previo) => ({
-      ...previo,
-      [s.usuario_id]: aprobar ? 'APROBADA' : 'RECHAZADA',
-    }));
+  async function resolver(
+    lista: Solicitud[],
+    aprobar: boolean,
+    limpiar?: () => void,
+  ) {
+    let fallos = 0;
+    for (const s of lista.filter((x) => x.estado === 'en_revision')) {
+      const { error } = await supabase!.rpc('resolver_solicitud', {
+        p_aprobar: aprobar,
+        p_usuario_id: s.usuario_id,
+      });
+      if (error) fallos += 1;
+    }
     establecerMensaje(
-      aprobar
-        ? `${s.nombre} ya es conductor con el código ${String(data)}.`
-        : `Rechazaste la solicitud de ${s.nombre}.`,
+      fallos > 0
+        ? `${fallos} no se pudieron guardar.`
+        : aprobar
+          ? 'Aprobadas. Ya son conductores y les llega a su app.'
+          : 'Rechazadas.',
     );
-    window.setTimeout(() => void recargar(), 1400);
+    limpiar?.();
+    if (abierta) {
+      establecerSello(aprobar ? 'APROBADA' : 'RECHAZADA');
+      window.setTimeout(() => {
+        establecerSello(null);
+        establecerAbierta(null);
+      }, 1300);
+    }
+    await d.recargar();
   }
 
-  const pendientes = filas.filter(
-    (s) => s.estado === 'en_revision' || sello[s.usuario_id],
-  );
-  const resueltas = filas.filter(
-    (s) => s.estado !== 'en_revision' && !sello[s.usuario_id],
-  );
-
+  const columnas: Columna<Solicitud>[] = [
+    {
+      celda: (s) => (
+        <strong>
+          {s.nombre} {s.apellido}
+        </strong>
+      ),
+      clave: 'nombre',
+      titulo: 'Persona',
+      valor: (s) => `${s.nombre} ${s.apellido}`,
+    },
+    {
+      celda: (s) => s.cedula,
+      clave: 'cedula',
+      titulo: 'Cédula',
+      valor: (s) => s.cedula,
+    },
+    {
+      celda: (s) => s.telefono,
+      clave: 'telefono',
+      titulo: 'Teléfono',
+      valor: (s) => s.telefono,
+    },
+    {
+      celda: (s) => (
+        <span title={fechaHora(s.creada_en)}>{hace(s.creada_en)}</span>
+      ),
+      clave: 'fecha',
+      titulo: 'Enviada',
+      valor: (s) => s.creada_en,
+    },
+    {
+      celda: (s) => (
+        <Etiqueta tono={ESTADOS[s.estado]?.tono ?? 'neutro'}>
+          {ESTADOS[s.estado]?.texto ?? s.estado}
+        </Etiqueta>
+      ),
+      clave: 'estado',
+      titulo: 'Estado',
+      valor: (s) => s.estado,
+    },
+  ];
+  const filtros: Filtro<Solicitud>[] = [
+    {
+      clave: 'rev',
+      prueba: (s) => s.estado === 'en_revision',
+      titulo: 'En revisión',
+    },
+    {
+      clave: 'apr',
+      prueba: (s) => s.estado === 'aprobada',
+      titulo: 'Aprobadas',
+    },
+    {
+      clave: 'rec',
+      prueba: (s) => s.estado === 'rechazada',
+      titulo: 'Rechazadas',
+    },
+  ];
   return (
-    <div className="pagina">
-      <header className="encabezado">
-        <p className="micro">02 / SOLICITUDES DE CONDUCTOR</p>
-        <h1 className="display">
-          <span>QUIÉN</span>
-          <em>MANEJA.</em>
-        </h1>
-        <p className="lead">
-          Revisá la cédula de cada persona y decidí. Al aprobar, su app se
-          convierte en la de un conductor.
-        </p>
-      </header>
+    <>
       {mensaje && (
         <p className="aviso" role="status">
           {mensaje}
         </p>
       )}
-      {cargando && <p className="vacio">Cargando…</p>}
-      {!cargando && pendientes.length === 0 && (
-        <p className="vacio">No hay solicitudes por revisar.</p>
-      )}
-      <div className="cartas">
-        {pendientes.map((s, i) => (
-          <article
-            className="carta"
-            key={s.usuario_id}
-            style={{ animationDelay: `${i * 80}ms` }}
-          >
-            {sello[s.usuario_id] && (
-              <div
-                className={`sello ${sello[s.usuario_id] === 'APROBADA' ? 'ok' : 'no'}`}
-              >
-                {sello[s.usuario_id]}
+      <Tabla
+        accionesEnLote={(sel, limpiar) => (
+          <>
+            <button
+              className="boton-t primario"
+              onClick={() => void resolver(sel, true, limpiar)}
+              type="button"
+            >
+              Aprobar
+            </button>
+            <button
+              className="boton-t peligro"
+              onClick={() => void resolver(sel, false, limpiar)}
+              type="button"
+            >
+              Rechazar
+            </button>
+          </>
+        )}
+        alAbrir={establecerAbierta}
+        columnas={columnas}
+        filas={d.solicitudes}
+        filtros={filtros}
+        idDe={(s) => s.usuario_id}
+        nombreArchivo="solicitudes-de-conductor"
+        textoDe={(s) => `${s.nombre} ${s.apellido} ${s.cedula} ${s.telefono}`}
+        vacio={{
+          detalle:
+            'Cuando alguien se registre como conductor desde la app, su solicitud aparece acá.',
+          titulo: 'Sin solicitudes',
+        }}
+      />
+      <Cajon
+        abierto={abierta !== null}
+        alCerrar={() => establecerAbierta(null)}
+        titulo={abierta ? `${abierta.nombre} ${abierta.apellido}` : ''}
+      >
+        {abierta && (
+          <div className="con-sello">
+            {sello && (
+              <div className={`sello ${sello === 'APROBADA' ? 'ok' : 'no'}`}>
+                {sello}
               </div>
             )}
-            <p className="micro">
-              {String(i + 1).padStart(2, '0')} ·{' '}
-              {new Date(s.creada_en).toLocaleString('es-NI')}
-            </p>
-            <h3 className="nombre">
-              {s.nombre} {s.apellido}
-            </h3>
-            <p className="suave">
-              Cédula {s.cedula} · Tel. {s.telefono}
-            </p>
+            <dl className="ficha-datos">
+              <div>
+                <dt>Cédula</dt>
+                <dd>{abierta.cedula}</dd>
+              </div>
+              <div>
+                <dt>Teléfono</dt>
+                <dd>{abierta.telefono}</dd>
+              </div>
+              <div>
+                <dt>Enviada</dt>
+                <dd>{fechaHora(abierta.creada_en)}</dd>
+              </div>
+              <div>
+                <dt>Estado</dt>
+                <dd>{ESTADOS[abierta.estado]?.texto}</dd>
+              </div>
+            </dl>
+            <h3 className="sub">Cédula</h3>
             <div className="fotos">
-              <Foto ruta={s.foto_frente} titulo="Frente" />
-              <Foto ruta={s.foto_dorso} titulo="Dorso" />
+              <Foto ruta={abierta.foto_frente} titulo="Frente" />
+              <Foto ruta={abierta.foto_dorso} titulo="Dorso" />
             </div>
-            <div className="acciones">
-              <button
-                className="boton-ed"
-                disabled={Boolean(sello[s.usuario_id])}
-                onClick={() => void resolver(s, true)}
-                type="button"
-              >
-                APROBAR ↗
-              </button>
-              <button
-                className="boton-linea"
-                disabled={Boolean(sello[s.usuario_id])}
-                onClick={() => void resolver(s, false)}
-                type="button"
-              >
-                RECHAZAR
-              </button>
-            </div>
-          </article>
-        ))}
-      </div>
-      {resueltas.length > 0 && (
-        <section className="bloque">
-          <h2 className="titulo-bloque">YA RESUELTAS</h2>
-          <ul className="lista">
-            {resueltas.map((s) => (
-              <li key={s.usuario_id}>
-                <span>
-                  {s.nombre} {s.apellido}
-                </span>
-                <span className="micro">{s.cedula}</span>
-                <span
-                  className={`chip ${s.estado === 'aprobada' ? 'ok' : 'no'}`}
+            {abierta.estado === 'en_revision' && (
+              <div className="acciones">
+                <button
+                  className="boton-t primario grande"
+                  onClick={() => void resolver([abierta], true)}
+                  type="button"
                 >
-                  {s.estado === 'aprobada' ? 'APROBADA' : 'RECHAZADA'}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-    </div>
+                  Aprobar
+                </button>
+                <button
+                  className="boton-t peligro grande"
+                  onClick={() => void resolver([abierta], false)}
+                  type="button"
+                >
+                  Rechazar
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </Cajon>
+    </>
   );
 }
