@@ -20,7 +20,7 @@ export interface Salida {
   minutosAtraso: number;
   /** ciudad de la terminal de la que sale */
   origen: string;
-  /** placa de la unidad, que en el taxi interlocal es lo que identifica el carro */
+  /** placa de la unidad */
   placa: string;
   rutaId: string;
   salida: Date;

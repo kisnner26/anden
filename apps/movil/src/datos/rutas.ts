@@ -19,11 +19,7 @@ export interface RutaVista {
   servicios: ServicioDeRuta[];
 }
 
-const SERVICIOS_EN_ORDEN: TipoServicio[] = [
-  'ordinario',
-  'expreso',
-  'taxi-interlocal',
-];
+const SERVICIOS_EN_ORDEN: TipoServicio[] = ['ordinario', 'expreso'];
 
 /** las rutas de la terminal con los servicios que las recorren, su tarifa de muestra y la próxima salida */
 export function armarRutas(datos: DatosMuestra, ahora: Date): RutaVista[] {

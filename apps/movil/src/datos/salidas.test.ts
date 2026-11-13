@@ -52,13 +52,6 @@ describe('armarSalidas', () => {
     expect(boaco?.placa).toBe('M 222-114');
     expect(boaco?.choferId).toBe('cho_2');
   });
-
-  it('identifica el taxi interlocal con su placa', () => {
-    const taxi = salidas.find(
-      (salida) => salida.servicio === 'taxi-interlocal',
-    );
-    expect(taxi?.placa).toMatch(/^M \d{3}-\d{3}$/);
-  });
 });
 
 describe('proximaSalida', () => {

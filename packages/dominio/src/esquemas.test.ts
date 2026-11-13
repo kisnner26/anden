@@ -165,7 +165,7 @@ const bus = {
   id: 'bus_01',
   placa: 'M 245-118',
   cooperativa: 'Cooperativa de muestra',
-  servicio: 'taxi-interlocal',
+  servicio: 'expreso',
   configuracion: 'coaster26',
   comodidades: ['aire-acondicionado', 'carga-usb'],
 };

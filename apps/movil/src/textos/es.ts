@@ -19,8 +19,6 @@ export const textos = {
   servicios: {
     ordinario: 'Ordinario',
     expreso: 'Expreso',
-    'taxi-interlocal': 'Taxi interlocal',
-    taxi: 'Taxi',
   },
   estados: {
     aTiempo: 'A tiempo',

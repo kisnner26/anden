@@ -27,7 +27,6 @@ describe('armarRutas', () => {
     expect(de('Boaco')?.servicios).toEqual([
       { servicio: 'ordinario', tarifa: 70 },
       { servicio: 'expreso', tarifa: 85 },
-      { servicio: 'taxi-interlocal', tarifa: 95 },
     ]);
   });
 

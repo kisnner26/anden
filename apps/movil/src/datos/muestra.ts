@@ -105,7 +105,7 @@ export const RUTAS: Ruta[] = RECORRIDOS.flatMap((recorrido) => [
 
 /** tarifa de muestra en córdobas por ruta y servicio */
 const TARIFAS: Record<string, Partial<Record<TipoServicio, number>>> = {
-  boa: { 'taxi-interlocal': 95, expreso: 85, ordinario: 70 },
+  boa: { expreso: 85, ordinario: 70 },
   jui: { expreso: 130, ordinario: 110 },
 };
 
@@ -128,7 +128,6 @@ export const TARIFARIO: Tarifario = RECORRIDOS.flatMap((recorrido) =>
 const CONFIGURACION_POR_SERVICIO: Record<TipoServicio, ConfiguracionBus> = {
   expreso: 'bus45',
   ordinario: 'coaster26',
-  'taxi-interlocal': 'micro15',
 };
 
 const NOMBRES_CHOFER = [
@@ -151,13 +150,7 @@ const SALIDAS: Array<{
   { anden: 3, atraso: 0, desde: 20, destino: 'boa', servicio: 'ordinario' },
   { anden: 4, atraso: 0, desde: 28, destino: 'jui', servicio: 'ordinario' },
   { anden: 1, atraso: 10, desde: 32, destino: 'jui', servicio: 'expreso' },
-  {
-    anden: 6,
-    atraso: 0,
-    desde: 40,
-    destino: 'boa',
-    servicio: 'taxi-interlocal',
-  },
+  { anden: 6, atraso: 0, desde: 40, destino: 'boa', servicio: 'ordinario' },
   { anden: 4, atraso: 0, desde: 55, destino: 'jui', servicio: 'ordinario' },
   { anden: 2, atraso: 0, desde: 65, destino: 'boa', servicio: 'expreso' },
   { anden: 1, atraso: 0, desde: 80, destino: 'jui', servicio: 'expreso' },
@@ -183,7 +176,7 @@ const SALIDAS: Array<{
     desde: 34,
     destino: 'may',
     origen: 'boa',
-    servicio: 'taxi-interlocal',
+    servicio: 'ordinario',
   },
   {
     anden: 2,
