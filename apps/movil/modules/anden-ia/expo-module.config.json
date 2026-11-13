@@ -1,6 +1,9 @@
 {
-  "platforms": ["apple"],
+  "platforms": ["apple", "android"],
   "apple": {
     "modules": ["AndenIAModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.andenia.AndenIAModule"]
   }
 }
