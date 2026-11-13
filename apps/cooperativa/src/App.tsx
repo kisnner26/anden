@@ -10,7 +10,7 @@ import { Viajes } from './paneles/Viajes';
 import { supabase } from './supabase';
 
 const SECCIONES = [
-  { clave: 'portada', titulo: 'Resumen' },
+  { clave: 'portada', titulo: 'Tablero' },
   { clave: 'solicitudes', titulo: 'Solicitudes' },
   { clave: 'conductores', titulo: 'Conductores' },
   { clave: 'viajes', titulo: 'Viajes' },
@@ -44,7 +44,7 @@ export function App() {
   if (!supabase) {
     return (
       <main className="ingreso">
-        <div className="tarjeta ingreso-form">
+        <div className="ingreso-form">
           <h1>Falta conectar el servidor</h1>
           <p className="suave">
             Copiá <code>.env.example</code> a <code>.env.local</code> y poné la
@@ -65,7 +65,7 @@ export function App() {
   if (estado === 'sin-permiso') {
     return (
       <main className="ingreso">
-        <div className="tarjeta ingreso-form">
+        <div className="ingreso-form">
           <h1>Esta cuenta no es de la cooperativa</h1>
           <p className="suave">
             Pedí que le den el rol con{' '}
@@ -73,7 +73,7 @@ export function App() {
             editor de SQL de Supabase.
           </p>
           <button
-            className="primario"
+            className="boton-ed"
             onClick={() =>
               void supabase?.auth
                 .signOut()
@@ -88,43 +88,56 @@ export function App() {
     );
   }
 
+  const salir = () =>
+    void supabase?.auth.signOut().then(() => establecerEstado('sin-sesion'));
+  const indice = SECCIONES.findIndex((s) => s.clave === seccion) + 1;
+
   return (
     <div className="marco">
-      <aside className="lateral">
-        <p className="etiqueta">ANDÉN</p>
-        <h2>Cooperativa</h2>
-        <nav>
-          {SECCIONES.map((s) => (
+      <header className="barra">
+        <div className="marca">
+          <span className="display marca-a">ANDÉN</span>
+          <span className="micro">COOPERATIVA · TORRE DE CONTROL</span>
+        </div>
+        <nav aria-label="Secciones" className="pestanas">
+          {SECCIONES.map((s, i) => (
             <button
               aria-current={seccion === s.clave ? 'page' : undefined}
               key={s.clave}
               onClick={() => establecerSeccion(s.clave)}
               type="button"
             >
+              <span className="micro">{String(i + 1).padStart(2, '0')}</span>
               {s.titulo}
             </button>
           ))}
         </nav>
-        <button
-          className="salir"
-          onClick={() =>
-            void supabase?.auth
-              .signOut()
-              .then(() => establecerEstado('sin-sesion'))
-          }
-          type="button"
-        >
-          Cerrar sesión
-        </button>
-      </aside>
-      <main className="contenido">
-        {seccion === 'portada' && <Portada />}
+        <div className="estado">
+          <span className="micro">
+            <span className="punto-vivo" /> EN VIVO
+          </span>
+          <button className="salir" onClick={salir} type="button">
+            SALIR
+          </button>
+        </div>
+      </header>
+      <main className="contenido" key={seccion}>
+        {seccion === 'portada' && (
+          <Portada irA={(s) => establecerSeccion(s as Seccion)} />
+        )}
         {seccion === 'solicitudes' && <Solicitudes />}
         {seccion === 'conductores' && <Conductores />}
         {seccion === 'viajes' && <Viajes />}
         {seccion === 'encomiendas' && <Encomiendas />}
         {seccion === 'alertas' && <Alertas />}
       </main>
+      <footer className="pie">
+        <span className="micro">
+          {String(indice).padStart(2, '0')} /{' '}
+          {String(SECCIONES.length).padStart(2, '0')}
+        </span>
+        <span className="micro">LA RUTA, AL DÍA.</span>
+      </footer>
     </div>
   );
 }
