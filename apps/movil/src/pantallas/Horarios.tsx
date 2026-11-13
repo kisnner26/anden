@@ -27,6 +27,8 @@ import {
   type ResultadoRecordatorio,
 } from '@/datos/useRecordatorios';
 import { useSalidas } from '@/datos/useSalidas';
+import { destinoHabitual } from '@/datos/memoriaIA';
+import { useMemoriaIA } from '@/datos/useMemoriaIA';
 import { diasDeReserva, inicioDelDia, mismoDia } from '@/datos/dias';
 import { diasDeAnticipacion } from '@/servicios/beneficios';
 import { proximaSalida } from '@/datos/salidas';
@@ -65,6 +67,7 @@ export function Horarios({
     () => diasDeReserva(hoy, diasDeAnticipacion(plus)),
     [hoy, plus],
   );
+  const memoriaIA = useMemoriaIA();
   const { favoritos } = useFavoritos();
   const [soloFavoritas, establecerSoloFavoritas] = useState(false);
   const recordatorios = useRecordatorios();
@@ -129,6 +132,17 @@ export function Horarios({
   const disponibles = visibles.filter(
     (salida) => salida.estado !== 'en-ruta' && salida.estado !== 'llego',
   );
+  // con la IA activada y su memoria, se marca la salida que más le conviene: el destino de siempre con asientos
+  const habitual = memoriaIA.activa ? destinoHabitual(memoriaIA.memoria) : null;
+  const sugeridaId =
+    habitual === null
+      ? null
+      : (disponibles.find(
+          (salida) =>
+            salida.destino === habitual &&
+            salida.asientosLibres > 0 &&
+            salida.salida.getTime() >= ahora.getTime(),
+        )?.viajeId ?? null);
   const nivelProxima = proxima
     ? nivelDisponibilidad(proxima.asientosLibres)
     : null;
@@ -337,6 +351,9 @@ export function Horarios({
                   ).replace('{{destino}}', salida.destino),
                 }}
                 salida={salida}
+                sugerida={
+                  salida.viajeId === sugeridaId ? t('ia.paraVos') : undefined
+                }
               />
             </Aparece>
           ))}
