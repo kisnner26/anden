@@ -29,6 +29,7 @@ struct ViajeVista: View {
             Text(cuentaAtras(r.viaje, ahora: ahora))
                 .font(.system(size: 13, weight: .medium))
                 .foregroundStyle(Tema.crema)
+            barra(r.viaje, ahora: ahora)
             Spacer(minLength: 2)
             HStack {
                 dato("Andén", "\(r.viaje.anden)")
@@ -37,6 +38,21 @@ struct ViajeVista: View {
                 Spacer()
                 dato("Bus", r.viaje.placa)
             }
+        }
+    }
+
+    /// se llena durante la última hora antes de la salida
+    @ViewBuilder
+    private func barra(_ v: Viaje, ahora: Date) -> some View {
+        if v.salioEn == nil {
+            let avance = min(1, max(0, 1 - v.salida.timeIntervalSince(ahora) / 3600))
+            GeometryReader { g in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(Tema.linea)
+                    Capsule().fill(Tema.ambar).frame(width: max(4, g.size.width * avance))
+                }
+            }
+            .frame(height: 4)
         }
     }
 
