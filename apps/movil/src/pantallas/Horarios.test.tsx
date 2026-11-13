@@ -49,7 +49,7 @@ describe('Horarios', () => {
   it('vuelve a mostrar todas con el filtro Todos', async () => {
     const pantalla = await renderPantalla(<Horarios />);
     await fireEvent.press(pantalla.getByRole('button', { name: /^Filtros/ }));
-    await fireEvent.press(pantalla.getByRole('button', { name: 'Taxi' }));
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Expreso' }));
     await fireEvent.press(pantalla.getByRole('button', { name: 'Todos' }));
     expect(
       pantalla.getAllByLabelText(/, (Salió|Abordando|A tiempo|\+\d+ min)$/),

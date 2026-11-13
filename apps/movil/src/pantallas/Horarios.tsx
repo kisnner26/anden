@@ -39,7 +39,6 @@ const FILTROS: readonly { clave: Filtro; etiqueta: () => string }[] = [
   { clave: 'todos', etiqueta: () => t('horarios.todos') },
   { clave: 'ordinario', etiqueta: () => t('servicios.ordinario') },
   { clave: 'expreso', etiqueta: () => t('servicios.expreso') },
-  { clave: 'taxi-interlocal', etiqueta: () => t('servicios.taxi') },
 ];
 
 export interface PropiedadesHorarios {

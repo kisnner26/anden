@@ -16,7 +16,6 @@ import { DibujoPestanaViajar } from './dibujos/PestanaViajar';
 import { DibujoRayo } from './dibujos/Rayo';
 import { DibujoReloj } from './dibujos/Reloj';
 import { DibujoSiguiente } from './dibujos/Siguiente';
-import { DibujoTaxi } from './dibujos/Taxi';
 import { useTema } from '@/tema/useTema';
 
 import type { PropiedadesDibujo } from './dibujos/tipos';
@@ -37,7 +36,6 @@ const DIBUJOS = {
   rayo: DibujoRayo,
   reloj: DibujoReloj,
   siguiente: DibujoSiguiente,
-  taxi: DibujoTaxi,
   volante: DibujoVolante,
   volver: DibujoVolver,
 } satisfies Record<string, (propiedades: PropiedadesDibujo) => ReactElement>;

@@ -158,13 +158,7 @@ export function DetalleViaje({
         <Bloque estiloContenido={estilos.unidad}>
           <Loseta>
             <Icono
-              nombre={
-                salida.servicio === 'expreso'
-                  ? 'rayo'
-                  : salida.servicio === 'taxi-interlocal'
-                    ? 'taxi'
-                    : 'pestanaViajar'
-              }
+              nombre={salida.servicio === 'expreso' ? 'rayo' : 'pestanaViajar'}
               color={colores.tinta}
               colorDetalle={colores.barroClaro}
               tamano="ilustracion"

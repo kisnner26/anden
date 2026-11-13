@@ -51,10 +51,10 @@ describe('Icono', () => {
     'respeta la medida %s de la escala',
     async (tamano) => {
       const pantalla = await render(
-        <Icono etiquetaAccesible="taxi" nombre="taxi" tamano={tamano} />,
+        <Icono etiquetaAccesible="reloj" nombre="reloj" tamano={tamano} />,
       );
       const medida = tamanosIcono[tamano];
-      expect(pantalla.getByLabelText('taxi').props.style).toEqual({
+      expect(pantalla.getByLabelText('reloj').props.style).toEqual({
         height: medida,
         width: medida,
       });

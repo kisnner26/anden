@@ -53,17 +53,9 @@ describe('FilaSalida', () => {
     expect(contar(con.toJSON())).toBeGreaterThan(contar(sin.toJSON()));
   });
 
-  it('muestra la placa en el taxi interlocal y no en el ordinario', async () => {
-    const todas = armarSalidas(crearMuestra(AHORA), AHORA);
-    const taxi = todas.find(
-      (salida) => salida.servicio === 'taxi-interlocal',
-    ) as Salida;
-    const pantalla = await render(<FilaSalida salida={taxi} />);
-    expect(
-      pantalla.getByText(`Taxi interlocal · andén 6 · ${taxi.placa}`),
-    ).toBeTruthy();
-    const ordinario = await render(<FilaSalida salida={boaco} />);
-    expect(ordinario.queryByText(new RegExp(boaco.placa))).toBeNull();
+  it('no muestra la placa de la unidad en la fila', async () => {
+    const pantalla = await render(<FilaSalida salida={boaco} />);
+    expect(pantalla.queryByText(new RegExp(boaco.placa))).toBeNull();
   });
 
   it('muestra los asientos libres solo si se pide', async () => {

@@ -27,9 +27,6 @@ export interface PropiedadesFilaSalida {
 function IconoServicio({ servicio }: { servicio: Salida['servicio'] }) {
   if (servicio === 'expreso')
     return <Icono nombre="rayo" tamano="ilustracion" />;
-  if (servicio === 'taxi-interlocal') {
-    return <Icono nombre="taxi" tamano="ilustracion" />;
-  }
   return <Autobus ancho={tamanosControl.toqueMinimo} />;
 }
 
@@ -68,9 +65,7 @@ export function FilaSalida({
             {salida.destino}
           </Text>
           <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {salida.servicio === 'taxi-interlocal'
-              ? `${servicio} · ${anden} · ${salida.placa}`
-              : `${servicio} · ${anden}`}
+            {`${servicio} · ${anden}`}
           </Text>
           {mostrarDisponibilidad ? (
             <Text

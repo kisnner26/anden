@@ -48,7 +48,6 @@ export interface PropiedadesBuscador {
 const SERVICIOS: readonly { clave: TipoServicio; etiqueta: () => string }[] = [
   { clave: 'ordinario', etiqueta: () => t('servicios.ordinario') },
   { clave: 'expreso', etiqueta: () => t('servicios.expreso') },
-  { clave: 'taxi-interlocal', etiqueta: () => t('servicios.taxi') },
 ];
 
 const NOMBRE_FRANJA: Record<Franja, () => string> = {
