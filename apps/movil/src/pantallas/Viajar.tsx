@@ -35,6 +35,8 @@ export interface PropiedadesViajar {
   alElegirAsiento: (viajeId: string) => void;
   /** lleva a Horarios, donde se elige otro día */
   alReservarOtroDia?: () => void;
+  /** abre "Dónde viene mi bus" */
+  alAbrirDondeViene?: () => void;
   /** salta a otra pestaña desde los atajos */
   alIrA?: (pestana: 'boletos' | 'horarios' | 'rutas') => void;
 }
@@ -48,6 +50,7 @@ export function Viajar({
   alAbrirViaje,
   alElegirAsiento,
   alReservarOtroDia,
+  alAbrirDondeViene,
   alIrA,
 }: PropiedadesViajar) {
   const { colores } = useTema();
@@ -158,6 +161,28 @@ export function Viajar({
           </Text>
         )}
 
+        {alAbrirDondeViene && (
+          <Pressable
+            accessibilityRole="button"
+            onPress={alAbrirDondeViene}
+            style={({ pressed }) => pressed && estilos.presionado}
+          >
+            <Bloque estiloContenido={estilos.dondeViene}>
+              <View style={estilos.textoDondeViene}>
+                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                  {t('dondeViene.entrada')}
+                </Text>
+                <Text
+                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                >
+                  {t('dondeViene.entradaDetalle')}
+                </Text>
+              </View>
+              <Icono nombre="siguiente" tamano="mediano" />
+            </Bloque>
+          </Pressable>
+        )}
+
         {alIrA && (
           <View style={estilos.atajos}>
             {(
@@ -254,6 +279,13 @@ export function Viajar({
 }
 
 const estilos = StyleSheet.create({
+  dondeViene: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.dieciseis,
+    padding: espacios.dieciseis,
+  },
+  textoDondeViene: { flex: 1, gap: espacios.cuatro },
   atajo: { flex: 1 },
   atajoContenido: {
     alignItems: 'center',

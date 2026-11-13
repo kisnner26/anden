@@ -300,4 +300,13 @@ describe('Viajar', () => {
     const pantalla = await dibujar();
     expect(pantalla.queryByRole('button', { name: 'Mis boletos' })).toBeNull();
   });
+
+  it('ofrece "Dónde viene mi bus" y lleva a esa pantalla', async () => {
+    const alAbrirDondeViene = jest.fn();
+    const pantalla = await dibujar({ alAbrirDondeViene });
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: /Dónde viene mi bus/ }),
+    );
+    expect(alAbrirDondeViene).toHaveBeenCalledTimes(1);
+  });
 });

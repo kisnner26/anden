@@ -685,6 +685,33 @@ export const textos = {
     solo: 'Tus boletos guardados',
     recoger: 'Recoger las tarjetas',
   },
+  dondeViene: {
+    titulo: 'Dónde viene mi bus',
+    entrada: '¿Dónde viene mi bus?',
+    entradaDetalle:
+      'Mirá qué buses vienen hacia tu terminal y a qué hora llegan',
+    subtitulo: 'Elegí dónde estás y mirá qué buses vienen hacia ahí.',
+    estoyEn: 'Estoy en',
+    vienenHacia: 'Vienen hacia {terminal}',
+    estasAca: 'Estás acá',
+    llegaEn: 'Llega en',
+    llegadaEta: 'Llegada estimada (ETA)',
+    unidades: 'a {km} km de {lugar}',
+    saleDe: 'Sale de {origen} en {minutos} min',
+    salioDe: 'Salió de {origen} a las {hora}',
+    enVivo: 'En vivo',
+    segunHorario: 'Según horario',
+    enVivoDetalle: 'El conductor comparte su ubicación.',
+    segunHorarioDetalle:
+      'Calculado con la hora de salida y lo que dura el viaje. Puede variar con el tráfico.',
+    vacio: 'No hay buses en camino hacia {lugar} ahora.',
+    vacioProximo:
+      'El próximo sale de {origen} a las {hora} y llegaría hacia las {llegada} (ETA).',
+    comoSeCalcula: 'Cómo se calcula',
+    mapaTitulo: 'Por dónde viene',
+    abrir: 'Ver el viaje',
+    km: 'km',
+  },
   rutas: {
     titulo: 'Rutas',
     detalle: 'Interlocales entre Managua, Boaco y Juigalpa.',

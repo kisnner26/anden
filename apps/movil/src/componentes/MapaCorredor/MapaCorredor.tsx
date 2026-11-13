@@ -24,6 +24,8 @@ export interface PropiedadesMapaCorredor {
   simulacion: Pick<BusSimulado, 'destino' | 'origen' | 'trazo'> & {
     bus?: Punto;
   };
+  /** texto bajo la terminal de destino, por ejemplo "Estás acá" */
+  etiquetaDestino?: string;
   /** modelo del bus; sin indicar se reparte por corredor, así cada camino tiene el suyo */
   variante?: IdVarianteBus;
 }
@@ -41,6 +43,7 @@ function Terminal({ codigo }: { codigo: string }) {
 
 /** mapa del corredor: trazo entre las dos terminales y el bus simulado encima */
 export function MapaCorredor({
+  etiquetaDestino,
   simulacion,
   variante,
 }: PropiedadesMapaCorredor) {
@@ -90,7 +93,21 @@ export function MapaCorredor({
           }}
           tracksViewChanges={false}
         >
-          <Terminal codigo={destino.codigo} />
+          <View style={estilos.marcaDestino}>
+            <Terminal codigo={destino.codigo} />
+            {etiquetaDestino ? (
+              <View
+                style={[
+                  estilos.cartel,
+                  { backgroundColor: colores.bloqueNegro },
+                ]}
+              >
+                <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+                  {etiquetaDestino}
+                </Text>
+              </View>
+            ) : null}
+          </View>
         </Marker>
         {bus && (
           <Marker
@@ -121,6 +138,13 @@ export function MapaCorredor({
 }
 
 const estilos = StyleSheet.create({
+  cartel: {
+    borderRadius: radios.pildora,
+    marginTop: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  marcaDestino: { alignItems: 'center' },
   mapa: { height: ALTO_MAPA, width: '100%' },
   marco: {
     borderRadius: radios.bloqueNegro,

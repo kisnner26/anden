@@ -12,6 +12,7 @@ export default function RutaViajar() {
         router.push({ params: { id }, pathname: '/viaje/[id]' })
       }
       alIrA={(pestana) => router.navigate(`/${pestana}`)}
+      alAbrirDondeViene={() => router.push('/donde-viene')}
       alReservarOtroDia={() => router.navigate('/horarios')}
       alElegirAsiento={(id) =>
         router.push({ params: { id }, pathname: '/viaje/[id]/asientos' })
