@@ -84,6 +84,8 @@ export function TrayectoCorredor({
         >
           <Autobus
             ancho={ANCHO_BUS}
+            animado
+            usarMiUnidad
             letrero=""
             variante={varianteDeClave(`${origen}${destino}`)}
           />
