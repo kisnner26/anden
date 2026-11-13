@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react';
 
-/** la hora de Nicaragua corriendo, para que el panel se sienta vivo */
-export function Reloj() {
+export function useAhora(): Date {
   const [ahora, establecerAhora] = useState(() => new Date());
   useEffect(() => {
     const t = setInterval(() => establecerAhora(new Date()), 1000);
     return () => clearInterval(t);
   }, []);
+  return ahora;
+}
+
+export function Reloj() {
+  const ahora = useAhora();
   return (
     <time dateTime={ahora.toISOString()}>
       {ahora.toLocaleTimeString('es-NI', {
