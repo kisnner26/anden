@@ -112,18 +112,23 @@ export const textos = {
     vozNoDisponible: 'El dictado por voz no está disponible en este teléfono.',
     callar: 'Callar',
     hablando: 'Andén está hablando…',
-    vozProblema: 'No pude reproducir la voz ({motivo}). Subí el volumen del teléfono o probá con la voz natural.',
+    vozProblema:
+      'No pude reproducir la voz ({motivo}). Subí el volumen del teléfono o probá con la voz natural.',
     vozNatural: 'Voz natural',
     vozNaturalDetalle:
       'Suena más humana, pero usa internet: el texto de la respuesta se envía a Google para convertirlo en voz. Apagada, se usa la voz del teléfono.',
     turista: 'Soy turista',
-    turistaDetalle: 'Andén te recomienda qué visitar, qué comer y qué hacer en cada destino.',
+    turistaDetalle:
+      'Andén te recomienda qué visitar, qué comer y qué hacer en cada destino.',
     verTurista: 'Qué visitar en {destino}, con IA',
-    pedidoTurista: 'Soy turista y voy a {destino}. Recomendame en cuatro frases qué visitar, qué comer y un dato curioso. Si no estás seguro de un lugar, decilo.',
+    pedidoTurista:
+      'Soy turista y voy a {destino}. Recomendame en cuatro frases qué visitar, qué comer y un dato curioso. Si no estás seguro de un lugar, decilo.',
     resumirConductor: 'Resumir este viaje con IA',
-    pedidoResumenConductor: 'Resumí este viaje en dos frases y decime qué debería hacer ahora como conductor: pasajeros por subir, cobros pendientes y encomiendas.',
+    pedidoResumenConductor:
+      'Resumí este viaje en dos frases y decime qué debería hacer ahora como conductor: pasajeros por subir, cobros pendientes y encomiendas.',
     analizarConductor: 'Explicame cómo me fue con IA',
-    pedidoAnalisisConductor: 'Explicame en tres frases cómo me fue en este período y dame una sugerencia concreta para ganar más o llenar mejor el bus. Usá solo estos números.',
+    pedidoAnalisisConductor:
+      'Explicame en tres frases cómo me fue en este período y dame una sugerencia concreta para ganar más o llenar mejor el bus. Usá solo estos números.',
     resumirViaje: 'Resumir este viaje con IA',
     pedidoResumenViaje:
       'Resumí este viaje en dos frases: hora, andén, tarifa y una recomendación útil para quien va a viajar.',
@@ -353,34 +358,44 @@ export const textos = {
   },
   seguridad: {
     titulo: 'Detección de choques',
-    detalle: 'Mientras viajás, el teléfono vigila si hay un golpe fuerte seguido de quietud. Si pasa, te pregunta si estás bien y, si no contestás, avisa a tu contacto de emergencia con tu ubicación.',
+    detalle:
+      'Mientras viajás, el teléfono vigila si hay un golpe fuerte seguido de quietud. Si pasa, te pregunta si estás bien y, si no contestás, avisa a tu contacto de emergencia con tu ubicación.',
     detectamos: 'Detectamos un golpe fuerte',
     estasBien: '¿Estás bien?',
-    avisaremos: 'Si no contestás en {segundos} segundos, avisamos a tu contacto de emergencia y a la cooperativa con tu ubicación.',
+    avisaremos:
+      'Si no contestás en {segundos} segundos, avisamos a tu contacto de emergencia y a la cooperativa con tu ubicación.',
     estoyBien: 'Estoy bien',
     avisarYa: 'Necesito ayuda, avisar ya',
     enviando: 'Avisando…',
     enviada: 'Avisamos que necesitás ayuda',
-    contactoAvisado: 'Se abrió Mensajes con el aviso y tu ubicación para tu contacto de emergencia: tocá Enviar.',
-    sinContacto: 'No tenés un contacto de emergencia guardado. Llamá a emergencias.',
+    contactoAvisado:
+      'Se abrió Mensajes con el aviso y tu ubicación para tu contacto de emergencia: tocá Enviar.',
+    sinContacto:
+      'No tenés un contacto de emergencia guardado. Llamá a emergencias.',
     cooperativaAvisada: 'La alerta con tu ubicación llegó a la cooperativa.',
-    cooperativaNoLlego: 'No pudimos avisar a la cooperativa por falta de conexión.',
+    cooperativaNoLlego:
+      'No pudimos avisar a la cooperativa por falta de conexión.',
     llamar: 'Llamar al {numero}',
     cerrar: 'Cerrar',
-    notaAjuste: 'Andén no llama solo a emergencias: iOS pide que la persona toque para llamar.',
+    notaAjuste:
+      'Andén no llama solo a emergencias: iOS pide que la persona toque para llamar.',
   },
   guiaConductor: {
     titulo: 'Tus primeros pasos como conductor',
     cerrar: 'Ocultar',
     avance: '{hechos} de {total} listos',
     perfil: 'Completá tu perfil',
-    perfilDetalle: 'Poné tu foto y tu nombre en la pestaña Perfil: así te reconocen los pasajeros.',
+    perfilDetalle:
+      'Poné tu foto y tu nombre en la pestaña Perfil: así te reconocen los pasajeros.',
     primerViaje: 'Publicá tu primer viaje',
-    primerViajeDetalle: 'Elegí la ruta, la hora en que ponés el bus en andén y la placa.',
+    primerViajeDetalle:
+      'Elegí la ruta, la hora en que ponés el bus en andén y la placa.',
     pasajeros: 'Mirá quién viaja y qué encomiendas hay',
-    pasajerosDetalle: 'En la pestaña A bordo ves a tus pasajeros y aceptás o rechazás encomiendas.',
+    pasajerosDetalle:
+      'En la pestaña A bordo ves a tus pasajeros y aceptás o rechazás encomiendas.',
     cerrarViaje: 'Cerrá tu primer viaje',
-    cerrarViajeDetalle: 'Marcá Ya salió cuando arranque y cerrá el cobro al terminar: alimenta tu Análisis.',
+    cerrarViajeDetalle:
+      'Marcá Ya salió cuando arranque y cerrá el cobro al terminar: alimenta tu Análisis.',
   },
   conductorEncomiendas: {
     segmento: 'Encomiendas',
@@ -388,7 +403,8 @@ export const textos = {
     porRecibir: 'Aceptadas, por recibir',
     enElBus: 'En el bus',
     cerradas: 'Últimas cerradas',
-    vacio: 'Todavía no hay encomiendas para tus viajes. Cuando alguien envíe una en tu bus, aparece acá.',
+    vacio:
+      'Todavía no hay encomiendas para tus viajes. Cuando alguien envíe una en tu bus, aparece acá.',
     aceptar: 'Aceptar',
     rechazar: 'Rechazar',
     motivoTitulo: 'Decile por qué no la llevás',
@@ -410,11 +426,13 @@ export const textos = {
       otro: 'Otro motivo',
     },
     enQueBus: '¿En qué bus va?',
-    sinViajes: 'Todavía no hay viajes publicados en este trayecto. Cuando un conductor publique uno, aparece acá.',
+    sinViajes:
+      'Todavía no hay viajes publicados en este trayecto. Cuando un conductor publique uno, aparece acá.',
     viajeNombre: 'Se pone en andén a las {hora}',
     viajeDetalle: 'Placa {placa} · {chofer}',
     errorViaje: 'Elegí el bus en que va la encomienda.',
-    falloEnvio: 'No pudimos enviar la solicitud. Revisá tu conexión y probá de nuevo.',
+    falloEnvio:
+      'No pudimos enviar la solicitud. Revisá tu conexión y probá de nuevo.',
     rechazada: 'El chofer no la puede llevar',
     motivo: 'Motivo: {motivo}',
     cancelada: 'Cancelaste esta encomienda',
@@ -476,10 +494,12 @@ export const textos = {
   registroConductor: {
     cuentaTitulo: 'Tu cuenta de Andén',
     seguridadPasos: 'Esto es lo que va a pasar',
-    seguridadPaso1: 'Confirmás con Face ID, tu huella o el código del teléfono.',
+    seguridadPaso1:
+      'Confirmás con Face ID, tu huella o el código del teléfono.',
     seguridadPaso2: 'Creamos tu cuenta y enviamos tu cédula a la cooperativa.',
     seguridadPaso3: 'Cuando la cooperativa te apruebe, entrás como conductor.',
-    seguridadCifrado: 'Tu cédula se guarda cifrada y solo la ve la cooperativa.',
+    seguridadCifrado:
+      'Tu cédula se guarda cifrada y solo la ve la cooperativa.',
     necesitaCuenta:
       'Para enviar la solicitud primero creá tu cuenta o ingresá con ella.',
     falloEnvio:
@@ -789,6 +809,9 @@ export const textos = {
     faltanNombres: 'Falta el nombre de algún pasajero.',
     nombreInvalido: 'Escribí un nombre de 2 a 80 letras.',
     cedulaInvalida: 'Usá el formato 001-010190-0001A o dejala vacía.',
+    nombreRepetido:
+      'Esta persona ya tiene boleto en este viaje. Escribí el nombre de otra persona.',
+    cedulaRepetida: 'Esa cédula ya tiene boleto en este viaje.',
     guardados: 'Tus pasajeros guardados',
   },
   pago: {
@@ -859,7 +882,8 @@ export const textos = {
     actividadEstado: 'Andén {anden}, salida a las {hora}',
     cancelado: 'Boleto cancelado',
     viajeCancelado: 'El conductor canceló este viaje',
-    viajeCanceladoDetalle: 'No tenés que pagar nada. Podés reservar otra salida.',
+    viajeCanceladoDetalle:
+      'No tenés que pagar nada. Podés reservar otra salida.',
     usado: 'Boleto usado',
     vencido: 'Salida vencida',
     estadoVigente: 'Vigente',
@@ -1161,7 +1185,8 @@ export const textos = {
   },
   rutas: {
     sinBusEnCamino: 'No hay un bus en camino ahora',
-    sinBusEnCaminoDetalle: 'Cuando un conductor salga en este trayecto, vas a ver el bus moverse acá en tiempo real.',
+    sinBusEnCaminoDetalle:
+      'Cuando un conductor salga en este trayecto, vas a ver el bus moverse acá en tiempo real.',
     titulo: 'Rutas',
     detalle: 'Interlocales entre Managua, Boaco y Juigalpa.',
     boacoManagua: 'Boaco · Managua',
