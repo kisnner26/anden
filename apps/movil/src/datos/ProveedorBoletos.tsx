@@ -13,7 +13,9 @@ import { publicarBoletos } from '@/servicios/supabase/boletosCompartidos';
 
 import { sincronizarAsientos } from './asientosRemotos';
 import { crearReserva, ocupacionesDe, type BoletoGuardado } from './reserva';
+import { useBusPropio } from './useBusPropio';
 import { useSesion } from './useSesion';
+import { useSuscripcion } from './useSuscripcion';
 import { ContextoBoletos, type ValorBoletos } from './useBoletos';
 import { obtenerMuestra } from './useSalidas';
 
@@ -60,6 +62,8 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
   const [boletos, establecerBoletos] = useState<BoletoGuardado[]>([]);
   const [cargando, establecerCargando] = useState(true);
   const { sesion } = useSesion();
+  const { plus } = useSuscripcion();
+  const { efectivo } = useBusPropio();
   const clave = claveBoletosDe(sesion);
 
   useEffect(() => {
@@ -105,6 +109,7 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
         pasajeros,
         new Date(),
         Math.random,
+        { plus, unidad: efectivo },
       );
       if (!resultado.ok) return resultado;
       // el servidor es quien decide si el asiento sigue libre: si otro lo vendió justo antes, no se reserva
