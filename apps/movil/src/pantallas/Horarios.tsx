@@ -28,6 +28,7 @@ import {
 } from '@/datos/useRecordatorios';
 import { useSalidas } from '@/datos/useSalidas';
 import { diasDeReserva, inicioDelDia, mismoDia } from '@/datos/dias';
+import { diasDeAnticipacion } from '@/servicios/beneficios';
 import { proximaSalida } from '@/datos/salidas';
 import { espacios, radios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -59,12 +60,15 @@ export function Horarios({
   const { ahora, datos, salidas } = useSalidas(terminalId, dia);
   const proxima = proximaSalida(salidas);
   const esHoy = mismoDia(dia, ahora);
-  const dias = useMemo(() => diasDeReserva(hoy), [hoy]);
+  const { plus } = useSuscripcion();
+  const dias = useMemo(
+    () => diasDeReserva(hoy, diasDeAnticipacion(plus)),
+    [hoy, plus],
+  );
   const { favoritos } = useFavoritos();
   const [soloFavoritas, establecerSoloFavoritas] = useState(false);
   const recordatorios = useRecordatorios();
   const sonar = useSonidos();
-  const { plus } = useSuscripcion();
   const [filtrando, establecerFiltrando] = useState(false);
   const [eligiendo, establecerEligiendo] = useState<Salida | null>(null);
   const [errorRecordatorio, establecerErrorRecordatorio] = useState<Exclude<
