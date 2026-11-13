@@ -20,16 +20,58 @@ function aFila(guardado: BoletoGuardado): FilaBoleto {
   };
 }
 
-/** sube los boletos para que el conductor los vea; sin Supabase o sin sesión no hace nada */
+/** lo que pasó al subir los boletos: los que chocaron con un asiento ya vendido y los que no llegaron */
+export interface ResultadoPublicacion {
+  conflictos: string[];
+  fallidos: string[];
+}
+
+/** el código de Postgres para una restricción de unicidad: el asiento ya lo vendió otro boleto */
+const CODIGO_DUPLICADO = '23505';
+
+/**
+ * sube cada boleto por separado para que el conductor los vea: si uno choca con un asiento ya
+ * vendido, los demás igual llegan. Sin Supabase o sin sesión no hace nada.
+ */
 export async function publicarBoletos(
   boletos: readonly BoletoGuardado[],
-): Promise<boolean> {
+): Promise<ResultadoPublicacion> {
+  const resultado: ResultadoPublicacion = { conflictos: [], fallidos: [] };
   const cliente = obtenerCliente();
-  if (!cliente || boletos.length === 0) return false;
-  const { error } = await cliente
-    .from('boletos')
-    .upsert(boletos.map(aFila), { onConflict: 'boleto_id' });
-  return error === null;
+  if (!cliente || boletos.length === 0) return resultado;
+  await Promise.all(
+    boletos.map(async (guardado) => {
+      try {
+        const { error } = await cliente
+          .from('boletos')
+          .upsert(aFila(guardado), { onConflict: 'boleto_id' });
+        if (error === null) return;
+        if (error.code === CODIGO_DUPLICADO) {
+          resultado.conflictos.push(guardado.boleto.id);
+        } else resultado.fallidos.push(guardado.boleto.id);
+      } catch {
+        resultado.fallidos.push(guardado.boleto.id);
+      }
+    }),
+  );
+  return resultado;
+}
+
+/** los asientos de un viaje que ya vendió cualquier teléfono; nulo si no hay servidor o no respondió */
+export async function leerAsientosOcupados(
+  viajeId: string,
+): Promise<number[] | null> {
+  const cliente = obtenerCliente();
+  if (!cliente) return null;
+  try {
+    const { data, error } = await cliente.rpc('asientos_ocupados', {
+      p_viaje: viajeId,
+    });
+    if (error || !Array.isArray(data)) return null;
+    return data.filter((valor): valor is number => typeof valor === 'number');
+  } catch {
+    return null;
+  }
 }
 
 /** los boletos de un viaje tal como los subieron los pasajeros; nulo si el servidor no respondió */
