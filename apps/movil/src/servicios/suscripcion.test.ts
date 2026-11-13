@@ -47,4 +47,11 @@ describe('suscripción', () => {
     expect(leerEstado('{no es json')).toEqual(ESTADO_GRATIS);
     expect(leerEstado(JSON.stringify({ plan: 'plus' }))).toEqual(ESTADO_GRATIS);
   });
+
+  it('cada cuenta tiene su propio plan', async () => {
+    await crearSuscripcionLocal('ana').activar();
+    expect(esPlus(await crearSuscripcionLocal('ana').leer())).toBe(true);
+    expect(esPlus(await crearSuscripcionLocal('1001').leer())).toBe(false);
+    expect(esPlus(await crearSuscripcionLocal().leer())).toBe(false);
+  });
 });
