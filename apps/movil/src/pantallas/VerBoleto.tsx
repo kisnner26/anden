@@ -23,6 +23,8 @@ import {
   terminarActividad,
 } from '../../modules/anden-actividad';
 import { HojaRecordatorio } from '@/componentes/HojaRecordatorio';
+import { ResumenIA } from '@/componentes/ResumenIA';
+import { lineaDeBoleto } from '@/datos/contextoIA';
 import type { MinutosAntes } from '@/datos/recordatorios';
 import type { Salida } from '@/datos/salidas';
 import { useRecordatorios } from '@/datos/useRecordatorios';
@@ -489,6 +491,12 @@ export function VerBoleto({
           ) : null}
         </View>
       )}
+
+      <ResumenIA
+        contexto={lineaDeBoleto(guardado)}
+        pedido={t('ia.pedidoResumenBoleto')}
+        titulo={t('ia.resumirBoleto')}
+      />
 
       {puedeOperar && confirmando ? (
         <Bloque estiloContenido={estilos.confirmar} hundido radio="loseta">
