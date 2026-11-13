@@ -7,6 +7,7 @@ jest.mock('@/servicios/supabase/viajesSupabase', () => ({
 import { leerViajesPublicados } from '@/servicios/supabase/viajesSupabase';
 
 import { DUENO_REMOTO } from './asientosRemotos';
+import { viajeCancelado } from './historialSalidas';
 import { crearBase } from './muestra';
 import {
   aplicarViajesPublicados,
@@ -103,6 +104,24 @@ describe('aplicarViajesPublicados', () => {
     aplicarViajesPublicados(datos, { ...PUBLICADOS, viajes: [] });
     expect(datos.viajes).toHaveLength(0);
     expect(datos.ocupaciones).toHaveLength(0);
+  });
+});
+
+describe('viajes cancelados', () => {
+  it('recuerda los viajes que el conductor canceló', () => {
+    aplicarViajesPublicados(crearBase(), {
+      ...PUBLICADOS,
+      cancelados: ['via_x'],
+    });
+    expect(viajeCancelado('via_x')).toBe(true);
+    expect(viajeCancelado('via_a')).toBe(false);
+  });
+
+  it('un viaje que ya salió deja la lista de los que esperan pasajeros', () => {
+    const datos = crearBase();
+    const salido = { ...PUBLICADOS.viajes[0]!, salio_en: SALIDA };
+    aplicarViajesPublicados(datos, { ...PUBLICADOS, viajes: [salido] });
+    expect(datos.viajes).toHaveLength(0);
   });
 });
 
