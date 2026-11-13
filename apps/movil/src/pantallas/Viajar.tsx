@@ -4,6 +4,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { OrbeIA } from '@/componentes/OrbeIA';
+import { TarjetaIA } from '@/componentes/TarjetaIA';
+import { consejoDelMomento } from '@/datos/ayudasIA';
+import { destinoHabitual } from '@/datos/memoriaIA';
+import { useBoletos } from '@/datos/useBoletos';
+import { useMemoriaIA } from '@/datos/useMemoriaIA';
 import { EtiquetaMuestra } from '@/componentes/EtiquetaMuestra';
 import { EnlaceTerminal } from '@/componentes/EnlaceTerminal';
 import { Campaneo } from '@/componentes/Campaneo';
@@ -60,6 +65,8 @@ export function Viajar({
   alIrA,
 }: PropiedadesViajar) {
   const ia = useIA();
+  const memoriaIA = useMemoriaIA();
+  const { boletos } = useBoletos();
   const { colores } = useTema();
   const { perfil } = usePerfil();
   const [origenId, establecerOrigenId] = useState('ter_may');
@@ -189,6 +196,61 @@ export function Viajar({
             </Bloque>
           </Pressable>
         )}
+
+        {ia.usable &&
+          (() => {
+            const vigente = boletos
+              .filter(
+                ({ boleto, resumen }) =>
+                  boleto.estado === 'vigente' &&
+                  new Date(resumen.salida) >= ahora,
+              )
+              .sort(
+                (a, b) =>
+                  new Date(a.resumen.salida).getTime() -
+                  new Date(b.resumen.salida).getTime(),
+              )[0];
+            const consejo = consejoDelMomento(
+              todasLasSalidas,
+              vigente
+                ? {
+                    anden: vigente.resumen.anden,
+                    destino: vigente.resumen.destino,
+                    salida: new Date(vigente.resumen.salida),
+                    viajeId: vigente.boleto.viajeId,
+                  }
+                : null,
+              destinoHabitual(memoriaIA.memoria),
+              ahora,
+            );
+            if (!consejo) return null;
+            return (
+              <Pressable
+                accessibilityRole="button"
+                onPress={() =>
+                  consejo.viajeId ? alAbrirViaje(consejo.viajeId) : undefined
+                }
+              >
+                <TarjetaIA>
+                  <View style={estilos.consejo}>
+                    <Text
+                      style={[
+                        tipografia.etiqueta,
+                        { color: colores.ambarTexto },
+                      ]}
+                    >
+                      {t('ia.consejoTitulo')}
+                    </Text>
+                    <Text
+                      style={[tipografia.subtitulo, { color: colores.tinta }]}
+                    >
+                      {consejo.texto}
+                    </Text>
+                  </View>
+                </TarjetaIA>
+              </Pressable>
+            );
+          })()}
 
         {alAbrirAsistente && ia.usable && (
           <Pressable
@@ -338,6 +400,7 @@ const estilos = StyleSheet.create({
     top: 4,
     width: 12,
   },
+  consejo: { gap: 2, padding: espacios.dieciseis },
   presionado: {
     opacity: 0.9,
     transform: [{ scale: movimiento.escalaPresion }],
