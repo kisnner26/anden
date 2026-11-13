@@ -94,7 +94,8 @@ export const textos = {
     sinPermisoVoz:
       'Sin permiso para usar el micrófono o el dictado. Activalo en los ajustes del teléfono.',
     vozNoDisponible: 'El dictado por voz no está disponible en este teléfono.',
-    callar: 'Callar la voz',
+    callar: 'Callar',
+    hablando: 'Andén está hablando…',
     vozNatural: 'Voz natural',
     vozNaturalDetalle:
       'Suena más humana, pero usa internet: el texto de la respuesta se envía a Google para convertirlo en voz. Apagada, se usa la voz del teléfono.',

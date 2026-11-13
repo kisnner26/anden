@@ -1,4 +1,5 @@
-import { describe, expect, it, jest } from '@jest/globals';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { act, fireEvent, waitFor } from '@testing-library/react-native';
 
 import { ContextoIA, type ValorIA } from '@/datos/useIA';
@@ -48,6 +49,11 @@ function abrir(contexto: ValorIA, voz: ServicioVoz = vozFalsa().voz) {
     </ContextoIA.Provider>,
   );
 }
+
+beforeEach(async () => {
+  // el interruptor de voz se recuerda entre pruebas si no se limpia
+  await AsyncStorage.clear();
+});
 
 describe('Asistente', () => {
   it('sin la IA usable explica por qué y no deja preguntar', async () => {
@@ -196,5 +202,24 @@ describe('Asistente', () => {
         expect.objectContaining({ enLinea: false }),
       ),
     );
+  });
+
+  it('mientras habla lo muestra y se puede callar', async () => {
+    const { voz } = vozFalsa();
+    voz.hablar.mockImplementation(async (_texto, opciones) => {
+      opciones?.alEstado?.(true);
+    });
+    const pantalla = await abrir(valor(), voz);
+    await fireEvent.press(
+      pantalla.getByRole('switch', { name: 'Responder en voz alta' }),
+    );
+    await fireEvent.changeText(pantalla.getByLabelText('Tu pregunta'), 'hola');
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Preguntar' }));
+    expect(await pantalla.findByText('Andén está hablando…')).toBeTruthy();
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Callar' }));
+    await waitFor(() =>
+      expect(pantalla.queryByText('Andén está hablando…')).toBeNull(),
+    );
+    expect(voz.callar).toHaveBeenCalled();
   });
 });

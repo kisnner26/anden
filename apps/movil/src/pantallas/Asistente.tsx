@@ -13,6 +13,7 @@ import { CampoTexto } from '@/componentes/CampoTexto';
 import { Chip } from '@/componentes/Chip';
 import { Interruptor } from '@/componentes/Interruptor';
 import { FilaSalida } from '@/componentes/FilaSalida';
+import { OndaDeVoz } from '@/componentes/OndaDeVoz';
 import { OrbeIA } from '@/componentes/OrbeIA';
 import { PuntosPensando } from '@/componentes/PuntosPensando';
 import { TextoEscribiendo } from '@/componentes/TextoEscribiendo';
@@ -93,6 +94,8 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
       establecerRespuestaEnVoz(activa);
       hablarRespuesta.current = activa;
     });
+    // se carga la voz por adelantado para que la primera respuesta hablada no tarde
+    void voz.preparar?.();
     void leerVozEnLinea().then((activa) => {
       if (!vigente) return;
       establecerVozEnLinea(activa);
@@ -254,7 +257,7 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
         />
 
         <View style={estilos.hero}>
-          <OrbeIA pensando={pensando} tamano={84} />
+          <OrbeIA pensando={pensando || escuchando || hablando} tamano={84} />
           <LinearGradient
             colors={[...coloresIA]}
             end={{ x: 1, y: 0 }}
@@ -379,7 +382,7 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
               style={estilos.hablar}
             >
               <Bloque estiloContenido={estilos.hablarContenido} radio="pildora">
-                <OrbeIA pensando={escuchando} tamano={22} />
+                {escuchando ? <OndaDeVoz /> : <OrbeIA tamano={22} />}
                 <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
                   {escuchando ? t('ia.escuchando') : t('ia.hablar')}
                 </Text>
@@ -446,6 +449,36 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
               >
                 {t('ia.error')}
               </Text>
+            )}
+
+            {hablando && (
+              <Bloque estiloContenido={estilos.hablando} radio="pildora">
+                <OndaDeVoz tono="habla" />
+                <Text
+                  accessibilityLiveRegion="polite"
+                  style={[
+                    tipografia.pequeno,
+                    estilos.hablandoTexto,
+                    { color: colores.tinta },
+                  ]}
+                >
+                  {t('ia.hablando')}
+                </Text>
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => {
+                    void voz.callar();
+                    establecerHablando(false);
+                  }}
+                  style={estilos.callar}
+                >
+                  <Text
+                    style={[tipografia.etiqueta, { color: colores.cancelado }]}
+                  >
+                    {t('ia.callar')}
+                  </Text>
+                </Pressable>
+              </Bloque>
             )}
 
             {pensando && (
@@ -581,6 +614,15 @@ const estilos = StyleSheet.create({
     padding: espacios.dieciseis,
   },
   firma: { alignItems: 'center', flexDirection: 'row', gap: espacios.ocho },
+  hablando: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.doce,
+    paddingHorizontal: espacios.dieciseis,
+    paddingVertical: espacios.ocho,
+  },
+  hablandoTexto: { flex: 1 },
+  callar: { justifyContent: 'center', minHeight: 44 },
   hablar: { minHeight: 52 },
   hablarContenido: {
     alignItems: 'center',
