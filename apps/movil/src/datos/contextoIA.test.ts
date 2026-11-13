@@ -86,10 +86,27 @@ describe('armarContexto', () => {
 });
 
 describe('instruccionesDelAsistente', () => {
-  it('manda responder solo con los datos y no inventar', () => {
+  it('manda responder con los datos y no inventar horarios ni precios', () => {
     const texto = instruccionesDelAsistente('DATOS');
-    expect(texto).toContain('Usá solamente los datos de abajo');
-    expect(texto).toContain('No inventes');
+    expect(texto).toContain('usá solamente los datos de abajo');
+    expect(texto).toContain('No inventes horarios, precios ni andenes');
     expect(texto.endsWith('DATOS')).toBe(true);
+  });
+
+  it('limita horarios y precios a los datos pero deja contar de las ciudades', () => {
+    const texto = instruccionesDelAsistente('DATOS');
+    expect(texto).toContain('usá solamente los datos de abajo');
+    expect(texto).toContain('Boaco');
+    expect(texto).toContain('lugares para visitar');
+    expect(texto).toContain('DATOS');
+  });
+
+  it('el modo turista pide recomendaciones y el normal no', () => {
+    expect(instruccionesDelAsistente('x', { turista: true })).toContain(
+      'La persona es turista',
+    );
+    expect(instruccionesDelAsistente('x')).not.toContain(
+      'La persona es turista',
+    );
   });
 });
