@@ -1,8 +1,23 @@
-import { afterEach, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from '@jest/globals';
 import { act, renderHook } from '@testing-library/react-native';
 
 import { inicioDelDia, mismoDia, sumarDias } from './dias';
 import { reiniciarMuestra, useAhora, useSalidas } from './useSalidas';
+
+// las salidas de muestra dependen de la hora; se fija media tarde para que las ocho de hoy no cruzen la medianoche
+beforeEach(() => {
+  jest.useFakeTimers({
+    advanceTimers: true,
+    now: new Date(2026, 10, 12, 14, 0),
+  });
+});
 
 afterEach(() => {
   reiniciarMuestra();

@@ -1,4 +1,11 @@
-import { afterEach, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from '@jest/globals';
 import { fireEvent, waitFor } from '@testing-library/react-native';
 
 jest.mock('@/datos/notificaciones', () => ({
@@ -26,7 +33,18 @@ const SERVICIO_PLUS: ServicioSuscripcion = {
   leer: async () => ({ desde: '2026-11-01T00:00:00Z', plan: 'plus' }),
 };
 
-afterEach(() => reiniciarMuestra());
+// las salidas de muestra dependen de la hora; se fija media tarde para que las ocho de hoy no cruzen la medianoche
+beforeEach(() => {
+  jest.useFakeTimers({
+    advanceTimers: true,
+    now: new Date(2026, 10, 12, 14, 0),
+  });
+});
+
+afterEach(() => {
+  reiniciarMuestra();
+  jest.useRealTimers();
+});
 
 describe('Horarios', () => {
   it('muestra el título y la terminal', async () => {
