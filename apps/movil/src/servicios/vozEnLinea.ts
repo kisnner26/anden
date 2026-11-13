@@ -72,7 +72,11 @@ export async function hablarEnLinea(
   const carpeta = new Directory(Paths.cache, 'voz');
   if (!carpeta.exists) carpeta.create();
   try {
-    await setAudioModeAsync({ playsInSilentMode: true });
+    await setAudioModeAsync({
+      allowsRecording: false,
+      interruptionMode: 'duckOthers',
+      playsInSilentMode: true,
+    });
     let empezo = false;
     for (let i = 0; i < trozos.length; i += 1) {
       const archivo = await File.downloadFileAsync(
