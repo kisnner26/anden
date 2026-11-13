@@ -35,6 +35,23 @@ describe('interpretarOrden', () => {
     });
   });
 
+  it('abre una pantalla de la app', () => {
+    expect(interpretarOrden('Abrime mis boletos', CIUDADES)).toEqual({
+      pantalla: 'boletos',
+      tipo: 'abrir',
+    });
+    expect(
+      interpretarOrden('quiero enviar una encomienda a Boaco', CIUDADES),
+    ).toEqual({
+      pantalla: 'encomienda',
+      tipo: 'abrir',
+    });
+    expect(interpretarOrden('llevame a los ajustes', CIUDADES)).toEqual({
+      pantalla: 'ajustes',
+      tipo: 'abrir',
+    });
+  });
+
   it('una pregunta normal no es una orden', () => {
     expect(interpretarOrden('¿cuánto cuesta ir a Boaco?', CIUDADES)).toBeNull();
     expect(interpretarOrden('hola', CIUDADES)).toBeNull();
