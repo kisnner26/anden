@@ -9,6 +9,19 @@ import {
 } from '../lib/ruta';
 import type { Transmision, Viaje } from '../tipos';
 
+function km(a: Terminal, b: Terminal): number {
+  const A = TERMINALES[a];
+  const B = TERMINALES[b];
+  const r = (g: number) => (g * Math.PI) / 180;
+  const h =
+    Math.sin(r(B.lat - A.lat) / 2) ** 2 +
+    Math.cos(r(A.lat)) *
+      Math.cos(r(B.lat)) *
+      Math.sin(r(B.lng - A.lng) / 2) ** 2;
+  // línea recta multiplicada por 1.25: lo que suele sobrar de curvas en la carretera
+  return Math.round(12742 * Math.asin(Math.sqrt(h)) * 1.25);
+}
+
 const ESTACIONES: Terminal[] = ['managua', 'boaco', 'juigalpa'];
 
 /** la red de Andén como plano de línea: Managua al centro, Boaco y Juigalpa en los extremos, con los buses moviéndose según su ubicación real */
@@ -40,51 +53,81 @@ export function LineaDeRed({
     if (origen) porTerminal.set(origen, (porTerminal.get(origen) ?? 0) + 1);
   }
   const m = PUNTOS_DIBUJO.managua;
+  const destinos = ['boaco', 'juigalpa'] as const;
   return (
     <figure className="red">
       <svg
         aria-label="Plano de la red con los buses en camino"
         role="img"
         style={{ maxHeight: alto }}
-        viewBox="-20 0 1060 360"
+        viewBox="0 0 900 360"
       >
         <defs>
-          <linearGradient id="trazo" x1="0" x2="1">
-            <stop offset="0" stopColor="#ffb21e" stopOpacity="0.2" />
-            <stop offset="1" stopColor="#ffb21e" stopOpacity="0.95" />
-          </linearGradient>
+          <pattern
+            height="30"
+            id="rejilla"
+            patternUnits="userSpaceOnUse"
+            width="30"
+          >
+            <path className="red-rejilla" d="M30 0H0V30" />
+          </pattern>
         </defs>
-        {(['boaco', 'juigalpa'] as const).map((c) => {
+        <rect fill="url(#rejilla)" height="360" width="900" />
+        {destinos.map((c) => {
           const f = PUNTOS_DIBUJO[c];
+          const mx = (m.x + f.x) / 2;
+          const my = (m.y + f.y) / 2;
           return (
             <g key={c}>
-              <line className="red-base" x1={m.x} x2={f.x} y1={m.y} y2={f.y} />
+              <line
+                className="red-orilla"
+                x1={m.x}
+                x2={f.x}
+                y1={m.y}
+                y2={f.y}
+              />
+              <line
+                className="red-asfalto"
+                x1={m.x}
+                x2={f.x}
+                y1={m.y}
+                y2={f.y}
+              />
               <line className="red-flujo" x1={m.x} x2={f.x} y1={m.y} y2={f.y} />
+              <g transform={`translate(${mx} ${my})`}>
+                <rect
+                  className="red-km"
+                  height="26"
+                  rx="13"
+                  width="86"
+                  x="-43"
+                  y="-13"
+                />
+                <text className="red-mono" textAnchor="middle" y="5">
+                  {`≈ ${km('managua', c)} km`}
+                </text>
+              </g>
             </g>
           );
         })}
         {ESTACIONES.map((e) => {
           const p = PUNTOS_DIBUJO[e];
           const n = porTerminal.get(e) ?? 0;
-          const izq = e === 'managua';
           return (
             <g key={e} transform={`translate(${p.x} ${p.y})`}>
-              {n > 0 && <circle className="red-pulso" r="14" />}
-              <circle className="red-estacion" r="11" />
-              <text
-                className="red-nombre"
-                textAnchor={izq ? 'end' : 'start'}
-                x={izq ? -18 : 18}
-                y="7"
-              >
+              {n > 0 && <circle className="red-pulso" r="40" />}
+              <rect
+                className={`red-tarjeta${n > 0 ? ' activa' : ''}`}
+                height="58"
+                rx="10"
+                width="164"
+                x="-82"
+                y="-29"
+              />
+              <text className="red-nombre" textAnchor="middle" y="-4">
                 {TERMINALES[e].nombre}
               </text>
-              <text
-                className="red-mono"
-                textAnchor={izq ? 'end' : 'start'}
-                x={izq ? -18 : 18}
-                y="32"
-              >
+              <text className="red-mono" textAnchor="middle" y="16">
                 {n === 0
                   ? 'sin buses en andén'
                   : `${n} ${n === 1 ? 'bus' : 'buses'} en andén`}
@@ -98,9 +141,17 @@ export function LineaDeRed({
             key={viaje.id}
             transform={`translate(${punto.x} ${punto.y})`}
           >
-            <circle className="red-bus-halo" r="16" />
-            <circle className="red-bus-punto" r="6" />
-            <text className="red-mono" x="12" y="-12">
+            <circle className="red-bus-halo" r="22" />
+            <circle className="red-bus-punto" r="9" />
+            <rect
+              className="red-placa"
+              height="22"
+              rx="6"
+              width="92"
+              x="-46"
+              y="-44"
+            />
+            <text className="red-placa-t" textAnchor="middle" y="-29">
               {viaje.placa}
             </text>
           </g>

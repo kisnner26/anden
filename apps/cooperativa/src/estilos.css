@@ -998,21 +998,39 @@ input[type='checkbox'] {
   height: auto;
   max-height: 300px;
 }
-.red-base {
-  stroke: var(--linea);
-  stroke-width: 2;
+.red-rejilla {
   fill: none;
+  stroke: var(--linea);
+  stroke-width: 1;
+  opacity: 0.45;
+}
+.red-orilla {
+  stroke: var(--linea);
+  stroke-width: 26;
+  stroke-linecap: round;
+}
+.red-asfalto {
+  stroke: var(--capa2);
+  stroke-width: 20;
+  stroke-linecap: round;
 }
 .red-flujo {
   stroke: var(--acento);
-  stroke-width: 2;
-  fill: none;
-  stroke-dasharray: 6 6;
-  animation: fluye 1.2s linear infinite;
+  stroke-width: 2.5;
+  stroke-dasharray: 10 14;
+  animation: fluye 1s linear infinite;
 }
-.red-estacion {
+.red-km {
+  fill: var(--bg);
+  stroke: var(--linea);
+}
+.red-tarjeta {
   fill: var(--capa);
-  stroke: var(--tinta);
+  stroke: var(--linea);
+  stroke-width: 1.5;
+}
+.red-tarjeta.activa {
+  stroke: var(--acento);
   stroke-width: 2;
 }
 .red-nombre {
@@ -1021,19 +1039,29 @@ input[type='checkbox'] {
 }
 .red-mono {
   fill: var(--suave);
-  font: 500 16px var(--mono);
+  font: 500 14px var(--mono);
 }
-.red-bus {
+.red-bus-punto {
   fill: var(--acento);
+  stroke: var(--bg);
+  stroke-width: 3;
 }
 .red-bus-halo {
   fill: var(--acento);
-  opacity: 0.25;
+  opacity: 0.3;
   animation: pulso 1.6s infinite;
+}
+.red-placa {
+  fill: var(--acento);
+}
+.red-placa-t {
+  fill: var(--acento-t);
+  font: 700 13px var(--mono);
 }
 .red-pulso {
   fill: none;
   stroke: var(--acento);
+  stroke-width: 2;
   animation: pulso 2s infinite;
 }
 .rueda-gira {
@@ -1293,4 +1321,7 @@ input[type='checkbox'] {
   .ingreso {
     grid-template-columns: 1fr;
   }
+}
+.red figcaption {
+  font-size: 10px;
 }
