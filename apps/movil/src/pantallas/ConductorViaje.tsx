@@ -116,7 +116,12 @@ export function ConductorViaje({
       ({ boleto }) =>
         boleto.viajeId === viajeId && boleto.estado !== 'cancelado',
     )
-    .sort((a, b) => a.boleto.asiento - b.boleto.asiento);
+    // quienes tienen Plus van primero: tienen prioridad al abordar
+    .sort(
+      (a, b) =>
+        Number(b.resumen.plus === true) - Number(a.resumen.plus === true) ||
+        a.boleto.asiento - b.boleto.asiento,
+    );
   const cobro = resumenDeCobro(
     pasajeros.map(({ boleto }) => ({ id: boleto.id, precio: boleto.precio })),
     registro,
@@ -265,14 +270,16 @@ export function ConductorViaje({
               }}
               bloqueada={cierre !== undefined}
               pagado={(id) => estadoDe(id) === 'pagado_efectivo'}
-              pasajeros={pasajeros.map(({ boleto }) => ({
+              pasajeros={pasajeros.map(({ boleto, resumen }) => ({
                 asiento: boleto.asiento,
                 boletoId: boleto.id,
                 cedula: boleto.pasajero.cedula,
                 codigo: boleto.codigo,
                 esMenorEnBrazos: boleto.pasajero.esMenorEnBrazos,
                 nombre: boleto.pasajero.nombre,
+                plus: resumen.plus,
                 precio: boleto.precio,
+                unidadPlus: resumen.unidadPlus,
               }))}
             />
             <Bloque estiloContenido={estilos.resumen} hundido radio="loseta">

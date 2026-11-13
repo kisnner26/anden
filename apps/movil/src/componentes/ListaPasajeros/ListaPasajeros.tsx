@@ -1,5 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { Autobus, type IdVarianteBus } from '@/componentes/Autobus';
+import type { IdVehiculoPlus } from '@/componentes/VehiculoPlus';
 import { Bloque } from '@/componentes/Bloque';
 import { nombrePropio } from '@/datos/perfil';
 import { conAlfa } from '@/tema/alfa';
@@ -16,7 +18,10 @@ export interface PasajeroDeLista {
   codigo: string;
   esMenorEnBrazos: boolean;
   nombre: string;
+  /** tiene Andén Plus: se muestra su sello y el vehículo que eligió */
+  plus?: boolean;
   precio: number;
+  unidadPlus?: string;
 }
 
 export interface PropiedadesListaPasajeros {
@@ -96,12 +101,41 @@ export function ListaPasajeros({
             </View>
 
             <View style={estilos.datos}>
-              <Text
-                numberOfLines={1}
-                style={[tipografia.nombreFila, { color: colores.tinta }]}
-              >
-                {nombre}
-              </Text>
+              <View style={estilos.nombreFila}>
+                <Text
+                  numberOfLines={1}
+                  style={[
+                    tipografia.nombreFila,
+                    estilos.nombreTexto,
+                    { color: colores.tinta },
+                  ]}
+                >
+                  {nombre}
+                </Text>
+                {pasajero.plus && (
+                  <View
+                    accessibilityLabel={t('plus.sello')}
+                    style={[
+                      estilos.sello,
+                      { backgroundColor: colores.bloqueNegro },
+                    ]}
+                  >
+                    {pasajero.unidadPlus && (
+                      <Autobus
+                        ancho={34}
+                        variante={
+                          pasajero.unidadPlus as IdVarianteBus | IdVehiculoPlus
+                        }
+                      />
+                    )}
+                    <Text
+                      style={[tipografia.etiqueta, { color: colores.ambar }]}
+                    >
+                      {t('plus.sello')}
+                    </Text>
+                  </View>
+                )}
+              </View>
               <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
                 {pasajero.cedula
                   ? `${t('conductor.cedula')} ${pasajero.cedula}`
@@ -175,6 +209,20 @@ export function ListaPasajeros({
 }
 
 const estilos = StyleSheet.create({
+  nombreFila: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.ocho,
+  },
+  nombreTexto: { flexShrink: 1 },
+  sello: {
+    alignItems: 'center',
+    borderRadius: radios.pildora,
+    flexDirection: 'row',
+    gap: 4,
+    paddingHorizontal: espacios.ocho,
+    paddingVertical: 2,
+  },
   acciones: { gap: espacios.ocho },
   asiento: {
     alignItems: 'center',

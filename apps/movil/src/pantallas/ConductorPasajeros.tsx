@@ -86,7 +86,11 @@ function SeccionViaje({
       ({ boleto }) =>
         boleto.viajeId === viaje.viajeId && boleto.estado !== 'cancelado',
     )
-    .sort((a, b) => a.boleto.asiento - b.boleto.asiento);
+    .sort(
+      (a, b) =>
+        Number(b.resumen.plus === true) - Number(a.resumen.plus === true) ||
+        a.boleto.asiento - b.boleto.asiento,
+    );
   const cobro = resumenDeCobro(
     pasajeros.map(({ boleto }) => ({ id: boleto.id, precio: boleto.precio })),
     registro,
@@ -122,11 +126,12 @@ function SeccionViaje({
             {t('conductorPasajeros.sinPasajeros')}
           </Text>
         )}
-        {pasajeros.map(({ boleto }) => (
+        {pasajeros.map(({ boleto, resumen }) => (
           <View key={boleto.id} style={estilos.fila}>
             <View style={estilos.texto}>
               <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
                 {nombrePropio(boleto.pasajero.nombre)}
+                {resumen.plus ? `  ·  ${t('plus.sello')}` : ''}
               </Text>
               <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
                 {rellenar(t('conductorPasajeros.asiento'), {
