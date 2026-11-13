@@ -7,6 +7,9 @@ import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { EscenaViaje } from '@/componentes/EscenaViaje';
+import { EstimacionSalida } from '@/componentes/EstimacionSalida';
+import { sincronizarViajes } from '@/datos/sincronizarViajes';
+import { marcarSalida } from '@/servicios/supabase/viajesSupabase';
 import { ListaPasajeros } from '@/componentes/ListaPasajeros';
 import { HojaCierreViaje } from '@/componentes/HojaCierreViaje';
 import { MapaCorredor } from '@/componentes/MapaCorredor';
@@ -74,6 +77,7 @@ export function ConductorViaje({
   const { estadoDe, marcarPagado, registro, revertir } = usePagos();
   const { abordo, alternar: alternarAbordaje } = useAbordaje();
   const [iniciando, establecerIniciando] = useState(false);
+  const [yaSalio, establecerYaSalio] = useState(false);
   const [problema, establecerProblema] = useState<string | null>(null);
   const [cerrando, establecerCerrando] = useState(false);
   const [escena, establecerEscena] = useState<'llegada' | 'salida' | null>(
@@ -139,6 +143,13 @@ export function ConductorViaje({
     viajeId,
     choferId,
   );
+
+  async function registrarSalida() {
+    if (await marcarSalida(viajeId)) {
+      establecerYaSalio(true);
+      await sincronizarViajes();
+    }
+  }
 
   async function terminar() {
     // terminar un viaje también pide identificarse
@@ -244,6 +255,29 @@ export function ConductorViaje({
             </View>
           )}
         </BloqueNegro>
+
+        <EstimacionSalida viajeId={viajeId} />
+        {!yaSalio && (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => void registrarSalida()}
+            style={estilos.yaSalio}
+          >
+            <Bloque estiloContenido={estilos.yaSalioContenido}>
+              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                {t('estimacion.yaSalio')}
+              </Text>
+              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+                {t('estimacion.yaSalioDetalle')}
+              </Text>
+            </Bloque>
+          </Pressable>
+        )}
+        {yaSalio && (
+          <Text style={[tipografia.pequeno, { color: colores.aTiempo }]}>
+            {t('estimacion.salidaMarcada')}
+          </Text>
+        )}
 
         {pasajeros.length === 0 ? (
           <>
@@ -399,6 +433,8 @@ export function ConductorViaje({
 }
 
 const estilos = StyleSheet.create({
+  yaSalio: { minHeight: tamanosControl.toqueMinimo },
+  yaSalioContenido: { gap: 2, padding: espacios.dieciseis },
   boton: {
     paddingHorizontal: espacios.dieciseis,
     paddingVertical: espacios.ocho,
