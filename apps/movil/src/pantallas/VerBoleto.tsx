@@ -25,6 +25,7 @@ import {
 import { HojaRecordatorio } from '@/componentes/HojaRecordatorio';
 import { ResumenIA } from '@/componentes/ResumenIA';
 import { lineaDeBoleto } from '@/datos/contextoIA';
+import { viajeCancelado } from '@/datos/historialSalidas';
 import type { MinutosAntes } from '@/datos/recordatorios';
 import type { Salida } from '@/datos/salidas';
 import { useRecordatorios } from '@/datos/useRecordatorios';
@@ -492,6 +493,17 @@ export function VerBoleto({
         </View>
       )}
 
+      {viajeCancelado(guardado.boleto.viajeId) && (
+        <Bloque estiloContenido={estilos.cancelado}>
+          <Text style={[tipografia.subtitulo, { color: colores.cancelado }]}>
+            {t('boleto.viajeCancelado')}
+          </Text>
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {t('boleto.viajeCanceladoDetalle')}
+          </Text>
+        </Bloque>
+      )}
+
       <ResumenIA
         contexto={lineaDeBoleto(guardado)}
         pedido={t('ia.pedidoResumenBoleto')}
@@ -584,6 +596,7 @@ export function VerBoleto({
 }
 
 const estilos = StyleSheet.create({
+  cancelado: { gap: 4, padding: espacios.dieciseis },
   cambiarContacto: { textAlign: 'center', textDecorationLine: 'underline' },
   verificar: { gap: espacios.cuatro, padding: espacios.dieciseis },
   acciones: { flexDirection: 'row', gap: espacios.ocho },
