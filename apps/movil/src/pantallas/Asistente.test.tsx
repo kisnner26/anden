@@ -191,6 +191,7 @@ describe('Asistente', () => {
     await waitFor(() =>
       expect(voz.hablar).toHaveBeenCalledWith(
         'El próximo bus a Boaco sale a las 2:30.',
+        expect.objectContaining({ enLinea: false }),
       ),
     );
   });
