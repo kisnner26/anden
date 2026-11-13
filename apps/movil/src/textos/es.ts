@@ -85,6 +85,17 @@ export const textos = {
     busPropioTitulo: 'Tu propio bus',
     busPropioDetalle:
       'Elegí el modelo de bus que aparece en tus boletos y en tu próximo viaje.',
+    busquedasAmpliadasTitulo: 'Más búsquedas guardadas',
+    busquedasAmpliadasDetalle:
+      'Andén recuerda tus últimas 15 búsquedas en vez de 5.',
+    insigniaPlusTitulo: 'Sello Plus en tus boletos',
+    insigniaPlusDetalle:
+      'Tus boletos llevan el sello Plus, y tu bus y tus viajes son los primeros que ves.',
+    bienvenidaTitulo: 'Ya sos Plus',
+    bienvenidaGracias:
+      'Gracias por apoyar a Andén. Con vos el transporte entre Managua, Boaco y Juigalpa se hace más fácil.',
+    bienvenidaLista: 'Esto ya está activo para vos',
+    bienvenidaEmpezar: 'Empezar a usar Plus',
     busTitulo: 'Elegí tu bus',
     busAuto: 'Automático',
     busBloqueado: 'Activá Plus para elegir tu bus.',
