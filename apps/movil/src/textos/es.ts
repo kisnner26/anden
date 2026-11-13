@@ -56,6 +56,28 @@ export const textos = {
     mapasNoAbrio: 'No pudimos abrir Apple Maps.',
     sinSalidasOrigen: 'Sin salidas de muestra desde esta terminal.',
   },
+  conductorAjustes: {
+    pestanaViajes: 'Viajes',
+    pestanaAjustes: 'Ajustes',
+    titulo: 'Ajustes',
+    detalle: 'Lo que usás en la ruta, a tu manera.',
+    seguridadSeccion: 'Seguridad',
+    biometriaTitulo: 'Confirmar con Face ID',
+    biometriaDetalle:
+      'Pedir Face ID o huella al abrir el panel y al iniciar o terminar un viaje. Está apagado hasta que lo actives.',
+    biometriaNoDisponible:
+      'Este teléfono no tiene Face ID ni huella configurados.',
+    biometriaMotivo: 'Confirmá que sos vos para activar la verificación',
+    viajeSeccion: 'En el viaje',
+    pantallaTitulo: 'Mantener la pantalla encendida',
+    pantallaDetalle:
+      'Mientras compartís tu ubicación la pantalla no se apaga, para que los pasajeros no pierdan tu bus. Gasta más batería.',
+    generalesSeccion: 'La app',
+    generalesTitulo: 'Apariencia, letra y ubicación',
+    generalesDetalle:
+      'Modo oscuro, tamaño de letra, movimiento y permisos del teléfono.',
+    sesionSeccion: 'Sesión',
+  },
   comun: {
     eliminar: 'Eliminar',
   },
