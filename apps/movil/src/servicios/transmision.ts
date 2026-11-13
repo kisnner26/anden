@@ -96,5 +96,28 @@ export function crearTransmisionLocal(): ServicioTransmision {
   };
 }
 
-/** la transmisión que usa toda la app */
-export const TRANSMISION: ServicioTransmision = crearTransmisionLocal();
+let elegida: ServicioTransmision | null = null;
+let fabrica: (() => ServicioTransmision) | null = null;
+
+/** quien arma la app dice cómo crear la transmisión compartida; sin eso se usa la local */
+export function configurarTransmision(crear: () => ServicioTransmision): void {
+  fabrica = crear;
+  elegida = null;
+}
+
+function servicio(): ServicioTransmision {
+  elegida ??= fabrica ? fabrica() : crearTransmisionLocal();
+  return elegida;
+}
+
+/** la transmisión que usa toda la app: se decide la primera vez que se usa, ya dentro de la app */
+export const TRANSMISION: ServicioTransmision = {
+  activos: () => servicio().activos(),
+  detener: (viajeId) => servicio().detener(viajeId),
+  instantanea: () => servicio().instantanea(),
+  iniciar: (viajeId, choferId) => servicio().iniciar(viajeId, choferId),
+  publicar: (viajeId, posicion) => servicio().publicar(viajeId, posicion),
+  suscribir: (oyente) => servicio().suscribir(oyente),
+  ultima: (viajeId) => servicio().ultima(viajeId),
+  version: () => servicio().version(),
+};
