@@ -1,12 +1,16 @@
 import {
   SchedulableTriggerInputTypes,
+  addNotificationResponseReceivedListener,
   cancelScheduledNotificationAsync,
   getPermissionsAsync,
   requestPermissionsAsync,
   scheduleNotificationAsync,
+  setNotificationCategoryAsync,
   setNotificationHandler,
 } from 'expo-notifications';
 import { Linking } from 'react-native';
+
+import { t } from '@/textos/t';
 
 export type PermisoNotificaciones = 'concedido' | 'negado' | 'sin-preguntar';
 
@@ -17,8 +21,48 @@ export interface RecordatorioPorProgramar {
   texto: { cuerpo: string; titulo: string };
 }
 
+export const CATEGORIA_RECORDATORIO = 'recordatorio';
+export const ACCION_VER = 'ver-boleto';
+export const ACCION_POSPONER = 'posponer';
+export const MINUTOS_POSPUESTO = 10;
+
+/**
+ * registra las acciones del recordatorio; el Apple Watch y las pulseras
+ * enlazadas las muestran solas, sin una app propia en el reloj
+ */
+export function registrarAccionesDeAvisos(): void {
+  setNotificationCategoryAsync(CATEGORIA_RECORDATORIO, [
+    {
+      buttonTitle: t('avisos.accionVerBoleto'),
+      identifier: ACCION_VER,
+      options: { opensAppToForeground: true },
+    },
+    {
+      buttonTitle: t('avisos.accionPosponer'),
+      identifier: ACCION_POSPONER,
+      options: { opensAppToForeground: false },
+    },
+  ]).catch(() => undefined);
+  addNotificationResponseReceivedListener((respuesta) => {
+    if (respuesta.actionIdentifier !== ACCION_POSPONER) return;
+    const { body, title } = respuesta.notification.request.content;
+    scheduleNotificationAsync({
+      content: {
+        body,
+        categoryIdentifier: CATEGORIA_RECORDATORIO,
+        title,
+      },
+      trigger: {
+        seconds: MINUTOS_POSPUESTO * 60,
+        type: SchedulableTriggerInputTypes.TIME_INTERVAL,
+      },
+    }).catch(() => undefined);
+  });
+}
+
 /** con la app abierta el aviso también se muestra, sin sonido */
 export function mostrarAvisosConLaAppAbierta(): void {
+  registrarAccionesDeAvisos();
   setNotificationHandler({
     handleNotification: async () => ({
       shouldPlaySound: false,
@@ -54,6 +98,7 @@ export function programarRecordatorio(
   return scheduleNotificationAsync({
     content: {
       body: recordatorio.texto.cuerpo,
+      categoryIdentifier: CATEGORIA_RECORDATORIO,
       title: recordatorio.texto.titulo,
     },
     trigger: {

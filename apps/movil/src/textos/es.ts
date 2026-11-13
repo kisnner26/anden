@@ -663,6 +663,8 @@ export const textos = {
     recordatorioCuerpo:
       'Andén {anden}. Llevá la tarifa exacta para pagar al abordar.',
     abrir: 'Abrir tus avisos',
+    accionVerBoleto: 'Ver boleto',
+    accionPosponer: 'Avisarme en 10 min',
   },
   ingresar: {
     titulo: 'Ingresar',
