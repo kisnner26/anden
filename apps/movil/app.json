@@ -10,7 +10,8 @@
     "ios": {
       "bundleIdentifier": "com.kisnner.anden",
       "infoPlist": {
-        "NSSupportsLiveActivities": true
+        "NSSupportsLiveActivities": true,
+        "NSMicrophoneUsageDescription": "Andén usa el micrófono solo mientras le hablás al asistente."
       }
     },
     "android": {
