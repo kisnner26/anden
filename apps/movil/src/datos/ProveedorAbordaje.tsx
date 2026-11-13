@@ -13,18 +13,45 @@ import {
   type ServicioAbordaje,
 } from '@/servicios/abordaje';
 
+import { obtenerCliente } from '@/servicios/supabase/cliente';
+import { crearAbordajeSupabase } from '@/servicios/supabase/abordajeSupabase';
+
+import { useSesion } from './useSesion';
 import { ContextoAbordaje, type ValorAbordaje } from './useAbordaje';
 
 const SERVICIO_LOCAL = crearAbordajeLocal();
 
+let servicioElegido: ServicioAbordaje | null = null;
+
+/** con Supabase configurado el abordaje viaja al servidor; sin él se guarda en el teléfono */
+function servicioPredeterminado(): ServicioAbordaje {
+  if (!servicioElegido) {
+    const cliente = obtenerCliente();
+    servicioElegido = cliente
+      ? crearAbordajeSupabase(cliente, async () => {
+          const { data } = await cliente.auth.getUser();
+          if (!data.user) return null;
+          const perfil = await cliente
+            .from('perfiles')
+            .select('chofer_id')
+            .eq('id', data.user.id)
+            .maybeSingle<{ chofer_id: string | null }>();
+          return perfil.data?.chofer_id ?? null;
+        })
+      : SERVICIO_LOCAL;
+  }
+  return servicioElegido;
+}
+
 /** comparte con la app qué pasajeros ya subieron al bus; el cambio se ve al instante */
 export function ProveedorAbordaje({
   children,
-  servicio = SERVICIO_LOCAL,
+  servicio = servicioPredeterminado(),
 }: {
   children: ReactNode;
   servicio?: ServicioAbordaje;
 }) {
+  const { sesion } = useSesion();
   const [registro, establecerRegistro] = useState<RegistroAbordaje>({});
 
   useEffect(() => {
@@ -35,7 +62,8 @@ export function ProveedorAbordaje({
     return () => {
       vigente = false;
     };
-  }, [servicio]);
+    // al cambiar de cuenta se vuelve a leer lo que el servidor deja ver
+  }, [servicio, sesion]);
 
   const alternar = useCallback(
     async (boletoId: string) => {
