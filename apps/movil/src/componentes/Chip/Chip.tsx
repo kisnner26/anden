@@ -40,9 +40,9 @@ export function Chip({
           estilos.base,
           {
             backgroundColor: seleccionado
-              ? colores.bloqueNegro
+              ? colores.fichaActiva
               : colores.barroClaro,
-            borderColor: seleccionado ? colores.bloqueNegro : colores.linea,
+            borderColor: seleccionado ? colores.fichaActiva : colores.linea,
           },
           deshabilitado && estilos.deshabilitado,
           pressed && estilos.presionado,
@@ -60,14 +60,17 @@ export function Chip({
         )}
         {seleccionado && (
           <View
-            style={[estilos.indicador, { backgroundColor: colores.ambar }]}
+            style={[
+              estilos.indicador,
+              { backgroundColor: colores.sobreFichaActiva },
+            ]}
             testID="chip-seleccionado-indicador"
           />
         )}
         <Text
           style={[
             tipografia.pequeno,
-            { color: seleccionado ? colores.sobreNegro : colores.tinta },
+            { color: seleccionado ? colores.sobreFichaActiva : colores.tinta },
           ]}
         >
           {etiqueta}

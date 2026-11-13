@@ -56,9 +56,9 @@ export function SelectorSalida({
               estilos.ficha,
               {
                 backgroundColor: activa
-                  ? colores.bloqueNegro
+                  ? colores.fichaActiva
                   : conAlfa(colores.tinta, 0.06),
-                borderColor: activa ? colores.ambar : colores.linea,
+                borderColor: activa ? colores.fichaActiva : colores.linea,
               },
               pressed && estilos.presionada,
             ]}
@@ -69,7 +69,7 @@ export function SelectorSalida({
                   tipografia.etiqueta,
                   {
                     color: activa
-                      ? colores.sobreNegroSuave
+                      ? colores.sobreFichaActiva
                       : colores.tintaSuave,
                   },
                 ]}
@@ -80,7 +80,7 @@ export function SelectorSalida({
             <Text
               style={[
                 tipografia.datoGrande,
-                { color: activa ? colores.sobreNegro : colores.tinta },
+                { color: activa ? colores.sobreFichaActiva : colores.tinta },
               ]}
             >
               {formatoHora(salida.salida)}
@@ -88,7 +88,9 @@ export function SelectorSalida({
             <Text
               style={[
                 tipografia.etiqueta,
-                { color: activa ? colores.ambar : colores.ambarTexto },
+                {
+                  color: activa ? colores.sobreFichaActiva : colores.ambarTexto,
+                },
               ]}
             >
               {sufijoHora(salida.salida)}
@@ -96,7 +98,7 @@ export function SelectorSalida({
             <Text
               style={[
                 tipografia.pequeno,
-                { color: activa ? colores.sobreNegro : colores.tinta },
+                { color: activa ? colores.sobreFichaActiva : colores.tinta },
               ]}
             >
               {t(`servicios.${salida.servicio}`)}
@@ -108,7 +110,7 @@ export function SelectorSalida({
                   tipografia.etiqueta,
                   {
                     color: activa
-                      ? colores.sobreNegroSuave
+                      ? colores.sobreFichaActiva
                       : colores.tintaSuave,
                   },
                 ]}

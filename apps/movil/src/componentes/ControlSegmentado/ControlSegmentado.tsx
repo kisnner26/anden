@@ -46,13 +46,15 @@ export function ControlSegmentado<T extends string>({
             onPress={() => alCambiar(opcion.clave)}
             style={[
               estilos.opcion,
-              activa && { backgroundColor: colores.bloqueNegro },
+              activa && { backgroundColor: colores.fichaActiva },
             ]}
           >
             <Text
               style={[
                 tipografia.subtitulo,
-                { color: activa ? colores.sobreNegro : colores.tintaSuave },
+                {
+                  color: activa ? colores.sobreFichaActiva : colores.tintaSuave,
+                },
               ]}
             >
               {opcion.etiqueta}
