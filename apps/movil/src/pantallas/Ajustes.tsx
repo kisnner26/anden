@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Linking,
   Pressable,
@@ -16,6 +17,7 @@ import { OpcionSeleccion } from '@/componentes/OpcionSeleccion';
 import { iniciales, nombreCompleto, nombrePropio } from '@/datos/perfil';
 import { useBloqueo } from '@/datos/useBloqueo';
 import { useIA } from '@/datos/useIA';
+import { useMemoriaIA } from '@/datos/useMemoriaIA';
 import { motivoNoDisponible } from '@/servicios/ia';
 import { usePerfil } from '@/datos/usePerfil';
 import { usePreferenciaUbicacion } from '@/datos/ProveedorUbicacion';
@@ -97,6 +99,8 @@ export function Ajustes({
   const ubicacion = usePreferenciaUbicacion();
   const bloqueo = useBloqueo();
   const ia = useIA();
+  const memoriaIA = useMemoriaIA();
+  const [memoriaBorrada, establecerMemoriaBorrada] = useState(false);
   // lo que no tiene arreglo desde la app (teléfono sin soporte, sistema viejo, sin módulo) no se puede encender
   const iaImposible = [
     'idioma-no-soportado',
@@ -270,6 +274,43 @@ export function Ajustes({
           etiqueta={rellenar(t('ia.titulo'), { nombre: ia.nombre })}
         />
       </Bloque>
+      {ia.usable && (
+        <>
+          <Bloque estiloContenido={estilos.filaOpcion}>
+            <View style={estilos.texto}>
+              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                {t('ia.memoriaTitulo')}
+              </Text>
+              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+                {t('ia.memoriaDetalle')}
+              </Text>
+            </View>
+            <Interruptor
+              activo={memoriaIA.permitida}
+              alCambiar={(permitir) => void memoriaIA.cambiarPermiso(permitir)}
+              etiqueta={t('ia.memoriaTitulo')}
+            />
+          </Bloque>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => {
+              void memoriaIA
+                .olvidar()
+                .then(() => establecerMemoriaBorrada(true));
+            }}
+          >
+            <Bloque estiloContenido={estilos.filaOpcion}>
+              <Text
+                style={[tipografia.subtitulo, { color: colores.cancelado }]}
+              >
+                {memoriaBorrada
+                  ? t('ia.memoriaBorrada')
+                  : t('ia.memoriaBorrar')}
+              </Text>
+            </Bloque>
+          </Pressable>
+        </>
+      )}
 
       <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {t('ajustes.ubicacionSeccion')}

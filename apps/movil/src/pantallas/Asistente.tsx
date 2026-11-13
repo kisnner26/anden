@@ -22,7 +22,10 @@ import {
 import { armarContexto, instruccionesDelAsistente } from '@/datos/contextoIA';
 import { formatoHoraCompleta } from '@/datos/formato';
 import { useBoletos } from '@/datos/useBoletos';
+import { registrarReserva, resumenParaModelo } from '@/datos/memoriaIA';
+import { sugerenciasDelMomento } from '@/datos/sugerenciasIA';
 import { useIA } from '@/datos/useIA';
+import { useMemoriaIA } from '@/datos/useMemoriaIA';
 import { useSalidas } from '@/datos/useSalidas';
 import { useVoz } from '@/datos/useVoz';
 import { motivoNoDisponible } from '@/servicios/ia';
@@ -59,6 +62,9 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
   const [historial, establecerHistorial] = useState<Intercambio[]>([]);
   const [siguienteId, establecerSiguienteId] = useState(1);
   const voz = useVoz();
+  const memoriaIA = useMemoriaIA();
+  // cambia en cada apertura de la pantalla para que las preguntas sugeridas roten
+  const [semilla] = useState(() => Math.floor(Date.now() / 1000));
   const [respuestaEnVoz, establecerRespuestaEnVoz] = useState(false);
   const [escuchando, establecerEscuchando] = useState(false);
   const [avisoVoz, establecerAvisoVoz] = useState<
@@ -103,13 +109,46 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
         new Date(b.resumen.salida).getTime(),
     )[0];
 
+  // lo que recuerda más lo que ya reservó: una reserva dice más que una pregunta
+  const memoriaEfectiva = boletos.reduce(
+    (previa, { resumen }) => registrarReserva(previa, resumen.destino),
+    memoriaIA.memoria,
+  );
+  const sugerencias = useMemo(
+    () =>
+      sugerenciasDelMomento({
+        ahora,
+        boletoProximo: proximoBoleto
+          ? {
+              destino: proximoBoleto.resumen.destino,
+              minutosParaSalir: Math.round(
+                (new Date(proximoBoleto.resumen.salida).getTime() -
+                  ahora.getTime()) /
+                  60_000,
+              ),
+            }
+          : null,
+        destinos,
+        memoria: memoriaEfectiva,
+        semilla,
+      }),
+    [ahora, destinos, memoriaEfectiva, proximoBoleto, semilla],
+  );
+
   async function enviar(pregunta: string) {
     const limpia = pregunta.trim();
     if (limpia === '' || pensando) return;
     establecerPensando(true);
     establecerFallo(false);
     try {
-      const contexto = armarContexto(salidas, boletos, new Date());
+      const todosLosDestinos = [...new Set(salidas.map((s) => s.destino))];
+      memoriaIA.recordarPregunta(limpia, todosLosDestinos);
+      const contexto = [
+        armarContexto(salidas, boletos, new Date()),
+        resumenParaModelo(memoriaEfectiva),
+      ]
+        .filter((parte) => parte !== '')
+        .join('\n');
       const respuesta = await preguntar(
         instruccionesDelAsistente(contexto),
         limpia,
@@ -161,14 +200,6 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
     if (!activa) await voz.callar();
     await guardarRespuestaHablada(activa);
   }
-
-  const sugerencias = [
-    t('ia.sugerencias.proximo'),
-    t('ia.sugerencias.boleto'),
-    destinos[0]
-      ? rellenar(t('ia.preguntaDestino'), { destino: destinos[0] })
-      : t('ia.sugerencias.asientos'),
-  ];
 
   const motivo = usable ? null : motivoNoDisponible(disponibilidad, nombre);
 

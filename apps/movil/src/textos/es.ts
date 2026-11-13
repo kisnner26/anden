@@ -94,6 +94,10 @@ export const textos = {
     sinPermisoVoz: 'Sin permiso para usar el micrófono o el dictado. Activalo en los ajustes del teléfono.',
     vozNoDisponible: 'El dictado por voz no está disponible en este teléfono.',
     callar: 'Callar la voz',
+    memoriaTitulo: 'Que Andén recuerde lo que me interesa',
+    memoriaDetalle: 'Guarda en tu teléfono tus destinos y horarios habituales para sugerirte mejores preguntas. No sale de tu teléfono.',
+    memoriaBorrar: 'Borrar lo que recuerda',
+    memoriaBorrada: 'Listo, Andén ya no recuerda nada.',
     sinUso: 'El asistente no está activado.',
     activarEnAjustes: 'Activalo en Ajustes',
     sugerencias: {
