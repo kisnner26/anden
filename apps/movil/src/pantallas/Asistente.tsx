@@ -34,6 +34,7 @@ import {
   interpretarOrden,
   proximaSalidaA,
   telefonoDictado,
+  type PantallaAbrible,
 } from '@/datos/ordenesIA';
 import { nombreCompleto, nombrePropio } from '@/datos/perfil';
 import { usePerfil } from '@/datos/usePerfil';
@@ -66,6 +67,8 @@ export interface PropiedadesAsistente {
   /** abre el boleto recién reservado por orden de voz */
   alAbrirBoleto?: (boletoId: string) => void;
   alAbrirViaje?: (viajeId: string) => void;
+  /** lleva a una pantalla de la app cuando la persona lo pide por voz o por escrito */
+  alAbrirPantalla?: (pantalla: PantallaAbrible) => void;
   alVolver: () => void;
 }
 
@@ -78,6 +81,7 @@ interface Intercambio {
 /** el asistente: responde con las salidas y boletos reales de la app usando el modelo del teléfono */
 export function Asistente({
   alAbrirBoleto,
+  alAbrirPantalla,
   alAbrirViaje,
   alVolver,
 }: PropiedadesAsistente) {
@@ -230,6 +234,11 @@ export function Asistente({
     ];
     const orden = interpretarOrden(pedido, ciudades);
     if (!orden) return null;
+    if (orden.tipo === 'abrir') {
+      if (!alAbrirPantalla) return null;
+      alAbrirPantalla(orden.pantalla);
+      return t(`ia.abriendo.${orden.pantalla}`);
+    }
     if (orden.tipo === 'contacto') {
       establecerPendiente({
         nombre: nombrePropio(orden.nombre),
