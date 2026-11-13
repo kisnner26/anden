@@ -1,27 +1,20 @@
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
 
 import { useSesion } from '@/datos/useSesion';
 import { Portada } from '@/pantallas/Portada';
-import { esInvitado } from '@/servicios/sesion';
 
 export default function Inicio() {
   const router = useRouter();
-  const { cargando: cargandoSesion, rol, sesion } = useSesion();
-  const [invitado, establecerInvitado] = useState<boolean | null>(null);
+  const { cargando, rol, sesion } = useSesion();
 
-  useEffect(() => {
-    void esInvitado().then(establecerInvitado);
-  }, []);
+  if (cargando) return null;
 
-  if (invitado === null || cargandoSesion) return null;
-
-  // la portada se ve cada vez que se abre la app; después cada cuenta va a lo suyo
+  // la portada se ve cada vez que se abre la app; sin cuenta registrada no se pasa del ingreso
   return (
     <Portada
       alEmpezar={() => {
-        if (rol === 'conductor') router.replace('/conductor');
-        else router.replace(sesion || invitado ? '/viajar' : '/ingresar');
+        if (!sesion) router.replace('/ingresar');
+        else router.replace(rol === 'conductor' ? '/conductor' : '/viajar');
       }}
     />
   );
