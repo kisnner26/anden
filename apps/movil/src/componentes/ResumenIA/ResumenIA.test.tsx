@@ -50,6 +50,16 @@ describe('ResumenIA', () => {
     expect(pedido).toBe('Resumí');
   });
 
+  it('responde al tocar cualquier parte de la tarjeta, no solo el título', async () => {
+    const valor = ia();
+    const pantalla = await dibujar(valor);
+    await fireEvent.press(await pantalla.findByRole('button'));
+    expect(
+      await pantalla.findByText('Sale a las 2:30 del andén 3.'),
+    ).toBeTruthy();
+    expect(valor.preguntar).toHaveBeenCalledTimes(1);
+  });
+
   it('si el modelo falla lo dice', async () => {
     const pantalla = await dibujar(
       ia({
