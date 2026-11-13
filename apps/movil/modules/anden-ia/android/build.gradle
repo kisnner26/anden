@@ -1,0 +1,20 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'com.kisnner.anden'
+version = '1.0.0'
+
+android {
+  namespace "expo.modules.andenia"
+  defaultConfig {
+    versionCode 1
+    versionName "1.0.0"
+  }
+}
+
+dependencies {
+  // Gemini Nano en el teléfono, por AICore; las preguntas no salen del aparato
+  implementation 'com.google.mlkit:genai-prompt:1.0.0-beta4'
+}
