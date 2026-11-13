@@ -11,7 +11,10 @@ export function aCsv(
   encabezados: readonly string[],
   filas: readonly (readonly unknown[])[],
 ): string {
-  return `﻿${[encabezados, ...filas].map((fila) => fila.map(celda).join(',')).join('\n')}`;
+  return (
+    BOM +
+    [encabezados, ...filas].map((fila) => fila.map(celda).join(',')).join('\n')
+  );
 }
 
 /** baja un CSV como archivo desde el navegador */
