@@ -6,6 +6,7 @@ import {
 } from '@/servicios/supabase/viajesSupabase';
 
 import { DUENO_REMOTO } from './asientosRemotos';
+import { fijarHistorial } from './historialSalidas';
 import { CONFIGURACION_POR_SERVICIO, type DatosMuestra } from './muestra';
 import { notificarCambioDeViajes, obtenerMuestra } from './useSalidas';
 
@@ -35,7 +36,8 @@ export function aplicarViajesPublicados(
   const viajes: Viaje[] = [];
   const buses: Bus[] = [];
   const idsChofer = new Set<string>();
-  for (const fila of publicados.viajes) {
+  // los que ya arrancaron dejan la lista: solo se muestran los que esperan pasajeros
+  for (const fila of publicados.viajes.filter((v) => !v.salio_en)) {
     const busId = `bus_${fila.id}`;
     idsChofer.add(fila.chofer_id);
     buses.push({
@@ -88,6 +90,20 @@ export function aplicarViajesPublicados(
     });
   }
 
+  fijarHistorial(
+    (publicados.historial ?? []).map((fila) => {
+      const puesto = new Date(fila.salida);
+      return {
+        esperaMin: Math.max(
+          0,
+          (new Date(fila.salio_en).getTime() - puesto.getTime()) / 60_000,
+        ),
+        horaDeInicio: puesto.getHours(),
+        rutaId: fila.ruta_id,
+        servicio: fila.servicio,
+      };
+    }),
+  );
   datos.viajes = viajes;
   datos.buses = buses;
   datos.choferes = choferes;
