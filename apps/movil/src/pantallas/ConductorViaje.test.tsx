@@ -294,4 +294,15 @@ describe('ConductorViaje', () => {
     expect(await pantalla.findByText('1 de 1 a bordo')).toBeTruthy();
     expect(pantalla.getByText('Abordó')).toBeTruthy();
   });
+
+  it('al iniciar el viaje muestra la escena de salida y se puede cerrar', async () => {
+    const pantalla = await dibujar();
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Iniciar viaje' }),
+    );
+    expect(await pantalla.findByTestId('escena-viaje')).toBeTruthy();
+    expect(pantalla.getByText('Buen viaje')).toBeTruthy();
+    await fireEvent.press(pantalla.getByTestId('escena-viaje'));
+    expect(pantalla.queryByTestId('escena-viaje')).toBeNull();
+  });
 });

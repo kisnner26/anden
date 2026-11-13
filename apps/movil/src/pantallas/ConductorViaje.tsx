@@ -6,6 +6,7 @@ import { Bloque } from '@/componentes/Bloque';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
+import { EscenaViaje } from '@/componentes/EscenaViaje';
 import { ListaPasajeros } from '@/componentes/ListaPasajeros';
 import { HojaCierreViaje } from '@/componentes/HojaCierreViaje';
 import { MapaCorredor } from '@/componentes/MapaCorredor';
@@ -24,6 +25,7 @@ import { useDetalleViaje } from '@/datos/useDetalleViaje';
 import { usePagos } from '@/datos/usePagos';
 import { useRecorrido } from '@/datos/useRecorrido';
 import { useSesion } from '@/datos/useSesion';
+import { useSonidos } from '@/datos/useSonidos';
 import { useTransmision } from '@/datos/useTransmision';
 import { armarCierre } from '@/servicios/cierres';
 import { resumenDeCobro } from '@/servicios/pagos';
@@ -69,6 +71,10 @@ export function ConductorViaje({
   const [iniciando, establecerIniciando] = useState(false);
   const [problema, establecerProblema] = useState<string | null>(null);
   const [cerrando, establecerCerrando] = useState(false);
+  const [escena, establecerEscena] = useState<'llegada' | 'salida' | null>(
+    null,
+  );
+  const sonar = useSonidos();
   const { cerrar: guardarCierreViaje, cierreDe } = useCierres();
 
   if (!detalle || !sesion?.choferId) {
@@ -132,11 +138,15 @@ export function ConductorViaje({
   async function confirmarCierre() {
     await guardarCierreViaje(resumenPrevio);
     establecerCerrando(false);
+    sonar('fin');
+    establecerEscena('llegada');
   }
 
   async function iniciar() {
     establecerIniciando(true);
     establecerProblema(null);
+    sonar('inicio');
+    establecerEscena('salida');
     const resultado = await iniciarTransmision(viajeId, choferId);
     establecerIniciando(false);
     if (resultado !== 'ok') establecerProblema(mensajeDe(resultado));
@@ -228,10 +238,14 @@ export function ConductorViaje({
           <>
             <ListaPasajeros
               abordo={abordo}
-              alAlternarAbordaje={(id) => void alternarAbordaje(id)}
-              alAlternarPago={(id, pagado) =>
-                void (pagado ? revertir(id) : marcarPagado(id, choferId))
-              }
+              alAlternarAbordaje={(id) => {
+                if (!abordo(id)) sonar('abordo');
+                void alternarAbordaje(id);
+              }}
+              alAlternarPago={(id, pagado) => {
+                if (!pagado) sonar('pago');
+                void (pagado ? revertir(id) : marcarPagado(id, choferId));
+              }}
               bloqueada={cierre !== undefined}
               pagado={(id) => estadoDe(id) === 'pagado_efectivo'}
               pasajeros={pasajeros.map(({ boleto }) => ({
@@ -330,6 +344,25 @@ export function ConductorViaje({
             </Pressable>
           )}
         </PieReserva>
+      )}
+
+      {escena && (
+        <EscenaViaje
+          alTerminar={() => establecerEscena(null)}
+          destino={salida.destino}
+          detalle={rellenar(
+            escena === 'salida'
+              ? t('conductor.escenaSalidaDetalle')
+              : t('conductor.escenaLlegadaDetalle'),
+            { destino: salida.destino },
+          )}
+          tipo={escena}
+          titulo={
+            escena === 'salida'
+              ? t('conductor.escenaSalida')
+              : t('conductor.escenaLlegada')
+          }
+        />
       )}
 
       <HojaCierreViaje
