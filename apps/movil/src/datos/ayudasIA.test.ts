@@ -1,6 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 
 import {
+  consejoDelMomento,
   destinosFrecuentes,
   salidaMasBarata,
   salidasRelacionadas,
@@ -77,5 +78,44 @@ describe('salidaMasBarata', () => {
 
   it('nula si no hay candidatas', () => {
     expect(salidaMasBarata([], AHORA)).toBeNull();
+  });
+});
+
+describe('consejoDelMomento', () => {
+  it('avisa del boleto que está por salir', () => {
+    const consejo = consejoDelMomento(
+      LISTA,
+      {
+        anden: 3,
+        destino: 'Boaco',
+        salida: new Date(AHORA.getTime() + 30 * 60_000),
+        viajeId: 'a',
+      },
+      null,
+      AHORA,
+    );
+    expect(consejo?.texto).toBe('Tu bus a Boaco sale en 30 min, andén 3.');
+    expect(consejo?.viajeId).toBe('a');
+  });
+
+  it('si el boleto está lejos propone la próxima salida habitual', () => {
+    const consejo = consejoDelMomento(
+      LISTA,
+      {
+        anden: 3,
+        destino: 'Boaco',
+        salida: new Date(AHORA.getTime() + 600 * 60_000),
+        viajeId: 'a',
+      },
+      'Boaco',
+      AHORA,
+    );
+    expect(consejo?.viajeId).toBe('b');
+    expect(consejo?.texto).toContain('habitual a Boaco');
+  });
+
+  it('sin nada útil no dice nada', () => {
+    expect(consejoDelMomento(LISTA, null, null, AHORA)).toBeNull();
+    expect(consejoDelMomento([], null, 'Boaco', AHORA)).toBeNull();
   });
 });
