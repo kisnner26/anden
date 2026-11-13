@@ -15,6 +15,8 @@ import { Interruptor } from '@/componentes/Interruptor';
 import { OpcionSeleccion } from '@/componentes/OpcionSeleccion';
 import { iniciales, nombreCompleto, nombrePropio } from '@/datos/perfil';
 import { useBloqueo } from '@/datos/useBloqueo';
+import { useIA } from '@/datos/useIA';
+import { motivoNoDisponible } from '@/servicios/ia';
 import { usePerfil } from '@/datos/usePerfil';
 import { usePreferenciaUbicacion } from '@/datos/ProveedorUbicacion';
 import {
@@ -29,6 +31,7 @@ import { useSesion } from '@/datos/useSesion';
 import { useSuscripcion } from '@/datos/useSuscripcion';
 import { useModoUso } from '@/tema/useModoUso';
 import { useTema, type PreferenciaTema } from '@/tema/useTema';
+import { rellenar } from '@/textos/rellenar';
 import { t } from '@/textos/t';
 
 export interface PropiedadesAjustes {
@@ -93,6 +96,17 @@ export function Ajustes({
   const { perfil } = usePerfil();
   const ubicacion = usePreferenciaUbicacion();
   const bloqueo = useBloqueo();
+  const ia = useIA();
+  // lo que no tiene arreglo desde la app (teléfono sin soporte, sistema viejo, sin módulo) no se puede encender
+  const iaImposible = [
+    'idioma-no-soportado',
+    'no-compatible',
+    'sin-modulo',
+    'sistema-antiguo',
+  ].includes(ia.disponibilidad);
+  const motivoIA = ia.cargando
+    ? null
+    : motivoNoDisponible(ia.disponibilidad, ia.nombre);
   const modoUso = useModoUso();
   const nombre = nombrePropio(nombreCompleto(perfil));
   const margenes = useSafeAreaInsets();
@@ -217,6 +231,34 @@ export function Ajustes({
           }
           deshabilitado={!bloqueo.biometria.disponible && !bloqueo.activo}
           etiqueta={t('ajustes.bloqueoTitulo')}
+        />
+      </Bloque>
+
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+        {t('ia.seccion')}
+      </Text>
+      <Bloque estiloContenido={estilos.filaOpcion}>
+        <View style={estilos.texto}>
+          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+            {rellenar(t('ia.titulo'), { nombre: ia.nombre })}
+          </Text>
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {t('ia.detalle')}
+          </Text>
+          {motivoIA !== null && (
+            <Text
+              accessibilityLiveRegion="polite"
+              style={[tipografia.pequeno, { color: colores.ambarTexto }]}
+            >
+              {motivoIA}
+            </Text>
+          )}
+        </View>
+        <Interruptor
+          activo={ia.activada}
+          alCambiar={(encender) => void ia.cambiar(encender)}
+          deshabilitado={iaImposible && !ia.activada}
+          etiqueta={rellenar(t('ia.titulo'), { nombre: ia.nombre })}
         />
       </Bloque>
 

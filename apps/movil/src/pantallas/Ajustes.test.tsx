@@ -223,4 +223,36 @@ describe('Ajustes', () => {
     );
     expect(solicitarAccesoUbicacion).toHaveBeenCalledTimes(2);
   });
+
+  it('ofrece la IA del teléfono y explica por qué no se puede encender si no hay módulo', async () => {
+    const pantalla = await renderPantalla(
+      <ProveedorSesion>
+        <Ajustes alVolver={() => undefined} />
+      </ProveedorSesion>,
+    );
+    expect(pantalla.getByText('Asistente con Apple Intelligence')).toBeTruthy();
+    expect(
+      pantalla.getByText(/Apple Intelligence todavía no está disponible/),
+    ).toBeTruthy();
+    expect(
+      pantalla.getByRole('switch', { name: 'Asistente con Apple Intelligence' })
+        .props.accessibilityState,
+    ).toMatchObject({ disabled: true });
+  });
+
+  it('ofrece la IA del teléfono y explica por qué no se puede encender si no hay módulo', async () => {
+    const pantalla = await renderPantalla(
+      <ProveedorSesion>
+        <Ajustes alVolver={() => undefined} />
+      </ProveedorSesion>,
+    );
+    expect(pantalla.getByText('Asistente con Apple Intelligence')).toBeTruthy();
+    expect(
+      pantalla.getByText(/Apple Intelligence todavía no está disponible/),
+    ).toBeTruthy();
+    expect(
+      pantalla.getByRole('switch', { name: 'Asistente con Apple Intelligence' })
+        .props.accessibilityState,
+    ).toMatchObject({ disabled: true });
+  });
 });
