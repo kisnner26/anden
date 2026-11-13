@@ -57,9 +57,18 @@ export function ResumenIA({ contexto, pedido, titulo }: PropiedadesResumenIA) {
     }
   }
 
+  // toda la tarjeta es el botón: antes solo el texto del título respondía y tocar el resto no hacía nada
+  const puedePedir = !pensando && respuesta === null;
+
   return (
     <TarjetaIA trabajando={pensando}>
-      <View style={estilos.cuerpo}>
+      <Pressable
+        accessibilityLabel={puedePedir ? titulo : undefined}
+        accessibilityRole={puedePedir ? 'button' : undefined}
+        disabled={!puedePedir}
+        onPress={() => void pedirResumen()}
+        style={estilos.cuerpo}
+      >
         <View style={estilos.cabecera}>
           <OrbeIA pensando={pensando} tamano={22} />
           <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
@@ -74,14 +83,9 @@ export function ResumenIA({ contexto, pedido, titulo }: PropiedadesResumenIA) {
             texto={respuesta}
           />
         ) : (
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => void pedirResumen()}
-          >
-            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-              {titulo}
-            </Text>
-          </Pressable>
+          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+            {titulo}
+          </Text>
         )}
         {fallo && (
           <Text
@@ -96,7 +100,7 @@ export function ResumenIA({ contexto, pedido, titulo }: PropiedadesResumenIA) {
             {rellenar(t('ia.nota'), { nombre })}
           </Text>
         )}
-      </View>
+      </Pressable>
     </TarjetaIA>
   );
 }
