@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Bloque } from '@/componentes/Bloque';
+import { DeslizarParaEliminar } from '@/componentes/DeslizarParaEliminar';
 import { type Habitual } from '@/datos/habituales';
 import {
   formatoDiasSemana,
@@ -44,58 +45,55 @@ export function TarjetaHabitual({
   const horaHabitual = formatoHoraCompleta(new Date(2000, 0, 1, hora, minuto));
 
   return (
-    <Bloque estiloContenido={estilos.contenido} testID="tarjeta-habitual">
-      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-        {t('habitual.titulo')}
-      </Text>
-      <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-        {`${habitual.origen} → ${habitual.destino}`}
-      </Text>
-      <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-        {`${formatoDiasSemana(habitual.dias)} · ${horaHabitual}`}
-      </Text>
+    <DeslizarParaEliminar
+      accion={rellenar(t('habitual.quitar'), {
+        destino: habitual.destino,
+        origen: habitual.origen,
+      })}
+      alEliminar={alQuitar}
+    >
+      <Bloque estiloContenido={estilos.contenido} testID="tarjeta-habitual">
+        <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+          {t('habitual.titulo')}
+        </Text>
+        <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+          {`${habitual.origen} → ${habitual.destino}`}
+        </Text>
+        <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+          {`${formatoDiasSemana(habitual.dias)} · ${horaHabitual}`}
+        </Text>
 
-      <View style={estilos.fila}>
-        {proxima ? (
-          <Pressable
-            accessibilityLabel={rellenar(t('habitual.reservar'), {
-              cuando: cuando(proxima.salida, ahora),
-            })}
-            accessibilityRole="button"
-            onPress={() => alReservar(proxima.viajeId)}
-            style={estilos.reservar}
-          >
-            <Text style={[tipografia.subtitulo, { color: colores.ambarTexto }]}>
-              {rellenar(t('habitual.proxima'), {
+        <View style={estilos.fila}>
+          {proxima ? (
+            <Pressable
+              accessibilityLabel={rellenar(t('habitual.reservar'), {
                 cuando: cuando(proxima.salida, ahora),
               })}
+              accessibilityRole="button"
+              onPress={() => alReservar(proxima.viajeId)}
+              style={estilos.reservar}
+            >
+              <Text
+                style={[tipografia.subtitulo, { color: colores.ambarTexto }]}
+              >
+                {rellenar(t('habitual.proxima'), {
+                  cuando: cuando(proxima.salida, ahora),
+                })}
+              </Text>
+              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+                {mismoDia(proxima.salida, ahora)
+                  ? t('habitual.reservarHoy')
+                  : t('habitual.reservarAhora')}
+              </Text>
+            </Pressable>
+          ) : (
+            <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
+              {t('habitual.sinSalida')}
             </Text>
-            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-              {mismoDia(proxima.salida, ahora)
-                ? t('habitual.reservarHoy')
-                : t('habitual.reservarAhora')}
-            </Text>
-          </Pressable>
-        ) : (
-          <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
-            {t('habitual.sinSalida')}
-          </Text>
-        )}
-        <Pressable
-          accessibilityLabel={rellenar(t('habitual.quitar'), {
-            origen: habitual.origen,
-            destino: habitual.destino,
-          })}
-          accessibilityRole="button"
-          onPress={alQuitar}
-          style={estilos.quitar}
-        >
-          <Text style={[tipografia.pequeno, { color: colores.cancelado }]}>
-            {t('habitual.quitarCorto')}
-          </Text>
-        </Pressable>
-      </View>
-    </Bloque>
+          )}
+        </View>
+      </Bloque>
+    </DeslizarParaEliminar>
   );
 }
 
@@ -107,12 +105,6 @@ const estilos = StyleSheet.create({
     gap: espacios.doce,
     justifyContent: 'space-between',
     marginTop: espacios.ocho,
-  },
-  quitar: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: tamanosControl.toqueMinimo,
-    paddingHorizontal: espacios.ocho,
   },
   reservar: { flex: 1, gap: 2, minHeight: tamanosControl.toqueMinimo },
 });

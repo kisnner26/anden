@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from '@jest/globals';
-import { fireEvent } from '@testing-library/react-native';
+import { fireEvent, waitFor } from '@testing-library/react-native';
 
 import type { Habitual } from '@/datos/habituales';
 import type { Salida } from '@/datos/salidas';
@@ -114,11 +114,13 @@ describe('TarjetaHabitual', () => {
         proxima={null}
       />,
     );
+    // la acción está detrás de la tarjeta y solo se ve al deslizar
     await fireEvent.press(
-      pantalla.getByRole('button', {
-        name: 'Quitar el viaje habitual de Boaco a Managua',
+      pantalla.getByTestId('deslizar-eliminar', {
+        includeHiddenElements: true,
       }),
     );
-    expect(alQuitar).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(alQuitar).toHaveBeenCalledTimes(1));
+    expect(pantalla.queryByText('Quitar', { exact: true })).toBeNull();
   });
 });
