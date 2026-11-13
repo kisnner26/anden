@@ -4,7 +4,12 @@ import {
   requestMediaLibraryPermissionsAsync,
 } from 'expo-image-picker';
 
+import { guardarFoto } from './almacenFotos';
 import { elegirFotoDeGaleria } from './fotos';
+
+jest.mock('./almacenFotos', () => ({
+  guardarFoto: jest.fn(() => 'fotos/copia.jpg'),
+}));
 
 jest.mock('expo-image-picker', () => ({
   launchImageLibraryAsync: jest.fn(),
@@ -25,6 +30,25 @@ beforeEach(() => {
 
 describe('elegirFotoDeGaleria', () => {
   it('devuelve la foto elegida', async () => {
+    galeria.mockResolvedValue({
+      assets: [{ uri: 'file:///foto.jpg' }],
+      canceled: false,
+    });
+    expect(await elegirFotoDeGaleria()).toEqual({
+      tipo: 'elegida',
+      uri: 'fotos/copia.jpg',
+    });
+    expect(guardarFoto).toHaveBeenCalledWith('file:///foto.jpg');
+  });
+
+  it('si no se puede copiar a los documentos conserva la ruta original', async () => {
+    (
+      guardarFoto as unknown as {
+        mockImplementationOnce: (f: () => never) => void;
+      }
+    ).mockImplementationOnce(() => {
+      throw new Error('sin espacio');
+    });
     galeria.mockResolvedValue({
       assets: [{ uri: 'file:///foto.jpg' }],
       canceled: false,

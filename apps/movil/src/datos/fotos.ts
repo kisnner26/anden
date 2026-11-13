@@ -3,6 +3,8 @@ import {
   requestMediaLibraryPermissionsAsync,
 } from 'expo-image-picker';
 
+import { guardarFoto } from './almacenFotos';
+
 export type ResultadoFoto =
   | { tipo: 'cancelada' }
   | { tipo: 'elegida'; uri: string }
@@ -23,7 +25,12 @@ export async function elegirFotoDeGaleria(
   });
   const foto = resultado.assets?.[0];
   if (resultado.canceled || !foto) return { tipo: 'cancelada' };
-  return { tipo: 'elegida', uri: foto.uri };
+  try {
+    // se copia a los documentos de la app para que no se pierda cuando el sistema vacíe lo temporal
+    return { tipo: 'elegida', uri: guardarFoto(foto.uri) };
+  } catch {
+    return { tipo: 'elegida', uri: foto.uri };
+  }
 }
 
 /** la foto de un lado de la cédula, con el recorte del tamaño de una tarjeta (86 por 54) */
