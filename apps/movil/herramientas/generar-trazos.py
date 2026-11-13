@@ -6,12 +6,12 @@ nada en linea. uso: python3 herramientas/generar-trazos.py
 """
 import json
 import math
-import urllib.request
+import subprocess
 from pathlib import Path
 
 DESTINO = Path(__file__).resolve().parent.parent / "src" / "datos" / "trazos.ts"
 MANAGUA = (12.13413, -86.1933)
-CIUDADES = {"boa": (12.46901, -85.65587), "jui": (12.09172, -85.36106)}
+CIUDADES = {"boa": (12.46781, -85.65786), "jui": (12.09172, -85.36106)}
 TOLERANCIA_GRADOS = 0.0004  # unos 45 m
 
 
@@ -21,8 +21,11 @@ def consultar(destino):
         f"{MANAGUA[1]},{MANAGUA[0]};{destino[1]},{destino[0]}"
         "?overview=full&geometries=geojson"
     )
-    with urllib.request.urlopen(url, timeout=60) as respuesta:
-        datos = json.load(respuesta)
+    # curl en lugar de urllib: el python de Xcode trae un OpenSSL viejo que el servicio rechaza
+    salida = subprocess.run(
+        ["curl", "-s", "-m", "60", url], capture_output=True, check=True, text=True
+    ).stdout
+    datos = json.loads(salida)
     ruta = datos["routes"][0]
     return [(lat, lng) for lng, lat in ruta["geometry"]["coordinates"]], ruta
 

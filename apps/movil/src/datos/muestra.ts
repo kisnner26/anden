@@ -38,7 +38,7 @@ export const TERMINALES: Terminal[] = [
     andenes: 3,
     ciudad: 'Boaco',
     codigo: 'BOA',
-    coordenadas: { lat: 12.46901, lng: -85.65587 },
+    coordenadas: { lat: 12.46781, lng: -85.65786 },
     id: 'ter_boa',
     nombre: 'Terminal de Buses de Boaco',
   },
@@ -105,7 +105,7 @@ export const RUTAS: Ruta[] = RECORRIDOS.flatMap((recorrido) => [
 
 /** tarifa de muestra en córdobas por ruta y servicio */
 const TARIFAS: Record<string, Partial<Record<TipoServicio, number>>> = {
-  boa: { expreso: 85, ordinario: 70 },
+  boa: { expreso: 85, ordinario: 66 },
   jui: { expreso: 130, ordinario: 110 },
 };
 

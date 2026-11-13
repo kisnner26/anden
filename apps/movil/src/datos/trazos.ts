@@ -10,7 +10,7 @@ export interface TrazoCorredor {
 
 export const TRAZOS: Readonly<Record<'boa' | 'jui', TrazoCorredor>> = {
   boa: {
-    distanciaKm: 82.9,
+    distanciaKm: 82.6,
     duracionMin: 79,
     puntos: [
       [12.13413, -86.19315],
@@ -106,9 +106,7 @@ export const TRAZOS: Readonly<Record<'boa' | 'jui', TrazoCorredor>> = {
       [12.46385, -85.66327],
       [12.46547, -85.66202],
       [12.46495, -85.66042],
-      [12.46767, -85.65808],
-      [12.46739, -85.65606],
-      [12.46898, -85.6561],
+      [12.46781, -85.65786],
     ],
   },
   jui: {
