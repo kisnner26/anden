@@ -1,0 +1,1 @@
+export { PuntosPensando } from './PuntosPensando';
