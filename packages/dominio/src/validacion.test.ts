@@ -8,6 +8,7 @@ import {
   claveValida,
   nombrePersonaValido,
   normalizarUsuario,
+  pasajeroRepetido,
   telefonoClave,
   usuarioValido,
 } from './validacion';
@@ -135,5 +136,36 @@ describe('telefonoClave', () => {
     expect(telefonoClave('1234')).toBe('');
     expect(telefonoClave('ana')).toBe('');
     expect(telefonoClave('1001')).toBe('');
+  });
+});
+
+describe('pasajeroRepetido', () => {
+  const ya = [
+    { cedula: '001-010190-0001A', nombre: 'Kisnner Obando' },
+    { nombre: 'Alondra Obando' },
+  ];
+
+  it('detecta el mismo nombre sin importar tildes, mayúsculas ni espacios', () => {
+    expect(pasajeroRepetido({ nombre: '  kísnner   OBANDO ' }, ya)).toBe(
+      'nombre',
+    );
+  });
+
+  it('detecta la misma cédula aunque el nombre cambie', () => {
+    expect(
+      pasajeroRepetido(
+        { cedula: '001-010190-0001a', nombre: 'Otra Persona' },
+        ya,
+      ),
+    ).toBe('cedula');
+  });
+
+  it('deja pasar a otra persona', () => {
+    expect(pasajeroRepetido({ nombre: 'Marvin Lanzas' }, ya)).toBeNull();
+  });
+
+  it('un nombre vacío o sin cédula no choca con nadie', () => {
+    expect(pasajeroRepetido({ nombre: '' }, [{ nombre: '' }])).toBeNull();
+    expect(pasajeroRepetido({ nombre: 'A B' }, [{ nombre: 'C D' }])).toBeNull();
   });
 });
