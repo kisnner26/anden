@@ -17,7 +17,12 @@ import { TRANSMISION } from '@/servicios/transmision';
 
 import { ConductorInicio } from './ConductorInicio';
 
+// las salidas de muestra dependen de la hora; se fija media tarde
 beforeEach(async () => {
+  jest.useFakeTimers({
+    advanceTimers: true,
+    now: new Date(2026, 10, 12, 14, 0),
+  });
   await AsyncStorage.clear();
   await AsyncStorage.setItem(
     'anden.sesion',
@@ -32,6 +37,7 @@ beforeEach(async () => {
 afterEach(() => {
   TRANSMISION.detener('via_2');
   reiniciarMuestra();
+  jest.useRealTimers();
 });
 
 function dibujar(
