@@ -6,8 +6,10 @@ import {
   varianteDeClave,
 } from '@/componentes/Autobus';
 import { Bloque } from '@/componentes/Bloque';
+import { ResumenPlus } from '@/componentes/ResumenPlus';
 import { CalendarioViajes } from '@/componentes/CalendarioViajes';
 import { agruparPorDestino } from '@/datos/historialViajes';
+import { useSuscripcion } from '@/datos/useSuscripcion';
 import type { BoletoGuardado } from '@/datos/reserva';
 import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -18,16 +20,19 @@ export interface PropiedadesHistorialViajes {
   ahora: Date;
   alAbrirBoleto: (boletoId: string) => void;
   boletos: readonly BoletoGuardado[];
+  alAbrirPlus?: () => void;
 }
 
 /** los viajes ya hechos: tres cifras grandes, el calendario con un círculo de color por destino y la leyenda de colores */
 export function HistorialViajes({
   ahora,
   alAbrirBoleto,
+  alAbrirPlus,
   boletos,
 }: PropiedadesHistorialViajes) {
   const { colores } = useTema();
   const grupos = agruparPorDestino(boletos);
+  const { plus } = useSuscripcion();
 
   return (
     <View style={estilos.contenedor}>
@@ -58,6 +63,8 @@ export function HistorialViajes({
         alAbrirBoleto={alAbrirBoleto}
         boletos={boletos}
       />
+
+      <ResumenPlus alAbrirPlus={alAbrirPlus} boletos={boletos} plus={plus} />
 
       <View style={estilos.leyenda}>
         {grupos.map((grupo) => (

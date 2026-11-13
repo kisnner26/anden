@@ -20,6 +20,8 @@ import { t } from '@/textos/t';
 export interface PropiedadesBoletos {
   alAbrirBoleto: (boletoId: string) => void;
   alBuscar: () => void;
+  /** abre la pantalla de Andén Plus */
+  alAbrirPlus?: () => void;
 }
 
 function porSalida(a: BoletoGuardado, b: BoletoGuardado): number {
@@ -29,7 +31,11 @@ function porSalida(a: BoletoGuardado, b: BoletoGuardado): number {
 }
 
 /** los boletos guardados en el teléfono, próximos primero; sin boletos muestra cómo conseguir uno */
-export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
+export function Boletos({
+  alAbrirBoleto,
+  alAbrirPlus,
+  alBuscar,
+}: PropiedadesBoletos) {
   const { colores } = useTema();
   const ahora = useAhora();
   const { boletos } = useBoletos();
@@ -103,6 +109,7 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
             <HistorialViajes
               ahora={ahora}
               alAbrirBoleto={alAbrirBoleto}
+              alAbrirPlus={alAbrirPlus}
               boletos={pasados}
             />
           )}
