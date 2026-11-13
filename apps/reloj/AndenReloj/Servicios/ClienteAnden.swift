@@ -74,6 +74,16 @@ final class ClienteAnden {
         }.sorted { $0.viaje.salida < $1.viaje.salida }
     }
 
+    /// las próximas salidas de todas las rutas que todavía esperan pasajeros
+    func salidas() async throws -> [Viaje] {
+        try await renovarSiHaceFalta()
+        let desde = ISO8601DateFormatter().string(from: Date().addingTimeInterval(-600))
+        return try await tabla(
+            "viajes",
+            [("select", "id,ruta_id,servicio,placa,anden,salida,estado,salio_en"), ("salida", "gte.\(desde)"),
+             ("estado", "neq.cancelado"), ("salio_en", "is.null"), ("order", "salida.asc"), ("limit", "12")])
+    }
+
     func transmision(viajeId: String) async throws -> Transmision? {
         try await renovarSiHaceFalta()
         let filas: [Transmision] = try await tabla(
