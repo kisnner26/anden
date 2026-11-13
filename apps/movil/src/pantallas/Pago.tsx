@@ -37,6 +37,7 @@ function mensajeDe(error: ErrorReserva): string {
   if (error === 'venta-cerrada') return t('pago.errorCerrada');
   if (error === 'maximo-6') return t('pago.errorMaximo');
   if (error === 'sin-tarifa') return t('pago.errorTarifa');
+  if (error === 'sin-plus-anticipado') return t('plus.soloPlusAnticipado');
   return t('pago.errorGeneral');
 }
 
