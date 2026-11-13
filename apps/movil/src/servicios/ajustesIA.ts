@@ -14,3 +14,18 @@ export async function leerIAActivada(): Promise<boolean> {
 export async function guardarIAActivada(activada: boolean): Promise<void> {
   await AsyncStorage.setItem(CLAVE_AJUSTES_IA, activada ? '1' : '0');
 }
+
+export const CLAVE_TURISTA = 'anden.iaTurista';
+
+/** si la persona se identificó como turista: el asistente le recomienda qué visitar en cada destino */
+export async function leerTurista(): Promise<boolean> {
+  try {
+    return (await AsyncStorage.getItem(CLAVE_TURISTA)) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export async function guardarTurista(turista: boolean): Promise<void> {
+  await AsyncStorage.setItem(CLAVE_TURISTA, turista ? '1' : '0');
+}
