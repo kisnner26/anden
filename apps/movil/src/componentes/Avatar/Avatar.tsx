@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
 import { Bloque } from '@/componentes/Bloque';
+import { resolverFoto } from '@/datos/almacenFotos';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 
@@ -39,7 +40,7 @@ export function Avatar({
         {mostrarFoto ? (
           <Image
             onError={() => establecerFallo(true)}
-            source={{ uri }}
+            source={{ uri: resolverFoto(uri) }}
             style={{ borderRadius: tamano / 2, height: tamano, width: tamano }}
             testID="avatar-foto"
           />
