@@ -3,7 +3,17 @@ import { digitosTelefonoNi } from '@anden/dominio';
 import type { Salida } from './salidas';
 
 /** lo que la persona le pide hacer a Andén dentro de la app, en vez de solo preguntarle */
+export type PantallaAbrible =
+  | 'ajustes'
+  | 'avisos'
+  | 'boletos'
+  | 'encomienda'
+  | 'horarios'
+  | 'plus'
+  | 'rutas';
+
 export type Orden =
+  | { pantalla: PantallaAbrible; tipo: 'abrir' }
   | { destino: string; origen: string | null; tipo: 'reservar' }
   | { destino: string; origen: string | null; tipo: 'viaje' }
   | { nombre: string; tipo: 'contacto' };
@@ -47,6 +57,24 @@ export function interpretarOrden(
     const inicio = normal.indexOf(contacto[1]);
     const nombre = limpio.slice(inicio, inicio + contacto[1].length).trim();
     if (nombre.length >= 2) return { nombre, tipo: 'contacto' };
+  }
+
+  // "abrime mis boletos", "enviar una encomienda": llevan a una pantalla de la app
+  if (/\b(envi\w*|mand\w*|despach\w*)\b.*\bencomienda\w*\b/.test(normal)) {
+    return { pantalla: 'encomienda', tipo: 'abrir' };
+  }
+  const abrir =
+    /\b(abr\w*|llev\w*|ir|ver|mostr\w*|muestr\w*)\b.*\b(boletos?|encomiendas?|avisos|ajustes|horarios|rutas|plus)\b/.exec(
+      normal,
+    );
+  if (abrir?.[2] && !VERBOS_RESERVA.test(normal)) {
+    const clave = abrir[2];
+    const pantalla: PantallaAbrible = clave.startsWith('boleto')
+      ? 'boletos'
+      : clave.startsWith('encomienda')
+        ? 'encomienda'
+        : (clave as PantallaAbrible);
+    return { pantalla, tipo: 'abrir' };
   }
 
   const destino = ciudadEn(
