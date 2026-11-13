@@ -29,7 +29,7 @@ export const CUENTAS_MUESTRA: readonly CuentaMuestra[] = [
   },
   {
     clave: CLAVE_DE_MUESTRA,
-    identificador: 'ana@correo.com',
-    sesion: { nombre: 'Ana Ruiz', rol: 'pasajero' },
+    identificador: 'ana',
+    sesion: { nombre: 'Ana Ruiz', rol: 'pasajero', usuario: 'ana' },
   },
 ];

@@ -5,7 +5,14 @@ import { leerConfiguracion } from './configuracion';
 import { correoDeIdentificador, crearSesionSupabase } from './sesionSupabase';
 
 function clienteFalso(opciones: {
-  perfil?: { chofer_id: string | null; nombre: string; rol: string } | null;
+  perfil?: {
+    chofer_id: string | null;
+    nombre: string;
+    rol: string;
+    usuario: string | null;
+  } | null;
+  disponible?: string;
+  sesionAlRegistrar?: boolean;
   usuario?: { id: string } | null;
 }) {
   const cerrar = jest.fn(async () => ({ error: null }));
@@ -24,8 +31,22 @@ function clienteFalso(opciones: {
           ? { data: { user: opciones.usuario }, error: null }
           : { data: { user: null }, error: new Error('no') },
       signOut: cerrar,
+      signUp: async () =>
+        opciones.sesionAlRegistrar === false
+          ? { data: { session: null, user: { id: 'u1' } }, error: null }
+          : {
+              data: { session: {}, user: { id: 'u1' } },
+              error: null,
+            },
     },
     from: () => consulta,
+    rpc: async (nombre: string) => ({
+      data:
+        nombre === 'acceso_disponible'
+          ? (opciones.disponible ?? 'libre')
+          : 'luis@cuentas.anden.app',
+      error: null,
+    }),
   };
   return { cerrar, cliente: cliente as unknown as SupabaseClient };
 }
@@ -55,10 +76,6 @@ describe('configuración', () => {
 });
 
 describe('correoDeIdentificador', () => {
-  it('respeta un correo', () => {
-    expect(correoDeIdentificador(' Ana@Correo.com ')).toBe('ana@correo.com');
-  });
-
   it('arma un correo interno para teléfono o código', () => {
     expect(correoDeIdentificador('8888-1234')).toBe(
       '88881234@cuentas.anden.app',
@@ -69,19 +86,29 @@ describe('correoDeIdentificador', () => {
 describe('sesión con Supabase', () => {
   it('el rol sale del perfil', async () => {
     const { cliente } = clienteFalso({
-      perfil: { chofer_id: 'cho_1', nombre: 'Luis', rol: 'conductor' },
+      perfil: {
+        chofer_id: 'cho_1',
+        nombre: 'Luis',
+        rol: 'conductor',
+        usuario: null,
+      },
       usuario: { id: 'u1' },
     });
     const resultado = await crearSesionSupabase(cliente).iniciar('1001', 'x');
     expect(resultado).toEqual({
       ok: true,
-      valor: { choferId: 'cho_1', nombre: 'Luis', rol: 'conductor' },
+      valor: {
+        choferId: 'cho_1',
+        nombre: 'Luis',
+        rol: 'conductor',
+        usuario: undefined,
+      },
     });
   });
 
   it('credenciales malas dan error', async () => {
     const { cliente } = clienteFalso({ usuario: null });
-    const resultado = await crearSesionSupabase(cliente).iniciar('a@b.c', 'x');
+    const resultado = await crearSesionSupabase(cliente).iniciar('luis', 'x');
     expect(resultado.ok).toBe(false);
   });
 
@@ -90,7 +117,7 @@ describe('sesión con Supabase', () => {
       perfil: null,
       usuario: { id: 'u' },
     });
-    const resultado = await crearSesionSupabase(cliente).iniciar('a@b.c', 'x');
+    const resultado = await crearSesionSupabase(cliente).iniciar('luis', 'x');
     expect(resultado.ok).toBe(false);
     expect(cerrar).toHaveBeenCalled();
   });
@@ -98,5 +125,55 @@ describe('sesión con Supabase', () => {
   it('sin sesión guardada no hay sesión actual', async () => {
     const { cliente } = clienteFalso({ usuario: null });
     expect(await crearSesionSupabase(cliente).actual()).toBeNull();
+  });
+
+  it('el correo no sirve para entrar', async () => {
+    const { cliente } = clienteFalso({ usuario: { id: 'u' } });
+    const resultado = await crearSesionSupabase(cliente).iniciar('a@b.c', 'x');
+    expect(resultado.ok).toBe(false);
+  });
+});
+
+describe('registro con Supabase', () => {
+  const datos = {
+    apellido: 'Pérez',
+    clave: 'andén2026',
+    nombre: 'Luis',
+    telefono: '8888 1234',
+    usuario: 'luis',
+  };
+
+  it('crea la cuenta y devuelve la sesión', async () => {
+    const { cliente } = clienteFalso({
+      perfil: {
+        chofer_id: null,
+        nombre: 'Luis Pérez',
+        rol: 'pasajero',
+        usuario: 'luis',
+      },
+    });
+    const resultado = await crearSesionSupabase(cliente).registrar(datos);
+    expect(resultado.ok && resultado.valor.usuario).toBe('luis');
+  });
+
+  it('avisa si el usuario o el teléfono ya existen', async () => {
+    const { cliente } = clienteFalso({ disponible: 'usuario' });
+    expect(await crearSesionSupabase(cliente).registrar(datos)).toEqual({
+      error: 'usuario-tomado',
+      ok: false,
+    });
+    const { cliente: otro } = clienteFalso({ disponible: 'telefono' });
+    expect(await crearSesionSupabase(otro).registrar(datos)).toEqual({
+      error: 'telefono-tomado',
+      ok: false,
+    });
+  });
+
+  it('si el servidor pide confirmar por correo lo dice', async () => {
+    const { cliente } = clienteFalso({ sesionAlRegistrar: false });
+    expect(await crearSesionSupabase(cliente).registrar(datos)).toEqual({
+      error: 'confirmacion-pendiente',
+      ok: false,
+    });
   });
 });

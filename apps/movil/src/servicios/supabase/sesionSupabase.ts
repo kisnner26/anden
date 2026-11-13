@@ -1,22 +1,27 @@
-import { error, ok } from '@anden/dominio';
+import { error, normalizarUsuario, ok, telefonoClave } from '@anden/dominio';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-import type { Rol, ServicioSesion, Sesion } from '../sesion';
+import {
+  esCorreo,
+  type Rol,
+  type ServicioSesion,
+  type Sesion,
+} from '../sesion';
 
 /** dominio interno con el que se arman los correos de quien entra con teléfono o código de chofer */
 export const DOMINIO_INTERNO = 'cuentas.anden.app';
 
-/** lo escrito en el ingreso a un correo: si ya es correo se usa, si es teléfono o código se le arma uno */
+/** el correo interno de un código de chofer o de un usuario que no existe; con arroba no hay correo posible */
 export function correoDeIdentificador(identificador: string): string {
-  const texto = identificador.trim().toLowerCase();
-  if (texto.includes('@')) return texto;
-  return `${texto.replace(/[\s-]/g, '')}@${DOMINIO_INTERNO}`;
+  const texto = identificador.trim().toLowerCase().replace(/[\s-]/g, '');
+  return `${texto}@${DOMINIO_INTERNO}`;
 }
 
 interface FilaPerfil {
   chofer_id: string | null;
   nombre: string;
   rol: Rol;
+  usuario: string | null;
 }
 
 async function leerPerfil(
@@ -25,7 +30,7 @@ async function leerPerfil(
 ): Promise<Sesion | null> {
   const { data, error: falla } = await cliente
     .from('perfiles')
-    .select('nombre, rol, chofer_id')
+    .select('nombre, rol, chofer_id, usuario')
     .eq('id', usuarioId)
     .maybeSingle<FilaPerfil>();
   if (falla || !data) return null;
@@ -33,6 +38,7 @@ async function leerPerfil(
     choferId: data.chofer_id ?? undefined,
     nombre: data.nombre,
     rol: data.rol,
+    usuario: data.usuario ?? undefined,
   };
 }
 
@@ -48,8 +54,16 @@ export function crearSesionSupabase(cliente: SupabaseClient): ServicioSesion {
       await cliente.auth.signOut();
     },
     async iniciar(identificador, clave) {
+      if (esCorreo(identificador)) return error('credenciales');
+      // el servidor sabe qué cuenta es: por usuario, por teléfono o por código de chofer
+      const { data: correo } = await cliente.rpc('correo_de_acceso', {
+        p_identificador: identificador,
+      });
       const { data, error: falla } = await cliente.auth.signInWithPassword({
-        email: correoDeIdentificador(identificador),
+        email:
+          typeof correo === 'string'
+            ? correo
+            : correoDeIdentificador(identificador),
         password: clave,
       });
       if (falla || !data.user) return error('credenciales');
@@ -59,6 +73,35 @@ export function crearSesionSupabase(cliente: SupabaseClient): ServicioSesion {
         return error('credenciales');
       }
       return ok(sesion);
+    },
+    async registrar(datos) {
+      const usuario = normalizarUsuario(datos.usuario);
+      const telefono = telefonoClave(datos.telefono);
+      const { data: libre, error: fallaRevision } = await cliente.rpc(
+        'acceso_disponible',
+        { p_telefono: telefono, p_usuario: usuario },
+      );
+      if (fallaRevision) return error('conexion');
+      if (libre === 'usuario') return error('usuario-tomado');
+      if (libre === 'telefono') return error('telefono-tomado');
+
+      const { data, error: falla } = await cliente.auth.signUp({
+        email: correoDeIdentificador(usuario),
+        options: {
+          data: {
+            apellido: datos.apellido.trim(),
+            nombre: `${datos.nombre.trim()} ${datos.apellido.trim()}`,
+            telefono,
+            usuario,
+          },
+        },
+        password: datos.clave,
+      });
+      if (falla) return error('conexion');
+      // con la confirmación por correo encendida no hay sesión: en el panel hay que apagarla
+      if (!data.session || !data.user) return error('confirmacion-pendiente');
+      const sesion = await leerPerfil(cliente, data.user.id);
+      return sesion ? ok(sesion) : error('conexion');
     },
   };
 }

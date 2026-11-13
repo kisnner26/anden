@@ -1,5 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { error, ok, type Resultado } from '@anden/dominio';
+import {
+  error,
+  normalizarUsuario,
+  ok,
+  telefonoClave,
+  type Resultado,
+} from '@anden/dominio';
 
 export const CLAVE_SESION = 'anden.sesion';
 
@@ -10,9 +16,22 @@ export interface Sesion {
   choferId?: string;
   nombre: string;
   rol: Rol;
+  /** con lo que la persona entra además del teléfono; los conductores entran con su código */
+  usuario?: string;
 }
 
 export type ErrorSesion = 'credenciales';
+
+export interface DatosRegistro {
+  apellido: string;
+  clave: string;
+  nombre: string;
+  telefono: string;
+  usuario: string;
+}
+
+export type ErrorRegistro =
+  'conexion' | 'confirmacion-pendiente' | 'telefono-tomado' | 'usuario-tomado';
 
 /**
  * lo que necesita la app de un sistema de cuentas; hoy lo cumple `crearSesionLocal` y más adelante
@@ -21,6 +40,8 @@ export type ErrorSesion = 'credenciales';
 export interface ServicioSesion {
   actual(): Promise<Sesion | null>;
   cerrar(): Promise<void>;
+  /** crea una cuenta de pasajero y la deja con la sesión iniciada */
+  registrar(datos: DatosRegistro): Promise<Resultado<Sesion, ErrorRegistro>>;
   /** entra con las credenciales; el rol lo decide quien guarda la cuenta, no la persona que entra */
   iniciar(
     identificador: string,
@@ -41,6 +62,11 @@ export function normalizarIdentificador(texto: string): string {
   return texto.trim().toLowerCase().replace(/[\s-]/g, '');
 }
 
+/** el correo ya no sirve para entrar: solo usuario, teléfono o código */
+export function esCorreo(texto: string): boolean {
+  return texto.includes('@');
+}
+
 /** el pasajero no necesita iniciar sesión: sin sesión se comporta como pasajero */
 export function rolDe(sesion: Sesion | null): Rol {
   return sesion?.rol ?? 'pasajero';
@@ -58,6 +84,7 @@ function leer(texto: string | null): Sesion | null {
         choferId: valor.choferId,
         nombre: valor.nombre,
         rol: valor.rol,
+        usuario: valor.usuario,
       };
     }
     return null;
@@ -66,7 +93,26 @@ function leer(texto: string | null): Sesion | null {
   }
 }
 
-/** sesión guardada en el teléfono con cuentas de muestra de los dos roles; sirve para desarrollo, no para producción */
+export const CLAVE_CUENTAS = 'anden.cuentas';
+
+interface CuentaGuardada {
+  clave: string;
+  sesion: Sesion;
+  telefono: string;
+}
+
+async function leerCuentas(): Promise<CuentaGuardada[]> {
+  try {
+    const valor: unknown = JSON.parse(
+      (await AsyncStorage.getItem(CLAVE_CUENTAS)) ?? '[]',
+    );
+    return Array.isArray(valor) ? (valor as CuentaGuardada[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+/** sesión guardada en el teléfono con cuentas de muestra y las que se crean aquí; sirve para desarrollo, no para producción */
 export function crearSesionLocal(
   cuentas: readonly CuentaMuestra[],
 ): ServicioSesion {
@@ -82,34 +128,55 @@ export function crearSesionLocal(
       await AsyncStorage.removeItem(CLAVE_SESION);
     },
     async iniciar(identificador, clave) {
+      if (esCorreo(identificador)) return error('credenciales');
       const buscado = normalizarIdentificador(identificador);
-      const cuenta = cuentas.find(
+      const telefono = telefonoClave(identificador);
+      const deMuestra = cuentas.find(
         (candidata) =>
           normalizarIdentificador(candidata.identificador) === buscado &&
           candidata.clave === clave,
       );
-      if (!cuenta) return error('credenciales');
-      await AsyncStorage.setItem(CLAVE_SESION, JSON.stringify(cuenta.sesion));
-      return ok(cuenta.sesion);
+      const creada = (await leerCuentas()).find(
+        (candidata) =>
+          candidata.clave === clave &&
+          (candidata.sesion.usuario === buscado ||
+            (telefono !== '' && candidata.telefono === telefono)),
+      );
+      const sesion = deMuestra?.sesion ?? creada?.sesion;
+      if (!sesion) return error('credenciales');
+      await AsyncStorage.setItem(CLAVE_SESION, JSON.stringify(sesion));
+      return ok(sesion);
+    },
+    async registrar(datos) {
+      const usuario = normalizarUsuario(datos.usuario);
+      const telefono = telefonoClave(datos.telefono);
+      const existentes = await leerCuentas();
+      if (
+        cuentas.some(
+          (muestra) =>
+            normalizarIdentificador(muestra.identificador) === usuario,
+        ) ||
+        existentes.some((cuenta) => cuenta.sesion.usuario === usuario)
+      ) {
+        return error('usuario-tomado');
+      }
+      if (existentes.some((cuenta) => cuenta.telefono === telefono)) {
+        return error('telefono-tomado');
+      }
+      const sesion: Sesion = {
+        nombre: `${datos.nombre.trim()} ${datos.apellido.trim()}`,
+        rol: 'pasajero',
+        usuario,
+      };
+      await AsyncStorage.setItem(
+        CLAVE_CUENTAS,
+        JSON.stringify([
+          ...existentes,
+          { clave: datos.clave, sesion, telefono },
+        ]),
+      );
+      await AsyncStorage.setItem(CLAVE_SESION, JSON.stringify(sesion));
+      return ok(sesion);
     },
   };
-}
-
-export const CLAVE_INVITADO = 'anden.invitado';
-
-/** quien prefiere usar la app sin cuenta; se recuerda para no volver a mostrar el ingreso */
-export async function marcarInvitado(): Promise<void> {
-  await AsyncStorage.setItem(CLAVE_INVITADO, '1');
-}
-
-export async function esInvitado(): Promise<boolean> {
-  try {
-    return (await AsyncStorage.getItem(CLAVE_INVITADO)) === '1';
-  } catch {
-    return false;
-  }
-}
-
-export async function olvidarInvitado(): Promise<void> {
-  await AsyncStorage.removeItem(CLAVE_INVITADO);
 }
