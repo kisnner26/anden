@@ -155,47 +155,56 @@ export function Ajustes({
         {t('ajustes.detalle')}
       </Text>
 
-      <Pressable
-        accessibilityLabel={t('perfil.entrada')}
-        accessibilityRole="button"
-        onPress={alAbrirPerfil}
-      >
-        <Bloque estiloContenido={estilos.filaOpcion}>
-          <Avatar
-            descripcion={t('perfil.fotoDescripcion')}
-            iniciales={iniciales(perfil)}
-            tamano={tamanosIlustracion.avatarAjustes}
-            uri={perfil.fotoUri}
-          />
-          <View style={estilos.texto}>
-            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-              {nombre === '' ? t('perfil.sinNombre') : nombre}
-            </Text>
-            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-              {t('perfil.entrada')}
-            </Text>
-          </View>
-          <Icono nombre="siguiente" tamano="mediano" />
-        </Bloque>
-      </Pressable>
+      {/* el conductor ya tiene su pestaña de perfil, y Plus es de la cuenta de pasajero */}
+      {sesion?.rol !== 'conductor' && (
+        <>
+          <Pressable
+            accessibilityLabel={t('perfil.entrada')}
+            accessibilityRole="button"
+            onPress={alAbrirPerfil}
+          >
+            <Bloque estiloContenido={estilos.filaOpcion}>
+              <Avatar
+                descripcion={t('perfil.fotoDescripcion')}
+                iniciales={iniciales(perfil)}
+                tamano={tamanosIlustracion.avatarAjustes}
+                uri={perfil.fotoUri}
+              />
+              <View style={estilos.texto}>
+                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                  {nombre === '' ? t('perfil.sinNombre') : nombre}
+                </Text>
+                <Text
+                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                >
+                  {t('perfil.entrada')}
+                </Text>
+              </View>
+              <Icono nombre="siguiente" tamano="mediano" />
+            </Bloque>
+          </Pressable>
 
-      <Pressable
-        accessibilityLabel={t('plus.entrada')}
-        accessibilityRole="button"
-        onPress={alAbrirPlus}
-      >
-        <Bloque estiloContenido={estilos.filaOpcion}>
-          <View style={estilos.texto}>
-            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-              {plus ? t('plus.entradaActivo') : t('plus.entrada')}
-            </Text>
-            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-              {t('plus.entradaDetalle')}
-            </Text>
-          </View>
-          <Icono nombre="siguiente" tamano="mediano" />
-        </Bloque>
-      </Pressable>
+          <Pressable
+            accessibilityLabel={t('plus.entrada')}
+            accessibilityRole="button"
+            onPress={alAbrirPlus}
+          >
+            <Bloque estiloContenido={estilos.filaOpcion}>
+              <View style={estilos.texto}>
+                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                  {plus ? t('plus.entradaActivo') : t('plus.entrada')}
+                </Text>
+                <Text
+                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                >
+                  {t('plus.entradaDetalle')}
+                </Text>
+              </View>
+              <Icono nombre="siguiente" tamano="mediano" />
+            </Bloque>
+          </Pressable>
+        </>
+      )}
 
       <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {t('ajustes.modoSeccion')}
