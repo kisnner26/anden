@@ -25,7 +25,9 @@ import { proximaSalida } from '@/datos/salidas';
 import { espacios, tamanosControl } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
+import { useIA } from '@/datos/useIA';
 import { useTema } from '@/tema/useTema';
+import { rellenar } from '@/textos/rellenar';
 import { t } from '@/textos/t';
 
 export interface PropiedadesViajar {
@@ -37,6 +39,8 @@ export interface PropiedadesViajar {
   alReservarOtroDia?: () => void;
   /** abre "Dónde viene mi bus" */
   alAbrirDondeViene?: () => void;
+  /** abre el asistente con la IA del teléfono; solo se ofrece si está activada y disponible */
+  alAbrirAsistente?: () => void;
   /** salta a otra pestaña desde los atajos */
   alIrA?: (pestana: 'boletos' | 'horarios' | 'rutas') => void;
 }
@@ -51,8 +55,10 @@ export function Viajar({
   alElegirAsiento,
   alReservarOtroDia,
   alAbrirDondeViene,
+  alAbrirAsistente,
   alIrA,
 }: PropiedadesViajar) {
+  const ia = useIA();
   const { colores } = useTema();
   const { perfil } = usePerfil();
   const [origenId, establecerOrigenId] = useState('ter_may');
@@ -176,6 +182,28 @@ export function Viajar({
                   style={[tipografia.pequeno, { color: colores.tintaSuave }]}
                 >
                   {t('dondeViene.entradaDetalle')}
+                </Text>
+              </View>
+              <Icono nombre="siguiente" tamano="mediano" />
+            </Bloque>
+          </Pressable>
+        )}
+
+        {alAbrirAsistente && ia.usable && (
+          <Pressable
+            accessibilityRole="button"
+            onPress={alAbrirAsistente}
+            style={({ pressed }) => pressed && estilos.presionado}
+          >
+            <Bloque estiloContenido={estilos.dondeViene}>
+              <View style={estilos.textoDondeViene}>
+                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                  {t('ia.entrada')}
+                </Text>
+                <Text
+                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                >
+                  {rellenar(t('ia.entradaDetalle'), { nombre: ia.nombre })}
                 </Text>
               </View>
               <Icono nombre="siguiente" tamano="mediano" />
