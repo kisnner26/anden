@@ -334,6 +334,16 @@ export const textos = {
       'Por ahora Plus se activa sin cobro: el pago dentro de la app llega antes de publicarla.',
   },
   encomiendas: {
+    enQueBus: '¿En qué bus va?',
+    sinViajes: 'Todavía no hay viajes publicados en este trayecto. Cuando un conductor publique uno, aparece acá.',
+    viajeNombre: 'Se pone en andén a las {hora}',
+    viajeDetalle: 'Placa {placa} · {chofer}',
+    errorViaje: 'Elegí el bus en que va la encomienda.',
+    falloEnvio: 'No pudimos enviar la solicitud. Revisá tu conexión y probá de nuevo.',
+    rechazada: 'El chofer no la puede llevar',
+    motivo: 'Motivo: {motivo}',
+    cancelada: 'Cancelaste esta encomienda',
+    cancelar: 'Cancelar solicitud',
     titulo: 'Encomiendas',
     detalle:
       'Mandá un paquete por el bus. La cooperativa confirma la tarifa y la hora; por ahora no se cobra nada.',

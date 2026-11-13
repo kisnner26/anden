@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Linking,
   Pressable,
@@ -23,10 +23,8 @@ import { Interruptor } from '@/componentes/Interruptor';
 import { LineaEstadoEncomienda } from '@/componentes/LineaEstadoEncomienda';
 import {
   erroresDeEncomienda,
-  guardarEncomienda,
-  leerEncomiendas,
+  etapasCumplidas,
   mensajeComprobante,
-  nuevaEncomienda,
   TAMANOS,
   urlSmsDestinatario,
   type Encomienda,
@@ -40,7 +38,12 @@ import {
   type CiudadRed,
   type SentidoRed,
 } from '@/datos/redRutas';
+import { useEncomiendas } from '@/datos/useEncomiendas';
 import { usePerfil } from '@/datos/usePerfil';
+import { useSalidas } from '@/datos/useSalidas';
+import { formatoHoraCompleta } from '@/datos/formato';
+import { OpcionSeleccion } from '@/componentes/OpcionSeleccion';
+import { Rebote } from '@/componentes/Rebote';
 import { conAlfa } from '@/tema/alfa';
 import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -90,19 +93,32 @@ export function Encomiendas({ alVolver }: PropiedadesEncomiendas) {
   const [telefono, establecerTelefono] = useState('');
   const [descripcion, establecerDescripcion] = useState('');
   const [errores, establecerErrores] = useState<ErrorEncomienda[]>([]);
-  const [solicitudes, establecerSolicitudes] = useState<Encomienda[]>([]);
+  const { cambiarEstado, encomiendas: solicitudes, enviar } = useEncomiendas();
+  const { ahora, datos: muestra, salidas } = useSalidas();
+  const [viajeId, establecerViajeId] = useState<string | null>(null);
+  const [falloEnvio, establecerFalloEnvio] = useState(false);
+  const [sinViaje, establecerSinViaje] = useState(false);
   const [recienEnviada, establecerRecienEnviada] = useState<Encomienda | null>(
     null,
   );
   const [enviando, establecerEnviando] = useState(false);
   const corredor = corredorDe({ ciudad, sentido });
 
-  useEffect(() => {
-    void leerEncomiendas().then(establecerSolicitudes);
-  }, []);
+  // los viajes publicados en este trayecto que todavía no salieron: la encomienda viaja en uno de ellos
+  const viajes = salidas
+    .filter(
+      (salida) =>
+        salida.origen === corredor.origen &&
+        salida.destino === corredor.destino &&
+        salida.salida.getTime() >= ahora.getTime() - 5 * 60_000,
+    )
+    .sort((a, b) => a.salida.getTime() - b.salida.getTime());
+  const elegido = viajes.find((viaje) => viaje.viajeId === viajeId) ?? null;
 
   function datos() {
     return {
+      choferId: elegido?.choferId,
+      viajeId: elegido?.viajeId,
       descripcion,
       destinatario,
       destino: corredor.destino,
@@ -120,6 +136,11 @@ export function Encomiendas({ alVolver }: PropiedadesEncomiendas) {
     );
     establecerErrores(fallos);
     if (fallos.length > 0) return;
+    if (paso === 1 && !elegido) {
+      establecerSinViaje(true);
+      return;
+    }
+    establecerSinViaje(false);
     if (paso < 3) establecerPaso((paso + 1) as 2 | 3);
   }
 
@@ -133,8 +154,12 @@ export function Encomiendas({ alVolver }: PropiedadesEncomiendas) {
       );
       return;
     }
-    const nueva = nuevaEncomienda(datos());
-    establecerSolicitudes(await guardarEncomienda(nueva));
+    establecerFalloEnvio(false);
+    const nueva = await enviar(datos());
+    if (!nueva) {
+      establecerFalloEnvio(true);
+      return;
+    }
     establecerRecienEnviada(nueva);
     establecerEnviando(true);
   }
@@ -147,52 +172,63 @@ export function Encomiendas({ alVolver }: PropiedadesEncomiendas) {
     establecerTelefono('');
     establecerFragil(false);
     establecerErrores([]);
+    establecerViajeId(null);
   }
 
   const error = (campo: ErrorEncomienda) =>
     errores.includes(campo) ? MENSAJES[campo]() : undefined;
 
-  const tarjetaTamano = (opcion: TamanoEncomienda) => {
+  const tarjetaTamano = (opcion: TamanoEncomienda, indice: number) => {
     const activa = tamano === opcion;
+    const texto = activa ? colores.sobreFichaActiva : colores.tinta;
+    const suave = activa ? colores.sobreFichaActiva : colores.tintaSuave;
     return (
-      <Pressable
-        accessibilityLabel={t(`encomiendas.${opcion}`)}
-        accessibilityRole="button"
-        accessibilityState={{ selected: activa }}
-        key={opcion}
-        onPress={() => establecerTamano(opcion)}
-        style={[
-          estilos.tamano,
-          {
-            backgroundColor: activa
-              ? colores.fichaActiva
-              : conAlfa(colores.tinta, 0.06),
-            borderColor: activa ? colores.fichaActiva : colores.linea,
-          },
-        ]}
-      >
-        <FormaPaquete
-          color={activa ? colores.sobreFichaActiva : colores.tinta}
-          tamano={opcion}
-        />
-        <Text
-          style={[
-            tipografia.nombreLinea,
-            { color: activa ? colores.sobreFichaActiva : colores.tinta },
-          ]}
-        >
-          {t(`encomiendas.${opcion}`)}
-        </Text>
-        <Text
-          style={[
-            tipografia.etiqueta,
-            estilos.centrado,
-            { color: activa ? colores.sobreFichaActiva : colores.tintaSuave },
-          ]}
-        >
-          {t(`encomiendas.${opcion}Detalle`)}
-        </Text>
-      </Pressable>
+      <View key={opcion} style={estilos.celdaTamano}>
+        <Aparece indice={indice}>
+          <Rebote activo={activa}>
+            <Pressable
+              accessibilityLabel={t(`encomiendas.${opcion}`)}
+              accessibilityRole="button"
+              accessibilityState={{ selected: activa }}
+              onPress={() => establecerTamano(opcion)}
+              style={[
+                estilos.tamano,
+                {
+                  backgroundColor: activa
+                    ? colores.fichaActiva
+                    : conAlfa(colores.tinta, 0.06),
+                  borderColor: activa ? colores.fichaActiva : colores.linea,
+                },
+              ]}
+            >
+              <View style={estilos.dibujoTamano}>
+                <FormaPaquete color={texto} tamano={opcion} />
+              </View>
+              <Text
+                numberOfLines={1}
+                style={[
+                  tipografia.nombreLinea,
+                  estilos.textoTamano,
+                  { color: texto },
+                ]}
+              >
+                {t(`encomiendas.${opcion}`)}
+              </Text>
+              <Text
+                numberOfLines={2}
+                style={[
+                  tipografia.etiqueta,
+                  estilos.textoTamano,
+                  estilos.detalleTamano,
+                  { color: suave },
+                ]}
+              >
+                {t(`encomiendas.${opcion}Detalle`)}
+              </Text>
+            </Pressable>
+          </Rebote>
+        </Aparece>
+      </View>
     );
   };
 
@@ -386,7 +422,7 @@ export function Encomiendas({ alVolver }: PropiedadesEncomiendas) {
                     {t('encomiendas.tamano')}
                   </Text>
                   <View style={estilos.tamanos}>
-                    {TAMANOS.map(tarjetaTamano)}
+                    {TAMANOS.map((opcion, i) => tarjetaTamano(opcion, i))}
                   </View>
                   <Bloque estiloContenido={estilos.fragil}>
                     <View style={estilos.textoFragil}>
@@ -410,6 +446,51 @@ export function Encomiendas({ alVolver }: PropiedadesEncomiendas) {
                       etiqueta={t('encomiendas.fragil')}
                     />
                   </Bloque>
+                  <Text
+                    style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
+                  >
+                    {t('encomiendas.enQueBus')}
+                  </Text>
+                  {viajes.length === 0 ? (
+                    <Bloque estiloContenido={estilos.sinViajes}>
+                      <Text
+                        style={[
+                          tipografia.cuerpo,
+                          { color: colores.tintaSuave },
+                        ]}
+                      >
+                        {t('encomiendas.sinViajes')}
+                      </Text>
+                    </Bloque>
+                  ) : (
+                    viajes.slice(0, 6).map((viaje) => (
+                      <OpcionSeleccion
+                        alElegir={() => {
+                          establecerViajeId(viaje.viajeId);
+                          establecerSinViaje(false);
+                        }}
+                        detalle={rellenar(t('encomiendas.viajeDetalle'), {
+                          chofer:
+                            muestra.choferes.find(
+                              (c) => c.id === viaje.choferId,
+                            )?.nombre ?? '',
+                          placa: viaje.placa,
+                        })}
+                        elegida={viaje.viajeId === viajeId}
+                        key={viaje.viajeId}
+                        nombre={rellenar(t('encomiendas.viajeNombre'), {
+                          hora: formatoHoraCompleta(viaje.salida),
+                        })}
+                      />
+                    ))
+                  )}
+                  {sinViaje && (
+                    <Text
+                      style={[tipografia.pequeno, { color: colores.cancelado }]}
+                    >
+                      {t('encomiendas.errorViaje')}
+                    </Text>
+                  )}
                 </View>
               </Aparece>
             )}
@@ -536,6 +617,14 @@ export function Encomiendas({ alVolver }: PropiedadesEncomiendas) {
               </Aparece>
             )}
 
+            {falloEnvio && (
+              <Text
+                accessibilityLiveRegion="polite"
+                style={[tipografia.cuerpo, { color: colores.cancelado }]}
+              >
+                {t('encomiendas.falloEnvio')}
+              </Text>
+            )}
             <View style={estilos.navegacion}>
               {paso > 1 && (
                 <Pressable
@@ -602,7 +691,58 @@ export function Encomiendas({ alVolver }: PropiedadesEncomiendas) {
                   >
                     {`${solicitud.descripcion} · ${t('encomiendas.para')} ${nombrePropio(solicitud.destinatario)}`}
                   </Text>
-                  <LineaEstadoEncomienda cumplidas={1} />
+                  {solicitud.estado === 'rechazada' ? (
+                    <View style={estilos.rechazo}>
+                      <Text
+                        style={[
+                          tipografia.subtitulo,
+                          { color: colores.cancelado },
+                        ]}
+                      >
+                        {t('encomiendas.rechazada')}
+                      </Text>
+                      {solicitud.motivoRechazo ? (
+                        <Text
+                          style={[tipografia.cuerpo, { color: colores.tinta }]}
+                        >
+                          {rellenar(t('encomiendas.motivo'), {
+                            motivo: solicitud.motivoRechazo,
+                          })}
+                        </Text>
+                      ) : null}
+                    </View>
+                  ) : solicitud.estado === 'cancelada' ? (
+                    <Text
+                      style={[
+                        tipografia.subtitulo,
+                        { color: colores.tintaSuave },
+                      ]}
+                    >
+                      {t('encomiendas.cancelada')}
+                    </Text>
+                  ) : (
+                    <LineaEstadoEncomienda
+                      cumplidas={etapasCumplidas(solicitud.estado)}
+                    />
+                  )}
+                  {solicitud.estado === 'solicitada' && (
+                    <Pressable
+                      accessibilityRole="button"
+                      onPress={() =>
+                        void cambiarEstado(solicitud.id, 'cancelada')
+                      }
+                      style={estilos.cancelar}
+                    >
+                      <Text
+                        style={[
+                          tipografia.pequeno,
+                          { color: colores.cancelado },
+                        ]}
+                      >
+                        {t('encomiendas.cancelar')}
+                      </Text>
+                    </Pressable>
+                  )}
                 </Bloque>
               </Aparece>
             ))}
@@ -620,6 +760,13 @@ export function Encomiendas({ alVolver }: PropiedadesEncomiendas) {
 }
 
 const estilos = StyleSheet.create({
+  cancelar: { justifyContent: 'center', minHeight: 44 },
+  celdaTamano: { flex: 1 },
+  detalleTamano: { minHeight: 32 },
+  dibujoTamano: { alignItems: 'center', height: 56, justifyContent: 'center' },
+  rechazo: { gap: espacios.cuatro },
+  sinViajes: { padding: espacios.dieciseis },
+  textoTamano: { alignSelf: 'stretch', textAlign: 'center' },
   accion: { flex: 1 },
   acciones: { flexDirection: 'row', gap: espacios.doce },
   atras: {
@@ -680,8 +827,9 @@ const estilos = StyleSheet.create({
     alignItems: 'center',
     borderRadius: radios.bloque,
     borderWidth: 2,
-    flex: 1,
     gap: espacios.cuatro,
+    justifyContent: 'flex-start',
+    minHeight: 148,
     padding: espacios.doce,
   },
   tamanos: { flexDirection: 'row', gap: espacios.ocho },

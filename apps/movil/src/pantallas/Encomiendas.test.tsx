@@ -3,21 +3,33 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, waitFor } from '@testing-library/react-native';
 import { Share } from 'react-native';
 
+import { ProveedorEncomiendas } from '@/datos/ProveedorEncomiendas';
+import { reiniciarMuestra } from '@/datos/useSalidas';
 import { renderPantalla } from '@/pruebas/render';
+import { reiniciarServicioEncomiendas } from '@/servicios/servicioEncomiendas';
 
 import { Encomiendas } from './Encomiendas';
 
 beforeEach(async () => {
   await AsyncStorage.clear();
+  reiniciarMuestra();
+  reiniciarServicioEncomiendas();
 });
 
 type Pantalla = Awaited<ReturnType<typeof dibujar>>;
 
 function dibujar(alVolver: () => void = () => undefined) {
-  return renderPantalla(<Encomiendas alVolver={alVolver} />);
+  return renderPantalla(
+    <ProveedorEncomiendas>
+      <Encomiendas alVolver={alVolver} />
+    </ProveedorEncomiendas>,
+  );
 }
 
 async function seguir(pantalla: Pantalla) {
+  // en el paso 1 hay que elegir primero el bus en que va el paquete
+  const buses = pantalla.queryAllByText(/Se pone en andén a las/);
+  if (buses[0]) await fireEvent.press(buses[0]);
   await fireEvent.press(pantalla.getByRole('button', { name: 'Seguir' }));
 }
 
@@ -195,5 +207,26 @@ describe('Encomiendas', () => {
     const pantalla = await dibujar(alVolver);
     await fireEvent.press(pantalla.getByRole('button', { name: 'Volver' }));
     expect(alVolver).toHaveBeenCalledTimes(1);
+  });
+
+  it('no deja seguir sin elegir el bus en que va el paquete', async () => {
+    const pantalla = await dibujar();
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Seguir' }));
+    expect(
+      pantalla.getByText('Elegí el bus en que va la encomienda.'),
+    ).toBeTruthy();
+    expect(pantalla.getByText('1/3')).toBeTruthy();
+  });
+
+  it('las tres tarjetas de tamaño tienen todo centrado y a la misma altura', async () => {
+    const pantalla = await dibujar();
+    for (const nombre of ['Sobre', 'Paquete chico', 'Paquete grande']) {
+      const texto = pantalla.getAllByText(nombre)[0]!;
+      expect(texto.props.style).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ textAlign: 'center' }),
+        ]),
+      );
+    }
   });
 });
