@@ -12,14 +12,13 @@ function suscribir(oyente: () => void): () => void {
   return TRANSMISION.suscribir(oyente);
 }
 
-function version(): number {
-  return TRANSMISION.version();
+function instantanea() {
+  return TRANSMISION.instantanea();
 }
 
 /** los viajes que alguien está compartiendo ahora */
 export function useViajesEnVivo(): readonly string[] {
-  const actual = useSyncExternalStore(suscribir, version, version);
-  return useMemo(() => TRANSMISION.activos(), [actual]);
+  return useSyncExternalStore(suscribir, instantanea, instantanea).activos;
 }
 
 export interface Transmision {
@@ -29,17 +28,21 @@ export interface Transmision {
   sinSenal: boolean;
 }
 
-/** si un viaje se está compartiendo, su última posición y si se perdió la señal */
+/**
+ * si un viaje se está compartiendo, su última posición y si se perdió la señal. Todo se calcula a
+ * partir de la instantánea que devuelve el store, no de lecturas sueltas: así el compilador de React
+ * (que ignora las dependencias que el cálculo no usa) sí vuelve a calcular cuando algo cambia
+ */
 export function useTransmision(viajeId: string): Transmision {
-  const actual = useSyncExternalStore(suscribir, version, version);
+  const foto = useSyncExternalStore(suscribir, instantanea, instantanea);
   const ahora = useAhora(15_000);
   return useMemo(() => {
-    const activa = TRANSMISION.activos().includes(viajeId);
-    const posicion = TRANSMISION.ultima(viajeId);
+    const activa = foto.activos.includes(viajeId);
+    const posicion = foto.posiciones.get(viajeId) ?? null;
     return {
       activa,
       posicion,
       sinSenal: activa && sinSenal(posicion, ahora),
     };
-  }, [actual, ahora, viajeId]);
+  }, [ahora, foto, viajeId]);
 }

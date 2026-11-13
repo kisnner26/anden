@@ -74,4 +74,30 @@ describe('sinSenal', () => {
   it('pasado el límite pierde la señal', () => {
     expect(sinSenal(POSICION, new Date('2026-11-12T18:03:00.000Z'))).toBe(true);
   });
+
+  it('la instantánea cambia de identidad con cada cambio y solo entonces', () => {
+    const servicio = crearTransmisionLocal();
+    const inicial = servicio.instantanea();
+    expect(servicio.instantanea()).toBe(inicial);
+    servicio.iniciar('via_1', 'cho_1');
+    const despues = servicio.instantanea();
+    expect(despues).not.toBe(inicial);
+    expect(despues.activos).toEqual(['via_1']);
+    expect(servicio.instantanea()).toBe(despues);
+  });
+
+  it('la instantánea trae las posiciones publicadas y las quita al detener', () => {
+    const servicio = crearTransmisionLocal();
+    servicio.iniciar('via_1', 'cho_1');
+    servicio.publicar('via_1', {
+      lat: 1,
+      lng: 2,
+      registradaEn: new Date().toISOString(),
+      velocidadMs: null,
+    });
+    expect(servicio.instantanea().posiciones.get('via_1')?.lat).toBe(1);
+    servicio.detener('via_1');
+    expect(servicio.instantanea().posiciones.size).toBe(0);
+    expect(servicio.instantanea().activos).toEqual([]);
+  });
 });

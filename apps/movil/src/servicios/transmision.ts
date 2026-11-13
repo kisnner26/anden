@@ -6,6 +6,13 @@ export interface PosicionBus {
   registradaEn: string;
 }
 
+/** todo lo que se sabe en un momento; es un objeto nuevo en cada cambio, así quien lo lee sabe cuándo recalcular */
+export interface InstantaneaTransmision {
+  activos: readonly string[];
+  posiciones: ReadonlyMap<string, PosicionBus>;
+  version: number;
+}
+
 /** pasado este tiempo sin posiciones nuevas, la unidad se considera sin señal */
 export const SEGUNDOS_SIN_SENAL = 90;
 
@@ -16,6 +23,8 @@ export const SEGUNDOS_SIN_SENAL = 90;
 export interface ServicioTransmision {
   activos(): readonly string[];
   detener(viajeId: string): void;
+  /** el estado completo; cambia de identidad solo cuando algo cambia, para usarlo con `useSyncExternalStore` */
+  instantanea(): InstantaneaTransmision;
   iniciar(viajeId: string, choferId: string): void;
   publicar(viajeId: string, posicion: PosicionBus): void;
   /** avisa cada vez que algo cambia; devuelve cómo dejar de escuchar */
@@ -43,9 +52,19 @@ export function crearTransmisionLocal(): ServicioTransmision {
   const posiciones = new Map<string, PosicionBus>();
   const oyentes = new Set<() => void>();
   let version = 0;
+  let instantanea: InstantaneaTransmision = {
+    activos: [],
+    posiciones: new Map(),
+    version: 0,
+  };
 
   function avisar() {
     version += 1;
+    instantanea = {
+      activos: [...activos.keys()],
+      posiciones: new Map(posiciones),
+      version,
+    };
     oyentes.forEach((oyente) => oyente());
   }
 
@@ -56,6 +75,7 @@ export function crearTransmisionLocal(): ServicioTransmision {
       posiciones.delete(viajeId);
       avisar();
     },
+    instantanea: () => instantanea,
     iniciar(viajeId, choferId) {
       activos.set(viajeId, choferId);
       avisar();
