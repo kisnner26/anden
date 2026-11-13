@@ -265,6 +265,8 @@ describe('Viajar', () => {
       activar: async () => false,
       avisos: [],
       desactivar: async () => undefined,
+      eliminar: async () => undefined,
+      eliminarTodos: async () => undefined,
       leidos: [],
       marcarLeido: async () => undefined,
       marcarTodos: async () => undefined,

@@ -9,6 +9,9 @@ export interface ValorAvisos {
   activadas: boolean;
   avisos: Aviso[];
   desactivar: () => Promise<void>;
+  /** quita un aviso de la lista y no vuelve a salir */
+  eliminar: (id: string) => Promise<void>;
+  eliminarTodos: () => Promise<void>;
   leidos: readonly string[];
   marcarLeido: (id: string) => Promise<void>;
   marcarTodos: () => Promise<void>;
@@ -21,6 +24,8 @@ export const ContextoAvisos = createContext<ValorAvisos>({
   activadas: false,
   avisos: [],
   desactivar: async () => undefined,
+  eliminar: async () => undefined,
+  eliminarTodos: async () => undefined,
   leidos: [],
   marcarLeido: async () => undefined,
   marcarTodos: async () => undefined,

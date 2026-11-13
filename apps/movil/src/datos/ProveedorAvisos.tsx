@@ -27,12 +27,19 @@ export const CLAVE_AVISOS = 'anden.avisos';
 
 interface Guardado {
   activadas: boolean;
+  /** avisos que la persona eliminó; no vuelven a salir */
+  descartados: string[];
   leidos: string[];
   /** boleto -> identificador del recordatorio programado en el teléfono */
   programados: Record<string, string>;
 }
 
-const VACIO: Guardado = { activadas: false, leidos: [], programados: {} };
+const VACIO: Guardado = {
+  activadas: false,
+  descartados: [],
+  leidos: [],
+  programados: {},
+};
 
 function leerGuardado(texto: string | null): Guardado {
   if (!texto) return VACIO;
@@ -40,6 +47,7 @@ function leerGuardado(texto: string | null): Guardado {
     const valor = JSON.parse(texto) as Partial<Guardado>;
     return {
       activadas: valor.activadas === true,
+      descartados: Array.isArray(valor.descartados) ? valor.descartados : [],
       leidos: Array.isArray(valor.leidos) ? valor.leidos : [],
       programados:
         valor.programados && typeof valor.programados === 'object'
@@ -88,12 +96,16 @@ export function ProveedorAvisos({ children }: { children: ReactNode }) {
     await AsyncStorage.setItem(CLAVE_AVISOS, JSON.stringify(nuevo));
   }, []);
 
-  const avisos = useMemo(
+  const todos = useMemo(
     () => [
       ...avisosDeBoletos(boletos, salidas, ahora),
       ...avisosDeEspera(esperas, salidas),
     ],
     [ahora, boletos, esperas, salidas],
+  );
+  const avisos = useMemo(
+    () => todos.filter((aviso) => !guardado.descartados.includes(aviso.id)),
+    [guardado.descartados, todos],
   );
 
   // un recordatorio por boleto vigente; se cancela el de los boletos que ya no lo están
@@ -176,6 +188,28 @@ export function ProveedorAvisos({ children }: { children: ReactNode }) {
     [avisos, guardado, persistir],
   );
 
+  const eliminar = useCallback<ValorAvisos['eliminar']>(
+    async (id) => {
+      if (guardado.descartados.includes(id)) return;
+      await persistir({
+        ...guardado,
+        descartados: [...guardado.descartados, id],
+      });
+    },
+    [guardado, persistir],
+  );
+
+  const eliminarTodos = useCallback<ValorAvisos['eliminarTodos']>(
+    () =>
+      persistir({
+        ...guardado,
+        descartados: [
+          ...new Set([...guardado.descartados, ...avisos.map((a) => a.id)]),
+        ],
+      }),
+    [avisos, guardado, persistir],
+  );
+
   const noLeidos = avisos.filter(
     (aviso) => !guardado.leidos.includes(aviso.id),
   ).length;
@@ -186,6 +220,8 @@ export function ProveedorAvisos({ children }: { children: ReactNode }) {
       activar,
       avisos,
       desactivar,
+      eliminar,
+      eliminarTodos,
       leidos: guardado.leidos,
       marcarLeido,
       marcarTodos,
@@ -196,6 +232,8 @@ export function ProveedorAvisos({ children }: { children: ReactNode }) {
       activar,
       avisos,
       desactivar,
+      eliminar,
+      eliminarTodos,
       guardado.activadas,
       guardado.leidos,
       marcarLeido,

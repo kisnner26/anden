@@ -6,6 +6,7 @@ import { Aparece } from '@/componentes/Aparece';
 import { Bloque } from '@/componentes/Bloque';
 import { Boton } from '@/componentes/Boton';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
+import { DeslizarParaEliminar } from '@/componentes/DeslizarParaEliminar';
 import { abrirAjustesDelSistema } from '@/datos/notificaciones';
 import { textoAviso } from '@/datos/textoAviso';
 import { useAvisos } from '@/datos/useAvisos';
@@ -27,6 +28,8 @@ export function Avisos({ alVolver }: PropiedadesAvisos) {
     activar,
     avisos,
     desactivar,
+    eliminar,
+    eliminarTodos,
     leidos,
     marcarLeido,
     marcarTodos,
@@ -132,52 +135,64 @@ export function Avisos({ alVolver }: PropiedadesAvisos) {
               variante="secundario"
             />
           )}
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {t('avisos.deslizaAyuda')}
+          </Text>
           {avisos.map((aviso, indice) => {
             const leido = leidos.includes(aviso.id);
             const { detalle, titulo } = textoAviso(aviso);
             return (
               <Aparece indice={indice} key={aviso.id}>
-                <Pressable
-                  accessibilityHint={
-                    leido ? t('avisos.leido') : t('avisos.noLeido')
-                  }
-                  accessibilityLabel={`${titulo}. ${detalle}`}
-                  accessibilityRole="button"
-                  onPress={() => void marcarLeido(aviso.id)}
+                <DeslizarParaEliminar
+                  alEliminar={() => void eliminar(aviso.id)}
                 >
-                  <Bloque estiloContenido={estilos.aviso} hundido={leido}>
-                    {!leido && (
-                      <View
-                        style={[
-                          estilos.punto,
-                          { backgroundColor: colores.ambar },
-                        ]}
-                        testID="aviso-sin-leer"
-                      />
-                    )}
-                    <View style={estilos.textoAviso}>
-                      <Text
-                        style={[
-                          tipografia.nombreFila,
-                          { color: colores.tinta },
-                        ]}
-                      >
-                        {titulo}
-                      </Text>
-                      <Text
-                        style={[
-                          tipografia.pequeno,
-                          { color: colores.tintaSuave },
-                        ]}
-                      >
-                        {detalle}
-                      </Text>
-                    </View>
-                  </Bloque>
-                </Pressable>
+                  <Pressable
+                    accessibilityHint={
+                      leido ? t('avisos.leido') : t('avisos.noLeido')
+                    }
+                    accessibilityLabel={`${titulo}. ${detalle}`}
+                    accessibilityRole="button"
+                    onPress={() => void marcarLeido(aviso.id)}
+                  >
+                    <Bloque estiloContenido={estilos.aviso} hundido={leido}>
+                      {!leido && (
+                        <View
+                          style={[
+                            estilos.punto,
+                            { backgroundColor: colores.ambar },
+                          ]}
+                          testID="aviso-sin-leer"
+                        />
+                      )}
+                      <View style={estilos.textoAviso}>
+                        <Text
+                          style={[
+                            tipografia.nombreFila,
+                            { color: colores.tinta },
+                          ]}
+                        >
+                          {titulo}
+                        </Text>
+                        <Text
+                          style={[
+                            tipografia.pequeno,
+                            { color: colores.tintaSuave },
+                          ]}
+                        >
+                          {detalle}
+                        </Text>
+                      </View>
+                    </Bloque>
+                  </Pressable>
+                </DeslizarParaEliminar>
               </Aparece>
             );
           })}
+          <Boton
+            alPresionar={() => void eliminarTodos()}
+            etiqueta={t('avisos.eliminarTodos')}
+            variante="secundario"
+          />
         </>
       )}
     </ScrollView>

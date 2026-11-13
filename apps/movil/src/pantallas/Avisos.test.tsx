@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from '@jest/globals';
-import { fireEvent } from '@testing-library/react-native';
+import { fireEvent, waitFor } from '@testing-library/react-native';
 
 import type { Aviso } from '@/datos/avisos';
 import { abrirAjustesDelSistema } from '@/datos/notificaciones';
@@ -27,6 +27,8 @@ function valor(cambios: Partial<ValorAvisos> = {}): ValorAvisos {
     activar: jest.fn(async () => true),
     avisos: [],
     desactivar: jest.fn(async () => undefined),
+    eliminar: jest.fn(async () => undefined),
+    eliminarTodos: jest.fn(async () => undefined),
     leidos: [],
     marcarLeido: jest.fn(async () => undefined),
     marcarTodos: jest.fn(async () => undefined),
@@ -105,5 +107,22 @@ describe('Avisos', () => {
       pantalla.getByRole('button', { name: 'Marcar todo como leído' }),
     );
     expect(contexto.marcarTodos).toHaveBeenCalledTimes(1);
+  });
+
+  it('elimina un aviso desde la acción de deslizar y todos desde el botón', async () => {
+    const contexto = valor({ avisos: [PRONTO], noLeidos: 1 });
+    const pantalla = await abrir(contexto);
+    await fireEvent.press(
+      pantalla.getByTestId('deslizar-eliminar', {
+        includeHiddenElements: true,
+      }),
+    );
+    await waitFor(() =>
+      expect(contexto.eliminar).toHaveBeenCalledWith('bol_1:pronto'),
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Eliminar todos los avisos' }),
+    );
+    expect(contexto.eliminarTodos).toHaveBeenCalledTimes(1);
   });
 });
