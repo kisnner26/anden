@@ -36,6 +36,8 @@ export interface FilaSalidaReal {
 }
 
 export interface ViajesPublicados {
+  /** viajes que el conductor canceló: los pasajeros con boleto deben enterarse */
+  cancelados?: string[];
   choferes: FilaChofer[];
   /** viajes que ya salieron, para aprender cuánto tarda en llenarse cada ruta */
   historial: FilaSalidaReal[];
@@ -49,25 +51,35 @@ export async function leerViajesPublicadosCon(
   desde: Date,
 ): Promise<ViajesPublicados | null> {
   try {
-    const [viajes, choferes, ocupacion, historial] = await Promise.all([
-      cliente
-        .from('viajes')
-        .select(
-          'id, chofer_id, ruta_id, servicio, placa, anden, salida, estado, salio_en',
-        )
-        .gte('salida', desde.toISOString())
-        .neq('estado', 'cancelado')
-        .order('salida', { ascending: true }),
-      cliente.from('perfiles_chofer').select('chofer_id, nombre, foto_url'),
-      cliente.rpc('ocupacion_de_viajes'),
-      cliente
-        .from('viajes')
-        .select('ruta_id, servicio, salida, salio_en')
-        .not('salio_en', 'is', null)
-        .limit(300),
-    ]);
+    const [viajes, choferes, ocupacion, historial, cancelados] =
+      await Promise.all([
+        cliente
+          .from('viajes')
+          .select(
+            'id, chofer_id, ruta_id, servicio, placa, anden, salida, estado, salio_en',
+          )
+          .gte('salida', desde.toISOString())
+          .neq('estado', 'cancelado')
+          .order('salida', { ascending: true }),
+        cliente.from('perfiles_chofer').select('chofer_id, nombre, foto_url'),
+        cliente.rpc('ocupacion_de_viajes'),
+        cliente
+          .from('viajes')
+          .select('ruta_id, servicio, salida, salio_en')
+          .not('salio_en', 'is', null)
+          .limit(300),
+        cliente
+          .from('viajes')
+          .select('id')
+          .eq('estado', 'cancelado')
+          .gte('salida', desde.toISOString()),
+      ]);
     if (viajes.error || !viajes.data) return null;
     return {
+      cancelados:
+        cancelados.error || !cancelados.data
+          ? []
+          : (cancelados.data as { id: string }[]).map((fila) => fila.id),
       historial:
         historial.error || !historial.data
           ? []
