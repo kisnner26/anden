@@ -28,15 +28,20 @@ export function Ingreso({ alEntrar }: { alEntrar: () => void }) {
 
   return (
     <main className="ingreso">
-      <form className="tarjeta ingreso-form" onSubmit={(e) => void entrar(e)}>
-        <p className="etiqueta">ANDÉN · COOPERATIVA</p>
-        <h1>Panel de la cooperativa</h1>
-        <p className="suave">
-          Entrá con tu cuenta de Andén. Solo las cuentas de cooperativa pueden
-          ver el panel.
+      <div className="ingreso-fondo" aria-hidden="true" />
+      <section className="ingreso-texto">
+        <p className="micro">ANDÉN · COOPERATIVA</p>
+        <h1 className="display">
+          <span>TORRE DE</span>
+          <em>CONTROL.</em>
+        </h1>
+        <p className="lead">
+          Pasajeros, conductores y encomiendas en un solo tablero, al instante.
         </p>
+      </section>
+      <form className="ingreso-form" onSubmit={(e) => void entrar(e)}>
         <label>
-          Usuario
+          <span className="micro">USUARIO</span>
           <input
             autoComplete="username"
             onChange={(e) => establecerUsuario(e.target.value)}
@@ -44,7 +49,7 @@ export function Ingreso({ alEntrar }: { alEntrar: () => void }) {
           />
         </label>
         <label>
-          Contraseña
+          <span className="micro">CONTRASEÑA</span>
           <input
             autoComplete="current-password"
             onChange={(e) => establecerClave(e.target.value)}
@@ -58,11 +63,11 @@ export function Ingreso({ alEntrar }: { alEntrar: () => void }) {
           </p>
         )}
         <button
-          className="primario"
+          className="boton-ed"
           disabled={cargando || usuario === '' || clave === ''}
           type="submit"
         >
-          {cargando ? 'Entrando…' : 'Entrar'}
+          {cargando ? 'ENTRANDO…' : 'ENTRAR ↗'}
         </button>
       </form>
     </main>
