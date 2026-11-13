@@ -1,77 +1,123 @@
-import type { AlertaFila } from '../resumen';
+import { Etiqueta } from '../componentes/Etiqueta';
+import { Tabla, type Columna, type Filtro } from '../componentes/Tabla';
+import { useDatos } from '../DatosContexto';
+import { fechaHora, hace } from '../lib/formato';
 import { supabase } from '../supabase';
-import { useLista } from '../useDatos';
+import { Sirena } from '../svg/Iconos';
+import type { Alerta } from '../tipos';
 
 export function Alertas() {
-  const { cargando, filas, recargar } = useLista<AlertaFila>(
-    'alertas',
-    'id, viaje_id, tipo, lat, lng, nombre, atendida, creada_en',
-    { columna: 'creada_en' },
-    5000,
-  );
-  const pendientes = filas.filter((a) => !a.atendida);
-  async function atender(a: AlertaFila) {
-    await supabase!.from('alertas').update({ atendida: true }).eq('id', a.id);
-    await recargar();
+  const d = useDatos();
+  const pendientes = d.alertas.filter((a) => !a.atendida);
+  async function atender(lista: Alerta[], limpiar?: () => void) {
+    await supabase!
+      .from('alertas')
+      .update({ atendida: true })
+      .in(
+        'id',
+        lista.map((a) => a.id),
+      );
+    limpiar?.();
+    await d.recargar();
   }
-  return (
-    <div className="pagina">
-      <header className="encabezado">
-        <p className="micro">
-          06 / SEGURIDAD · {pendientes.length} SIN ATENDER
-        </p>
-        <h1 className="display">
-          <span>SI ALGO</span>
-          <em>PASA.</em>
-        </h1>
-        <p className="lead">
-          Un teléfono detectó un posible choque y la persona no respondió a
-          tiempo. Se actualiza cada 5 segundos.
-        </p>
-      </header>
-      {cargando && <p className="vacio">Cargando…</p>}
-      {!cargando && filas.length === 0 && (
-        <p className="vacio">No hay alertas. Qué bueno.</p>
-      )}
-      <div className="cartas">
-        {filas.map((a) => (
-          <article
-            className={`carta${a.atendida ? '' : ' urgente'}`}
-            key={a.id}
+  const columnas: Columna<Alerta>[] = [
+    {
+      celda: (a) => (
+        <span className="persona">
+          <span className="mini">
+            <Sirena activa={!a.atendida} />
+          </span>
+          <strong>{a.nombre ?? 'Una persona'}</strong>
+        </span>
+      ),
+      clave: 'nombre',
+      titulo: 'Persona',
+      valor: (a) => a.nombre,
+    },
+    { celda: () => 'Posible choque', clave: 'tipo', titulo: 'Tipo' },
+    {
+      celda: (a) => (
+        <span title={fechaHora(a.creada_en)}>{hace(a.creada_en)}</span>
+      ),
+      clave: 'cuando',
+      titulo: 'Cuándo',
+      valor: (a) => a.creada_en,
+    },
+    {
+      celda: (a) => a.viaje_id ?? '—',
+      clave: 'viaje',
+      titulo: 'Viaje',
+      valor: (a) => a.viaje_id,
+    },
+    {
+      celda: (a) =>
+        a.lat !== null && a.lng !== null ? (
+          <a
+            className="enlace"
+            href={`https://maps.apple.com/?ll=${a.lat},${a.lng}`}
+            onClick={(e) => e.stopPropagation()}
+            rel="noreferrer"
+            target="_blank"
           >
-            {!a.atendida && <span className="punto-rojo" />}
-            <p className="micro">
-              {new Date(a.creada_en).toLocaleString('es-NI')} · VIAJE{' '}
-              {a.viaje_id ?? '—'}
-            </p>
-            <h3 className="nombre">{a.nombre ?? 'Una persona'}</h3>
-            <p className="suave">Posible choque detectado por el teléfono.</p>
-            <div className="acciones">
-              {a.lat !== null && a.lng !== null && (
-                <a
-                  className="boton-linea"
-                  href={`https://maps.apple.com/?ll=${a.lat},${a.lng}`}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  VER UBICACIÓN ↗
-                </a>
-              )}
-              {!a.atendida ? (
-                <button
-                  className="boton-ed"
-                  onClick={() => void atender(a)}
-                  type="button"
-                >
-                  MARCAR ATENDIDA
-                </button>
-              ) : (
-                <span className="chip ok">ATENDIDA</span>
-              )}
-            </div>
-          </article>
-        ))}
-      </div>
-    </div>
+            Ver ubicación ↗
+          </a>
+        ) : (
+          '—'
+        ),
+      clave: 'mapa',
+      titulo: 'Ubicación',
+    },
+    {
+      celda: (a) => (
+        <Etiqueta tono={a.atendida ? 'ok' : 'error'}>
+          {a.atendida ? 'Atendida' : 'Sin atender'}
+        </Etiqueta>
+      ),
+      clave: 'estado',
+      titulo: 'Estado',
+      valor: (a) => a.atendida,
+    },
+  ];
+  const filtros: Filtro<Alerta>[] = [
+    { clave: 'sin', prueba: (a) => !a.atendida, titulo: 'Sin atender' },
+    { clave: 'ok', prueba: (a) => a.atendida, titulo: 'Atendidas' },
+  ];
+  return (
+    <>
+      {pendientes.length > 0 && (
+        <p className="cinta-alerta">
+          <span className="punto-rojo" /> {pendientes.length}{' '}
+          {pendientes.length === 1 ? 'persona necesita' : 'personas necesitan'}{' '}
+          atención ahora
+        </p>
+      )}
+      <Tabla
+        accionesEnLote={(sel, limpiar) => (
+          <button
+            className="boton-t primario"
+            onClick={() =>
+              void atender(
+                sel.filter((a) => !a.atendida),
+                limpiar,
+              )
+            }
+            type="button"
+          >
+            Marcar atendidas
+          </button>
+        )}
+        columnas={columnas}
+        filas={d.alertas}
+        filtros={filtros}
+        idDe={(a) => a.id}
+        nombreArchivo="alertas"
+        textoDe={(a) => `${a.nombre ?? ''} ${a.viaje_id ?? ''}`}
+        vacio={{
+          detalle:
+            'Si un teléfono detecta un choque y la persona no responde, la alerta aparece acá al instante.',
+          titulo: 'Sin alertas. Qué bueno.',
+        }}
+      />
+    </>
   );
 }
