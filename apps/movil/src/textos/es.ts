@@ -758,6 +758,8 @@ export const textos = {
     actividadActiva: 'Siguiendo en la pantalla de bloqueo, tocá para quitar',
     actividadEstado: 'Andén {anden}, salida a las {hora}',
     cancelado: 'Boleto cancelado',
+    viajeCancelado: 'El conductor canceló este viaje',
+    viajeCanceladoDetalle: 'No tenés que pagar nada. Podés reservar otra salida.',
     usado: 'Boleto usado',
     vencido: 'Salida vencida',
     estadoVigente: 'Vigente',
