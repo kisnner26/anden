@@ -445,6 +445,8 @@ export function EscenaViaje({
             )}
             <Autobus
               ancho={anchoBus}
+              animado
+              usarMiUnidad
               letrero={destino.toUpperCase()}
               variante={varianteDeClave(destino)}
             />
