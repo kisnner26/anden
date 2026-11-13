@@ -15,6 +15,11 @@ jest.mock('expo-local-authentication', () => ({
 }));
 
 import {
+  AJUSTES_CONDUCTOR_INICIALES,
+  recordarAjustesConductor,
+} from '@/servicios/ajustesConductor';
+
+import {
   VENTANA_VERIFICACION_MS,
   autenticar,
   consultarBiometria,
@@ -26,6 +31,11 @@ import {
 beforeEach(() => {
   jest.resetAllMocks();
   olvidarVerificacion();
+  // estas pruebas son del conductor que sí activó la verificación
+  recordarAjustesConductor({
+    ...AJUSTES_CONDUCTOR_INICIALES,
+    exigirBiometria: true,
+  });
 });
 
 describe('consultarBiometria', () => {
@@ -120,5 +130,15 @@ describe('verificarConductor', () => {
     expect(
       verificacionVigente(Date.now() + VENTANA_VERIFICACION_MS + 1000),
     ).toBe(false);
+  });
+});
+
+describe('verificación desactivada en los ajustes del conductor', () => {
+  it('no pide Face ID ni al abrir ni al iniciar el viaje', async () => {
+    recordarAjustesConductor(AJUSTES_CONDUCTOR_INICIALES);
+    expect(verificacionVigente()).toBe(true);
+    expect(await verificarConductor('entrar')).toBe(true);
+    expect(await verificarConductor('iniciar el viaje', true)).toBe(true);
+    expect(mockAutenticar).not.toHaveBeenCalled();
   });
 });

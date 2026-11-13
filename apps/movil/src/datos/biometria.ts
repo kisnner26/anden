@@ -1,5 +1,7 @@
 import * as AutenticacionLocal from 'expo-local-authentication';
 
+import { ajustesConductorActuales } from '@/servicios/ajustesConductor';
+
 export type TipoBiometria = 'rostro' | 'huella' | 'ninguna';
 
 export interface EstadoBiometria {
@@ -44,17 +46,20 @@ let ultimaVerificacion: number | null = null;
 
 /** si el conductor ya se identificó hace poco y no hace falta pedirlo de nuevo */
 export function verificacionVigente(ahora: number = Date.now()): boolean {
+  // si el conductor no activó la verificación en sus ajustes, nunca se pide
+  if (!ajustesConductorActuales().exigirBiometria) return true;
   return (
     ultimaVerificacion !== null &&
     ahora - ultimaVerificacion < VENTANA_VERIFICACION_MS
   );
 }
 
-/** pide Face ID o huella al conductor y recuerda el resultado un rato; `exigir` obliga a pedirlo aunque haya una verificación reciente */
+/** pide Face ID o huella al conductor solo si lo activó en sus ajustes, y recuerda el resultado un rato; `exigir` obliga a pedirlo aunque haya una verificación reciente */
 export async function verificarConductor(
   motivo: string,
   exigir = false,
 ): Promise<boolean> {
+  if (!ajustesConductorActuales().exigirBiometria) return true;
   if (!exigir && verificacionVigente()) return true;
   const ok = await autenticar(motivo);
   if (ok) ultimaVerificacion = Date.now();

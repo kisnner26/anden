@@ -1,5 +1,6 @@
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 
+import { ajustesConductorActuales } from '@/servicios/ajustesConductor';
 import { TRANSMISION } from '@/servicios/transmision';
 
 import { seguirUbicacion } from './seguirUbicacion';
@@ -47,7 +48,10 @@ export async function iniciarTransmision(
       return 'ok';
     }
     dejarDeEscuchar.set(viajeId, parar);
-    void activateKeepAwakeAsync(ETIQUETA_PANTALLA).catch(() => undefined);
+    // la pantalla encendida es un ajuste del conductor: con la pantalla apagada el GPS puede cortarse
+    if (ajustesConductorActuales().pantallaEncendida) {
+      void activateKeepAwakeAsync(ETIQUETA_PANTALLA).catch(() => undefined);
+    }
     return 'ok';
   } catch {
     TRANSMISION.detener(viajeId);
