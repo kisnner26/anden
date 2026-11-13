@@ -91,6 +91,7 @@ export const textos = {
     detener: 'Detener y enviar',
     confirmarReserva: 'Sí, reservar',
     cancelarOrden: 'No, cancelar',
+    paraVos: 'Para vos: tu destino de siempre',
     respondiendo: 'Andén te responde',
     pensandoCaption: 'Andén está pensando',
     tocaElOrbe: 'Tocá el orbe para hablarle a Andén',
