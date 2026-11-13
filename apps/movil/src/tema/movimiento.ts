@@ -16,6 +16,8 @@ export const movimiento = {
   pulsoOrbe: 1600,
   puntoPensando: 420,
   letraEscrita: 16,
+  palabraEscrita: 45,
+  ondaVoz: 320,
   chispas: 10,
   confirmacionReserva: 800,
   pulsoConfirmacion: 1100,
