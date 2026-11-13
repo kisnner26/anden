@@ -200,3 +200,60 @@ export const coloresAura = [
   '#FFBA71',
   '#C686FF',
 ] as const;
+
+/** el resplandor dorado que se enciende mientras la IA habla */
+export const coloresOro = [
+  '#FFD60A',
+  '#FFB21E',
+  '#FFF1A8',
+  '#FF9F0A',
+  '#FFE066',
+  '#FFC53D',
+] as const;
+
+/** los colores de los vehículos exclusivos de Plus */
+export const paletaVehiculos = {
+  avion: {
+    acento: '#2F80ED',
+    cuerpo: '#F4F7FB',
+    sombra: '#B8C4D6',
+    vidrio: '#1B2A41',
+  },
+  helicoptero: {
+    acento: '#E04B3A',
+    cuerpo: '#FFD23F',
+    sombra: '#C9A227',
+    vidrio: '#1B2A41',
+  },
+  nave: {
+    acento: '#7B61FF',
+    cuerpo: '#C9D1E3',
+    sombra: '#8D97B0',
+    vidrio: '#2EC4F1',
+  },
+  submarino: {
+    acento: '#F4A300',
+    cuerpo: '#FFC933',
+    sombra: '#C48A00',
+    vidrio: '#1B3A4B',
+  },
+  tractor: {
+    acento: '#2E7D32',
+    cuerpo: '#43A047',
+    sombra: '#1B5E20',
+    vidrio: '#1B2A41',
+  },
+  tren: {
+    acento: '#B02E20',
+    cuerpo: '#E04B3A',
+    sombra: '#7A2A20',
+    vidrio: '#1B2A41',
+  },
+  comun: {
+    llanta: '#1C1B17',
+    llantaClara: '#5B574A',
+    destello: '#FFFFFF',
+    llama: '#FF9F0A',
+    llamaClara: '#FFE066',
+  },
+} as const;
