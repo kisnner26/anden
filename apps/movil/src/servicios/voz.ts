@@ -77,6 +77,23 @@ export function elegirVoz(
 }
 
 /**
+ * deja el audio listo para sonar: por el altavoz, aunque el teléfono esté en silencio y justo
+ * después de haber usado el micrófono (si no, iOS deja la sesión en modo grabación y no se oye nada)
+ */
+async function prepararAudioParaHablar(): Promise<void> {
+  try {
+    const { setAudioModeAsync } = await import('expo-audio');
+    await setAudioModeAsync({
+      allowsRecording: false,
+      interruptionMode: 'duckOthers',
+      playsInSilentMode: true,
+    });
+  } catch {
+    // sin ajustes de audio se intenta igual
+  }
+}
+
+/**
  * el servicio real: reconocimiento y voz del sistema. Los módulos nativos se cargan al usarlos,
  * así donde no existen (pruebas, web) la app abre igual y la voz queda sin efecto.
  */
@@ -143,6 +160,7 @@ export function crearVozDelSistema(): ServicioVoz {
     },
     async hablar(texto, opciones = {}) {
       const { alEstado, enLinea = false } = opciones;
+      await prepararAudioParaHablar();
       if (enLinea) {
         try {
           const { hablarEnLinea } = await import('./vozEnLinea');
@@ -168,6 +186,7 @@ export function crearVozDelSistema(): ServicioVoz {
           onStopped: () => alEstado?.(false),
           pitch: 1,
           rate: 0.5,
+          volume: 1,
           voice: voz,
         });
       } catch {
