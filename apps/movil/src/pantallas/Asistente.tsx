@@ -1,3 +1,4 @@
+import { estadoAsientos } from '@anden/dominio';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -28,6 +29,15 @@ import {
   salidaMasBarata,
   salidasRelacionadas,
 } from '@/datos/ayudasIA';
+import { armarContacto, guardarContacto } from '@/datos/contactoConfianza';
+import {
+  interpretarOrden,
+  proximaSalidaA,
+  telefonoDictado,
+} from '@/datos/ordenesIA';
+import { nombreCompleto, nombrePropio } from '@/datos/perfil';
+import { usePerfil } from '@/datos/usePerfil';
+import { useSesion } from '@/datos/useSesion';
 import { armarContexto, instruccionesDelAsistente } from '@/datos/contextoIA';
 import { formatoHoraCompleta } from '@/datos/formato';
 import { useBoletos } from '@/datos/useBoletos';
@@ -53,6 +63,8 @@ import { t } from '@/textos/t';
 
 export interface PropiedadesAsistente {
   /** abre el detalle de una salida mostrada junto a una respuesta */
+  /** abre el boleto recién reservado por orden de voz */
+  alAbrirBoleto?: (boletoId: string) => void;
   alAbrirViaje?: (viajeId: string) => void;
   alVolver: () => void;
 }
@@ -64,12 +76,29 @@ interface Intercambio {
 }
 
 /** el asistente: responde con las salidas y boletos reales de la app usando el modelo del teléfono */
-export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
+export function Asistente({
+  alAbrirBoleto,
+  alAbrirViaje,
+  alVolver,
+}: PropiedadesAsistente) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const { disponibilidad, nombre, preguntar, usable } = useIA();
-  const { boletos } = useBoletos();
-  const { ahora, salidas } = useSalidas();
+  const { boletos, reservar } = useBoletos();
+  const { ahora, datos, salidas } = useSalidas();
+  const { perfil } = usePerfil();
+  const { sesion } = useSesion();
+  // lo que Andén espera antes de seguir una orden: un teléfono o un sí para reservar
+  const [pendiente, establecerPendiente] = useState<
+    | { nombre: string; tipo: 'telefono' }
+    | {
+        asiento: number;
+        destino: string;
+        tipo: 'confirmar';
+        viajeId: string;
+      }
+    | null
+  >(null);
   const [texto, establecerTexto] = useState('');
   const [pensando, establecerPensando] = useState(false);
   const [fallo, establecerFallo] = useState(false);
@@ -162,12 +191,125 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
     [ahora, destinos, memoriaEfectiva, proximoBoleto, semilla],
   );
 
+  /** agrega un intercambio sin pasar por el modelo y lo lee en voz alta si corresponde */
+  function responder(pregunta: string, respuesta: string, porVoz: boolean) {
+    establecerHistorial((previo) => [
+      { id: siguienteId, pregunta, respuesta },
+      ...previo,
+    ]);
+    establecerSiguienteId((id) => id + 1);
+    establecerTexto('');
+    if (porVoz || hablarRespuesta.current) {
+      void voz.hablar(respuesta, {
+        alEstado: establecerHablando,
+        alProblema: (motivo) => {
+          establecerHablando(false);
+          establecerProblemaVoz(motivo);
+        },
+        enLinea: usarVozEnLinea.current,
+      });
+    }
+  }
+
+  /** ejecuta lo que la persona pidió dentro de la app; devuelve lo que se le contesta, o nulo si no era una orden */
+  async function ejecutarOrden(pedido: string): Promise<string | null> {
+    if (pendiente?.tipo === 'telefono') {
+      const telefono = telefonoDictado(pedido);
+      const contacto = telefono
+        ? armarContacto(pendiente.nombre, telefono)
+        : null;
+      if (!contacto) {
+        return 'No entendí el número. Decímelo de nuevo, con los 8 dígitos.';
+      }
+      await guardarContacto(contacto);
+      establecerPendiente(null);
+      return `Listo: ${contacto.nombre} quedó como tu contacto de emergencia. Lo vas a ver al compartir tu viaje.`;
+    }
+    const ciudades = [
+      ...new Set(datos.terminales.map((terminal) => terminal.ciudad)),
+    ];
+    const orden = interpretarOrden(pedido, ciudades);
+    if (!orden) return null;
+    if (orden.tipo === 'contacto') {
+      establecerPendiente({
+        nombre: nombrePropio(orden.nombre),
+        tipo: 'telefono',
+      });
+      return `¿Cuál es el teléfono de ${nombrePropio(orden.nombre)}? Decímelo con los 8 dígitos.`;
+    }
+    const salida = proximaSalidaA(
+      salidas,
+      orden.destino,
+      orden.origen,
+      new Date(),
+    );
+    if (!salida) {
+      return `No encontré salidas a ${orden.destino} con asientos por ahora. Revisá Horarios más tarde.`;
+    }
+    const hora = formatoHoraCompleta(salida.salida);
+    const tarifa = salida.tarifa === null ? '' : `, C$ ${salida.tarifa}`;
+    if (orden.tipo === 'viaje') {
+      return `El próximo bus a ${salida.destino} sale de ${salida.origen} a las ${hora}, andén ${salida.anden}${tarifa}. Quedan ${salida.asientosLibres} asientos.`;
+    }
+    const viaje = datos.viajes.find(
+      (candidato) => candidato.id === salida.viajeId,
+    );
+    const bus = datos.buses.find((candidato) => candidato.id === viaje?.busId);
+    const libre = bus
+      ? estadoAsientos(
+          bus.configuracion,
+          datos.ocupaciones.filter((o) => o.viajeId === salida.viajeId),
+          new Date(),
+        ).find((asiento) => asiento.estado === 'libre')
+      : undefined;
+    if (!libre)
+      return `La salida a ${salida.destino} ya no tiene asientos libres.`;
+    establecerPendiente({
+      asiento: libre.numero,
+      destino: salida.destino,
+      tipo: 'confirmar',
+      viajeId: salida.viajeId,
+    });
+    return `Puedo reservarte el asiento ${libre.numero} a ${salida.destino}, sale a las ${hora}${tarifa}, y pagás en efectivo al abordar. ¿Confirmás?`;
+  }
+
+  async function confirmarReserva() {
+    if (pendiente?.tipo !== 'confirmar') return;
+    const datosPendiente = pendiente;
+    establecerPendiente(null);
+    const nombrePasajero =
+      nombreCompleto(perfil).trim() || (sesion?.nombre ?? '').trim();
+    const resultado = await reservar(datosPendiente.viajeId, [
+      { asiento: datosPendiente.asiento, nombre: nombrePasajero },
+    ]);
+    if (resultado.ok) {
+      const primero = resultado.valor[0];
+      responder(
+        'Confirmar reserva',
+        `Reservado: asiento ${datosPendiente.asiento} a ${datosPendiente.destino}. Pagás en efectivo al abordar.`,
+        false,
+      );
+      if (primero) alAbrirBoleto?.(primero.boleto.id);
+    } else {
+      responder(
+        'Confirmar reserva',
+        'No pude reservar ese asiento: alguien lo tomó o la venta se cerró. Probá de nuevo.',
+        false,
+      );
+    }
+  }
+
   async function enviar(pregunta: string, porVoz = false) {
     const limpia = pregunta.trim();
     if (limpia === '' || pensando) return;
     establecerPensando(true);
     establecerFallo(false);
     try {
+      const orden = await ejecutarOrden(limpia);
+      if (orden !== null) {
+        responder(limpia, orden, porVoz);
+        return;
+      }
       const todosLosDestinos = [...new Set(salidas.map((s) => s.destino))];
       memoriaIA.recordarPregunta(limpia, todosLosDestinos);
       const contexto = [
@@ -546,6 +688,26 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
               </Bloque>
             )}
 
+            {pendiente?.tipo === 'confirmar' && (
+              <Bloque estiloContenido={estilos.confirmar}>
+                <BotonAccion
+                  alPresionar={() => void confirmarReserva()}
+                  etiqueta={t('ia.confirmarReserva')}
+                />
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => establecerPendiente(null)}
+                  style={estilos.callar}
+                >
+                  <Text
+                    style={[tipografia.subtitulo, { color: colores.cancelado }]}
+                  >
+                    {t('ia.cancelarOrden')}
+                  </Text>
+                </Pressable>
+              </Bloque>
+            )}
+
             {historial.map((intercambio, indice) => {
               const relacionadas = salidasRelacionadas(
                 `${intercambio.pregunta} ${intercambio.respuesta}`,
@@ -663,6 +825,7 @@ const estilos = StyleSheet.create({
     paddingVertical: espacios.ocho,
   },
   hablandoTexto: { flex: 1 },
+  confirmar: { gap: espacios.ocho, padding: espacios.dieciseis },
   callar: { justifyContent: 'center', minHeight: 44 },
   hablar: { minHeight: 52 },
   hablarContenido: {
