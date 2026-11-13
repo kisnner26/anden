@@ -11,7 +11,7 @@ const SERVICIO: Record<string, string> = {
   ordinario: 'ordinario',
 };
 
-function lineaDeSalida(salida: Salida): string {
+export function lineaDeSalida(salida: Salida): string {
   const hora = formatoHoraCompleta(salida.salida);
   const dia = formatoFechaCorta(salida.salida);
   const atraso =
@@ -22,7 +22,7 @@ function lineaDeSalida(salida: Salida): string {
   return `- ${dia} ${hora}, ${salida.origen} a ${salida.destino}, ${SERVICIO[salida.servicio] ?? salida.servicio}, andén ${salida.anden}, ${tarifa}, ${salida.asientosLibres} asientos libres, ${salida.estado}${atraso}${venta}`;
 }
 
-function lineaDeBoleto({ boleto, resumen }: BoletoGuardado): string {
+export function lineaDeBoleto({ boleto, resumen }: BoletoGuardado): string {
   const salida = new Date(resumen.salida);
   return `- ${formatoFechaCorta(salida)} ${formatoHoraCompleta(salida)}, a ${resumen.destino}, andén ${resumen.anden}, asiento ${boleto.asiento}, C$ ${boleto.precio}, ${boleto.estado}`;
 }
