@@ -165,6 +165,8 @@ export function TableroSalidas({
             </View>
             <View style={estilos.colDestino}>
               <Text
+                adjustsFontSizeToFit
+                minimumFontScale={0.7}
                 numberOfLines={1}
                 style={[
                   estilos.destino,
