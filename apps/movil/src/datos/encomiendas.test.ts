@@ -4,6 +4,8 @@ import { beforeEach, describe, expect, it } from '@jest/globals';
 import {
   CLAVE_ENCOMIENDAS,
   codigoEncomienda,
+  conEstado,
+  etapasCumplidas,
   erroresDeEncomienda,
   guardarEncomienda,
   leerEncomiendas,
@@ -127,5 +129,52 @@ describe('comprobante', () => {
     await AsyncStorage.setItem(CLAVE_ENCOMIENDAS, JSON.stringify([sinCampo]));
     const [leida] = await leerEncomiendas();
     expect(leida?.fragil).toBe(false);
+  });
+});
+
+describe('estados de la encomienda', () => {
+  const base = nuevaEncomienda(DATOS, new Date('2026-11-12T18:00:00.000Z'));
+
+  it('el chofer la acepta, la recibe y la entrega, en ese orden', () => {
+    const aceptada = conEstado(base, 'aceptada');
+    expect(aceptada?.estado).toBe('aceptada');
+    const recibida = conEstado(aceptada!, 'recibida');
+    expect(recibida?.estado).toBe('recibida');
+    const entregada = conEstado(recibida!, 'entregada');
+    expect(entregada?.estado).toBe('entregada');
+    expect(etapasCumplidas('solicitada')).toBe(1);
+    expect(etapasCumplidas('aceptada')).toBe(2);
+    expect(etapasCumplidas('recibida')).toBe(3);
+    expect(etapasCumplidas('entregada')).toBe(4);
+  });
+
+  it('no se puede saltar un paso ni volver atrás', () => {
+    expect(conEstado(base, 'entregada')).toBeNull();
+    expect(conEstado(base, 'recibida')).toBeNull();
+    const entregada = { ...base, estado: 'entregada' as const };
+    expect(conEstado(entregada, 'aceptada')).toBeNull();
+  });
+
+  it('al rechazar guarda el motivo que dio el chofer', () => {
+    const rechazada = conEstado(base, 'rechazada', '  No hay espacio  ');
+    expect(rechazada).toMatchObject({
+      estado: 'rechazada',
+      motivoRechazo: 'No hay espacio',
+    });
+  });
+
+  it('quien envía puede cancelarla solo mientras está solicitada', () => {
+    expect(conEstado(base, 'cancelada')?.estado).toBe('cancelada');
+    const aceptada = conEstado(base, 'aceptada')!;
+    expect(conEstado(aceptada, 'cancelada')).toBeNull();
+  });
+
+  it('guarda el viaje y el chofer elegidos', () => {
+    const conViaje = nuevaEncomienda({
+      ...DATOS,
+      choferId: 'cho_1',
+      viajeId: 'via_x',
+    });
+    expect(conViaje).toMatchObject({ choferId: 'cho_1', viajeId: 'via_x' });
   });
 });
