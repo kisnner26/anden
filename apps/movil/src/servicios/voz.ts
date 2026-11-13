@@ -65,6 +65,28 @@ export async function guardarRespuestaHablada(activa: boolean): Promise<void> {
   await AsyncStorage.setItem(CLAVE_VOZ_IA, activa ? '1' : '0');
 }
 
+/**
+ * junta lo que se va dictando: los tramos que el reconocedor da por cerrados se conservan y el
+ * tramo en curso se reemplaza con cada resultado, así una pausa larga no borra lo dicho antes
+ */
+export function crearAcumulador() {
+  let fijo = '';
+  let parcial = '';
+  const unir = (a: string, b: string) => `${a} ${b}`.trim();
+  return {
+    resultado(texto: string, final: boolean): string {
+      if (final) {
+        fijo = unir(fijo, texto);
+        parcial = '';
+      } else parcial = texto;
+      return unir(fijo, parcial);
+    },
+    texto(): string {
+      return unir(fijo, parcial);
+    },
+  };
+}
+
 /** la voz en español de mejor calidad: las mejoradas o premium suenan como las de Siri */
 export function elegirVoz(
   voces: readonly { identifier: string; language: string; quality?: string }[],
@@ -79,6 +101,9 @@ export function elegirVoz(
       return peso(b.quality) - peso(a.quality) || exacta(b) - exacta(a);
     })[0]?.identifier;
 }
+
+/** el micrófono sigue abierto hasta que la persona lo detiene; esto marca que ya lo pidió */
+let detencionPedida = false;
 
 let vozElegida: Promise<string | undefined> | null = null;
 
@@ -141,6 +166,7 @@ export function crearVozDelSistema(): ServicioVoz {
       }
     },
     async detener() {
+      detencionPedida = true;
       try {
         const { ExpoSpeechRecognitionModule } =
           await import('expo-speech-recognition');
@@ -159,27 +185,50 @@ export function crearVozDelSistema(): ServicioVoz {
         const permiso =
           await ExpoSpeechRecognitionModule.requestPermissionsAsync();
         if (!permiso.granted) return 'sin-permiso';
+        detencionPedida = false;
+        const acumulado = crearAcumulador();
+        let reinicios = 0;
+        const empezar = () =>
+          ExpoSpeechRecognitionModule.start({
+            // sigue escuchando todo el rato: solo se corta cuando la persona toca Detener
+            continuous: true,
+            interimResults: true,
+            lang: IDIOMA_VOZ,
+            // el dictado se queda en el teléfono cuando el sistema lo permite
+            requiresOnDeviceRecognition:
+              ExpoSpeechRecognitionModule.supportsOnDeviceRecognition(),
+          });
         const suscripciones = [
           ExpoSpeechRecognitionModule.addListener('result', (evento) => {
             const texto = evento.results[0]?.transcript ?? '';
-            oyentes.alTexto(texto, evento.isFinal);
+            oyentes.alTexto(acumulado.resultado(texto, evento.isFinal), false);
           }),
-          ExpoSpeechRecognitionModule.addListener('error', () => {
+          ExpoSpeechRecognitionModule.addListener('error', (evento) => {
+            // el silencio o un corte del sistema no son fallas: se vuelve a abrir en 'end'
+            if (evento.error === 'no-speech' || evento.error === 'aborted') {
+              return;
+            }
+            detencionPedida = true;
             oyentes.alFallar();
           }),
           ExpoSpeechRecognitionModule.addListener('end', () => {
+            // iOS corta el dictado solo tras unos segundos de silencio o al cumplir su tiempo máximo:
+            // si la persona no pidió detener, se reabre para no perder lo que siga
+            if (!detencionPedida && reinicios < 30) {
+              reinicios += 1;
+              try {
+                empezar();
+                return;
+              } catch {
+                // no se pudo reabrir: se da por terminado
+              }
+            }
             for (const suscripcion of suscripciones) suscripcion.remove();
+            oyentes.alTexto(acumulado.texto(), true);
             oyentes.alTerminar();
           }),
         ];
-        ExpoSpeechRecognitionModule.start({
-          continuous: false,
-          interimResults: true,
-          lang: IDIOMA_VOZ,
-          // el dictado se queda en el teléfono cuando el sistema lo permite
-          requiresOnDeviceRecognition:
-            ExpoSpeechRecognitionModule.supportsOnDeviceRecognition(),
-        });
+        empezar();
         return 'ok';
       } catch {
         return 'no-disponible';
