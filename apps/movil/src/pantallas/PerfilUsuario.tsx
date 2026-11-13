@@ -22,6 +22,7 @@ import { Boton } from '@/componentes/Boton';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { CampoTexto } from '@/componentes/CampoTexto';
+import { borrarFoto } from '@/datos/almacenFotos';
 import { elegirFotoDeGaleria } from '@/datos/fotos';
 import {
   iniciales,
@@ -101,7 +102,9 @@ function FormularioPerfil({ alVolver }: PropiedadesPerfilUsuario) {
     const resultado = await elegirFotoDeGaleria();
     establecerSinPermiso(resultado.tipo === 'sin-permiso');
     if (resultado.tipo === 'elegida') {
+      const anterior = perfil.fotoUri;
       await guardar({ fotoUri: resultado.uri });
+      if (anterior !== null) borrarFoto(anterior);
     }
   }
 
@@ -161,7 +164,12 @@ function FormularioPerfil({ alVolver }: PropiedadesPerfilUsuario) {
             />
             {perfil.fotoUri !== null && (
               <Boton
-                alPresionar={() => void guardar({ fotoUri: null })}
+                alPresionar={() => {
+                  const anterior = perfil.fotoUri;
+                  void guardar({ fotoUri: null }).then(() => {
+                    if (anterior !== null) borrarFoto(anterior);
+                  });
+                }}
                 etiqueta={t('perfil.quitarFoto')}
                 variante="secundario"
               />
