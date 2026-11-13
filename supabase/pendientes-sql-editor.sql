@@ -179,3 +179,13 @@ create policy "fotos de choferes: escribir" on storage.objects
       where p.id = auth.uid() and p.rol = 'conductor' and p.chofer_id = (storage.foldername(name))[1]
     )
   );
+
+-- ===== 0011: asientos ocupados del servidor =====
+-- qué asientos de un viaje ya están vendidos, sin mostrar de quién son: así todos los teléfonos ven lo mismo
+create or replace function public.asientos_ocupados(p_viaje text) returns setof integer
+language sql stable security definer set search_path = public as $$
+  select asiento from public.boletos where viaje_id = p_viaje and estado <> 'cancelado';
+$$;
+
+revoke all on function public.asientos_ocupados(text) from public;
+grant execute on function public.asientos_ocupados(text) to authenticated;
