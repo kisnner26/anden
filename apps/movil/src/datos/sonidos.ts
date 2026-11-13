@@ -4,6 +4,7 @@ import type { AudioPlayer } from 'expo-audio';
 import abordo from '../../assets/sonidos/abordo.wav';
 import arranque from '../../assets/sonidos/arranque.wav';
 import bocina from '../../assets/sonidos/bocina.wav';
+import bienvenida from '../../assets/sonidos/bienvenida.wav';
 import boleto from '../../assets/sonidos/boleto.wav';
 import confirmacion from '../../assets/sonidos/confirmacion.wav';
 import envio from '../../assets/sonidos/envio.wav';
@@ -18,6 +19,7 @@ import toque from '../../assets/sonidos/toque.wav';
 const FUENTES = {
   abordo,
   arranque,
+  bienvenida,
   bocina,
   boleto,
   confirmacion,
