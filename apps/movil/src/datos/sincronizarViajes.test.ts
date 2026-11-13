@@ -19,6 +19,7 @@ const AHORA = new Date();
 const SALIDA = new Date(AHORA.getTime() + 2 * 3_600_000).toISOString();
 
 const PUBLICADOS = {
+  historial: [],
   choferes: [
     {
       chofer_id: 'cho_9',
