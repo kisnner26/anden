@@ -125,7 +125,10 @@ export const TARIFARIO: Tarifario = RECORRIDOS.flatMap((recorrido) =>
     ]),
 );
 
-const CONFIGURACION_POR_SERVICIO: Record<TipoServicio, ConfiguracionBus> = {
+export const CONFIGURACION_POR_SERVICIO: Record<
+  TipoServicio,
+  ConfiguracionBus
+> = {
   expreso: 'bus45',
   ordinario: 'coaster26',
 };
@@ -248,6 +251,23 @@ function crearCalificaciones(): Calificacion[] {
       etiquetas: [...ETIQUETAS_POR_NOTA[estrellas]],
     })),
   );
+}
+
+/**
+ * lo único que viene con la app: terminales, rutas y tarifa oficial, que fija el MTI. Los viajes,
+ * las unidades, los choferes y los asientos vendidos los publican los conductores y llegan del servidor.
+ */
+export function crearBase(): DatosMuestra {
+  return {
+    buses: [],
+    calificaciones: [],
+    choferes: [],
+    ocupaciones: [],
+    rutas: RUTAS,
+    tarifario: TARIFARIO,
+    terminales: TERMINALES,
+    viajes: [],
+  };
 }
 
 /** id del viaje de la salida de Boaco, el que tiene el plano de asientos con ocupaciones */

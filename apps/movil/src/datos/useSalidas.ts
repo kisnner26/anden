@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { crearMuestra, type DatosMuestra } from './muestra';
+import { haySupabase } from '@/servicios/supabase/cliente';
+
+import { crearBase, crearMuestra, type DatosMuestra } from './muestra';
 import {
   armarSalidas,
   armarTodasLasSalidas,
@@ -12,10 +14,21 @@ const MEDIO_MINUTO = 30_000;
 
 let muestra: DatosMuestra | null = null;
 
-/** la muestra se crea una sola vez por sesión para que todas las pantallas vean las mismas salidas */
+/**
+ * los datos de la sesión, creados una sola vez para que todas las pantallas vean lo mismo. Con
+ * servidor arrancan sin viajes y se llenan con lo que publican los conductores; sin servidor
+ * (pruebas y desarrollo sin conexión) se usan los viajes de muestra.
+ */
 export function obtenerMuestra(): DatosMuestra {
-  muestra ??= crearMuestra(new Date());
+  muestra ??= haySupabase() ? crearBase() : crearMuestra(new Date());
   return muestra;
+}
+
+const oyentes = new Set<() => void>();
+
+/** avisa a las pantallas que los viajes o los asientos cambiaron */
+export function notificarCambioDeViajes(): void {
+  for (const oyente of oyentes) oyente();
 }
 
 /** reinicia la muestra; solo lo usan las pruebas */
@@ -26,6 +39,14 @@ export function reiniciarMuestra(): void {
 /** la hora actual, refrescada cada medio minuto */
 export function useAhora(intervalo: number = MEDIO_MINUTO): Date {
   const [ahora, establecerAhora] = useState(() => new Date());
+  // cuando llegan viajes nuevos del servidor la hora se renueva, y con ella todo lo que se calcula de las salidas
+  useEffect(() => {
+    const alCambiar = () => establecerAhora(new Date());
+    oyentes.add(alCambiar);
+    return () => {
+      oyentes.delete(alCambiar);
+    };
+  }, []);
   useEffect(() => {
     const temporizador = setInterval(
       () => establecerAhora(new Date()),
