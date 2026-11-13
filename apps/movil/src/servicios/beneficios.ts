@@ -4,7 +4,9 @@ import type { NombreIcono } from '@/componentes/Icono';
 export type Beneficio =
   | 'avisosPersonalizados'
   | 'busPropio'
+  | 'busquedasAmpliadas'
   | 'habitualesIlimitados'
+  | 'insigniaPlus'
   | 'resumenViajes';
 
 export interface DescripcionBeneficio {
@@ -17,6 +19,8 @@ export const BENEFICIOS_PLUS: readonly DescripcionBeneficio[] = [
   { icono: 'estrella', id: 'habitualesIlimitados' },
   { icono: 'reloj', id: 'resumenViajes' },
   { icono: 'volante', id: 'busPropio' },
+  { icono: 'lupa', id: 'busquedasAmpliadas' },
+  { icono: 'rayo', id: 'insigniaPlus' },
 ];
 
 /** cuántos viajes habituales se pueden guardar sin Plus */
@@ -34,4 +38,12 @@ export function puedeGuardarHabitual(
 
 export function avisoDisponible(plus: boolean, minutosAntes: number): boolean {
   return plus || minutosAntes === AVISO_GRATIS_MINUTOS;
+}
+
+/** búsquedas recientes que se recuerdan: más con Plus */
+export const RECIENTES_GRATIS = 5;
+export const RECIENTES_PLUS = 15;
+
+export function limiteDeRecientes(plus: boolean): number {
+  return plus ? RECIENTES_PLUS : RECIENTES_GRATIS;
 }
