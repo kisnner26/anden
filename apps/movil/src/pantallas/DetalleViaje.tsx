@@ -20,6 +20,7 @@ import { estadoTablero } from '@/componentes/TableroSalidas';
 import { formatoDuracion, formatoFechaCorta } from '@/datos/formato';
 import { useAvanceViaje } from '@/datos/useAvanceViaje';
 import { useRecorrido } from '@/datos/useRecorrido';
+import { useTurista } from '@/datos/useTurista';
 import { useChoferPublico } from '@/datos/useChoferPublico';
 import { useDetalleViaje } from '@/datos/useDetalleViaje';
 import { useEspera } from '@/datos/useEspera';
@@ -30,6 +31,7 @@ import {
 } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
+import { rellenar } from '@/textos/rellenar';
 import { t } from '@/textos/t';
 
 export interface PropiedadesDetalleViaje {
@@ -64,6 +66,7 @@ export function DetalleViaje({
     detalle?.salida.destino ?? '',
   );
 
+  const { turista } = useTurista();
   const publico = useChoferPublico(detalle?.chofer.id ?? '');
 
   if (!detalle) {
@@ -302,6 +305,15 @@ export function DetalleViaje({
           <LineaRuta paradas={detalle.paradas} />
         </Bloque>
         <EstimacionSalida viajeId={salida.viajeId} />
+        {turista && (
+          <ResumenIA
+            contexto={lineaDeSalida(salida)}
+            pedido={rellenar(t('ia.pedidoTurista'), {
+              destino: salida.destino,
+            })}
+            titulo={rellenar(t('ia.verTurista'), { destino: salida.destino })}
+          />
+        )}
         <ResumenIA
           contexto={lineaDeSalida(salida)}
           pedido={t('ia.pedidoResumenViaje')}
