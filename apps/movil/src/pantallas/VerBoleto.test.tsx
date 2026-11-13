@@ -11,6 +11,16 @@ jest.mock('@/datos/notificaciones', () => ({
   programarRecordatorio: jest.fn(async () => 'notif_1'),
 }));
 
+jest.mock('../../modules/anden-actividad', () => ({
+  actividadesDisponibles: jest.fn(async () => true),
+  iniciarActividad: jest.fn(async () => 'act_1'),
+  terminarActividad: jest.fn(async () => undefined),
+}));
+
+import {
+  iniciarActividad,
+  terminarActividad,
+} from '../../modules/anden-actividad';
 import { programarRecordatorio } from '@/datos/notificaciones';
 import { ProveedorRecordatorios } from '@/datos/ProveedorRecordatorios';
 import { CLAVE_BOLETOS, ProveedorBoletos } from '@/datos/ProveedorBoletos';
@@ -423,5 +433,23 @@ describe('VerBoleto', () => {
     );
     await waitFor(() => expect(programarRecordatorio).toHaveBeenCalledTimes(1));
     expect(await pantalla.findByText('Aviso 30 min antes')).toBeTruthy();
+  });
+
+  it('sigue el viaje en la pantalla de bloqueo y lo quita al volver a tocar', async () => {
+    const pantalla = await dibujar();
+    await fireEvent.press(
+      await pantalla.findByRole('button', {
+        name: 'Seguir en la pantalla de bloqueo',
+      }),
+    );
+    await waitFor(() => expect(iniciarActividad).toHaveBeenCalledTimes(1));
+    await fireEvent.press(
+      await pantalla.findByRole('button', {
+        name: 'Siguiendo en la pantalla de bloqueo, tocá para quitar',
+      }),
+    );
+    await waitFor(() =>
+      expect(terminarActividad).toHaveBeenCalledWith('act_1'),
+    );
   });
 });
