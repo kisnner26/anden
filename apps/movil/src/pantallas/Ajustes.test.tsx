@@ -33,17 +33,13 @@ beforeEach(async () => {
 });
 
 describe('Ajustes', () => {
-  it('quien usa la app sin cuenta puede ingresar o crear una', async () => {
-    const alAbrirIngreso = jest.fn();
+  it('sin sesión no ofrece ingresar ni cerrar sesión', async () => {
     const pantalla = await renderPantalla(
       <ProveedorSesion>
-        <Ajustes alAbrirIngreso={alAbrirIngreso} alVolver={() => undefined} />
+        <Ajustes alVolver={() => undefined} />
       </ProveedorSesion>,
     );
-    await fireEvent.press(
-      pantalla.getByRole('button', { name: /Ingresar o crear cuenta/ }),
-    );
-    expect(alAbrirIngreso).toHaveBeenCalledTimes(1);
+    expect(pantalla.queryByText(/Ingresar o crear cuenta/)).toBeNull();
     expect(pantalla.queryByText('Cerrar sesión')).toBeNull();
   });
 

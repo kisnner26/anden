@@ -33,7 +33,6 @@ import { t } from '@/textos/t';
 
 export interface PropiedadesAjustes {
   /** abre el ingreso, para quien usa la app sin cuenta */
-  alAbrirIngreso?: () => void;
   /** se llama al cerrar la sesión, para volver al ingreso */
   alSalir?: () => void;
   alAbrirPerfil?: () => void;
@@ -83,7 +82,6 @@ const OPCIONES: readonly {
 
 /** apariencia: claro, oscuro o automático según la hora */
 export function Ajustes({
-  alAbrirIngreso,
   alSalir,
   alAbrirPerfil,
   alAbrirPlus,
@@ -197,50 +195,6 @@ export function Ajustes({
           nombre={NOMBRES_MODO[modo].nombre()}
         />
       ))}
-
-      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-        {t('ajustes.sesionSeccion')}
-      </Text>
-      {sesion ? (
-        <>
-          <Bloque estiloContenido={estilos.filaOpcion}>
-            <View style={estilos.texto}>
-              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                {nombrePropio(sesion.nombre)}
-              </Text>
-              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-                {t('ajustes.sesionIniciada')}
-              </Text>
-            </View>
-          </Bloque>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => void cerrar().then(() => alSalir?.())}
-          >
-            <Bloque estiloContenido={estilos.filaOpcion}>
-              <Text
-                style={[tipografia.subtitulo, { color: colores.cancelado }]}
-              >
-                {t('ajustes.cerrarSesion')}
-              </Text>
-            </Bloque>
-          </Pressable>
-        </>
-      ) : (
-        <Pressable accessibilityRole="button" onPress={alAbrirIngreso}>
-          <Bloque estiloContenido={estilos.filaOpcion}>
-            <View style={estilos.texto}>
-              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                {t('ajustes.ingresarTitulo')}
-              </Text>
-              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-                {t('ajustes.ingresarDetalle')}
-              </Text>
-            </View>
-            <Icono nombre="siguiente" tamano="mediano" />
-          </Bloque>
-        </Pressable>
-      )}
 
       <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {t('ajustes.seguridadSeccion')}
@@ -394,6 +348,36 @@ export function Ajustes({
         <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
           {opcionActiva.detalle()}
         </Text>
+      )}
+
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+        {t('ajustes.sesionSeccion')}
+      </Text>
+      {sesion && (
+        <>
+          <Bloque estiloContenido={estilos.filaOpcion}>
+            <View style={estilos.texto}>
+              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                {nombrePropio(sesion.nombre)}
+              </Text>
+              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+                {t('ajustes.sesionIniciada')}
+              </Text>
+            </View>
+          </Bloque>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => void cerrar().then(() => alSalir?.())}
+          >
+            <Bloque estiloContenido={estilos.filaOpcion}>
+              <Text
+                style={[tipografia.subtitulo, { color: colores.cancelado }]}
+              >
+                {t('ajustes.cerrarSesion')}
+              </Text>
+            </Bloque>
+          </Pressable>
+        </>
       )}
     </ScrollView>
   );
