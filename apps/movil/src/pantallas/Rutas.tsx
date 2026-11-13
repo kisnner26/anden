@@ -1,130 +1,267 @@
 import { useState } from 'react';
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { EscenaViaje } from '@/componentes/EscenaViaje';
 import { Bloque } from '@/componentes/Bloque';
+import { BloqueNegro } from '@/componentes/BloqueNegro';
+import { BotonAccion } from '@/componentes/BotonAccion';
+import { ContadorPasajeros } from '@/componentes/ContadorPasajeros';
+import { ControlSegmentado } from '@/componentes/ControlSegmentado';
 import { Icono } from '@/componentes/Icono';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
-import { PanelCorredor } from '@/componentes/PanelCorredor';
-import { RedRutas } from '@/componentes/RedRutas';
-import type { CorredorInterlocal } from '@/datos/corredores';
-import { useSonidos } from '@/datos/useSonidos';
+import { SelectorSalida } from '@/componentes/SelectorSalida';
+import { TrayectoCorredor } from '@/componentes/TrayectoCorredor';
+import { formatoHora, sufijoHora } from '@/datos/formato';
+import { llegadaEstimada } from '@/datos/planificador';
 import {
+  CIUDADES_RED,
   corredorDe,
-  invertirSentido,
-  type SeleccionRed,
+  type CiudadRed,
+  type SentidoRed,
 } from '@/datos/redRutas';
+import { totalReserva } from '@/datos/reserva';
+import { usePlanificador } from '@/datos/usePlanificador';
+import { obtenerMuestra } from '@/datos/useSalidas';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
+import { rellenar } from '@/textos/rellenar';
 import { t } from '@/textos/t';
 
 export interface PropiedadesRutas {
+  /** abre el mapa del corredor */
   alAbrirRuta?: (id: string) => void;
   /** abre la solicitud de una encomienda */
   alAbrirEncomiendas?: () => void;
+  /** lleva a elegir los asientos de la salida escogida */
+  alElegirAsientos?: (viajeId: string) => void;
 }
 
 /**
- * la red de rutas: un mapa simbólico con Managua al centro y las dos ciudades a los lados, y debajo
- * el corredor elegido en un panel simétrico que se abre deslizando
+ * planificador de viaje: se elige la ciudad y el sentido, se ve cuánto dura y qué salidas hay,
+ * se escoge una y la cantidad de pasajeros, y la pantalla dice a qué hora se llega (ETA) y cuánto cuesta
  */
-export function Rutas({ alAbrirEncomiendas, alAbrirRuta }: PropiedadesRutas) {
+export function Rutas({
+  alAbrirEncomiendas,
+  alAbrirRuta,
+  alElegirAsientos,
+}: PropiedadesRutas) {
   const { colores } = useTema();
-  const { width } = useWindowDimensions();
-  const [seleccion, establecerSeleccion] = useState<SeleccionRed>({
-    ciudad: 'Boaco',
-    sentido: 'vuelta',
-  });
-  const [abriendo, establecerAbriendo] = useState<CorredorInterlocal | null>(
-    null,
-  );
-  const sonar = useSonidos();
-  const corredor = corredorDe(seleccion);
-  // ancho útil dentro de la tarjeta: pantalla menos márgenes laterales y relleno de la tarjeta
-  const anchoControl =
-    Math.min(width, 520) - 2 * espacios.lateral - 2 * espacios.lateral;
+  const [ciudad, establecerCiudad] = useState<CiudadRed>('Boaco');
+  const [sentido, establecerSentido] = useState<SentidoRed>('ida');
+  const [elegida, establecerElegida] = useState<string | null>(null);
+  const [cantidad, establecerCantidad] = useState(1);
+  const corredor = corredorDe({ ciudad, sentido });
+  const plan = usePlanificador(corredor);
+  const salida =
+    plan.salidas.find((candidata) => candidata.viajeId === elegida) ??
+    plan.salidas[0];
+  const precio = salida
+    ? totalReserva(obtenerMuestra(), salida.viajeId, cantidad)
+    : null;
+  const llegada =
+    salida && plan.duracionMin !== null
+      ? llegadaEstimada(salida, plan.duracionMin)
+      : null;
 
   return (
-    <View style={estilos.raiz}>
-      <MarcoPestana estiloContenido={estilos.contenido}>
-        <View style={estilos.titular}>
-          <Text style={[tipografia.display, { color: colores.tinta }]}>
-            {t('rutas.titulo')}.
-          </Text>
-          <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
-            {t('rutas.detalle')}
-          </Text>
-        </View>
-
-        <RedRutas
-          alElegirCiudad={(ciudad) =>
-            establecerSeleccion((actual) => ({ ...actual, ciudad }))
-          }
-          alInvertir={() => establecerSeleccion(invertirSentido)}
-          seleccion={seleccion}
-        />
-
-        <PanelCorredor
-          alAbrir={() => {
-            sonar('bocina');
-            establecerAbriendo(corredor);
-          }}
-          alInvertir={() => establecerSeleccion(invertirSentido)}
-          anchoControl={anchoControl}
-          corredor={corredor}
-        />
-
-        <Pressable accessibilityRole="button" onPress={alAbrirEncomiendas}>
-          <Bloque estiloContenido={estilos.encomienda}>
-            <View style={estilos.textoEncomienda}>
-              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                {t('encomiendas.entrada')}
-              </Text>
-              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-                {t('encomiendas.entradaDetalle')}
-              </Text>
-            </View>
-            <Icono nombre="siguiente" tamano="mediano" />
-          </Bloque>
-        </Pressable>
-
-        <Text
-          style={[
-            tipografia.pequeno,
-            estilos.aviso,
-            { color: colores.tintaSuave },
-          ]}
-        >
-          {t('rutas.datosPendientesDetalle')}
+    <MarcoPestana estiloContenido={estilos.contenido}>
+      <View style={estilos.titular}>
+        <Text style={[tipografia.display, { color: colores.tinta }]}>
+          {t('rutas.titulo')}.
         </Text>
-      </MarcoPestana>
-      {abriendo && (
-        <EscenaViaje
-          alTerminar={() => {
-            const id = abriendo.id;
-            establecerAbriendo(null);
-            alAbrirRuta?.(id);
+        <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
+          {t('rutas.subtitulo')}
+        </Text>
+      </View>
+
+      <View style={estilos.selectores}>
+        <ControlSegmentado
+          alCambiar={(clave) => {
+            establecerCiudad(clave);
+            establecerElegida(null);
           }}
-          destino={abriendo.destino}
-          detalle={t('rutas.abriendo')}
-          duracion={1700}
-          tipo="salida"
-          titulo={`${abriendo.origen} → ${abriendo.destino}`}
+          opciones={CIUDADES_RED.map((nombre) => ({
+            clave: nombre,
+            etiqueta: nombre,
+          }))}
+          valor={ciudad}
         />
+        <ControlSegmentado
+          alCambiar={(clave) => {
+            establecerSentido(clave);
+            establecerElegida(null);
+          }}
+          opciones={[
+            { clave: 'ida', etiqueta: t('rutas.desdeManagua') },
+            { clave: 'vuelta', etiqueta: t('rutas.haciaManagua') },
+          ]}
+          valor={sentido}
+        />
+      </View>
+
+      <TrayectoCorredor
+        destino={corredor.destino}
+        distanciaKm={plan.distanciaKm}
+        duracionMin={plan.duracionMin}
+        origen={corredor.origen}
+        recorrido={`${corredor.id}${salida?.viajeId ?? ''}`}
+      />
+
+      <View style={estilos.seccion}>
+        <Text style={[tipografia.titulo, { color: colores.tinta }]}>
+          {t('rutas.elegirSalida')}
+        </Text>
+        {plan.deManana && plan.salidas.length > 0 && (
+          <Text style={[tipografia.pequeno, { color: colores.ambarTexto }]}>
+            {t('rutas.salidasManana')}
+          </Text>
+        )}
+        {plan.salidas.length === 0 ? (
+          <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
+            {t('rutas.sinSalidas')}
+          </Text>
+        ) : (
+          <SelectorSalida
+            alElegir={establecerElegida}
+            conDia={plan.deManana}
+            elegida={salida?.viajeId ?? null}
+            salidas={plan.salidas}
+          />
+        )}
+      </View>
+
+      {salida && (
+        <>
+          <ContadorPasajeros
+            alCambiar={establecerCantidad}
+            cantidad={cantidad}
+          />
+
+          <BloqueNegro estiloContenido={estilos.resumen}>
+            <View style={estilos.horas}>
+              <View style={estilos.hora}>
+                <Text
+                  style={[
+                    tipografia.etiqueta,
+                    { color: colores.sobreNegroSuave },
+                  ]}
+                >
+                  {t('rutas.salis')}
+                </Text>
+                <Text
+                  style={[tipografia.datoGrande, { color: colores.sobreNegro }]}
+                >
+                  {formatoHora(salida.salida)}
+                </Text>
+                <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+                  {sufijoHora(salida.salida)}
+                </Text>
+              </View>
+              <Icono color={colores.ambar} nombre="siguiente" tamano="grande" />
+              <View style={estilos.hora}>
+                <Text
+                  style={[
+                    tipografia.etiqueta,
+                    { color: colores.sobreNegroSuave },
+                  ]}
+                >
+                  {t('rutas.llegas')}
+                </Text>
+                <Text
+                  style={[tipografia.datoGrande, { color: colores.sobreNegro }]}
+                >
+                  {llegada ? formatoHora(llegada) : '—'}
+                </Text>
+                <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+                  {llegada
+                    ? `${sufijoHora(llegada)}${llegada.getDate() !== salida.salida.getDate() ? ` · ${t('rutas.manana')}` : ''}`
+                    : ' '}
+                </Text>
+              </View>
+            </View>
+
+            <View
+              style={[
+                estilos.regla,
+                { backgroundColor: colores.sobreNegroSuave },
+              ]}
+            />
+
+            <View style={estilos.total}>
+              <Text
+                style={[
+                  tipografia.etiqueta,
+                  { color: colores.sobreNegroSuave },
+                ]}
+              >
+                {t('rutas.totalAbordo')}
+              </Text>
+              <Text style={[tipografia.display, { color: colores.ambar }]}>
+                {precio ? `C$ ${precio.total}` : '—'}
+              </Text>
+              {precio && (
+                <Text
+                  style={[
+                    tipografia.pequeno,
+                    { color: colores.sobreNegroSuave },
+                  ]}
+                >
+                  {rellenar(t('rutas.porPasajero'), {
+                    unitario: precio.unitario,
+                  })}
+                </Text>
+              )}
+            </View>
+
+            <BotonAccion
+              alPresionar={() => alElegirAsientos?.(salida.viajeId)}
+              deshabilitado={salida.asientosLibres === 0}
+              etiqueta={t('rutas.elegirAsientos')}
+              icono="boleto"
+            />
+          </BloqueNegro>
+        </>
       )}
-    </View>
+
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => alAbrirRuta?.(corredor.id)}
+        style={estilos.mapa}
+      >
+        <Text style={[tipografia.subtitulo, { color: colores.ambarTexto }]}>
+          {t('rutas.verMapa')}
+        </Text>
+        <Icono color={colores.ambarTexto} nombre="siguiente" tamano="mediano" />
+      </Pressable>
+
+      <Pressable accessibilityRole="button" onPress={alAbrirEncomiendas}>
+        <Bloque estiloContenido={estilos.encomienda}>
+          <View style={estilos.textoEncomienda}>
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+              {t('encomiendas.entrada')}
+            </Text>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {t('encomiendas.entradaDetalle')}
+            </Text>
+          </View>
+          <Icono nombre="siguiente" tamano="mediano" />
+        </Bloque>
+      </Pressable>
+
+      <Text
+        style={[
+          tipografia.pequeno,
+          estilos.aviso,
+          { color: colores.tintaSuave },
+        ]}
+      >
+        {t('rutas.datosPendientesDetalle')}
+      </Text>
+    </MarcoPestana>
   );
 }
 
 const estilos = StyleSheet.create({
-  raiz: { flex: 1 },
   aviso: { textAlign: 'center' },
   contenido: { gap: espacios.veinticuatro },
   encomienda: {
@@ -133,6 +270,20 @@ const estilos = StyleSheet.create({
     gap: espacios.dieciseis,
     padding: espacios.dieciseis,
   },
+  hora: { alignItems: 'center', flex: 1, gap: espacios.cuatro },
+  horas: { alignItems: 'center', flexDirection: 'row' },
+  mapa: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.ocho,
+    justifyContent: 'center',
+    minHeight: 48,
+  },
+  regla: { height: 1, opacity: 0.4 },
+  resumen: { gap: espacios.dieciseis, padding: espacios.veinticuatro },
+  seccion: { gap: espacios.doce },
+  selectores: { gap: espacios.doce },
   textoEncomienda: { flex: 1, gap: espacios.cuatro },
   titular: { gap: espacios.ocho },
+  total: { alignItems: 'center', gap: espacios.cuatro },
 });
