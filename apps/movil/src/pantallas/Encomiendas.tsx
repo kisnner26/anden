@@ -206,6 +206,8 @@ export function Encomiendas({ alVolver }: PropiedadesEncomiendas) {
             paddingTop: margenes.top + espacios.ocho,
           },
         ]}
+        automaticallyAdjustKeyboardInsets
+        keyboardDismissMode="interactive"
         keyboardShouldPersistTaps="handled"
         style={{ backgroundColor: colores.fondo }}
       >

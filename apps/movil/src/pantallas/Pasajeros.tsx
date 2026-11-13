@@ -2,7 +2,6 @@ import { cedulaOpcionalValida, nombrePersonaValido } from '@anden/dominio';
 import { useState } from 'react';
 import {
   KeyboardAvoidingView,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -90,7 +89,6 @@ export function Pasajeros({
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={[estilos.pantalla, { backgroundColor: colores.fondo }]}
     >
       <ScrollView
@@ -101,6 +99,8 @@ export function Pasajeros({
             paddingTop: margenes.top + espacios.ocho,
           },
         ]}
+        automaticallyAdjustKeyboardInsets
+        keyboardDismissMode="interactive"
         keyboardShouldPersistTaps="handled"
       >
         <CabeceraPantalla alVolver={alVolver} titulo={t('pasajeros.titulo')} />

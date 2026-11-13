@@ -2,7 +2,6 @@ import { FRANJAS, type Franja, type TipoServicio } from '@anden/dominio';
 import { useEffect, useMemo, useState } from 'react';
 import {
   KeyboardAvoidingView,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -110,7 +109,6 @@ export function Buscador({
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={[estilos.pantalla, { backgroundColor: colores.fondo }]}
     >
       <ScrollView
@@ -121,6 +119,8 @@ export function Buscador({
             paddingTop: margenes.top + espacios.ocho,
           },
         ]}
+        automaticallyAdjustKeyboardInsets
+        keyboardDismissMode="interactive"
         keyboardShouldPersistTaps="handled"
       >
         <CabeceraPantalla alVolver={alVolver} titulo={t('buscador.titulo')} />
