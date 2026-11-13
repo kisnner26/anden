@@ -8,6 +8,8 @@ import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { EscenaViaje } from '@/componentes/EscenaViaje';
 import { EstimacionSalida } from '@/componentes/EstimacionSalida';
+import { ResumenIA } from '@/componentes/ResumenIA';
+import { lineaDeSalida } from '@/datos/contextoIA';
 import { sincronizarViajes } from '@/datos/sincronizarViajes';
 import { marcarSalida } from '@/servicios/supabase/viajesSupabase';
 import { ListaPasajeros } from '@/componentes/ListaPasajeros';
@@ -257,6 +259,15 @@ export function ConductorViaje({
         </BloqueNegro>
 
         <EstimacionSalida viajeId={viajeId} />
+        <ResumenIA
+          contexto={[
+            lineaDeSalida(salida),
+            `Pasajeros: ${pasajeros.length}, a bordo: ${pasajeros.filter(({ boleto }) => abordo(boleto.id)).length}, con Plus: ${pasajeros.filter(({ resumen }) => resumen.plus === true).length}.`,
+            `Cobrado C$ ${cobro.cobrado}, por cobrar C$ ${cobro.pendiente}.`,
+          ].join('\n')}
+          pedido={t('ia.pedidoResumenConductor')}
+          titulo={t('ia.resumirConductor')}
+        />
         {!yaSalio && (
           <Pressable
             accessibilityRole="button"
