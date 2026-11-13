@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const CLAVE_VOZ_IA = 'anden.iaVoz';
+export const CLAVE_VOZ_EN_LINEA = 'anden.iaVozEnLinea';
 
 /** el idioma con el que se escucha y se habla; Nicaragua usa el español latino */
 export const IDIOMA_VOZ = 'es-MX';
@@ -15,6 +16,12 @@ export interface OyentesDeVoz {
   alFallar: () => void;
 }
 
+export interface OpcionesDeHabla {
+  alEstado?: (hablando: boolean) => void;
+  /** usar la voz natural de internet; el texto de la respuesta sale del teléfono */
+  enLinea?: boolean;
+}
+
 /** hablar con la IA: escuchar lo que dice la persona y leerle la respuesta con la voz del sistema */
 export interface ServicioVoz {
   /** deja de leer la respuesta */
@@ -23,8 +30,11 @@ export interface ServicioVoz {
   detener(): Promise<void>;
   /** empieza a escuchar; pide los permisos la primera vez */
   escuchar(oyentes: OyentesDeVoz): Promise<ResultadoEscucha>;
-  /** lee el texto en voz alta con la mejor voz en español que tenga el teléfono */
-  hablar(texto: string): Promise<void>;
+  /**
+   * lee el texto en voz alta: con una voz natural en línea si se pide y hay internet, y si no con la
+   * mejor voz en español del teléfono; `alEstado` avisa cuándo empieza y cuándo termina de hablar
+   */
+  hablar(texto: string, opciones?: OpcionesDeHabla): Promise<void>;
 }
 
 export async function leerRespuestaHablada(): Promise<boolean> {
@@ -33,6 +43,18 @@ export async function leerRespuestaHablada(): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+export async function leerVozEnLinea(): Promise<boolean> {
+  try {
+    return (await AsyncStorage.getItem(CLAVE_VOZ_EN_LINEA)) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export async function guardarVozEnLinea(activa: boolean): Promise<void> {
+  await AsyncStorage.setItem(CLAVE_VOZ_EN_LINEA, activa ? '1' : '0');
 }
 
 export async function guardarRespuestaHablada(activa: boolean): Promise<void> {
@@ -61,6 +83,12 @@ export function elegirVoz(
 export function crearVozDelSistema(): ServicioVoz {
   return {
     async callar() {
+      try {
+        const { callarVozEnLinea } = await import('./vozEnLinea');
+        callarVozEnLinea();
+      } catch {
+        // sin voz en línea no hay nada que cortar
+      }
       try {
         const Speech = await import('expo-speech');
         await Speech.stop();
@@ -113,18 +141,37 @@ export function crearVozDelSistema(): ServicioVoz {
         return 'no-disponible';
       }
     },
-    async hablar(texto) {
+    async hablar(texto, opciones = {}) {
+      const { alEstado, enLinea = false } = opciones;
+      if (enLinea) {
+        try {
+          const { hablarEnLinea } = await import('./vozEnLinea');
+          const sono = await hablarEnLinea(
+            texto,
+            () => alEstado?.(true),
+            () => alEstado?.(false),
+          );
+          if (sono) return;
+        } catch {
+          // se cae a la voz del teléfono
+        }
+      }
       try {
         const Speech = await import('expo-speech');
         await Speech.stop();
         const voz = elegirVoz(await Speech.getAvailableVoicesAsync());
+        alEstado?.(true);
         Speech.speak(texto, {
           language: IDIOMA_VOZ,
+          onDone: () => alEstado?.(false),
+          onError: () => alEstado?.(false),
+          onStopped: () => alEstado?.(false),
           pitch: 1,
           rate: 0.5,
           voice: voz,
         });
       } catch {
+        alEstado?.(false);
         // sin voz del sistema la respuesta igual queda escrita
       }
     },
