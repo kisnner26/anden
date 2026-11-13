@@ -56,6 +56,31 @@ export const textos = {
     mapasNoAbrio: 'No pudimos abrir Apple Maps.',
     sinSalidasOrigen: 'Sin salidas de muestra desde esta terminal.',
   },
+  ia: {
+    seccion: 'Inteligencia del teléfono',
+    titulo: 'Asistente con {nombre}',
+    detalle:
+      'Preguntale a Andén por horarios, tarifas y tus boletos. Las respuestas se generan en tu teléfono: tus preguntas no salen de él.',
+    entrada: 'Preguntale a Andén',
+    entradaDetalle: 'Con {nombre}, en tu teléfono',
+    asistenteTitulo: 'Preguntale a Andén',
+    asistenteDetalle:
+      'Respondo con los horarios, tarifas y boletos que hay en la app.',
+    campo: 'Tu pregunta',
+    marcador: 'Por ejemplo: ¿cuál es el próximo bus a Boaco?',
+    preguntar: 'Preguntar',
+    pensando: 'Pensando…',
+    error: 'No pudimos responder. Probá de nuevo.',
+    nota: 'Respuesta generada por IA en tu teléfono. Confirmá el horario en Horarios antes de salir.',
+    sinUso: 'El asistente no está activado.',
+    activarEnAjustes: 'Activalo en Ajustes',
+    sugerencias: {
+      proximo: '¿Cuál es el próximo bus a Boaco?',
+      precio: '¿Cuánto cuesta ir a Juigalpa?',
+      boleto: '¿Cuándo sale mi boleto?',
+      asientos: '¿Hay asientos libres hoy?',
+    },
+  },
   conductorAjustes: {
     pestanaViajes: 'Viajes',
     pestanaAjustes: 'Ajustes',
