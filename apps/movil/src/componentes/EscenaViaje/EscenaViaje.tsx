@@ -307,13 +307,13 @@ const estilos = StyleSheet.create({
     position: 'absolute',
     top: 0,
   },
-  sol: { alignSelf: 'center', position: 'absolute', top: '16%' },
+  sol: { alignSelf: 'center', position: 'absolute', top: '7%' },
   textos: {
     alignItems: 'center',
     gap: espacios.ocho,
     left: espacios.veinticuatro,
     position: 'absolute',
     right: espacios.veinticuatro,
-    top: '28%',
+    top: '41%',
   },
 });
