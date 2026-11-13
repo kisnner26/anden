@@ -94,6 +94,8 @@ export const textos = {
     sinPermisoVoz: 'Sin permiso para usar el micrófono o el dictado. Activalo en los ajustes del teléfono.',
     vozNoDisponible: 'El dictado por voz no está disponible en este teléfono.',
     callar: 'Callar la voz',
+    vozNatural: 'Voz natural',
+    vozNaturalDetalle: 'Suena más humana, pero usa internet: el texto de la respuesta se envía a Google para convertirlo en voz. Apagada, se usa la voz del teléfono.',
     resumirViaje: 'Resumir este viaje con IA',
     pedidoResumenViaje: 'Resumí este viaje en dos frases: hora, andén, tarifa y una recomendación útil para quien va a viajar.',
     resumirBoleto: 'Qué debo saber de mi boleto, con IA',
@@ -234,6 +236,8 @@ export const textos = {
     eliminar: 'Eliminar',
   },
   plus: {
+    vehiculosTitulo: 'Vehículos exclusivos',
+    vehiculosDetalle: 'Elegí un avión, una nave espacial, un tractor y más. Los conductores y los demás lo ven junto a tu nombre.',
     marca: 'Plus',
     avisosHint: 'Con Plus elegís también 15 y 60 minutos antes.',
     habitualesLleno: 'Con Plus guardás más viajes habituales',
@@ -256,9 +260,14 @@ export const textos = {
     resumenViajesTitulo: 'Resumen de tus viajes',
     resumenViajesDetalle:
       'Kilómetros recorridos, lo que gastaste, tu destino favorito y tu mes con más viajes.',
-    busPropioTitulo: 'Tu propio bus',
+    busPropioTitulo: 'Tu propio vehículo',
     busPropioDetalle:
-      'Elegí el modelo de bus que aparece en tus boletos y en tu próximo viaje.',
+      'Elegí un avión, una nave espacial, un tractor u otro vehículo, o un bus de otro color. Se ve en tus boletos y los conductores lo ven junto a tu nombre.',
+    reservaAnticipadaTitulo: 'Reservá primero',
+    reservaAnticipadaDetalle:
+      'Reservá hasta 14 días antes. Sin Plus, solo los próximos 3 días.',
+    soloPlusAnticipado: 'Esa salida solo la pueden reservar quienes tienen Plus. Se abre para todos 3 días antes.',
+    sello: 'Plus',
     busquedasAmpliadasTitulo: 'Más búsquedas guardadas',
     busquedasAmpliadasDetalle:
       'Andén recuerda tus últimas 15 búsquedas en vez de 5.',
@@ -270,9 +279,9 @@ export const textos = {
       'Gracias por apoyar a Andén. Con vos el transporte entre Managua, Boaco y Juigalpa se hace más fácil.',
     bienvenidaLista: 'Esto ya está activo para vos',
     bienvenidaEmpezar: 'Empezar a usar Plus',
-    busTitulo: 'Elegí tu bus',
+    busTitulo: 'Elegí un bus de otro color',
     busAuto: 'Automático',
-    busBloqueado: 'Activá Plus para elegir tu bus.',
+    busBloqueado: 'Activá Plus para elegir tu vehículo.',
     estadoGratis: 'Estás en el plan gratis.',
     estadoPlus: 'Tenés Plus desde {{fecha}}.',
     activar: 'Activar Plus',
