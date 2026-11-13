@@ -116,6 +116,10 @@ export const textos = {
     vozNatural: 'Voz natural',
     vozNaturalDetalle:
       'Suena más humana, pero usa internet: el texto de la respuesta se envía a Google para convertirlo en voz. Apagada, se usa la voz del teléfono.',
+    turista: 'Soy turista',
+    turistaDetalle: 'Andén te recomienda qué visitar, qué comer y qué hacer en cada destino.',
+    verTurista: 'Qué visitar en {destino}, con IA',
+    pedidoTurista: 'Soy turista y voy a {destino}. Recomendame en cuatro frases qué visitar, qué comer y un dato curioso. Si no estás seguro de un lugar, decilo.',
     resumirConductor: 'Resumir este viaje con IA',
     pedidoResumenConductor: 'Resumí este viaje en dos frases y decime qué debería hacer ahora como conductor: pasajeros por subir, cobros pendientes y encomiendas.',
     analizarConductor: 'Explicame cómo me fue con IA',
