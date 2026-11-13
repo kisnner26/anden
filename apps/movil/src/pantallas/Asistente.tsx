@@ -5,6 +5,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Aparece } from '@/componentes/Aparece';
 import { Bloque } from '@/componentes/Bloque';
+import { BordeLuminoso } from '@/componentes/BordeLuminoso';
+import { EsqueletoIA } from '@/componentes/EsqueletoIA';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { CampoTexto } from '@/componentes/CampoTexto';
@@ -204,285 +206,302 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
   const motivo = usable ? null : motivoNoDisponible(disponibilidad, nombre);
 
   return (
-    <ScrollView
-      automaticallyAdjustKeyboardInsets
-      contentContainerStyle={[
-        estilos.contenido,
-        {
-          paddingBottom: espacios.cuarentaYOcho,
-          paddingTop: margenes.top + espacios.ocho,
-        },
-      ]}
-      keyboardDismissMode="interactive"
-      keyboardShouldPersistTaps="handled"
-      style={{ backgroundColor: colores.fondo }}
-    >
-      <CabeceraPantalla alVolver={alVolver} titulo={t('ia.asistenteTitulo')} />
+    <View style={[estilos.raiz, { backgroundColor: colores.fondo }]}>
+      <ScrollView
+        automaticallyAdjustKeyboardInsets
+        contentContainerStyle={[
+          estilos.contenido,
+          {
+            paddingBottom: espacios.cuarentaYOcho,
+            paddingTop: margenes.top + espacios.ocho,
+          },
+        ]}
+        keyboardDismissMode="interactive"
+        keyboardShouldPersistTaps="handled"
+        style={estilos.raiz}
+      >
+        <CabeceraPantalla
+          alVolver={alVolver}
+          titulo={t('ia.asistenteTitulo')}
+        />
 
-      <View style={estilos.hero}>
-        <OrbeIA pensando={pensando} tamano={84} />
-        <LinearGradient
-          colors={[...coloresIA]}
-          end={{ x: 1, y: 0 }}
-          start={{ x: 0, y: 0 }}
-          style={estilos.borde}
-        >
-          <View style={[estilos.insignia, { backgroundColor: colores.fondo }]}>
-            <Text style={[tipografia.etiqueta, { color: colores.tinta }]}>
-              {rellenar(t('ia.potenciadoPor'), { nombre })}
+        <View style={estilos.hero}>
+          <OrbeIA pensando={pensando} tamano={84} />
+          <LinearGradient
+            colors={[...coloresIA]}
+            end={{ x: 1, y: 0 }}
+            start={{ x: 0, y: 0 }}
+            style={estilos.borde}
+          >
+            <View
+              style={[estilos.insignia, { backgroundColor: colores.fondo }]}
+            >
+              <Text style={[tipografia.etiqueta, { color: colores.tinta }]}>
+                {rellenar(t('ia.potenciadoPor'), { nombre })}
+              </Text>
+            </View>
+          </LinearGradient>
+          <Text
+            style={[
+              tipografia.cuerpo,
+              estilos.centrado,
+              { color: colores.tintaSuave },
+            ]}
+          >
+            {t('ia.asistenteDetalle')}
+          </Text>
+        </View>
+
+        {!usable ? (
+          <Bloque estiloContenido={estilos.aviso}>
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+              {t('ia.sinUso')}
             </Text>
-          </View>
-        </LinearGradient>
-        <Text
-          style={[
-            tipografia.cuerpo,
-            estilos.centrado,
-            { color: colores.tintaSuave },
-          ]}
-        >
-          {t('ia.asistenteDetalle')}
-        </Text>
-      </View>
+            <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
+              {motivo ?? t('ia.activarEnAjustes')}
+            </Text>
+          </Bloque>
+        ) : (
+          <>
+            {proximoBoleto && (
+              <Aparece indice={0}>
+                <Bloque estiloContenido={estilos.tarjeta}>
+                  <Text
+                    style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
+                  >
+                    {t('ia.proximoBoleto')}
+                  </Text>
+                  <Text
+                    style={[tipografia.subtitulo, { color: colores.tinta }]}
+                  >
+                    {rellenar(t('ia.proximoBoletoFila'), {
+                      anden: proximoBoleto.resumen.anden,
+                      asiento: proximoBoleto.boleto.asiento,
+                      destino: proximoBoleto.resumen.destino,
+                    })}
+                  </Text>
+                  <Text
+                    style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                  >
+                    {rellenar(t('ia.saleEn'), {
+                      hora: formatoHoraCompleta(
+                        new Date(proximoBoleto.resumen.salida),
+                      ),
+                    })}
+                  </Text>
+                </Bloque>
+              </Aparece>
+            )}
 
-      {!usable ? (
-        <Bloque estiloContenido={estilos.aviso}>
-          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-            {t('ia.sinUso')}
-          </Text>
-          <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
-            {motivo ?? t('ia.activarEnAjustes')}
-          </Text>
-        </Bloque>
-      ) : (
-        <>
-          {proximoBoleto && (
-            <Aparece indice={0}>
+            <Aparece indice={1}>
               <Bloque estiloContenido={estilos.tarjeta}>
                 <Text
                   style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
                 >
-                  {t('ia.proximoBoleto')}
+                  {t('ia.masBarata')}
                 </Text>
-                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                  {rellenar(t('ia.proximoBoletoFila'), {
-                    anden: proximoBoleto.resumen.anden,
-                    asiento: proximoBoleto.boleto.asiento,
-                    destino: proximoBoleto.resumen.destino,
-                  })}
-                </Text>
-                <Text
-                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
-                >
-                  {rellenar(t('ia.saleEn'), {
-                    hora: formatoHoraCompleta(
-                      new Date(proximoBoleto.resumen.salida),
-                    ),
-                  })}
-                </Text>
+                {masBarata ? (
+                  <Pressable
+                    accessibilityRole="button"
+                    onPress={() => alAbrirViaje?.(masBarata.viajeId)}
+                  >
+                    <Text
+                      style={[tipografia.subtitulo, { color: colores.tinta }]}
+                    >
+                      {rellenar(t('ia.masBarataDetalle'), {
+                        destino: masBarata.destino,
+                        hora: formatoHoraCompleta(masBarata.salida),
+                        tarifa: masBarata.tarifa ?? 0,
+                      })}
+                    </Text>
+                  </Pressable>
+                ) : (
+                  <Text
+                    style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                  >
+                    {t('ia.sinMasBarata')}
+                  </Text>
+                )}
               </Bloque>
             </Aparece>
-          )}
 
-          <Aparece indice={1}>
-            <Bloque estiloContenido={estilos.tarjeta}>
+            <View style={estilos.sugerencias}>
+              {sugerencias.map((pregunta) => (
+                <Chip
+                  alCambiar={() => void enviar(pregunta)}
+                  deshabilitado={pensando}
+                  etiqueta={pregunta}
+                  key={pregunta}
+                />
+              ))}
+            </View>
+            <CampoTexto
+              alCambiar={establecerTexto}
+              etiqueta={t('ia.campo')}
+              marcador={t('ia.marcador')}
+              valor={texto}
+            />
+            <Pressable
+              accessibilityLabel={
+                escuchando ? t('ia.dejarDeEscuchar') : t('ia.hablar')
+              }
+              accessibilityRole="button"
+              accessibilityState={{ selected: escuchando }}
+              onPress={() => void alternarEscucha()}
+              style={estilos.hablar}
+            >
+              <Bloque estiloContenido={estilos.hablarContenido} radio="pildora">
+                <OrbeIA pensando={escuchando} tamano={22} />
+                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                  {escuchando ? t('ia.escuchando') : t('ia.hablar')}
+                </Text>
+              </Bloque>
+            </Pressable>
+            {avisoVoz && (
               <Text
-                style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
+                accessibilityLiveRegion="polite"
+                style={[tipografia.pequeno, { color: colores.cancelado }]}
               >
-                {t('ia.masBarata')}
+                {avisoVoz === 'sin-permiso'
+                  ? t('ia.sinPermisoVoz')
+                  : t('ia.vozNoDisponible')}
               </Text>
-              {masBarata ? (
-                <Pressable
-                  accessibilityRole="button"
-                  onPress={() => alAbrirViaje?.(masBarata.viajeId)}
-                >
-                  <Text
-                    style={[tipografia.subtitulo, { color: colores.tinta }]}
-                  >
-                    {rellenar(t('ia.masBarataDetalle'), {
-                      destino: masBarata.destino,
-                      hora: formatoHoraCompleta(masBarata.salida),
-                      tarifa: masBarata.tarifa ?? 0,
-                    })}
-                  </Text>
-                </Pressable>
-              ) : (
+            )}
+            <Bloque estiloContenido={estilos.filaVoz}>
+              <View style={estilos.textoVoz}>
+                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                  {t('ia.respuestaEnVoz')}
+                </Text>
                 <Text
                   style={[tipografia.pequeno, { color: colores.tintaSuave }]}
                 >
-                  {t('ia.sinMasBarata')}
+                  {t('ia.respuestaEnVozDetalle')}
                 </Text>
-              )}
-            </Bloque>
-          </Aparece>
-
-          <View style={estilos.sugerencias}>
-            {sugerencias.map((pregunta) => (
-              <Chip
-                alCambiar={() => void enviar(pregunta)}
-                deshabilitado={pensando}
-                etiqueta={pregunta}
-                key={pregunta}
+              </View>
+              <Interruptor
+                activo={respuestaEnVoz}
+                alCambiar={(activa) => void cambiarRespuestaEnVoz(activa)}
+                etiqueta={t('ia.respuestaEnVoz')}
               />
-            ))}
-          </View>
-          <CampoTexto
-            alCambiar={establecerTexto}
-            etiqueta={t('ia.campo')}
-            marcador={t('ia.marcador')}
-            valor={texto}
-          />
-          <Pressable
-            accessibilityLabel={
-              escuchando ? t('ia.dejarDeEscuchar') : t('ia.hablar')
-            }
-            accessibilityRole="button"
-            accessibilityState={{ selected: escuchando }}
-            onPress={() => void alternarEscucha()}
-            style={estilos.hablar}
-          >
-            <Bloque estiloContenido={estilos.hablarContenido} radio="pildora">
-              <OrbeIA pensando={escuchando} tamano={22} />
-              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                {escuchando ? t('ia.escuchando') : t('ia.hablar')}
-              </Text>
             </Bloque>
-          </Pressable>
-          {avisoVoz && (
-            <Text
-              accessibilityLiveRegion="polite"
-              style={[tipografia.pequeno, { color: colores.cancelado }]}
-            >
-              {avisoVoz === 'sin-permiso'
-                ? t('ia.sinPermisoVoz')
-                : t('ia.vozNoDisponible')}
-            </Text>
-          )}
-          <Bloque estiloContenido={estilos.filaVoz}>
-            <View style={estilos.textoVoz}>
-              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                {t('ia.respuestaEnVoz')}
-              </Text>
-              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-                {t('ia.respuestaEnVozDetalle')}
-              </Text>
-            </View>
-            <Interruptor
-              activo={respuestaEnVoz}
-              alCambiar={(activa) => void cambiarRespuestaEnVoz(activa)}
-              etiqueta={t('ia.respuestaEnVoz')}
+            <BotonAccion
+              alPresionar={() => void enviar(texto)}
+              cargando={pensando}
+              deshabilitado={texto.trim() === ''}
+              etiqueta={pensando ? t('ia.pensando') : t('ia.preguntar')}
             />
-          </Bloque>
-          <BotonAccion
-            alPresionar={() => void enviar(texto)}
-            cargando={pensando}
-            deshabilitado={texto.trim() === ''}
-            etiqueta={pensando ? t('ia.pensando') : t('ia.preguntar')}
-          />
-          {fallo && (
-            <Text
-              accessibilityLiveRegion="polite"
-              style={[tipografia.cuerpo, { color: colores.cancelado }]}
-            >
-              {t('ia.error')}
-            </Text>
-          )}
-
-          {pensando && (
-            <Bloque estiloContenido={estilos.pensando}>
-              <PuntosPensando />
+            {fallo && (
               <Text
                 accessibilityLiveRegion="polite"
-                style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                style={[tipografia.cuerpo, { color: colores.cancelado }]}
               >
-                {rellenar(t('ia.pensandoCon'), { nombre })}
+                {t('ia.error')}
               </Text>
-            </Bloque>
-          )}
+            )}
 
-          {historial.map((intercambio, indice) => {
-            const relacionadas = salidasRelacionadas(
-              `${intercambio.pregunta} ${intercambio.respuesta}`,
-              salidas,
-              ahora,
-            );
-            return (
-              <View key={intercambio.id} style={estilos.intercambio}>
-                <View
-                  style={[
-                    estilos.burbujaPregunta,
-                    { backgroundColor: colores.barroClaro },
-                  ]}
-                >
-                  <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
-                    {intercambio.pregunta}
+            {pensando && (
+              <Bloque estiloContenido={estilos.pensandoColumna}>
+                <View style={estilos.pensando}>
+                  <PuntosPensando />
+                  <Text
+                    accessibilityLiveRegion="polite"
+                    style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                  >
+                    {rellenar(t('ia.pensandoCon'), { nombre })}
                   </Text>
                 </View>
-                <Bloque estiloContenido={estilos.respuesta}>
-                  <View style={estilos.firma}>
-                    <LinearGradient
-                      colors={[...coloresIA]}
-                      end={{ x: 1, y: 1 }}
-                      start={{ x: 0, y: 0 }}
-                      style={estilos.chispa}
-                    />
-                    <Text
-                      style={[
-                        tipografia.etiqueta,
-                        { color: colores.ambarTexto },
-                      ]}
-                    >
-                      {rellenar(t('ia.respuestaDe'), { nombre })}
+                <EsqueletoIA />
+              </Bloque>
+            )}
+
+            {historial.map((intercambio, indice) => {
+              const relacionadas = salidasRelacionadas(
+                `${intercambio.pregunta} ${intercambio.respuesta}`,
+                salidas,
+                ahora,
+              );
+              return (
+                <View key={intercambio.id} style={estilos.intercambio}>
+                  <View
+                    style={[
+                      estilos.burbujaPregunta,
+                      { backgroundColor: colores.barroClaro },
+                    ]}
+                  >
+                    <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
+                      {intercambio.pregunta}
                     </Text>
                   </View>
-                  <TextoEscribiendo
-                    animado={indice === 0}
-                    estilo={[tipografia.cuerpo, { color: colores.tinta }]}
-                    texto={intercambio.respuesta}
-                  />
-                  {relacionadas.length > 0 && (
-                    <View style={estilos.relacionadas}>
+                  <Bloque estiloContenido={estilos.respuesta}>
+                    <View style={estilos.firma}>
+                      <LinearGradient
+                        colors={[...coloresIA]}
+                        end={{ x: 1, y: 1 }}
+                        start={{ x: 0, y: 0 }}
+                        style={estilos.chispa}
+                      />
                       <Text
                         style={[
                           tipografia.etiqueta,
-                          { color: colores.tintaSuave },
+                          { color: colores.ambarTexto },
                         ]}
                       >
-                        {t('ia.relacionadas')}
+                        {rellenar(t('ia.respuestaDe'), { nombre })}
                       </Text>
-                      {relacionadas.map((salida) => (
-                        <FilaSalida
-                          alPresionar={alAbrirViaje}
-                          key={salida.viajeId}
-                          salida={salida}
-                        />
-                      ))}
                     </View>
-                  )}
-                </Bloque>
-              </View>
-            );
-          })}
-          {historial.length > 0 && (
-            <>
-              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-                {rellenar(t('ia.nota'), { nombre })}
-              </Text>
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => establecerHistorial([])}
-                style={estilos.limpiar}
-              >
+                    <TextoEscribiendo
+                      animado={indice === 0}
+                      estilo={[tipografia.cuerpo, { color: colores.tinta }]}
+                      texto={intercambio.respuesta}
+                    />
+                    {relacionadas.length > 0 && (
+                      <View style={estilos.relacionadas}>
+                        <Text
+                          style={[
+                            tipografia.etiqueta,
+                            { color: colores.tintaSuave },
+                          ]}
+                        >
+                          {t('ia.relacionadas')}
+                        </Text>
+                        {relacionadas.map((salida) => (
+                          <FilaSalida
+                            alPresionar={alAbrirViaje}
+                            key={salida.viajeId}
+                            salida={salida}
+                          />
+                        ))}
+                      </View>
+                    )}
+                  </Bloque>
+                </View>
+              );
+            })}
+            {historial.length > 0 && (
+              <>
                 <Text
-                  style={[tipografia.subtitulo, { color: colores.cancelado }]}
+                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
                 >
-                  {t('ia.limpiar')}
+                  {rellenar(t('ia.nota'), { nombre })}
                 </Text>
-              </Pressable>
-            </>
-          )}
-        </>
-      )}
-    </ScrollView>
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => establecerHistorial([])}
+                  style={estilos.limpiar}
+                >
+                  <Text
+                    style={[tipografia.subtitulo, { color: colores.cancelado }]}
+                  >
+                    {t('ia.limpiar')}
+                  </Text>
+                </Pressable>
+              </>
+            )}
+          </>
+        )}
+      </ScrollView>
+      <BordeLuminoso activo={pensando || escuchando} />
+    </View>
   );
 }
 
@@ -525,8 +544,9 @@ const estilos = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     gap: espacios.doce,
-    padding: espacios.dieciseis,
   },
+  pensandoColumna: { gap: espacios.doce, padding: espacios.dieciseis },
+  raiz: { flex: 1 },
   relacionadas: { gap: espacios.ocho },
   respuesta: { gap: espacios.ocho, padding: espacios.dieciseis },
   sugerencias: { flexDirection: 'row', flexWrap: 'wrap', gap: espacios.ocho },
