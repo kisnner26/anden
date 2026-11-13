@@ -124,6 +124,8 @@ export function MapaCorredor({
               testID="orientacion-bus"
             >
               <Autobus
+                animado
+                usarMiUnidad
                 ancho={ANCHO_BUS_MAPA}
                 espejo={orientacion?.haciaElOeste}
                 letrero={ANCHO_BUS_LETRERO}
