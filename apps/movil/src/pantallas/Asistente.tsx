@@ -31,7 +31,12 @@ import { useMemoriaIA } from '@/datos/useMemoriaIA';
 import { useSalidas } from '@/datos/useSalidas';
 import { useVoz } from '@/datos/useVoz';
 import { motivoNoDisponible } from '@/servicios/ia';
-import { guardarRespuestaHablada, leerRespuestaHablada } from '@/servicios/voz';
+import {
+  guardarRespuestaHablada,
+  guardarVozEnLinea,
+  leerRespuestaHablada,
+  leerVozEnLinea,
+} from '@/servicios/voz';
 import { coloresIA } from '@/tema/colores';
 import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -69,6 +74,9 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
   const [semilla] = useState(() => Math.floor(Date.now() / 1000));
   const [respuestaEnVoz, establecerRespuestaEnVoz] = useState(false);
   const [escuchando, establecerEscuchando] = useState(false);
+  const [hablando, establecerHablando] = useState(false);
+  const [vozEnLinea, establecerVozEnLinea] = useState(false);
+  const usarVozEnLinea = useRef(false);
   const [avisoVoz, establecerAvisoVoz] = useState<
     'sin-permiso' | 'no-disponible' | null
   >(null);
@@ -84,6 +92,11 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
       if (!vigente) return;
       establecerRespuestaEnVoz(activa);
       hablarRespuesta.current = activa;
+    });
+    void leerVozEnLinea().then((activa) => {
+      if (!vigente) return;
+      establecerVozEnLinea(activa);
+      usarVozEnLinea.current = activa;
     });
     return () => {
       vigente = false;
@@ -161,7 +174,12 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
       ]);
       establecerSiguienteId((id) => id + 1);
       establecerTexto('');
-      if (hablarRespuesta.current) void voz.hablar(respuesta.trim());
+      if (hablarRespuesta.current) {
+        void voz.hablar(respuesta.trim(), {
+          alEstado: establecerHablando,
+          enLinea: usarVozEnLinea.current,
+        });
+      }
     } catch {
       establecerFallo(true);
     } finally {
@@ -199,8 +217,17 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
   async function cambiarRespuestaEnVoz(activa: boolean) {
     establecerRespuestaEnVoz(activa);
     hablarRespuesta.current = activa;
-    if (!activa) await voz.callar();
+    if (!activa) {
+      await voz.callar();
+      establecerHablando(false);
+    }
     await guardarRespuestaHablada(activa);
+  }
+
+  async function cambiarVozEnLinea(activa: boolean) {
+    establecerVozEnLinea(activa);
+    usarVozEnLinea.current = activa;
+    await guardarVozEnLinea(activa);
   }
 
   const motivo = usable ? null : motivoNoDisponible(disponibilidad, nombre);
@@ -384,6 +411,27 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
                 etiqueta={t('ia.respuestaEnVoz')}
               />
             </Bloque>
+            {respuestaEnVoz && (
+              <Bloque estiloContenido={estilos.filaVoz}>
+                <View style={estilos.textoVoz}>
+                  <Text
+                    style={[tipografia.subtitulo, { color: colores.tinta }]}
+                  >
+                    {t('ia.vozNatural')}
+                  </Text>
+                  <Text
+                    style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                  >
+                    {t('ia.vozNaturalDetalle')}
+                  </Text>
+                </View>
+                <Interruptor
+                  activo={vozEnLinea}
+                  alCambiar={(activa) => void cambiarVozEnLinea(activa)}
+                  etiqueta={t('ia.vozNatural')}
+                />
+              </Bloque>
+            )}
             <BotonAccion
               alPresionar={() => void enviar(texto)}
               cargando={pensando}
@@ -500,7 +548,15 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
           </>
         )}
       </ScrollView>
-      <BordeLuminoso activo={pensando || escuchando} />
+      <BordeLuminoso
+        modo={
+          hablando
+            ? 'hablando'
+            : pensando || escuchando
+              ? 'pensando'
+              : 'apagado'
+        }
+      />
     </View>
   );
 }
