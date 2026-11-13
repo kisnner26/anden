@@ -11,7 +11,6 @@ import {
 } from '@expo-google-fonts/jetbrains-mono';
 import { useFonts } from 'expo-font';
 import '@/datos/configurarServicios';
-import { OrbeFlotante } from '@/componentes/OrbeFlotante';
 import { ProveedorIA } from '@/datos/ProveedorIA';
 import { ProveedorMemoriaIA } from '@/datos/ProveedorMemoriaIA';
 import { ProveedorAjustesConductor } from '@/datos/ProveedorAjustesConductor';
@@ -117,7 +116,6 @@ export default function DisenoRaiz() {
                                                     }}
                                                   />
                                                 </Stack>
-                                                <OrbeFlotante />
                                               </ProveedorCierres>
                                             </ProveedorAbordaje>
                                           </ProveedorPagos>
