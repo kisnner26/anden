@@ -1,1 +1,0 @@
-export { BordeLuminoso } from './BordeLuminoso';
