@@ -75,7 +75,14 @@
           "microphonePermission": false
         }
       ],
-      "@bacons/apple-targets"
+      "@bacons/apple-targets",
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Andén usa el micrófono solo mientras le hablás al asistente.",
+          "speechRecognitionPermission": "Andén usa el dictado del teléfono para entender lo que le preguntás al asistente."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
