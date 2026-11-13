@@ -15,7 +15,16 @@ import { ProveedorFavoritos } from '@/datos/ProveedorFavoritos';
 import { reiniciarMuestra } from '@/datos/useSalidas';
 import { renderPantalla } from '@/pruebas/render';
 
+import { ProveedorSuscripcion } from '@/datos/ProveedorSuscripcion';
+import type { ServicioSuscripcion } from '@/servicios/suscripcion';
+
 import { Horarios } from './Horarios';
+
+const SERVICIO_PLUS: ServicioSuscripcion = {
+  activar: async () => ({ desde: '2026-11-01T00:00:00Z', plan: 'plus' }),
+  cancelar: async () => ({ desde: null, plan: 'gratis' }),
+  leer: async () => ({ desde: '2026-11-01T00:00:00Z', plan: 'plus' }),
+};
 
 afterEach(() => reiniciarMuestra());
 
@@ -97,10 +106,13 @@ describe('Horarios', () => {
 
   it('pide un aviso para una salida desde la campana y lo quita después', async () => {
     const pantalla = await renderPantalla(
-      <ProveedorRecordatorios>
-        <Horarios />
-      </ProveedorRecordatorios>,
+      <ProveedorSuscripcion servicio={SERVICIO_PLUS}>
+        <ProveedorRecordatorios>
+          <Horarios />
+        </ProveedorRecordatorios>
+      </ProveedorSuscripcion>,
     );
+    await pantalla.findAllByRole('button', { name: /^Recordarme la salida a/ });
     const campanas = pantalla.getAllByRole('button', {
       name: /^Recordarme la salida a/,
     });
@@ -186,5 +198,24 @@ describe('Horarios', () => {
     expect(
       pantalla.getAllByLabelText(/, (Salió|Abordando|A tiempo|\+\d+ min)$/),
     ).toHaveLength(8);
+  });
+
+  it('sin Plus solo deja pedir el aviso de 30 minutos', async () => {
+    const pantalla = await renderPantalla(
+      <ProveedorRecordatorios>
+        <Horarios />
+      </ProveedorRecordatorios>,
+    );
+    const campanas = pantalla.getAllByRole('button', {
+      name: /^Recordarme la salida a/,
+    });
+    await fireEvent.press(campanas[0] as never);
+    expect(
+      pantalla.getByText('Con Plus elegís también 15 y 60 minutos antes.'),
+    ).toBeTruthy();
+    expect(
+      pantalla.getByRole('button', { name: '15 min antes · Plus' }).props
+        .accessibilityState,
+    ).toMatchObject({ disabled: true });
   });
 });

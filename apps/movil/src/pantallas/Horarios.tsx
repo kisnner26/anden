@@ -20,6 +20,7 @@ import { formatoHoraCompleta } from '@/datos/formato';
 import type { MinutosAntes } from '@/datos/recordatorios';
 import type { Salida } from '@/datos/salidas';
 import { useSonidos } from '@/datos/useSonidos';
+import { useSuscripcion } from '@/datos/useSuscripcion';
 import { useFavoritos } from '@/datos/useFavoritos';
 import {
   useRecordatorios,
@@ -63,6 +64,7 @@ export function Horarios({
   const [soloFavoritas, establecerSoloFavoritas] = useState(false);
   const recordatorios = useRecordatorios();
   const sonar = useSonidos();
+  const { plus } = useSuscripcion();
   const [filtrando, establecerFiltrando] = useState(false);
   const [eligiendo, establecerEligiendo] = useState<Salida | null>(null);
   const [errorRecordatorio, establecerErrorRecordatorio] = useState<Exclude<
@@ -344,6 +346,7 @@ export function Horarios({
         alElegir={(minutos) => void elegirMinutos(minutos)}
         alQuitar={() => void quitarRecordatorio()}
         error={errorRecordatorio}
+        plus={plus}
         salida={eligiendo}
       />
     </MarcoPestana>

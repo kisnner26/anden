@@ -57,6 +57,9 @@ export const textos = {
     sinSalidasOrigen: 'Sin salidas de muestra desde esta terminal.',
   },
   plus: {
+    marca: 'Plus',
+    avisosHint: 'Con Plus elegís también 15 y 60 minutos antes.',
+    habitualesLleno: 'Con Plus guardás más viajes habituales',
     entrada: 'Andén Plus',
     entradaActivo: 'Plus activo',
     entradaDetalle: 'US$ 5 al mes',

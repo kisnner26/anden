@@ -21,6 +21,8 @@ import { useAvisos } from '@/datos/useAvisos';
 import { usePagos } from '@/datos/usePagos';
 import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
 import { useSonidos } from '@/datos/useSonidos';
+import { useSuscripcion } from '@/datos/useSuscripcion';
+import { puedeGuardarHabitual } from '@/servicios/beneficios';
 import {
   guardarContacto,
   leerContacto,
@@ -79,6 +81,7 @@ export function VerBoleto({
   const [pidiendoContacto, establecerPidiendoContacto] = useState(false);
 
   const sonar = useSonidos();
+  const { plus } = useSuscripcion();
 
   useEffect(() => {
     void leerObjetos().then(establecerObjetos);
@@ -131,6 +134,7 @@ export function VerBoleto({
             horaTexto(salidaGuardada),
           ) && habitual.dias.includes(salidaGuardada.getDay()),
     );
+  const cabeHabitual = puedeGuardarHabitual(plus, habituales.length);
   const etiquetaEstado = {
     cancelado: t('boleto.cancelado'),
     usado: t('boleto.usado'),
@@ -248,8 +252,8 @@ export function VerBoleto({
       {ciudadOrigen && guardado.boleto.estado !== 'cancelado' && (
         <Pressable
           accessibilityRole="button"
-          accessibilityState={{ disabled: yaEsHabitual }}
-          disabled={yaEsHabitual}
+          accessibilityState={{ disabled: yaEsHabitual || !cabeHabitual }}
+          disabled={yaEsHabitual || !cabeHabitual}
           onPress={() =>
             void agregarHabitual(
               habitualDeSalida(
@@ -262,7 +266,11 @@ export function VerBoleto({
         >
           <Bloque estiloContenido={estilos.boton} radio="pildora">
             <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-              {yaEsHabitual ? t('habitual.guardado') : t('habitual.guardar')}
+              {yaEsHabitual
+                ? t('habitual.guardado')
+                : cabeHabitual
+                  ? t('habitual.guardar')
+                  : t('plus.habitualesLleno')}
             </Text>
           </Bloque>
         </Pressable>

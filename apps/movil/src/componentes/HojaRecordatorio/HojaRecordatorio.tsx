@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import { BotonAccion } from '@/componentes/BotonAccion';
+import { avisoDisponible } from '@/servicios/beneficios';
 import { abrirAjustesDelSistema } from '@/datos/notificaciones';
 import { Chip } from '@/componentes/Chip';
 import { Hoja } from '@/componentes/Hoja';
@@ -26,6 +27,8 @@ export interface PropiedadesHojaRecordatorio {
   /** lo que salió mal la última vez, si algo salió mal */
   error?: 'fallo' | 'permiso-negado' | 'ya-paso' | null;
   salida: Salida | null;
+  /** con Plus se pueden elegir los tres avisos; sin Plus solo el de 30 minutos */
+  plus?: boolean;
 }
 
 /** hoja para elegir cuánto antes de la salida suena el aviso, o quitarlo */
@@ -36,6 +39,7 @@ export function HojaRecordatorio({
   alElegir,
   alQuitar,
   error = null,
+  plus = true,
   salida,
 }: PropiedadesHojaRecordatorio) {
   const { colores } = useTema();
@@ -62,6 +66,7 @@ export function HojaRecordatorio({
               <Chip
                 alCambiar={() => alElegir(minutos)}
                 deshabilitado={
+                  !avisoDisponible(plus, minutos) ||
                   !opcionDisponible(
                     salida.salida,
                     salida.minutosAtraso,
@@ -69,14 +74,19 @@ export function HojaRecordatorio({
                     ahora,
                   )
                 }
-                etiqueta={rellenar(t('recordatorios.minutosAntes'), {
+                etiqueta={`${rellenar(t('recordatorios.minutosAntes'), {
                   minutos,
-                })}
+                })}${avisoDisponible(plus, minutos) ? '' : ` · ${t('plus.marca')}`}`}
                 key={minutos}
                 seleccionado={actual?.minutosAntes === minutos}
               />
             ))}
           </View>
+          {!plus && (
+            <Text style={[tipografia.pequeno, { color: colores.ambarTexto }]}>
+              {t('plus.avisosHint')}
+            </Text>
+          )}
           {error !== null && (
             <Text
               accessibilityLiveRegion="polite"
