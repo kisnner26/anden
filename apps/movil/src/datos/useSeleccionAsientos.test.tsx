@@ -75,6 +75,6 @@ describe('useSeleccionAsientos', () => {
     );
     await act(async () => result.current.alternar(8));
     await act(async () => result.current.alternar(9));
-    expect(result.current.total).toEqual({ total: 140, unitario: 70 });
+    expect(result.current.total).toEqual({ total: 132, unitario: 66 });
   });
 });

@@ -47,9 +47,9 @@ describe('Asientos', () => {
       />,
     );
     await fireEvent.press(pantalla.getByLabelText('Asiento 8, pasillo, libre'));
-    expect(pantalla.getByText('C$ 70')).toBeTruthy();
+    expect(pantalla.getByText('C$ 66')).toBeTruthy();
     await fireEvent.press(pantalla.getByLabelText('Asiento 9, ventana, libre'));
-    expect(pantalla.getByText('C$ 140')).toBeTruthy();
+    expect(pantalla.getByText('C$ 132')).toBeTruthy();
   });
 
   it('lleva a los pasajeros con los asientos elegidos en orden', async () => {
@@ -123,7 +123,7 @@ describe('Asientos', () => {
     ).toBeTruthy();
     // un viaje de mañana tiene todos los asientos libres
     await fireEvent.press(pantalla.getByLabelText(/^Asiento 2, .*libre$/));
-    expect(pantalla.getByText('C$ 70')).toBeTruthy();
+    expect(pantalla.getByText('C$ 66')).toBeTruthy();
     expect(
       pantalla.getByRole('button', { name: 'Seguir' }).props.accessibilityState,
     ).toMatchObject({ disabled: false });

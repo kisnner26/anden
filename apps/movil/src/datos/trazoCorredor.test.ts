@@ -13,8 +13,8 @@ describe('trazoEntre', () => {
     ).toBeLessThan(2);
     expect(
       distanciaKm(puntos[puntos.length - 1]!, {
-        lat: 12.46901,
-        lng: -85.65587,
+        lat: 12.46781,
+        lng: -85.65786,
       }),
     ).toBeLessThan(2);
   });

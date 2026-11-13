@@ -64,7 +64,7 @@ describe('crearMuestra', () => {
         nombre: 'Mercado Mayoreo',
       }),
       expect.objectContaining({
-        coordenadas: { lat: 12.46901, lng: -85.65587 },
+        coordenadas: { lat: 12.46781, lng: -85.65786 },
         id: 'ter_boa',
         nombre: 'Terminal de Buses de Boaco',
       }),

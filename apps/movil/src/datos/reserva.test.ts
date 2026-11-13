@@ -36,7 +36,7 @@ describe('crearReserva', () => {
     expect(resultado.valor).toHaveLength(2);
     for (const { boleto } of resultado.valor) {
       expect(boleto.estado).toBe('vigente');
-      expect(boleto.precio).toBe(70);
+      expect(boleto.precio).toBe(66);
     }
   });
 
@@ -141,8 +141,8 @@ describe('totalReserva', () => {
   it('multiplica la tarifa oficial por la cantidad de asientos', () => {
     const datos = crearMuestra(AHORA);
     expect(totalReserva(datos, VIAJE_BOACO, 3)).toEqual({
-      total: 210,
-      unitario: 70,
+      total: 198,
+      unitario: 66,
     });
   });
 

@@ -22,7 +22,7 @@ describe('useMapaAsientos', () => {
 
   it('trae la tarifa de muestra del viaje', async () => {
     const { result } = await renderHook(() => useMapaAsientos(VIAJE_BOACO));
-    expect(result.current?.tarifa).toBe(70);
+    expect(result.current?.tarifa).toBe(66);
   });
 
   it('devuelve nulo si el viaje no existe', async () => {

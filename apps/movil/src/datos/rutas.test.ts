@@ -25,7 +25,7 @@ describe('armarRutas', () => {
 
   it('lista los servicios que la recorren con su tarifa de muestra', () => {
     expect(de('Boaco')?.servicios).toEqual([
-      { servicio: 'ordinario', tarifa: 70 },
+      { servicio: 'ordinario', tarifa: 66 },
       { servicio: 'expreso', tarifa: 85 },
     ]);
   });

@@ -51,7 +51,7 @@ describe('DetalleViaje', () => {
       pantalla.getByLabelText('Mapa del recorrido de esta salida'),
     ).toBeTruthy();
     expect(
-      pantalla.getByText(/^82\.9 km de carretera · Trazo de la carretera/),
+      pantalla.getByText(/^82\.6 km de carretera · Trazo de la carretera/),
     ).toBeTruthy();
   });
 
@@ -99,7 +99,7 @@ describe('DetalleViaje', () => {
 
   it('muestra la tarifa de muestra', async () => {
     const pantalla = await dibujar();
-    expect(pantalla.getByText('C$ 70')).toBeTruthy();
+    expect(pantalla.getByText('C$ 66')).toBeTruthy();
     expect(pantalla.getByText('Tarifa de muestra')).toBeTruthy();
   });
 

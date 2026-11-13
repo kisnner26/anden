@@ -72,7 +72,7 @@ describe('DetalleRuta', () => {
     expect(pantalla.getByText(/Posición simulada/)).toBeTruthy();
     expect(pantalla.getByLabelText('Origen: Boaco')).toBeTruthy();
     expect(pantalla.getByLabelText('Destino: Managua')).toBeTruthy();
-    expect(pantalla.getByText('82.9 km de carretera')).toBeTruthy();
+    expect(pantalla.getByText('82.6 km de carretera')).toBeTruthy();
     expect(
       pantalla.getByText('Trazo de la carretera: OpenStreetMap'),
     ).toBeTruthy();

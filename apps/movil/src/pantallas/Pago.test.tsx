@@ -79,8 +79,8 @@ describe('Pago', () => {
 
   it('muestra el total de la tarifa de muestra a pagar al abordar', async () => {
     const pantalla = await dibujar(DOS);
-    expect(await pantalla.findByText('C$ 140')).toBeTruthy();
-    expect(pantalla.getByText(/tarifa de muestra · C\$ 70/)).toBeTruthy();
+    expect(await pantalla.findByText('C$ 132')).toBeTruthy();
+    expect(pantalla.getByText(/tarifa de muestra · C\$ 66/)).toBeTruthy();
   });
 
   it('muestra solo el pago en efectivo al abordar', async () => {

@@ -1,5 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { afterEach, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from '@jest/globals';
 import { fireEvent } from '@testing-library/react-native';
 
 jest.mock('@/datos/ubicacion', () => ({
@@ -23,7 +30,16 @@ import { renderPantalla } from '@/pruebas/render';
 
 import { Viajar } from './Viajar';
 
+// las salidas de muestra dependen de la hora; se fija media tarde para que no cruzen la medianoche
+beforeEach(() => {
+  jest.useFakeTimers({
+    advanceTimers: true,
+    now: new Date(2026, 10, 12, 14, 0),
+  });
+});
+
 afterEach(() => {
+  jest.useRealTimers();
   jest.restoreAllMocks();
   reiniciarMuestra();
 });

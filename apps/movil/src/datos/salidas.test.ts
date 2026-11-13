@@ -29,7 +29,7 @@ describe('armarSalidas', () => {
 
   it('trae la tarifa de muestra de Boaco', () => {
     const boaco = salidas.find((salida) => salida.viajeId === VIAJE_BOACO);
-    expect(boaco?.tarifa).toBe(70);
+    expect(boaco?.tarifa).toBe(66);
   });
 
   it('deja la tarifa en nulo si no hay tarifario', () => {
