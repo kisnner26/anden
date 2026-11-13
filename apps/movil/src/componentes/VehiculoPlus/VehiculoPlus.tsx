@@ -1,6 +1,7 @@
 import { View } from 'react-native';
 import Svg, { Circle, Ellipse, G, Path, Rect } from 'react-native-svg';
 
+import { EfectosDeVehiculoPlus } from '@/componentes/EfectosVehiculo';
 import { paletaVehiculos } from '@/tema/colores';
 
 import { nombreDeVehiculo, type IdVehiculoPlus } from './vehiculos';
@@ -10,6 +11,10 @@ const ALTO_BASE = 300;
 
 export interface PropiedadesVehiculoPlus {
   ancho: number;
+  /** agrega los efectos que se mueven: estela, humo, rayos, rotor, burbujas, luces */
+  animado?: boolean;
+  /** lo dibuja mirando a la izquierda, para un vehículo que avanza hacia el oeste */
+  espejo?: boolean;
   /** sin etiqueta el dibujo es decorativo y se oculta a los lectores de pantalla */
   etiquetaAccesible?: string;
   id: IdVehiculoPlus;
@@ -253,6 +258,8 @@ const DIBUJOS: Record<IdVehiculoPlus, () => React.JSX.Element> = {
 /** los vehículos de Plus: un dibujo propio para cada uno, para reconocerlos de un vistazo */
 export function VehiculoPlus({
   ancho,
+  animado = false,
+  espejo = false,
   etiquetaAccesible,
   id,
 }: PropiedadesVehiculoPlus) {
@@ -266,7 +273,11 @@ export function VehiculoPlus({
       accessibilityRole={comunica ? 'image' : undefined}
       accessible={comunica}
       importantForAccessibility={comunica ? 'yes' : 'no-hide-descendants'}
-      style={{ height: alto, width: ancho }}
+      style={{
+        height: alto,
+        transform: espejo ? [{ scaleX: -1 }] : undefined,
+        width: ancho,
+      }}
     >
       <Svg
         height={alto}
@@ -275,6 +286,7 @@ export function VehiculoPlus({
       >
         <Dibujo />
       </Svg>
+      {animado && <EfectosDeVehiculoPlus ancho={ancho} id={id} />}
     </View>
   );
 }
