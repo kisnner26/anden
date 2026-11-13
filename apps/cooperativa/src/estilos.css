@@ -1,0 +1,248 @@
+:root {
+  --fondo: #121210;
+  --papel: #1c1b17;
+  --linea: #2e2d27;
+  --tinta: #f5f1e8;
+  --suave: #b9b3a2;
+  --ambar: #ffb21e;
+  --rojo: #e04b3a;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --fondo: #f5f1e8;
+    --papel: #ffffff;
+    --linea: #e3dccb;
+    --tinta: #17160f;
+    --suave: #6b6657;
+    color-scheme: light;
+  }
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  background: var(--fondo);
+  color: var(--tinta);
+  font-family: -apple-system, 'SF Pro Text', system-ui, sans-serif;
+  margin: 0;
+}
+h1 {
+  font-size: 2.2rem;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.25rem;
+}
+h2 {
+  font-size: 1.1rem;
+  margin: 1.5rem 0 0.5rem;
+}
+h3 {
+  margin: 0 0 0.25rem;
+}
+.etiqueta {
+  color: var(--ambar);
+  font-family: ui-monospace, 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  margin: 0;
+}
+.suave {
+  color: var(--suave);
+}
+.marco {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  min-height: 100vh;
+}
+.lateral {
+  background: var(--papel);
+  border-right: 1px solid var(--linea);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1.5rem 1rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+.lateral h2 {
+  margin: 0 0 1rem;
+}
+.lateral nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.lateral button {
+  background: none;
+  border: 0;
+  border-radius: 10px;
+  color: var(--tinta);
+  cursor: pointer;
+  font: inherit;
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+}
+.lateral button[aria-current='page'] {
+  background: var(--ambar);
+  color: #1a1100;
+  font-weight: 600;
+}
+.lateral .salir {
+  color: var(--suave);
+  margin-top: auto;
+}
+.contenido {
+  max-width: 1100px;
+  padding: 2rem;
+  width: 100%;
+}
+.rejilla {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  margin-top: 1.5rem;
+}
+.tarjeta {
+  background: var(--papel);
+  border: 1px solid var(--linea);
+  border-radius: 16px;
+  margin-top: 1rem;
+  padding: 1.25rem;
+}
+.tarjeta.dato {
+  margin: 0;
+}
+.tarjeta.alerta {
+  border-color: var(--rojo);
+  box-shadow: 0 0 0 1px var(--rojo);
+}
+.valor {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0.4rem 0 0;
+}
+table {
+  border-collapse: collapse;
+  margin-top: 1rem;
+  width: 100%;
+}
+th,
+td {
+  border-bottom: 1px solid var(--linea);
+  padding: 0.6rem 0.5rem;
+  text-align: left;
+}
+th {
+  color: var(--suave);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+button,
+a {
+  color: inherit;
+}
+button {
+  background: var(--papel);
+  border: 1px solid var(--linea);
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  padding: 0.5rem 1rem;
+}
+button.primario {
+  background: var(--ambar);
+  border-color: var(--ambar);
+  color: #1a1100;
+  font-weight: 600;
+}
+button.peligro {
+  border-color: var(--rojo);
+  color: var(--rojo);
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.fila {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+.aviso {
+  background: var(--papel);
+  border-left: 4px solid var(--ambar);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+}
+.error {
+  color: var(--rojo);
+}
+.cedula {
+  border-radius: 12px;
+  max-width: 320px;
+}
+.avatar {
+  border-radius: 999px;
+  height: 64px;
+  object-fit: cover;
+  width: 64px;
+}
+.avatar.vacio {
+  align-items: center;
+  background: var(--linea);
+  display: flex;
+  font-size: 1.5rem;
+  justify-content: center;
+}
+.ingreso {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1rem;
+}
+.ingreso-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  max-width: 420px;
+  width: 100%;
+}
+.ingreso-form label {
+  color: var(--suave);
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  gap: 0.3rem;
+}
+input {
+  background: var(--fondo);
+  border: 1px solid var(--linea);
+  border-radius: 10px;
+  color: var(--tinta);
+  font: inherit;
+  padding: 0.7rem 0.8rem;
+}
+code {
+  background: var(--fondo);
+  border-radius: 6px;
+  padding: 0.1rem 0.35rem;
+}
+@media (max-width: 800px) {
+  .marco {
+    grid-template-columns: 1fr;
+  }
+  .lateral {
+    flex-direction: row;
+    flex-wrap: wrap;
+    height: auto;
+    position: static;
+  }
+  .lateral nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
