@@ -46,7 +46,7 @@ export function LineaDeRed({
         aria-label="Plano de la red con los buses en camino"
         role="img"
         style={{ maxHeight: alto }}
-        viewBox="0 0 900 360"
+        viewBox="-20 0 1060 360"
       >
         <defs>
           <linearGradient id="trazo" x1="0" x2="1">
@@ -70,12 +70,12 @@ export function LineaDeRed({
           return (
             <g key={e} transform={`translate(${p.x} ${p.y})`}>
               {n > 0 && <circle className="red-pulso" r="14" />}
-              <circle className="red-estacion" r="9" />
+              <circle className="red-estacion" r="11" />
               <text
                 className="red-nombre"
                 textAnchor={izq ? 'end' : 'start'}
                 x={izq ? -18 : 18}
-                y="5"
+                y="7"
               >
                 {TERMINALES[e].nombre}
               </text>
@@ -83,7 +83,7 @@ export function LineaDeRed({
                 className="red-mono"
                 textAnchor={izq ? 'end' : 'start'}
                 x={izq ? -18 : 18}
-                y="24"
+                y="32"
               >
                 {n === 0
                   ? 'sin buses en andén'

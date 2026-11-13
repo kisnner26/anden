@@ -932,8 +932,8 @@ input[type='checkbox'] {
 }
 .anden {
   display: grid;
-  grid-template-columns: 54px 1fr;
-  gap: 12px;
+  grid-template-columns: 40px 1fr 84px;
+  gap: 6px 12px;
   align-items: center;
   padding: 10px 12px;
   border: 1px solid var(--linea);
@@ -947,10 +947,15 @@ input[type='checkbox'] {
   font-weight: 600;
 }
 .anden-bus {
-  width: 90px;
+  width: 84px;
   justify-self: end;
 }
+.anden .asientos {
+  grid-column: 2 / 4;
+  margin-top: 0;
+}
 .anden-libre {
+  grid-column: 2 / 4;
   color: var(--suave);
   font: 500 11px var(--mono);
   letter-spacing: 0.1em;
@@ -977,14 +982,21 @@ input[type='checkbox'] {
 .andenes.compacto .anden {
   min-height: 48px;
 }
-.placa,
-.placa-anden {
-  font: 700 20px var(--mono);
-  color: var(--acento);
+.placa {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  display: block;
 }
 .red {
   width: 100%;
+  display: grid;
+  gap: 8px;
+}
+.red svg {
+  width: 100%;
   height: auto;
+  max-height: 300px;
 }
 .red-base {
   stroke: var(--linea);
@@ -1003,10 +1015,13 @@ input[type='checkbox'] {
   stroke: var(--tinta);
   stroke-width: 2;
 }
-.red-nombre,
+.red-nombre {
+  fill: var(--tinta);
+  font: 600 22px var(--fuente);
+}
 .red-mono {
   fill: var(--suave);
-  font: 500 10px var(--mono);
+  font: 500 16px var(--mono);
 }
 .red-bus {
   fill: var(--acento);
