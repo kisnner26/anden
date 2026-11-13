@@ -35,6 +35,8 @@ export interface ServicioVoz {
    * mejor voz en español del teléfono; `alEstado` avisa cuándo empieza y cuándo termina de hablar
    */
   hablar(texto: string, opciones?: OpcionesDeHabla): Promise<void>;
+  /** carga por adelantado lo necesario para que la primera respuesta hablada no tarde */
+  preparar?(): Promise<void>;
 }
 
 export async function leerRespuestaHablada(): Promise<boolean> {
@@ -74,6 +76,16 @@ export function elegirVoz(
         voz.language.toLowerCase() === IDIOMA_VOZ.toLowerCase() ? 1 : 0;
       return peso(b.quality) - peso(a.quality) || exacta(b) - exacta(a);
     })[0]?.identifier;
+}
+
+let vozElegida: Promise<string | undefined> | null = null;
+
+/** la voz del teléfono se busca una sola vez: listar las voces en cada respuesta la demoraba */
+function vozDelTelefono(): Promise<string | undefined> {
+  vozElegida ??= import('expo-speech')
+    .then(async (Speech) => elegirVoz(await Speech.getAvailableVoicesAsync()))
+    .catch(() => undefined);
+  return vozElegida;
 }
 
 /**
@@ -158,6 +170,13 @@ export function crearVozDelSistema(): ServicioVoz {
         return 'no-disponible';
       }
     },
+    async preparar() {
+      await Promise.all([
+        vozDelTelefono(),
+        prepararAudioParaHablar(),
+        import('./vozEnLinea').catch(() => undefined),
+      ]);
+    },
     async hablar(texto, opciones = {}) {
       const { alEstado, enLinea = false } = opciones;
       await prepararAudioParaHablar();
@@ -176,10 +195,11 @@ export function crearVozDelSistema(): ServicioVoz {
       }
       try {
         const Speech = await import('expo-speech');
-        await Speech.stop();
-        const voz = elegirVoz(await Speech.getAvailableVoicesAsync());
+        if (await Speech.isSpeakingAsync()) await Speech.stop();
+        const voz = await vozDelTelefono();
+        const { limpiarParaVoz } = await import('./vozEnLinea');
         alEstado?.(true);
-        Speech.speak(texto, {
+        Speech.speak(limpiarParaVoz(texto), {
           language: IDIOMA_VOZ,
           onDone: () => alEstado?.(false),
           onError: () => alEstado?.(false),

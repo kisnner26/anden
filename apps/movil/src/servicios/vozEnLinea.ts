@@ -35,6 +35,15 @@ export function trozosDeTexto(
   return trozos;
 }
 
+/** saca lo que no se debe leer en voz alta: marcas de formato y espacios de más */
+export function limpiarParaVoz(texto: string): string {
+  return texto
+    .replace(/[*_#`>|]/g, ' ')
+    .replace(/C\$\s?(\d+)/g, '$1 córdobas')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 /** la dirección de la voz en línea para un trozo de texto, en español */
 export function direccionDeVoz(trozo: string): string {
   return `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=es&q=${encodeURIComponent(trozo)}`;
@@ -67,7 +76,7 @@ export async function hablarEnLinea(
   const { createAudioPlayer, setAudioModeAsync } = await import('expo-audio');
   callarVozEnLinea();
   const mia = generacion;
-  const trozos = trozosDeTexto(texto);
+  const trozos = trozosDeTexto(limpiarParaVoz(texto));
   if (trozos.length === 0) return false;
   const carpeta = new Directory(Paths.cache, 'voz');
   if (!carpeta.exists) carpeta.create();
@@ -77,13 +86,19 @@ export async function hablarEnLinea(
       interruptionMode: 'duckOthers',
       playsInSilentMode: true,
     });
-    let empezo = false;
-    for (let i = 0; i < trozos.length; i += 1) {
-      const archivo = await File.downloadFileAsync(
-        direccionDeVoz(trozos[i] ?? ''),
-        new File(carpeta, `trozo-${i}.mp3`),
+    // todos los trozos se piden a la vez: mientras suena el primero ya bajan los demás, sin pausas entre frases
+    const descargas = trozos.map((trozo, i) =>
+      File.downloadFileAsync(
+        direccionDeVoz(trozo),
+        new File(carpeta, `trozo-${mia}-${i}.mp3`),
         { idempotent: true },
-      );
+      ),
+    );
+    // si alguna falla más adelante no debe quedar como rechazo sin atender
+    for (const descarga of descargas) descarga.catch(() => undefined);
+    let empezo = false;
+    for (const descarga of descargas) {
+      const archivo = await descarga;
       if (mia !== generacion) return true;
       const reproductor = createAudioPlayer(archivo.uri);
       reproductorActual = reproductor;
@@ -104,6 +119,11 @@ export async function hablarEnLinea(
         reproductor.play();
       });
       reproductor.remove();
+      try {
+        archivo.delete();
+      } catch {
+        // el archivo temporal ya no estaba
+      }
       if (mia !== generacion) return true;
     }
     if (mia === generacion) alTerminar();

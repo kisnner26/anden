@@ -1,6 +1,11 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { direccionDeVoz, MAXIMO_POR_TROZO, trozosDeTexto } from './vozEnLinea';
+import {
+  direccionDeVoz,
+  limpiarParaVoz,
+  MAXIMO_POR_TROZO,
+  trozosDeTexto,
+} from './vozEnLinea';
 
 describe('trozosDeTexto', () => {
   it('un texto corto queda en un solo trozo', () => {
@@ -36,5 +41,13 @@ describe('direccionDeVoz', () => {
     const url = direccionDeVoz('¿Qué hay?');
     expect(url).toContain('tl=es');
     expect(url).toContain(encodeURIComponent('¿Qué hay?'));
+  });
+});
+
+describe('limpiarParaVoz', () => {
+  it('quita las marcas de formato y dice los córdobas', () => {
+    expect(limpiarParaVoz('**Sale** a las 2:30. Cuesta C$ 66.')).toBe(
+      'Sale a las 2:30. Cuesta 66 córdobas.',
+    );
   });
 });
