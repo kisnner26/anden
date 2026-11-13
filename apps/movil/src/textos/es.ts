@@ -96,6 +96,7 @@ export const textos = {
     vozNoDisponible: 'El dictado por voz no está disponible en este teléfono.',
     callar: 'Callar',
     hablando: 'Andén está hablando…',
+    vozProblema: 'No pude reproducir la voz ({motivo}). Subí el volumen del teléfono o probá con la voz natural.',
     vozNatural: 'Voz natural',
     vozNaturalDetalle:
       'Suena más humana, pero usa internet: el texto de la respuesta se envía a Google para convertirlo en voz. Apagada, se usa la voz del teléfono.',

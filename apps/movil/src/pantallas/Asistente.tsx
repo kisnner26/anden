@@ -76,6 +76,7 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
   const [respuestaEnVoz, establecerRespuestaEnVoz] = useState(false);
   const [escuchando, establecerEscuchando] = useState(false);
   const [hablando, establecerHablando] = useState(false);
+  const [problemaVoz, establecerProblemaVoz] = useState<string | null>(null);
   const [vozEnLinea, establecerVozEnLinea] = useState(false);
   const usarVozEnLinea = useRef(false);
   const [avisoVoz, establecerAvisoVoz] = useState<
@@ -181,6 +182,10 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
       if (porVoz || hablarRespuesta.current) {
         void voz.hablar(respuesta.trim(), {
           alEstado: establecerHablando,
+          alProblema: (motivo) => {
+            establecerHablando(false);
+            establecerProblemaVoz(motivo);
+          },
           enLinea: usarVozEnLinea.current,
         });
       }
@@ -201,6 +206,7 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
     await voz.callar();
     establecerAvisoVoz(null);
     dicho.current = '';
+    establecerProblemaVoz(null);
     const resultado = await voz.escuchar({
       alFallar: () => establecerEscuchando(false),
       alTerminar: () => {
@@ -451,6 +457,14 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
               </Text>
             )}
 
+            {problemaVoz !== null && (
+              <Text
+                accessibilityLiveRegion="polite"
+                style={[tipografia.pequeno, { color: colores.cancelado }]}
+              >
+                {rellenar(t('ia.vozProblema'), { motivo: problemaVoz })}
+              </Text>
+            )}
             {hablando && (
               <Bloque estiloContenido={estilos.hablando} radio="pildora">
                 <OndaDeVoz tono="habla" />

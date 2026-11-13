@@ -18,6 +18,8 @@ export interface OyentesDeVoz {
 
 export interface OpcionesDeHabla {
   alEstado?: (hablando: boolean) => void;
+  /** por qué no se pudo oír la respuesta, para decírselo a la persona */
+  alProblema?: (motivo: string) => void;
   /** usar la voz natural de internet; el texto de la respuesta sale del teléfono */
   enLinea?: boolean;
 }
@@ -93,6 +95,19 @@ function vozDelTelefono(): Promise<string | undefined> {
  * después de haber usado el micrófono (si no, iOS deja la sesión en modo grabación y no se oye nada)
  */
 async function prepararAudioParaHablar(): Promise<void> {
+  // el dictado deja la sesión en grabación con modo "medición", que baja o apaga lo que suena
+  try {
+    const { ExpoSpeechRecognitionModule } =
+      await import('expo-speech-recognition');
+    ExpoSpeechRecognitionModule.setCategoryIOS({
+      category: 'playback',
+      categoryOptions: [],
+      mode: 'default',
+    });
+    ExpoSpeechRecognitionModule.setAudioSessionActiveIOS(true);
+  } catch {
+    // en Android o sin el módulo no hace falta
+  }
   try {
     const { setAudioModeAsync } = await import('expo-audio');
     await setAudioModeAsync({
@@ -196,22 +211,40 @@ export function crearVozDelSistema(): ServicioVoz {
       try {
         const Speech = await import('expo-speech');
         if (await Speech.isSpeakingAsync()) await Speech.stop();
-        const voz = await vozDelTelefono();
         const { limpiarParaVoz } = await import('./vozEnLinea');
-        alEstado?.(true);
+        let arranco = false;
+        // si en unos segundos no empezó a sonar, se le dice a la persona en vez de quedar en silencio
+        const vigilante = setTimeout(() => {
+          if (!arranco) opciones.alProblema?.('sin-inicio');
+        }, 4000);
+        // sin elegir una voz concreta: el teléfono usa la suya por defecto para el idioma, que siempre existe
         Speech.speak(limpiarParaVoz(texto), {
           language: IDIOMA_VOZ,
-          onDone: () => alEstado?.(false),
-          onError: () => alEstado?.(false),
-          onStopped: () => alEstado?.(false),
+          onDone: () => {
+            clearTimeout(vigilante);
+            alEstado?.(false);
+          },
+          onError: (error) => {
+            clearTimeout(vigilante);
+            alEstado?.(false);
+            opciones.alProblema?.(error.message || 'error');
+          },
+          onStart: () => {
+            arranco = true;
+            clearTimeout(vigilante);
+            alEstado?.(true);
+          },
+          onStopped: () => {
+            clearTimeout(vigilante);
+            alEstado?.(false);
+          },
           pitch: 1,
           rate: 0.5,
           volume: 1,
-          voice: voz,
         });
-      } catch {
+      } catch (error) {
         alEstado?.(false);
-        // sin voz del sistema la respuesta igual queda escrita
+        opciones.alProblema?.(error instanceof Error ? error.message : 'error');
       }
     },
   };
