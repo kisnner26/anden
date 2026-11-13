@@ -92,3 +92,37 @@ export function telefonoClave(texto: string): string {
       : digitos;
   return /^[2578]\d{7}$/.test(local) ? local : '';
 }
+
+export interface DatosDePasajero {
+  cedula?: string;
+  nombre: string;
+}
+
+/** el nombre sin tildes, mayúsculas ni espacios de más, para saber si dos nombres son la misma persona */
+export function claveDeNombre(texto: string): string {
+  return texto
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * dice si alguien ya tiene boleto en el mismo viaje: el mismo nombre, sin importar tildes o mayúsculas,
+ * o la misma cédula. Una persona no puede ocupar dos asientos de un viaje; dos personas distintas sí.
+ */
+export function pasajeroRepetido(
+  candidato: DatosDePasajero,
+  otros: readonly DatosDePasajero[],
+): 'cedula' | 'nombre' | null {
+  const nombre = claveDeNombre(candidato.nombre);
+  const cedula = (candidato.cedula ?? '').trim().toUpperCase();
+  for (const otro of otros) {
+    if (cedula !== '' && cedula === (otro.cedula ?? '').trim().toUpperCase()) {
+      return 'cedula';
+    }
+    if (nombre !== '' && nombre === claveDeNombre(otro.nombre)) return 'nombre';
+  }
+  return null;
+}
