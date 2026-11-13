@@ -83,4 +83,44 @@ describe('Asistente', () => {
       await pantalla.findByText('No pudimos responder. Probá de nuevo.'),
     ).toBeTruthy();
   });
+
+  it('dice que está potenciado por la IA del teléfono', async () => {
+    const pantalla = await abrir(valor());
+    expect(
+      pantalla.getByText('Potenciado por Apple Intelligence'),
+    ).toBeTruthy();
+  });
+
+  it('muestra la animación de pensar mientras espera la respuesta', async () => {
+    let terminar: (texto: string) => void = () => undefined;
+    const contexto = valor({
+      preguntar: jest.fn(
+        () => new Promise<string>((resolver) => (terminar = resolver)),
+      ),
+    });
+    const pantalla = await abrir(contexto);
+    await fireEvent.changeText(pantalla.getByLabelText('Tu pregunta'), 'hola');
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Preguntar' }));
+    expect(
+      await pantalla.findByText('Pensando con Apple Intelligence…'),
+    ).toBeTruthy();
+    terminar('Listo.');
+    expect(await pantalla.findByText('Listo.')).toBeTruthy();
+    expect(pantalla.queryByText('Pensando con Apple Intelligence…')).toBeNull();
+  });
+
+  it('ofrece sugerencias con destinos reales y borra la conversación', async () => {
+    const pantalla = await abrir(valor());
+    await fireEvent.changeText(pantalla.getByLabelText('Tu pregunta'), 'hola');
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Preguntar' }));
+    await pantalla.findByText('El próximo bus a Boaco sale a las 2:30.');
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Borrar la conversación' }),
+    );
+    await waitFor(() =>
+      expect(
+        pantalla.queryByText('El próximo bus a Boaco sale a las 2:30.'),
+      ).toBeNull(),
+    );
+  });
 });
