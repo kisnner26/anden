@@ -6,6 +6,7 @@ export const movimiento = {
   escalon: 70,
   maximoEscalon: 6,
   chispa: 900,
+  crecimientoBarra: 600,
   chispas: 10,
   confirmacionReserva: 800,
   pulsoConfirmacion: 1100,
