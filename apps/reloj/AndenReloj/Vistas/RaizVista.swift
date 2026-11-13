@@ -16,6 +16,7 @@ struct RaizVista: View {
                     BoletoVista()
                     BusVista()
                     SalidasVista()
+                    AsistenteVista()
                     AjustesVista()
                 }
                 .tabViewStyle(.verticalPage)
