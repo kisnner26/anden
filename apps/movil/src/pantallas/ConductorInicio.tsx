@@ -2,10 +2,13 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Aparece } from '@/componentes/Aparece';
+import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
 import { formatoHora, sufijoHora } from '@/datos/formato';
+import { iniciales, nombreCompleto, nombrePropio } from '@/datos/perfil';
+import { usePerfil } from '@/datos/usePerfil';
 import { salidasDeChofer, salidasDelDia } from '@/datos/salidas';
 import { useCierres } from '@/datos/useCierres';
 import { useSesion } from '@/datos/useSesion';
@@ -34,6 +37,8 @@ export function ConductorInicio({
   const ahora = useAhora();
   const enVivo = useViajesEnVivo();
   const { cierreDe } = useCierres();
+  const { perfil } = usePerfil();
+  const nombre = nombrePropio(nombreCompleto(perfil) || (sesion?.nombre ?? ''));
   const viajes = sesion?.choferId
     ? salidasDelDia(
         salidasDeChofer(obtenerMuestra(), ahora, sesion.choferId),
@@ -52,9 +57,20 @@ export function ConductorInicio({
       ]}
       style={{ backgroundColor: colores.fondo }}
     >
-      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-        {rellenar(t('conductor.saludo'), { nombre: sesion?.nombre ?? '' })}
-      </Text>
+      <View style={estilos.saludo}>
+        <Avatar
+          descripcion={t('conductorPerfil.fotoDescripcion')}
+          iniciales={iniciales({
+            apellido: perfil.apellido,
+            nombre: perfil.nombre || (sesion?.nombre ?? ''),
+          })}
+          tamano={44}
+          uri={perfil.fotoUri}
+        />
+        <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+          {rellenar(t('conductor.saludo'), { nombre })}
+        </Text>
+      </View>
       <Text style={[tipografia.display, { color: colores.tinta }]}>
         {t('conductor.titulo')}.
       </Text>
@@ -161,6 +177,11 @@ const estilos = StyleSheet.create({
     padding: espacios.doce,
   },
   hora: { alignItems: 'flex-end' },
+  saludo: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.doce,
+  },
   salir: {
     alignItems: 'center',
     marginTop: espacios.veinticuatro,
