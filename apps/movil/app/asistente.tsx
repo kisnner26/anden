@@ -4,5 +4,12 @@ import { Asistente } from '@/pantallas/Asistente';
 
 export default function RutaAsistente() {
   const router = useRouter();
-  return <Asistente alVolver={() => router.back()} />;
+  return (
+    <Asistente
+      alAbrirViaje={(id) =>
+        router.push({ params: { id }, pathname: '/viaje/[id]' })
+      }
+      alVolver={() => router.back()}
+    />
+  );
 }
