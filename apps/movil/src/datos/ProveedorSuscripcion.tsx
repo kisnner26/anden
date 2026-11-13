@@ -14,22 +14,31 @@ import {
   type ServicioSuscripcion,
 } from '@/servicios/suscripcion';
 
-import { ContextoSuscripcion } from './useSuscripcion';
+import { claveDeCuenta } from '@/servicios/sesion';
 
-const SERVICIO_LOCAL = crearSuscripcionLocal();
+import { useSesion } from './useSesion';
+import { ContextoSuscripcion } from './useSuscripcion';
 
 /** comparte si la persona tiene Andén Plus */
 export function ProveedorSuscripcion({
   children,
-  servicio = SERVICIO_LOCAL,
+  servicio: servicioFijo,
 }: {
   children: ReactNode;
   servicio?: ServicioSuscripcion;
 }) {
+  const { sesion } = useSesion();
+  const cuenta = claveDeCuenta(sesion);
+  // cada cuenta tiene su propio plan: lo que activó el pasajero no lo hereda el conductor
+  const servicio = useMemo(
+    () => servicioFijo ?? crearSuscripcionLocal(cuenta),
+    [cuenta, servicioFijo],
+  );
   const [estado, establecerEstado] = useState<EstadoSuscripcion>(ESTADO_GRATIS);
 
   useEffect(() => {
     let vigente = true;
+    establecerEstado(ESTADO_GRATIS);
     void servicio.leer().then((leido) => {
       if (vigente) establecerEstado(leido);
     });

@@ -43,23 +43,31 @@ export function leerEstado(guardado: string | null): EstadoSuscripcion {
   }
 }
 
-export function crearSuscripcionLocal(): ServicioSuscripcion {
+/** cada cuenta guarda su plan aparte; sin cuenta se usa la clave de siempre del teléfono */
+export function claveSuscripcionDe(cuenta: string | null): string {
+  return cuenta ? `${CLAVE_SUSCRIPCION}.${cuenta}` : CLAVE_SUSCRIPCION;
+}
+
+export function crearSuscripcionLocal(
+  cuenta: string | null = null,
+): ServicioSuscripcion {
+  const clave = claveSuscripcionDe(cuenta);
   return {
     async activar(ahora = new Date()) {
       const estado: EstadoSuscripcion = {
         desde: ahora.toISOString(),
         plan: 'plus',
       };
-      await AsyncStorage.setItem(CLAVE_SUSCRIPCION, JSON.stringify(estado));
+      await AsyncStorage.setItem(clave, JSON.stringify(estado));
       return estado;
     },
     async cancelar() {
-      await AsyncStorage.removeItem(CLAVE_SUSCRIPCION);
+      await AsyncStorage.removeItem(clave);
       return ESTADO_GRATIS;
     },
     async leer() {
       try {
-        return leerEstado(await AsyncStorage.getItem(CLAVE_SUSCRIPCION));
+        return leerEstado(await AsyncStorage.getItem(clave));
       } catch {
         return ESTADO_GRATIS;
       }
