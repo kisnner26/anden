@@ -25,7 +25,8 @@ describe('TarjetaProximoViaje', () => {
     );
     expect(pantalla.getByText('Boaco')).toBeTruthy();
     expect(pantalla.getByText('Andén 3 · Ordinario')).toBeTruthy();
-    expect(pantalla.getByText('2:40 p. m.')).toBeTruthy();
+    expect(pantalla.getByText('2:40')).toBeTruthy();
+    expect(pantalla.getByText('p. m.')).toBeTruthy();
   });
 
   it('cuenta los minutos que faltan para salir', async () => {

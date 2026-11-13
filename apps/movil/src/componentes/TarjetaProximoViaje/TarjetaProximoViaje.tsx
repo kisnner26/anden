@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Autobus, varianteDeClave } from '@/componentes/Autobus';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
-import { formatoHoraCompleta } from '@/datos/formato';
+import { formatoHora, formatoHoraCompleta, sufijoHora } from '@/datos/formato';
 import type { Salida } from '@/datos/salidas';
 import { espacios, tamanosIlustracion } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -40,8 +40,13 @@ export function TarjetaProximoViaje({
       </View>
       <BloqueNegro estiloContenido={estilos.tarjeta} testID="proximo-viaje">
         <View style={estilos.fila}>
-          <View>
-            <Text style={[tipografia.display, { color: colores.sobreNegro }]}>
+          <View style={estilos.izquierda}>
+            <Text
+              adjustsFontSizeToFit
+              minimumFontScale={0.7}
+              numberOfLines={1}
+              style={[tipografia.display, { color: colores.sobreNegro }]}
+            >
               {salida.destino}
             </Text>
             <Text
@@ -51,8 +56,16 @@ export function TarjetaProximoViaje({
             </Text>
           </View>
           <View style={estilos.derecha}>
-            <Text style={[tipografia.datoGrande, { color: colores.ambar }]}>
-              {formatoHoraCompleta(salida.salida)}
+            <Text
+              accessibilityLabel={formatoHoraCompleta(salida.salida)}
+              style={[tipografia.datoGrande, { color: colores.ambar }]}
+            >
+              {formatoHora(salida.salida)}
+            </Text>
+            <Text
+              style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
+            >
+              {sufijoHora(salida.salida)}
             </Text>
             <Text
               style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
@@ -85,6 +98,7 @@ const estilos = StyleSheet.create({
   },
   contenedor: { marginTop: tamanosIlustracion.espacioAutobusProximo },
   derecha: { alignItems: 'flex-end' },
+  izquierda: { flex: 1, paddingRight: espacios.doce },
   fila: {
     alignItems: 'flex-end',
     flexDirection: 'row',
