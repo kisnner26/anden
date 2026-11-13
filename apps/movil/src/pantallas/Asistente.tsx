@@ -1,11 +1,17 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Animated,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Aparece } from '@/componentes/Aparece';
 import { Bloque } from '@/componentes/Bloque';
-import { BordeLuminoso } from '@/componentes/BordeLuminoso';
 import { EsqueletoIA } from '@/componentes/EsqueletoIA';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
@@ -75,6 +81,8 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
   const [semilla] = useState(() => Math.floor(Date.now() / 1000));
   const [respuestaEnVoz, establecerRespuestaEnVoz] = useState(false);
   const [escuchando, establecerEscuchando] = useState(false);
+  // el volumen de la voz mueve el orbe sin volver a dibujar toda la pantalla
+  const nivel = useRef(new Animated.Value(0)).current;
   const [hablando, establecerHablando] = useState(false);
   const [problemaVoz, establecerProblemaVoz] = useState<string | null>(null);
   const [vozEnLinea, establecerVozEnLinea] = useState(false);
@@ -209,6 +217,12 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
     establecerProblemaVoz(null);
     const resultado = await voz.escuchar({
       alFallar: () => establecerEscuchando(false),
+      alNivel: (valor) =>
+        Animated.timing(nivel, {
+          duration: 90,
+          toValue: valor,
+          useNativeDriver: true,
+        }).start(),
       alTerminar: () => {
         establecerEscuchando(false);
         const pregunta = dicho.current;
@@ -263,7 +277,37 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
         />
 
         <View style={estilos.hero}>
-          <OrbeIA pensando={pensando || escuchando || hablando} tamano={84} />
+          <OrbeIA
+            alPresionar={() => void alternarEscucha()}
+            estado={
+              escuchando
+                ? 'escuchando'
+                : pensando
+                  ? 'pensando'
+                  : hablando
+                    ? 'hablando'
+                    : 'reposo'
+            }
+            etiquetaAccesible={escuchando ? t('ia.detener') : t('ia.hablar')}
+            nivel={nivel}
+            tamano={120}
+          />
+          <Text
+            accessibilityLiveRegion="polite"
+            style={[
+              tipografia.subtitulo,
+              estilos.centrado,
+              { color: colores.tinta },
+            ]}
+          >
+            {escuchando
+              ? t('ia.detener')
+              : pensando
+                ? t('ia.pensandoCaption')
+                : hablando
+                  ? t('ia.respondiendo')
+                  : t('ia.tocaElOrbe')}
+          </Text>
           <LinearGradient
             colors={[...coloresIA]}
             end={{ x: 1, y: 0 }}
@@ -378,20 +422,6 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
               marcador={t('ia.marcador')}
               valor={texto}
             />
-            <Pressable
-              accessibilityLabel={escuchando ? t('ia.detener') : t('ia.hablar')}
-              accessibilityRole="button"
-              accessibilityState={{ selected: escuchando }}
-              onPress={() => void alternarEscucha()}
-              style={estilos.hablar}
-            >
-              <Bloque estiloContenido={estilos.hablarContenido} radio="pildora">
-                {escuchando ? <OndaDeVoz /> : <OrbeIA tamano={22} />}
-                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                  {escuchando ? t('ia.detener') : t('ia.hablar')}
-                </Text>
-              </Bloque>
-            </Pressable>
             {escuchando && (
               <Text
                 accessibilityLiveRegion="polite"
@@ -602,15 +632,6 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
           </>
         )}
       </ScrollView>
-      <BordeLuminoso
-        modo={
-          hablando
-            ? 'hablando'
-            : pensando || escuchando
-              ? 'pensando'
-              : 'apagado'
-        }
-      />
     </View>
   );
 }
