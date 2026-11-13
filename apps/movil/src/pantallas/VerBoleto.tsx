@@ -20,6 +20,7 @@ import { useBoletos } from '@/datos/useBoletos';
 import { useAvisos } from '@/datos/useAvisos';
 import { usePagos } from '@/datos/usePagos';
 import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
+import { useSonidos } from '@/datos/useSonidos';
 import {
   guardarContacto,
   leerContacto,
@@ -77,10 +78,17 @@ export function VerBoleto({
   );
   const [pidiendoContacto, establecerPidiendoContacto] = useState(false);
 
+  const sonar = useSonidos();
+
   useEffect(() => {
     void leerObjetos().then(establecerObjetos);
     void leerContacto().then(establecerContacto);
   }, []);
+
+  // el talón se desprende con su sonido al abrir el boleto
+  useEffect(() => {
+    sonar('boleto');
+  }, [sonar]);
   const guardado = boletos.find(({ boleto }) => boleto.id === boletoId);
 
   if (!guardado) {

@@ -1,6 +1,7 @@
 import * as Haptics from 'expo-haptics';
 import { Pressable, StyleSheet } from 'react-native';
 
+import { useSonidos } from '@/datos/useSonidos';
 import { Icono } from '@/componentes/Icono';
 import { Rebote } from '@/componentes/Rebote';
 import { tamanosControl } from '@/tema/espacios';
@@ -19,6 +20,7 @@ export function BotonFavorito({
   etiqueta,
 }: PropiedadesBotonFavorito) {
   const { colores } = useTema();
+  const sonar = useSonidos();
 
   return (
     <Pressable
@@ -28,6 +30,8 @@ export function BotonFavorito({
       hitSlop={8}
       onPress={() => {
         void Haptics.selectionAsync().catch(() => undefined);
+        // al encender la estrella suena un destello; al apagarla, nada
+        if (!activo) sonar('favorito');
         alCambiar();
       }}
       style={estilos.boton}

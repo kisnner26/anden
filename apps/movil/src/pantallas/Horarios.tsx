@@ -19,6 +19,7 @@ import { minutosParaSalir, nivelDisponibilidad } from '@/datos/disponibilidad';
 import { formatoHoraCompleta } from '@/datos/formato';
 import type { MinutosAntes } from '@/datos/recordatorios';
 import type { Salida } from '@/datos/salidas';
+import { useSonidos } from '@/datos/useSonidos';
 import { useFavoritos } from '@/datos/useFavoritos';
 import {
   useRecordatorios,
@@ -62,6 +63,7 @@ export function Horarios({
   const { favoritos } = useFavoritos();
   const [soloFavoritas, establecerSoloFavoritas] = useState(false);
   const recordatorios = useRecordatorios();
+  const sonar = useSonidos();
   const [filtrando, establecerFiltrando] = useState(false);
   const [eligiendo, establecerEligiendo] = useState<Salida | null>(null);
   const [errorRecordatorio, establecerErrorRecordatorio] = useState<Exclude<
@@ -77,8 +79,10 @@ export function Horarios({
   async function elegirMinutos(minutos: MinutosAntes) {
     if (!eligiendo) return;
     const resultado = await recordatorios.programar(eligiendo, minutos);
-    if (resultado === 'listo') cerrarHoja();
-    else establecerErrorRecordatorio(resultado);
+    if (resultado === 'listo') {
+      sonar('recordatorio');
+      cerrarHoja();
+    } else establecerErrorRecordatorio(resultado);
   }
 
   async function quitarRecordatorio() {

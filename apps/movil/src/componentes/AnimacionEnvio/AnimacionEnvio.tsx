@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 
 import { Autobus, varianteDeClave } from '@/componentes/Autobus';
+import { useSonidos } from '@/datos/useSonidos';
 import { Icono } from '@/componentes/Icono';
 import { conAlfa } from '@/tema/alfa';
 import { espacios, radios } from '@/tema/espacios';
@@ -29,6 +30,12 @@ export function AnimacionEnvio({
   const bus = useRef(new Animated.Value(0)).current;
   const paquete = useRef(new Animated.Value(0)).current;
   const sello = useRef(new Animated.Value(0)).current;
+  const sonar = useSonidos();
+
+  // el soplo y el golpe del paquete acompañan la caída
+  useEffect(() => {
+    sonar('envio');
+  }, [sonar]);
 
   useEffect(() => {
     if (reducido) {
