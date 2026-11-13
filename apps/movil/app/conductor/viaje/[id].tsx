@@ -1,7 +1,9 @@
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 
+import { PuertaBiometrica } from '@/componentes/PuertaBiometrica';
 import { useSesion } from '@/datos/useSesion';
 import { ConductorViaje } from '@/pantallas/ConductorViaje';
+import { t } from '@/textos/t';
 
 export default function RutaConductorViaje() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -11,5 +13,9 @@ export default function RutaConductorViaje() {
   if (cargando) return null;
   if (rol !== 'conductor') return <Redirect href="/ingresar" />;
 
-  return <ConductorViaje alVolver={() => router.back()} viajeId={id ?? ''} />;
+  return (
+    <PuertaBiometrica motivo={t('conductor.motivoPanel')}>
+      <ConductorViaje alVolver={() => router.back()} viajeId={id ?? ''} />
+    </PuertaBiometrica>
+  );
 }

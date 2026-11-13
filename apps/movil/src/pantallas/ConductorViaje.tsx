@@ -12,6 +12,7 @@ import { HojaCierreViaje } from '@/componentes/HojaCierreViaje';
 import { MapaCorredor } from '@/componentes/MapaCorredor';
 import { PieReserva } from '@/componentes/PieReserva';
 import { formatoHoraCompleta } from '@/datos/formato';
+import { verificarConductor } from '@/datos/biometria';
 import { progresoSobreTrazo } from '@/datos/progresoViaje';
 import {
   detenerTransmision,
@@ -130,7 +131,12 @@ export function ConductorViaje({
     choferId,
   );
 
-  function terminar() {
+  async function terminar() {
+    // terminar un viaje también pide identificarse
+    if (!(await verificarConductor(t('conductor.motivoTerminar'), true))) {
+      establecerProblema(t('conductor.bloqueadoFallo'));
+      return;
+    }
     detenerTransmision(viajeId);
     establecerCerrando(true);
   }
@@ -143,8 +149,13 @@ export function ConductorViaje({
   }
 
   async function iniciar() {
-    establecerIniciando(true);
     establecerProblema(null);
+    // empezar a compartir la ubicación exige confirmar la identidad en ese momento
+    if (!(await verificarConductor(t('conductor.motivoIniciar'), true))) {
+      establecerProblema(t('conductor.bloqueadoFallo'));
+      return;
+    }
+    establecerIniciando(true);
     sonar('inicio');
     establecerEscena('salida');
     const resultado = await iniciarTransmision(viajeId, choferId);
@@ -321,7 +332,7 @@ export function ConductorViaje({
         <PieReserva estiloContenido={estilos.pie}>
           <BotonAccion
             alPresionar={() =>
-              transmision.activa ? terminar() : void iniciar()
+              transmision.activa ? void terminar() : void iniciar()
             }
             cargando={iniciando && !transmision.activa}
             etiqueta={

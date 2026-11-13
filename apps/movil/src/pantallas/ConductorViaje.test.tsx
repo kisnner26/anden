@@ -9,11 +9,15 @@ import {
 } from '@jest/globals';
 import { act, fireEvent, waitFor } from '@testing-library/react-native';
 
+jest.mock('@/datos/biometria', () => ({
+  verificarConductor: jest.fn(async () => true),
+}));
 jest.mock('@/datos/transmisor', () => ({
   detenerTransmision: jest.fn(),
   iniciarTransmision: jest.fn(),
 }));
 
+import { verificarConductor } from '@/datos/biometria';
 import { VIAJE_BOACO } from '@/datos/muestra';
 import { ProveedorBoletos } from '@/datos/ProveedorBoletos';
 import { ProveedorCierres } from '@/datos/ProveedorCierres';
@@ -31,6 +35,7 @@ import { ConductorViaje } from './ConductorViaje';
 
 beforeEach(async () => {
   jest.clearAllMocks();
+  jest.mocked(verificarConductor).mockResolvedValue(true);
   await AsyncStorage.clear();
   await AsyncStorage.setItem(
     'anden.sesion',
@@ -309,5 +314,40 @@ describe('ConductorViaje', () => {
         timeout: 3000,
       },
     );
+  });
+
+  it('iniciar el viaje pide confirmar la identidad y, si no se confirma, no empieza', async () => {
+    jest.mocked(verificarConductor).mockResolvedValue(false);
+    const pantalla = await dibujar();
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Iniciar viaje' }),
+    );
+    expect(verificarConductor).toHaveBeenCalledWith(
+      'Confirmá que sos vos para iniciar el viaje',
+      true,
+    );
+    expect(
+      await pantalla.findByText(
+        'No pudimos confirmar que sos vos. Probá de nuevo.',
+      ),
+    ).toBeTruthy();
+    expect(iniciarTransmision).not.toHaveBeenCalled();
+    expect(pantalla.queryByTestId('escena-viaje')).toBeNull();
+  });
+
+  it('terminar el viaje también pide confirmar la identidad', async () => {
+    const pantalla = await dibujar();
+    await act(async () => {
+      TRANSMISION.iniciar(VIAJE_BOACO, 'cho_2');
+    });
+    jest.mocked(verificarConductor).mockResolvedValue(false);
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Terminar viaje' }),
+    );
+    expect(verificarConductor).toHaveBeenCalledWith(
+      'Confirmá que sos vos para terminar el viaje',
+      true,
+    );
+    await waitFor(() => expect(detenerTransmision).not.toHaveBeenCalled());
   });
 });
