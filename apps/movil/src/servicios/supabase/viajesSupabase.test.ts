@@ -29,6 +29,7 @@ function cliente(opciones: { error?: boolean } = {}) {
   const consulta = (data: unknown[]) => {
     const resultado = { data: opciones.error ? null : data, error };
     const cadena: Record<string, unknown> = {
+      eq: () => cadena,
       gte: () => cadena,
       limit: async () => resultado,
       neq: () => cadena,
