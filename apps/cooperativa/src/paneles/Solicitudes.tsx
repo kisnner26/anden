@@ -21,14 +21,15 @@ function Foto({ ruta, titulo }: { ruta: string; titulo: string }) {
   async function ver() {
     const { data, error } = await supabase!.storage
       .from('cedulas')
-      .createSignedUrl(ruta, 120);
+      .createSignedUrl(ruta, 180);
     if (error || !data) establecerFallo(true);
     else establecerUrl(data.signedUrl);
   }
   if (url) return <img alt={titulo} className="cedula" src={url} />;
   return (
-    <button onClick={() => void ver()} type="button">
-      {fallo ? 'No se pudo abrir' : `Ver ${titulo.toLowerCase()}`}
+    <button className="ranura" onClick={() => void ver()} type="button">
+      <span className="micro">{titulo.toUpperCase()}</span>
+      <span>{fallo ? 'No se pudo abrir' : 'Revelar ↗'}</span>
     </button>
   );
 }
@@ -39,6 +40,7 @@ export function Solicitudes() {
     'usuario_id, nombre, apellido, telefono, cedula, foto_frente, foto_dorso, estado, creada_en',
     { columna: 'creada_en' },
   );
+  const [sello, establecerSello] = useState<Record<string, string>>({});
   const [mensaje, establecerMensaje] = useState<string | null>(null);
 
   async function resolver(s: Solicitud, aprobar: boolean) {
@@ -46,84 +48,117 @@ export function Solicitudes() {
       p_aprobar: aprobar,
       p_usuario_id: s.usuario_id,
     });
+    if (error) return establecerMensaje(`No se pudo guardar: ${error.message}`);
+    establecerSello((previo) => ({
+      ...previo,
+      [s.usuario_id]: aprobar ? 'APROBADA' : 'RECHAZADA',
+    }));
     establecerMensaje(
-      error
-        ? `No se pudo guardar: ${error.message}`
-        : aprobar
-          ? `${s.nombre} ya es conductor con el código ${String(data)}.`
-          : `Rechazaste la solicitud de ${s.nombre}.`,
+      aprobar
+        ? `${s.nombre} ya es conductor con el código ${String(data)}.`
+        : `Rechazaste la solicitud de ${s.nombre}.`,
     );
-    await recargar();
+    window.setTimeout(() => void recargar(), 1400);
   }
 
-  const pendientes = filas.filter((s) => s.estado === 'en_revision');
-  const resueltas = filas.filter((s) => s.estado !== 'en_revision');
+  const pendientes = filas.filter(
+    (s) => s.estado === 'en_revision' || sello[s.usuario_id],
+  );
+  const resueltas = filas.filter(
+    (s) => s.estado !== 'en_revision' && !sello[s.usuario_id],
+  );
 
   return (
-    <section>
-      <h1>Solicitudes de conductor</h1>
-      <p className="suave">
-        Revisá la cédula y aprobá o rechazá. Al aprobar, la persona pasa a ser
-        conductor y le llega a su app.
-      </p>
+    <div className="pagina">
+      <header className="encabezado">
+        <p className="micro">02 / SOLICITUDES DE CONDUCTOR</p>
+        <h1 className="display">
+          <span>QUIÉN</span>
+          <em>MANEJA.</em>
+        </h1>
+        <p className="lead">
+          Revisá la cédula de cada persona y decidí. Al aprobar, su app se
+          convierte en la de un conductor.
+        </p>
+      </header>
       {mensaje && (
         <p className="aviso" role="status">
           {mensaje}
         </p>
       )}
-      {cargando && <p className="suave">Cargando…</p>}
+      {cargando && <p className="vacio">Cargando…</p>}
       {!cargando && pendientes.length === 0 && (
-        <p className="suave">No hay solicitudes por revisar.</p>
+        <p className="vacio">No hay solicitudes por revisar.</p>
       )}
-      {pendientes.map((s) => (
-        <article className="tarjeta" key={s.usuario_id}>
-          <h3>
-            {s.nombre} {s.apellido}
-          </h3>
-          <p className="suave">
-            Cédula {s.cedula} · Tel. {s.telefono} ·{' '}
-            {new Date(s.creada_en).toLocaleString('es-NI')}
-          </p>
-          <div className="fila">
-            <Foto ruta={s.foto_frente} titulo="Frente de la cédula" />
-            <Foto ruta={s.foto_dorso} titulo="Dorso de la cédula" />
-          </div>
-          <div className="fila">
-            <button
-              className="primario"
-              onClick={() => void resolver(s, true)}
-              type="button"
-            >
-              Aprobar
-            </button>
-            <button
-              className="peligro"
-              onClick={() => void resolver(s, false)}
-              type="button"
-            >
-              Rechazar
-            </button>
-          </div>
-        </article>
-      ))}
+      <div className="cartas">
+        {pendientes.map((s, i) => (
+          <article
+            className="carta"
+            key={s.usuario_id}
+            style={{ animationDelay: `${i * 80}ms` }}
+          >
+            {sello[s.usuario_id] && (
+              <div
+                className={`sello ${sello[s.usuario_id] === 'APROBADA' ? 'ok' : 'no'}`}
+              >
+                {sello[s.usuario_id]}
+              </div>
+            )}
+            <p className="micro">
+              {String(i + 1).padStart(2, '0')} ·{' '}
+              {new Date(s.creada_en).toLocaleString('es-NI')}
+            </p>
+            <h3 className="nombre">
+              {s.nombre} {s.apellido}
+            </h3>
+            <p className="suave">
+              Cédula {s.cedula} · Tel. {s.telefono}
+            </p>
+            <div className="fotos">
+              <Foto ruta={s.foto_frente} titulo="Frente" />
+              <Foto ruta={s.foto_dorso} titulo="Dorso" />
+            </div>
+            <div className="acciones">
+              <button
+                className="boton-ed"
+                disabled={Boolean(sello[s.usuario_id])}
+                onClick={() => void resolver(s, true)}
+                type="button"
+              >
+                APROBAR ↗
+              </button>
+              <button
+                className="boton-linea"
+                disabled={Boolean(sello[s.usuario_id])}
+                onClick={() => void resolver(s, false)}
+                type="button"
+              >
+                RECHAZAR
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
       {resueltas.length > 0 && (
-        <>
-          <h2>Ya resueltas</h2>
-          <table>
-            <tbody>
-              {resueltas.map((s) => (
-                <tr key={s.usuario_id}>
-                  <td>
-                    {s.nombre} {s.apellido}
-                  </td>
-                  <td>{s.cedula}</td>
-                  <td>{s.estado === 'aprobada' ? 'Aprobada' : 'Rechazada'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
+        <section className="bloque">
+          <h2 className="titulo-bloque">YA RESUELTAS</h2>
+          <ul className="lista">
+            {resueltas.map((s) => (
+              <li key={s.usuario_id}>
+                <span>
+                  {s.nombre} {s.apellido}
+                </span>
+                <span className="micro">{s.cedula}</span>
+                <span
+                  className={`chip ${s.estado === 'aprobada' ? 'ok' : 'no'}`}
+                >
+                  {s.estado === 'aprobada' ? 'APROBADA' : 'RECHAZADA'}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
-    </section>
+    </div>
   );
 }
