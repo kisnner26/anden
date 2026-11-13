@@ -40,7 +40,7 @@ xcodebuild -project AndenReloj.xcodeproj -scheme AndenReloj -configuration Relea
   -destination "platform=watchOS,id=$UDID" -allowProvisioningUpdates DEVELOPMENT_TEAM="$TEAM_ID" \
   -derivedDataPath build build | grep -E 'error:|BUILD' || true
 
-APP=$(find build -path '*Release-watchos/AndenReloj.app' -maxdepth 6 2>/dev/null | head -1)
+APP=$(find build ~/Library/Developer/Xcode/DerivedData/Build/Products -path '*Release-watchos/AndenReloj.app' -maxdepth 6 2>/dev/null | head -1)
 [ -d "${APP:-}" ] || { echo "no encontré AndenReloj.app compilado" >&2; exit 1; }
 xcrun devicectl device install app --device "$ID" "$APP"
 xcrun devicectl device process launch --device "$ID" com.kisnner.anden.reloj
