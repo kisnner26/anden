@@ -7,7 +7,10 @@ import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { Icono } from '@/componentes/Icono';
+import { GuiaConductor } from '@/componentes/GuiaConductor';
 import { Loseta } from '@/componentes/Loseta';
+import { pasosDeGuia } from '@/datos/guiaConductor';
+import { useEncomiendas } from '@/datos/useEncomiendas';
 import { formatoDiaCorto, formatoHora, sufijoHora } from '@/datos/formato';
 import { iniciales, nombreCompleto, nombrePropio } from '@/datos/perfil';
 import { usePerfil } from '@/datos/usePerfil';
@@ -46,6 +49,8 @@ export function ConductorInicio({
   const enVivo = useViajesEnVivo();
   const { cierreDe } = useCierres();
   const { perfil } = usePerfil();
+  const { encomiendas } = useEncomiendas();
+  const { cierres } = useCierres();
   const nombre = nombrePropio(nombreCompleto(perfil) || (sesion?.nombre ?? ''));
   // todos sus viajes de hoy en adelante: los que él mismo publicó
   const viajes = sesion?.choferId
@@ -96,6 +101,20 @@ export function ConductorInicio({
       <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
         {t('conductor.detalle')}
       </Text>
+
+      <GuiaConductor
+        pasos={pasosDeGuia({
+          cerrados: cierres.filter((c) => c.choferId === sesion?.choferId)
+            .length,
+          conFoto: perfil.fotoUri !== null,
+          nombreListo: nombre !== '',
+          viajesPublicados: viajes.length,
+          // con pasajeros o encomiendas reales, ya conoce esa pestaña
+          vioPasajeros: encomiendas.some(
+            (e) => e.choferId === sesion?.choferId,
+          ),
+        })}
+      />
 
       {alNuevoViaje && (
         <BotonAccion
