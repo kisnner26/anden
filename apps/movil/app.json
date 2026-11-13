@@ -8,7 +8,10 @@
     "scheme": "anden",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "bundleIdentifier": "com.kisnner.anden"
+      "bundleIdentifier": "com.kisnner.anden",
+      "infoPlist": {
+        "NSSupportsLiveActivities": true
+      }
     },
     "android": {
       "package": "com.kisnner.anden",
@@ -54,14 +57,25 @@
           "isAndroidForegroundServiceEnabled": false
         }
       ],
-      "expo-notifications",
+      [
+        "expo-notifications",
+        {
+          "enableRemoteNotifications": false
+        }
+      ],
       [
         "expo-local-authentication",
         {
           "faceIDPermission": "Andén usa Face ID solo para abrir la app y mostrar tus boletos."
         }
       ],
-      ["expo-audio", { "microphonePermission": false }]
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false
+        }
+      ],
+      "@bacons/apple-targets"
     ],
     "experiments": {
       "typedRoutes": true,
