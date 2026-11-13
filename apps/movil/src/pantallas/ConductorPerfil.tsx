@@ -79,16 +79,17 @@ export function ConductorPerfil({
 
   return (
     <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={[
         estilos.contenido,
         {
-          paddingBottom: espacios.cuarentaYOcho,
+          paddingBottom: 120,
           paddingTop: margenes.top + espacios.veinticuatro,
         },
       ]}
       style={{ backgroundColor: colores.fondo }}
     >
-      <Text style={[tipografia.display, { color: colores.tinta }]}>
+      <Text style={[tipografia.titulo, { color: colores.tinta }]}>
         {t('conductorPerfil.titulo')}.
       </Text>
       <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
@@ -102,7 +103,7 @@ export function ConductorPerfil({
             apellido: perfil.apellido,
             nombre: perfil.nombre || (sesion?.nombre ?? ''),
           })}
-          tamano={96}
+          tamano={72}
           uri={perfil.fotoUri}
         />
         <View style={estilos.texto}>
