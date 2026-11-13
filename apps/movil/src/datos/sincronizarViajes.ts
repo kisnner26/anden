@@ -6,7 +6,7 @@ import {
 } from '@/servicios/supabase/viajesSupabase';
 
 import { DUENO_REMOTO } from './asientosRemotos';
-import { fijarHistorial } from './historialSalidas';
+import { fijarCancelados, fijarHistorial } from './historialSalidas';
 import { CONFIGURACION_POR_SERVICIO, type DatosMuestra } from './muestra';
 import { notificarCambioDeViajes, obtenerMuestra } from './useSalidas';
 
@@ -90,6 +90,7 @@ export function aplicarViajesPublicados(
     });
   }
 
+  fijarCancelados(publicados.cancelados ?? []);
   fijarHistorial(
     (publicados.historial ?? []).map((fila) => {
       const puesto = new Date(fila.salida);
