@@ -5,6 +5,70 @@ export const CLAVE_ENCOMIENDAS = 'anden.encomiendas';
 export const TAMANOS = ['sobre', 'pequeno', 'grande'] as const;
 export type TamanoEncomienda = (typeof TAMANOS)[number];
 
+export const ESTADOS_ENCOMIENDA = [
+  'solicitada',
+  'aceptada',
+  'rechazada',
+  'recibida',
+  'entregada',
+  'cancelada',
+] as const;
+export type EstadoEncomienda = (typeof ESTADOS_ENCOMIENDA)[number];
+
+/** cuántas etapas de la línea del envío lleva cada estado: solicitada, confirmada, en el bus, entregada */
+export function etapasCumplidas(estado: EstadoEncomienda): number {
+  switch (estado) {
+    case 'aceptada':
+      return 2;
+    case 'recibida':
+      return 3;
+    case 'entregada':
+      return 4;
+    default:
+      return 1;
+  }
+}
+
+/** los motivos que el chofer puede dar al rechazar, para elegirlos con un toque */
+export const MOTIVOS_RECHAZO = [
+  'sinEspacio',
+  'muyGrande',
+  'noFragiles',
+  'viajeCambio',
+  'otro',
+] as const;
+export type MotivoRechazo = (typeof MOTIVOS_RECHAZO)[number];
+
+/** qué estados puede pasar a tener una encomienda desde el que está */
+export const SIGUIENTES: Readonly<
+  Record<EstadoEncomienda, readonly EstadoEncomienda[]>
+> = {
+  aceptada: ['recibida', 'rechazada'],
+  cancelada: [],
+  entregada: [],
+  recibida: ['entregada'],
+  rechazada: [],
+  solicitada: ['aceptada', 'rechazada', 'cancelada'],
+};
+
+/** la encomienda con su nuevo estado; nula si ese cambio no es posible desde el estado actual */
+export function conEstado(
+  encomienda: Encomienda,
+  estado: EstadoEncomienda,
+  motivo?: string,
+  ahora: Date = new Date(),
+): Encomienda | null {
+  if (!SIGUIENTES[encomienda.estado].includes(estado)) return null;
+  return {
+    ...encomienda,
+    actualizadaEn: ahora.toISOString(),
+    estado,
+    ...(estado === 'rechazada' && motivo?.trim()
+      ? { motivoRechazo: motivo.trim() }
+      : {}),
+  };
+}
+
 /** una solicitud de envío por bus; queda en el teléfono hasta que la cooperativa la confirme con el servidor */
 export interface Encomienda {
   codigo: string;
@@ -12,7 +76,14 @@ export interface Encomienda {
   descripcion: string;
   destinatario: string;
   destino: string;
-  estado: 'solicitada';
+  estado: EstadoEncomienda;
+  /** el chofer del bus en que viaja; las solicitudes viejas no lo tienen */
+  choferId?: string;
+  /** por qué el chofer no la lleva, cuando la rechaza */
+  motivoRechazo?: string;
+  /** el viaje elegido para llevarla; las solicitudes viejas no lo tienen */
+  viajeId?: string;
+  actualizadaEn?: string;
   /** se marca para que lo cuiden más; los envíos guardados antes de este campo no lo tienen */
   fragil: boolean;
   id: string;
@@ -24,6 +95,8 @@ export interface Encomienda {
 }
 
 export interface DatosEncomienda {
+  choferId?: string;
+  viajeId?: string;
   descripcion: string;
   destinatario: string;
   destino: string;
@@ -73,6 +146,8 @@ export function nuevaEncomienda(
     destinatario: datos.destinatario.trim(),
     destino: datos.destino,
     estado: 'solicitada',
+    ...(datos.choferId ? { choferId: datos.choferId } : {}),
+    ...(datos.viajeId ? { viajeId: datos.viajeId } : {}),
     fragil: datos.fragil === true,
     id: `enc_${ahora.getTime()}`,
     origen: datos.origen,
@@ -95,6 +170,7 @@ function esEncomienda(valor: unknown): valor is Encomienda {
     typeof e.descripcion === 'string' &&
     typeof e.creadaEn === 'string' &&
     typeof e.telefonoDestinatario === 'string' &&
+    (ESTADOS_ENCOMIENDA as readonly unknown[]).includes(e.estado) &&
     (TAMANOS as readonly unknown[]).includes(e.tamano)
   );
 }
