@@ -11,6 +11,7 @@ import envio from '../../assets/sonidos/envio.wav';
 import favorito from '../../assets/sonidos/favorito.wav';
 import fin from '../../assets/sonidos/fin.wav';
 import inicio from '../../assets/sonidos/inicio.wav';
+import plus from '../../assets/sonidos/plus.wav';
 import pago from '../../assets/sonidos/pago.wav';
 import recordatorio from '../../assets/sonidos/recordatorio.wav';
 import salida from '../../assets/sonidos/salida.wav';
@@ -28,6 +29,7 @@ const FUENTES = {
   fin,
   inicio,
   pago,
+  plus,
   recordatorio,
   salida,
   toque,
