@@ -29,7 +29,7 @@ export interface PropiedadesFilaSalida {
 function IconoServicio({ servicio }: { servicio: Salida['servicio'] }) {
   if (servicio === 'expreso')
     return <Icono nombre="rayo" tamano="ilustracion" />;
-  return <Autobus ancho={tamanosControl.toqueMinimo} />;
+  return <Autobus ancho={tamanosControl.toqueMinimo} usarMiUnidad />;
 }
 
 /** una salida de la terminal: ícono del servicio, destino, andén, hora y el estado del boleto */
