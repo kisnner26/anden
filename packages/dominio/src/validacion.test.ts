@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import {
   cedulaOpcionalValida,
+  cedulaValida,
+  formatearCedula,
   correoOpcionalValido,
   nombrePersonaValido,
 } from './validacion';
@@ -43,5 +45,47 @@ describe('cedulaOpcionalValida', () => {
     expect(cedulaOpcionalValida('0010101900001A')).toBe(false);
     expect(cedulaOpcionalValida('001-010190-001A')).toBe(false);
     expect(cedulaOpcionalValida('001-010190-00011')).toBe(false);
+  });
+});
+
+describe('cedulaValida', () => {
+  it('acepta una cédula completa con fecha posible, sin importar mayúsculas ni espacios', () => {
+    expect(cedulaValida('001-010190-0001A')).toBe(true);
+    expect(cedulaValida('  001-010190-0001a ')).toBe(true);
+  });
+
+  it('es obligatoria: vacío no vale', () => {
+    expect(cedulaValida('')).toBe(false);
+    expect(cedulaValida('   ')).toBe(false);
+  });
+
+  it('rechaza la estructura incorrecta', () => {
+    expect(cedulaValida('0010101900001A')).toBe(false);
+    expect(cedulaValida('001-010190-0001')).toBe(false);
+    expect(cedulaValida('001-010190-00011')).toBe(false);
+  });
+
+  it('rechaza una fecha de nacimiento imposible', () => {
+    expect(cedulaValida('001-310290-0001A')).toBe(false);
+    expect(cedulaValida('001-011390-0001A')).toBe(false);
+    expect(cedulaValida('001-000190-0001A')).toBe(false);
+  });
+
+  it('acepta el 29 de febrero de un año bisiesto', () => {
+    expect(cedulaValida('001-290200-0001A')).toBe(true);
+  });
+});
+
+describe('formatearCedula', () => {
+  it('pone los guiones y la mayúscula mientras se escribe', () => {
+    expect(formatearCedula('0010101900001a')).toBe('001-010190-0001A');
+    expect(formatearCedula('001010')).toBe('001-010');
+    expect(formatearCedula('001')).toBe('001');
+    expect(formatearCedula('')).toBe('');
+  });
+
+  it('ignora lo que no es letra ni número y no pasa de la longitud', () => {
+    expect(formatearCedula('001-010190-0001A99')).toBe('001-010190-0001A');
+    expect(formatearCedula('00 1.01')).toBe('001-01');
   });
 });
