@@ -13,7 +13,7 @@ export interface PropiedadesTextoEscribiendo {
   texto: string;
 }
 
-/** muestra el texto letra por letra, como si la IA lo estuviera escribiendo */
+/** muestra el texto palabra por palabra, como si la IA lo estuviera escribiendo */
 export function TextoEscribiendo({
   alTerminar,
   animado = true,
@@ -30,15 +30,20 @@ export function TextoEscribiendo({
       return;
     }
     establecerLetras(0);
-    // se escribe de a varias letras por tick si el texto es largo, para que no tarde demasiado
-    const paso = Math.max(1, Math.ceil(texto.length / 220));
+    // avanza por palabras: se lee más natural y redibuja muchas menos veces que letra por letra
+    const cortes: number[] = [];
+    for (let i = 0; i < texto.length; i += 1) {
+      if (texto[i] === ' ' || texto[i] === '\n') cortes.push(i + 1);
+    }
+    cortes.push(texto.length);
+    // un texto largo salta de a varias palabras para no tardar demasiado
+    const paso = Math.max(1, Math.ceil(cortes.length / 90));
+    let indice = 0;
     const temporizador = setInterval(() => {
-      establecerLetras((actual) => {
-        const siguiente = Math.min(texto.length, actual + paso);
-        if (siguiente >= texto.length) clearInterval(temporizador);
-        return siguiente;
-      });
-    }, movimiento.letraEscrita);
+      indice = Math.min(cortes.length - 1, indice + paso);
+      establecerLetras(cortes[indice] ?? texto.length);
+      if (indice >= cortes.length - 1) clearInterval(temporizador);
+    }, movimiento.palabraEscrita);
     return () => clearInterval(temporizador);
   }, [instantaneo, texto]);
 
