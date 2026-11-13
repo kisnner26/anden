@@ -20,6 +20,7 @@ import {
   type ResultadoTransmision,
 } from '@/datos/transmisor';
 import { useAbordaje } from '@/datos/useAbordaje';
+import { unirBoletos, useBoletosDelViaje } from '@/datos/useBoletosDelViaje';
 import { useBoletos } from '@/datos/useBoletos';
 import { useCierres } from '@/datos/useCierres';
 import { useDetalleViaje } from '@/datos/useDetalleViaje';
@@ -66,7 +67,9 @@ export function ConductorViaje({
     detalle?.salida.destino ?? '',
   );
   const transmision = useTransmision(viajeId);
-  const { boletos } = useBoletos();
+  const { boletos: locales } = useBoletos();
+  const remotos = useBoletosDelViaje(viajeId);
+  const boletos = unirBoletos(locales, remotos);
   const { estadoDe, marcarPagado, registro, revertir } = usePagos();
   const { abordo, alternar: alternarAbordaje } = useAbordaje();
   const [iniciando, establecerIniciando] = useState(false);
