@@ -19,6 +19,8 @@ export interface PropiedadesFilaSalida {
   conBoleto?: boolean;
   /** agrega cuántos asientos quedan, con aviso si son pocos o ninguno */
   mostrarDisponibilidad?: boolean;
+  /** una marca breve bajo el destino, por ejemplo "Para vos" cuando la sugiere la IA */
+  sugerida?: string;
   /** campana para pedir el aviso de esta salida */
   recordatorio?: { activo: boolean; alPresionar: () => void; etiqueta: string };
   salida: Salida;
@@ -37,6 +39,7 @@ export function FilaSalida({
   mostrarDisponibilidad = false,
   recordatorio,
   salida,
+  sugerida,
 }: PropiedadesFilaSalida) {
   const { colores } = useTema();
   const servicio = t(`servicios.${salida.servicio}`);
@@ -67,6 +70,11 @@ export function FilaSalida({
           <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
             {`${servicio} · ${anden}`}
           </Text>
+          {sugerida ? (
+            <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+              {sugerida}
+            </Text>
+          ) : null}
           {mostrarDisponibilidad ? (
             <Text
               style={[
