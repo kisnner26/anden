@@ -189,3 +189,14 @@ export const paletasAutobus: Readonly<
 
 /** el degradado que identifica todo lo que genera la IA del teléfono */
 export const coloresIA = ['#7B61FF', '#2EC4F1', '#FFB21E'] as const;
+
+/** el aura de la IA, al estilo de la de Apple: violetas, rosas, azules y un toque de naranja */
+export const coloresAura = [
+  '#BC82F3',
+  '#F5B9EA',
+  '#8D9FFF',
+  '#AA6EEE',
+  '#FF6778',
+  '#FFBA71',
+  '#C686FF',
+] as const;
