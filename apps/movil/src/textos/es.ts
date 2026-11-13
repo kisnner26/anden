@@ -377,8 +377,26 @@ export const textos = {
   cuenta: {
     titulo: 'Creá tu cuenta',
     detalle:
-      'Guardamos tus datos solo en este teléfono para que reservar sea más rápido.',
+      'Con tu usuario y tu contraseña entrás a Andén desde cualquier teléfono.',
     nombre: 'Nombre',
+    usuario: 'Usuario',
+    marcadorUsuario: 'tu.usuario',
+    usuarioAyuda:
+      'Con este usuario vas a ingresar. De 3 a 20 letras sin tilde, números, punto o guion bajo.',
+    usuarioInvalido:
+      'Escribí de 3 a 20 letras sin tilde, números, punto o guion bajo.',
+    usuarioTomado: 'Ese usuario ya está en uso. Probá con otro.',
+    telefonoTomado: 'Ya hay una cuenta con ese teléfono.',
+    clave: 'Contraseña',
+    claveInvalida: 'Usá al menos 8 caracteres, con una letra y un número.',
+    confirmarClave: 'Repetí la contraseña',
+    clavesDistintas: 'Las contraseñas no coinciden.',
+    sinConexion:
+      'No pudimos crear la cuenta. Revisá tu conexión y probá de nuevo.',
+    confirmacionPendiente:
+      'La cuenta se creó pero el servidor pide confirmarla. Avisale a la cooperativa.',
+    bienvenida: 'Te damos la bienvenida, {nombre}',
+    bienvenidaDetalle: 'Tu cuenta quedó lista.',
     apellido: 'Apellido',
     telefono: 'Teléfono',
     marcadorNombre: 'Tu nombre',
@@ -394,7 +412,6 @@ export const textos = {
     telefonoInvalido: 'Escribí un teléfono de Nicaragua de 8 dígitos.',
     bloqueo: 'Proteger mis boletos con Face ID',
     crear: 'Crear cuenta',
-    omitir: 'Ahora no',
   },
   opiniones: {
     titulo: 'Opiniones',
@@ -509,8 +526,6 @@ export const textos = {
   ajustes: {
     sesionSeccion: 'Sesión',
     sesionIniciada: 'Sesión iniciada',
-    ingresarTitulo: 'Ingresar o crear cuenta',
-    ingresarDetalle: 'Guardá tus boletos y tus datos en tu cuenta.',
     cerrarSesion: 'Cerrar sesión',
     titulo: 'Configuración',
     detalle: 'Ajustá Andén a tu forma de viajar.',
@@ -585,15 +600,14 @@ export const textos = {
   ingresar: {
     titulo: 'Ingresar',
     detalle: 'Entrá con tu cuenta de Andén.',
-    identificador: 'Correo, teléfono o código',
+    identificador: 'Usuario, teléfono o código',
     clave: 'Contraseña',
     entrar: 'Ingresar',
     error: 'Los datos no son correctos.',
     crear: 'Crear cuenta',
-    invitado: 'Continuar sin cuenta',
     pruebaTitulo: 'Modo de prueba',
     pruebaDetalle:
-      'Todavía no hay servidor. Para probar: 1001 o ana@correo.com, con la contraseña 2026.',
+      'Todavía no hay servidor. Para probar: 1001 o ana, con la contraseña 2026. También podés crear una cuenta.',
   },
   seguimiento: {
     enVivo: 'En vivo',
