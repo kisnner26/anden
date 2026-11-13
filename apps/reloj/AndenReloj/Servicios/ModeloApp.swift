@@ -12,11 +12,13 @@ final class ModeloApp: ObservableObject {
     @Published var reservas: [Reserva] = []
     @Published var avanceBus: Double?
     @Published var salidas: [Viaje] = []
+    @Published var encomiendas: [Encomienda] = []
     @Published var mensaje: String?
     @Published var entrando = false
 
     private let cliente = ClienteAnden()
     private var avisados = Set<String>()
+    private var avisoCerca = Set<String>()
 
     init() {
         fase = cliente.tieneSesion ? .cargando : .ingreso
@@ -48,6 +50,7 @@ final class ModeloApp: ObservableObject {
         cliente.salir()
         reservas = []
         salidas = []
+        encomiendas = []
         Instantanea().guardar()
         WidgetCenter.shared.reloadAllTimelines()
         avanceBus = nil
@@ -59,6 +62,7 @@ final class ModeloApp: ObservableObject {
         do {
             reservas = try await cliente.reservas()
             salidas = (try? await cliente.salidas()) ?? salidas
+            encomiendas = ((try? await cliente.encomiendas()) ?? encomiendas).sorted { $0.activa && !$1.activa }
             avisarSiEstaPorSalir()
             actualizarComplicacion()
             mensaje = nil
@@ -103,6 +107,11 @@ final class ModeloApp: ObservableObject {
               let t = try? await cliente.transmision(viajeId: r.viaje.id), let lat = t.lat, let lng = t.lng
         else { avanceBus = nil; return }
         avanceBus = ruta.avance(lat: lat, lng: lng)
+        // un toque cuando el bus pasa del 90 % del camino, una sola vez por viaje
+        if let a = avanceBus, a >= 0.9, !avisoCerca.contains(r.viaje.id) {
+            avisoCerca.insert(r.viaje.id)
+            WKInterfaceDevice.current().play(.success)
+        }
     }
 
     /// vuelve a leer cada 20 s mientras la app está abierta
