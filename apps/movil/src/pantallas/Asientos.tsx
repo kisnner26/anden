@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -7,6 +8,7 @@ import { Icono } from '@/componentes/Icono';
 import { MapaAsientos } from '@/componentes/MapaAsientos';
 import { PieReserva } from '@/componentes/PieReserva';
 import { ProgresoReserva } from '@/componentes/ProgresoReserva';
+import { sincronizarAsientos } from '@/datos/asientosRemotos';
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
 import { formatoCuenta, useCuentaRegresiva } from '@/datos/useCuentaRegresiva';
 import { useMapaAsientos } from '@/datos/useMapaAsientos';
@@ -53,7 +55,8 @@ function Leyenda({
 export function Asientos({ alSeguir, alVolver, viajeId }: PropiedadesAsientos) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
-  const mapa = useMapaAsientos(viajeId);
+  const [version, establecerVersion] = useState(0);
+  const mapa = useMapaAsientos(viajeId, version);
   const { datos, salidas } = useSalidas();
   const { alternar, aviso, elegidos, total } = useSeleccionAsientos(viajeId);
   const restantes = useCuentaRegresiva(SEGUNDOS_RETENCION);
@@ -62,6 +65,22 @@ export function Asientos({ alSeguir, alVolver, viajeId }: PropiedadesAsientos) {
   const origen = datos.terminales.find(
     (terminal) => terminal.id === ruta?.origenId,
   );
+
+  // los asientos que venden otros teléfonos aparecen ocupados mientras se mira el plano
+  useEffect(() => {
+    let vigente = true;
+    const traer = () => {
+      void sincronizarAsientos(viajeId).then((nuevos) => {
+        if (vigente && nuevos > 0) establecerVersion((v) => v + 1);
+      });
+    };
+    traer();
+    const temporizador = setInterval(traer, 5000);
+    return () => {
+      vigente = false;
+      clearInterval(temporizador);
+    };
+  }, [viajeId]);
 
   if (!mapa || !salida) {
     return (

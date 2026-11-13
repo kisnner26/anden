@@ -20,7 +20,10 @@ export interface MapaAsientosViaje {
 }
 
 /** el plano del bus de un viaje con el estado de cada asiento; nulo si el viaje no existe */
-export function useMapaAsientos(viajeId: string): MapaAsientosViaje | null {
+export function useMapaAsientos(
+  viajeId: string,
+  version = 0,
+): MapaAsientosViaje | null {
   const ahora = useAhora();
   const { datos, salidas } = useSalidas();
 
@@ -45,5 +48,6 @@ export function useMapaAsientos(viajeId: string): MapaAsientosViaje | null {
       tarifa:
         salidas.find((salida) => salida.viajeId === viaje.id)?.tarifa ?? null,
     };
-  }, [ahora, datos, salidas, viajeId]);
+    // `version` cambia cuando llegan asientos vendidos por otros teléfonos
+  }, [ahora, datos, salidas, version, viajeId]);
 }
