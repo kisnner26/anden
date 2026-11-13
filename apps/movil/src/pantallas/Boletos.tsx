@@ -100,7 +100,11 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
               boletos={proximos}
             />
           ) : (
-            <HistorialViajes alAbrirBoleto={alAbrirBoleto} boletos={pasados} />
+            <HistorialViajes
+              ahora={ahora}
+              alAbrirBoleto={alAbrirBoleto}
+              boletos={pasados}
+            />
           )}
         </>
       )}

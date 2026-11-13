@@ -82,7 +82,10 @@ describe('Boletos', () => {
     const pantalla = await dibujar();
     expect(await pantalla.findByRole('tab', { name: 'Próximos' })).toBeTruthy();
     await fireEvent.press(pantalla.getByRole('tab', { name: 'Historial' }));
-    expect(await pantalla.findByText('último')).toBeTruthy();
+    expect(
+      await pantalla.findByRole('button', { name: 'Mes anterior' }),
+    ).toBeTruthy();
+    expect(pantalla.getByText('viajes')).toBeTruthy();
     expect(pantalla.queryByText('Sale en')).toBeNull();
   });
 
@@ -99,20 +102,25 @@ describe('Boletos', () => {
     expect(alAbrirBoleto).toHaveBeenCalledWith('bol_K7RM4QX9');
   });
 
-  it('agrupa los viajes hechos por destino y deja ver cada uno', async () => {
+  it('muestra los viajes hechos en un calendario y abre los de un día', async () => {
     const alAbrirBoleto = jest.fn();
+    const hace = new Date(Date.now() - 3_600_000);
     await AsyncStorage.setItem(
       CLAVE_BOLETOS,
       JSON.stringify([
-        boletoDePrueba(HACE_UNA_HORA(), 3, 'AAAA1111'),
-        boletoDePrueba(new Date(Date.now() - 5 * 3_600_000), 4, 'BBBB2222'),
+        boletoDePrueba(hace, 3, 'AAAA1111'),
+        boletoDePrueba(new Date(hace.getTime() - 60_000), 4, 'BBBB2222'),
       ]),
     );
     const pantalla = await dibujar({ alAbrirBoleto });
+    expect(await pantalla.findByText('destinos')).toBeTruthy();
     await fireEvent.press(
-      await pantalla.findByRole('button', { name: /^Boaco, 2 viajes$/ }),
+      await pantalla.findByRole('button', {
+        name: new RegExp(`^Ver los viajes del ${hace.getDate()} `),
+      }),
     );
-    await fireEvent.press(pantalla.getByRole('button', { name: /Asiento 3$/ }));
+    expect(await pantalla.findAllByText('Viaje hecho')).toHaveLength(2);
+    await fireEvent.press(pantalla.getByLabelText(/Asiento 3$/));
     expect(alAbrirBoleto).toHaveBeenCalledWith('bol_AAAA1111');
   });
 });
