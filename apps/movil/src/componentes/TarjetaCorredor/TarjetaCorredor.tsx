@@ -73,7 +73,7 @@ export function TarjetaCorredor({
       >
         <Bloque estiloContenido={estilos.contenido} radio="tarjeta">
           <View style={estilos.cabecera}>
-            <View style={estilos.trayecto}>
+            <View style={estilos.extremo}>
               <View
                 style={[
                   estilos.codigo,
@@ -84,27 +84,35 @@ export function TarjetaCorredor({
                   {codigoOrigen}
                 </Text>
               </View>
-              <View style={estilos.sentido}>
-                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                  {corredor.origen}
-                </Text>
-                <Text
-                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
-                >
-                  {t('rutas.hacia')}
-                </Text>
-                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                  {corredor.destino}
+              <Text
+                numberOfLines={1}
+                style={[tipografia.subtitulo, { color: colores.tinta }]}
+              >
+                {corredor.origen}
+              </Text>
+            </View>
+            <View style={estilos.conector}>
+              <View style={[estilos.guia, { borderColor: colores.linea }]} />
+              <Icono color={colores.tinta} nombre="siguiente" tamano="grande" />
+              <View style={[estilos.guia, { borderColor: colores.linea }]} />
+            </View>
+            <View style={estilos.extremo}>
+              <View
+                style={[
+                  estilos.codigo,
+                  { backgroundColor: colores.bloqueNegro },
+                ]}
+              >
+                <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+                  {codigoDestino}
                 </Text>
               </View>
-            </View>
-            <View style={estilos.destinoYEstrella}>
               <Text
-                style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
+                numberOfLines={1}
+                style={[tipografia.subtitulo, { color: colores.tinta }]}
               >
-                {codigoDestino}
+                {corredor.destino}
               </Text>
-              <View style={estilos.huecoEstrella} />
             </View>
           </View>
 
@@ -159,18 +167,25 @@ export function TarjetaCorredor({
                 </View>
               )}
             </View>
-            <View
-              style={[estilos.avance, { backgroundColor: colores.bloqueNegro }]}
-            >
-              <Icono
-                color={colores.ambar}
-                nombre="siguiente"
-                tamano="mediano"
-              />
+            <View style={estilos.acciones}>
+              <View style={estilos.huecoEstrella} />
+              <View
+                style={[
+                  estilos.avance,
+                  { backgroundColor: colores.bloqueNegro },
+                ]}
+              >
+                <Icono
+                  color={colores.ambar}
+                  nombre="siguiente"
+                  tamano="mediano"
+                />
+              </View>
             </View>
           </View>
         </Bloque>
       </Pressable>
+      {/* la estrella es hermana de la tarjeta, no hija: un botón dentro de otro no es válido */}
       <View style={estilos.estrella}>
         <BotonFavorito
           activo={favorito}
@@ -194,11 +209,25 @@ const estilos = StyleSheet.create({
     justifyContent: 'center',
     width: tamanosControl.toqueMinimo,
   },
-  cabecera: {
+  acciones: { alignItems: 'center', flexDirection: 'row', gap: espacios.ocho },
+  cabecera: { alignItems: 'center', flexDirection: 'row', gap: espacios.doce },
+  conector: {
     alignItems: 'center',
+    flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    gap: espacios.cuatro,
   },
+  estrella: {
+    bottom: espacios.dieciseis,
+    position: 'absolute',
+    right: espacios.dieciseis + tamanosControl.toqueMinimo + espacios.ocho,
+  },
+  huecoEstrella: {
+    height: tamanosControl.toqueMinimo,
+    width: tamanosControl.toqueMinimo,
+  },
+  extremo: { alignItems: 'center', gap: espacios.ocho, width: 104 },
+  guia: { borderStyle: 'dashed', borderTopWidth: 2, flex: 1 },
   codigo: {
     alignItems: 'center',
     borderRadius: radios.loseta,
@@ -207,22 +236,8 @@ const estilos = StyleSheet.create({
     width: tamanosControl.toqueMinimo,
   },
   contenido: { gap: espacios.doce, padding: espacios.dieciseis },
-  destinoYEstrella: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: espacios.cuatro,
-  },
   envoltura: { position: 'relative' },
-  estrella: {
-    position: 'absolute',
-    right: espacios.doce,
-    top: espacios.ocho,
-  },
   horario: { gap: espacios.cuatro },
-  huecoEstrella: {
-    height: tamanosControl.toqueMinimo,
-    width: tamanosControl.toqueMinimo,
-  },
   operacion: {
     flex: 1,
     gap: espacios.cuatro,
@@ -233,10 +248,8 @@ const estilos = StyleSheet.create({
     gap: espacios.doce,
     justifyContent: 'space-between',
   },
-  sentido: { gap: espacios.cuatro },
   separador: { height: espacios.trazo },
   sinServicio: { gap: espacios.cuatro },
   tarjeta: { minHeight: tamanosControl.toqueMinimo },
   tarjetaPresionada: { transform: [{ scale: movimiento.escalaPresion }] },
-  trayecto: { alignItems: 'center', flexDirection: 'row', gap: espacios.doce },
 });
