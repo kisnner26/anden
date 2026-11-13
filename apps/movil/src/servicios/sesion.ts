@@ -67,6 +67,22 @@ export function esCorreo(texto: string): boolean {
   return texto.includes('@');
 }
 
+/** con qué se distingue una cuenta de otra en este teléfono: usuario, código de chofer o nombre; sin sesión no hay cuenta */
+export function claveDeCuenta(sesion: Sesion | null): string | null {
+  if (!sesion) return null;
+  const base = sesion.usuario ?? sesion.choferId ?? sesion.nombre;
+  return base.trim().toLowerCase().replace(/\s+/g, '-');
+}
+
+/** el nombre y el apellido que se pueden sacar de la sesión: la primera palabra es el nombre y el resto el apellido */
+export function nombreYApellido(sesion: Sesion): {
+  apellido: string;
+  nombre: string;
+} {
+  const [nombre = '', ...resto] = sesion.nombre.trim().split(/\s+/);
+  return { apellido: resto.join(' '), nombre };
+}
+
 /** el pasajero no necesita iniciar sesión: sin sesión se comporta como pasajero */
 export function rolDe(sesion: Sesion | null): Rol {
   return sesion?.rol ?? 'pasajero';
