@@ -289,7 +289,7 @@ const estilos = StyleSheet.create({
   },
   saludo: { flex: 1 },
   cuerpo: { gap: espacios.treintaYDos, marginTop: espacios.veinticuatro },
-  encabezadoSeccion: { gap: espacios.ocho },
+  encabezadoSeccion: { alignItems: 'flex-start', gap: espacios.ocho },
   grupo: { gap: espacios.doce },
   vacio: { marginTop: espacios.treintaYDos, textAlign: 'center' },
 });
