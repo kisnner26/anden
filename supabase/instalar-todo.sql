@@ -248,6 +248,12 @@ create policy "conductores marcan el abordaje" on public.abordajes for all
 create policy "retirar la solicitud en revision" on public.solicitudes_conductor
   for delete using (auth.uid() = usuario_id and estado = 'en_revision');
 
+-- 0009
+-- el mismo asiento de un viaje no se puede vender dos veces: lo impide la base, no el teléfono
+create unique index boletos_un_asiento_por_viaje
+  on public.boletos (viaje_id, asiento)
+  where estado <> 'cancelado';
+
 -- update public.perfiles
 --    set rol = 'conductor', chofer_id = 'cho_2', nombre = 'Marvin Lanzas'
 --  where id = (select id from auth.users where email = '1002@cuentas.anden.app');
