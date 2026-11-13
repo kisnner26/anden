@@ -5,12 +5,14 @@ import {
   avisoDisponible,
   limiteDeRecientes,
   puedeGuardarHabitual,
+  diasDeAnticipacion,
+  puedeReservarSalida,
 } from './beneficios';
 
 describe('beneficios de Plus', () => {
-  it('hay seis beneficios, cada uno con ícono y sin repetirse', () => {
-    expect(BENEFICIOS_PLUS).toHaveLength(6);
-    expect(new Set(BENEFICIOS_PLUS.map((b) => b.id)).size).toBe(6);
+  it('hay siete beneficios, cada uno con ícono y sin repetirse', () => {
+    expect(BENEFICIOS_PLUS).toHaveLength(7);
+    expect(new Set(BENEFICIOS_PLUS.map((b) => b.id)).size).toBe(7);
     expect(BENEFICIOS_PLUS.every((b) => b.icono !== undefined)).toBe(true);
   });
 
@@ -38,5 +40,24 @@ describe('beneficios de Plus', () => {
     for (const minutos of [15, 30, 60]) {
       expect(avisoDisponible(true, minutos)).toBe(true);
     }
+  });
+});
+
+describe('reserva anticipada', () => {
+  const ahora = new Date(2026, 10, 12, 10, 0);
+  const enDias = (dias: number) => new Date(2026, 10, 12 + dias, 9, 0);
+
+  it('Plus reserva con más días de anticipación', () => {
+    expect(diasDeAnticipacion(true)).toBeGreaterThan(diasDeAnticipacion(false));
+  });
+
+  it('sin Plus solo se reserva dentro de los próximos días', () => {
+    expect(puedeReservarSalida(false, enDias(2), ahora)).toBe(true);
+    expect(puedeReservarSalida(false, enDias(3), ahora)).toBe(false);
+  });
+
+  it('con Plus se reserva mucho antes', () => {
+    expect(puedeReservarSalida(true, enDias(10), ahora)).toBe(true);
+    expect(puedeReservarSalida(true, enDias(14), ahora)).toBe(false);
   });
 });
