@@ -8,3 +8,4 @@ export {
   type IdVarianteBus,
   type VarianteBus,
 } from './variantes';
+export { colorDeDestino } from './colorDeDestino';
