@@ -1,0 +1,1 @@
+export { DeslizarParaEliminar } from './DeslizarParaEliminar';
