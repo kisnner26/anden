@@ -16,6 +16,7 @@ struct RaizVista: View {
                     BoletoVista()
                     BusVista()
                     SalidasVista()
+                    EncomiendasVista()
                     AsistenteVista()
                     AjustesVista()
                 }
