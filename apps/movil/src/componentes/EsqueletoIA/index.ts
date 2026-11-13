@@ -1,0 +1,1 @@
+export { EsqueletoIA } from './EsqueletoIA';
