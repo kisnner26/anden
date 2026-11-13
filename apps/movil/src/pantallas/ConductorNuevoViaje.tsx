@@ -68,7 +68,9 @@ export function ConductorNuevoViaje({
   });
   const [intento, establecerIntento] = useState(false);
   const [publicando, establecerPublicando] = useState(false);
-  const [errorServidor, establecerErrorServidor] = useState(false);
+  const [errorServidor, establecerErrorServidor] = useState<string | null>(
+    null,
+  );
 
   const errores = validarViaje(borrador, ahora);
   const nombreTerminal = (id: string) =>
@@ -80,7 +82,7 @@ export function ConductorNuevoViaje({
 
   async function publicar() {
     establecerIntento(true);
-    establecerErrorServidor(false);
+    establecerErrorServidor(null);
     if (errores.length > 0 || !sesion?.choferId) return;
     const fila = armarFilaViaje(borrador, sesion.choferId, new Date());
     if (!fila) return;
@@ -88,7 +90,15 @@ export function ConductorNuevoViaje({
     const resultado = await publicarViaje(fila);
     establecerPublicando(false);
     if (resultado !== 'ok') {
-      establecerErrorServidor(true);
+      establecerErrorServidor(
+        resultado === 'sin-servidor'
+          ? t('nuevoViaje.sinServidor')
+          : resultado === 'sin-permiso'
+            ? t('nuevoViaje.sinPermiso')
+            : resultado === 'tabla-faltante'
+              ? t('nuevoViaje.tablaFaltante')
+              : t('nuevoViaje.errorServidor'),
+      );
       return;
     }
     await sincronizarViajes();
@@ -187,12 +197,12 @@ export function ConductorNuevoViaje({
           />
         </View>
 
-        {errorServidor && (
+        {errorServidor !== null && (
           <Text
             accessibilityLiveRegion="polite"
             style={[tipografia.cuerpo, { color: colores.cancelado }]}
           >
-            {t('nuevoViaje.errorServidor')}
+            {errorServidor}
           </Text>
         )}
         <BotonAccion
