@@ -6,6 +6,7 @@ import { Aparece } from '@/componentes/Aparece';
 import { Bloque } from '@/componentes/Bloque';
 import { ControlSegmentado } from '@/componentes/ControlSegmentado';
 import { GraficoBarras } from '@/componentes/GraficoBarras';
+import { ResumenIA } from '@/componentes/ResumenIA';
 import {
   actividadPorDia,
   cierresDelPeriodo,
@@ -147,6 +148,12 @@ export function ConductorHistorial() {
               valor={`${Math.round(resumen.cobranza * 100)}%`}
             />
           </View>
+
+          <ResumenIA
+            contexto={`Últimos ${periodo} días del conductor: cobrado C$ ${resumen.cobrado}, ${resumen.viajes} viajes, ${resumen.pasajeros} pasajeros, C$ ${Math.round(resumen.porViaje)} por viaje, ${resumen.pasajerosPorViaje.toFixed(1)} pasajeros por viaje, cobranza ${Math.round(resumen.cobranza * 100)}%, por cobrar C$ ${resumen.pendiente}.${resumen.mejorDia ? ` Mejor día: ${resumen.mejorDia.dia} con C$ ${resumen.mejorDia.cobrado}.` : ''}`}
+            pedido={t('ia.pedidoAnalisisConductor')}
+            titulo={t('ia.analizarConductor')}
+          />
 
           <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
             {t('conductorHistorial.gananciasTitulo')}
