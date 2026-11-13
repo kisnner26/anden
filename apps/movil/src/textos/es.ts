@@ -44,8 +44,6 @@ export const textos = {
     minutos: 'min',
     salidasDeHoy: 'Salidas de hoy',
     otroDia: 'Reservar para otro día',
-    destinosDesde: 'Destinos desde acá',
-    atajos: 'Atajos',
     atajoBoletos: 'Mis boletos',
     atajoHorarios: 'Horarios',
     atajoRutas: 'Rutas',

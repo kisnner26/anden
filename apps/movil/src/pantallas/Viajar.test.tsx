@@ -274,7 +274,6 @@ describe('Viajar', () => {
   it('muestra los atajos y lleva a la pestaña elegida', async () => {
     const alIrA = jest.fn();
     const pantalla = await dibujar({ alIrA });
-    expect(pantalla.getByText('Atajos')).toBeTruthy();
     await fireEvent.press(
       pantalla.getByRole('button', { name: 'Mis boletos' }),
     );
@@ -283,6 +282,6 @@ describe('Viajar', () => {
 
   it('sin atajos configurados no dibuja la sección', async () => {
     const pantalla = await dibujar();
-    expect(pantalla.queryByText('Atajos')).toBeNull();
+    expect(pantalla.queryByRole('button', { name: 'Mis boletos' })).toBeNull();
   });
 });

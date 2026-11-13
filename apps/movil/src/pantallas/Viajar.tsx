@@ -1,7 +1,6 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { Autobus, varianteDeClave } from '@/componentes/Autobus';
 import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { EtiquetaMuestra } from '@/componentes/EtiquetaMuestra';
@@ -13,8 +12,6 @@ import { Icono } from '@/componentes/Icono';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { TarjetaHabitual } from '@/componentes/TarjetaHabitual';
 import { TarjetaProximoViaje } from '@/componentes/TarjetaProximoViaje';
-import { destinosDeHoy } from '@/datos/destinosDeHoy';
-import { formatoHoraCompleta } from '@/datos/formato';
 import { iniciales, nombrePropio } from '@/datos/perfil';
 import { useAvisos } from '@/datos/useAvisos';
 import { usePerfil } from '@/datos/usePerfil';
@@ -28,7 +25,6 @@ import { proximaSalida } from '@/datos/salidas';
 import { espacios, tamanosControl } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
-import { useModoUso } from '@/tema/useModoUso';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
@@ -56,7 +52,6 @@ export function Viajar({
 }: PropiedadesViajar) {
   const { colores } = useTema();
   const { perfil } = usePerfil();
-  const { ajustes } = useModoUso();
   const [origenId, establecerOrigenId] = useState('ter_may');
   const hoy = useMemo(() => inicioDelDia(new Date()), []);
   const { ahora, datos, salidas } = useSalidas(origenId, hoy);
@@ -78,9 +73,6 @@ export function Viajar({
         ESTADOS_PENDIENTES.includes(salida.estado),
     )
     .slice(0, 3);
-  const destinos = destinosDeHoy(salidas);
-  // con pocos destinos se reparten a lo ancho y quedan simétricos; con muchos se desliza
-  const repartidos = destinos.length <= 3;
   const terminalOrigen = datos.terminales.find(
     (terminal) => terminal.id === origenId,
   );
@@ -147,128 +139,26 @@ export function Viajar({
         </Pressable>
       </View>
 
-      {proxima ? (
-        <TarjetaProximoViaje
-          ahora={ahora}
-          alVerBoleto={() => alElegirAsiento(proxima.viajeId)}
-          salida={proxima}
-        />
-      ) : (
-        <Text
-          style={[
-            tipografia.cuerpo,
-            estilos.vacio,
-            { color: colores.tintaSuave },
-          ]}
-        >
-          {t('viajar.sinSalidas')}
-        </Text>
-      )}
-
-      {habituales.map((habitual) => (
-        <TarjetaHabitual
-          ahora={ahora}
-          alQuitar={() => void quitarHabitual(habitual.id)}
-          alReservar={alAbrirViaje}
-          habitual={habitual}
-          key={habitual.id}
-          proxima={proximaDelHabitual(habitual, todasLasSalidas, ahora)}
-        />
-      ))}
-
-      <View style={estilos.seccion}>
-        <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-          {t('viajar.salidasDeHoy')}
-        </Text>
-        <EtiquetaMuestra />
-      </View>
-
-      {pendientes.length === 0 && (
-        <Text
-          style={[
-            tipografia.cuerpo,
-            estilos.vacio,
-            { color: colores.tintaSuave },
-          ]}
-        >
-          {t('viajar.sinSalidasOrigen')}
-        </Text>
-      )}
-      {pendientes.map((salida, indice) => (
-        <Aparece indice={indice} key={salida.viajeId}>
-          <FilaSalida alPresionar={alAbrirViaje} salida={salida} />
-        </Aparece>
-      ))}
-
-      {destinos.length > 0 && !ajustes.simplificado && (
-        <View>
+      <View style={estilos.cuerpo}>
+        {proxima ? (
+          <TarjetaProximoViaje
+            ahora={ahora}
+            alVerBoleto={() => alElegirAsiento(proxima.viajeId)}
+            salida={proxima}
+          />
+        ) : (
           <Text
             style={[
-              tipografia.subtitulo,
-              estilos.seccionSola,
-              { color: colores.tinta },
+              tipografia.cuerpo,
+              estilos.vacio,
+              { color: colores.tintaSuave },
             ]}
           >
-            {t('viajar.destinosDesde')}
+            {t('viajar.sinSalidas')}
           </Text>
-          <ScrollView
-            contentContainerStyle={[
-              estilos.destinos,
-              repartidos && estilos.repartidos,
-            ]}
-            horizontal
-            scrollEnabled={!repartidos}
-            showsHorizontalScrollIndicator={false}
-          >
-            {destinos.map((salida, indice) => (
-              <Pressable
-                accessibilityLabel={`${salida.destino}, ${formatoHoraCompleta(salida.salida)}`}
-                accessibilityRole="button"
-                key={salida.destino}
-                onPress={() => alAbrirViaje(salida.viajeId)}
-                style={({ pressed }) => [
-                  repartidos ? estilos.destinoRepartido : estilos.destinoFijo,
-                  pressed && estilos.presionado,
-                ]}
-              >
-                <Aparece indice={indice}>
-                  <Bloque estiloContenido={estilos.destino}>
-                    <Autobus
-                      ancho={96}
-                      variante={varianteDeClave(salida.destino)}
-                    />
-                    <Text
-                      style={[tipografia.nombreFila, { color: colores.tinta }]}
-                    >
-                      {salida.destino}
-                    </Text>
-                    <Text
-                      style={[
-                        tipografia.etiqueta,
-                        { color: colores.ambarTexto },
-                      ]}
-                    >
-                      {formatoHoraCompleta(salida.salida)}
-                    </Text>
-                  </Bloque>
-                </Aparece>
-              </Pressable>
-            ))}
-          </ScrollView>
-        </View>
-      )}
+        )}
 
-      {alIrA && (
-        <View>
-          <Text
-            style={[
-              tipografia.subtitulo,
-              estilos.seccionSola,
-              { color: colores.tinta },
-            ]}
-          >
-            {t('viajar.atajos')}
-          </Text>
+        {alIrA && (
           <View style={estilos.atajos}>
             {(
               [
@@ -288,33 +178,77 @@ export function Viajar({
               >
                 <Bloque estiloContenido={estilos.atajoContenido}>
                   <Icono nombre={icono} tamano="ilustracion" />
-                  <Text style={[tipografia.pequeno, { color: colores.tinta }]}>
+                  <Text
+                    numberOfLines={1}
+                    style={[tipografia.pequeno, { color: colores.tinta }]}
+                  >
                     {t(texto)}
                   </Text>
                 </Bloque>
               </Pressable>
             ))}
           </View>
-        </View>
-      )}
+        )}
 
-      <Pressable
-        accessibilityHint={t('dias.selector')}
-        accessibilityRole="button"
-        onPress={alReservarOtroDia}
-        style={estilos.otroDia}
-      >
-        <Text style={[tipografia.subtitulo, { color: colores.ambarTexto }]}>
-          {t('viajar.otroDia')}
-        </Text>
-        <Icono color={colores.ambarTexto} nombre="siguiente" tamano="mediano" />
-      </Pressable>
+        {habituales.length > 0 && (
+          <View style={estilos.grupo}>
+            {habituales.map((habitual) => (
+              <TarjetaHabitual
+                ahora={ahora}
+                alQuitar={() => void quitarHabitual(habitual.id)}
+                alReservar={alAbrirViaje}
+                habitual={habitual}
+                key={habitual.id}
+                proxima={proximaDelHabitual(habitual, todasLasSalidas, ahora)}
+              />
+            ))}
+          </View>
+        )}
 
-      {terminalOrigen ? (
-        <View style={estilos.terminal}>
-          <EnlaceTerminal terminal={terminalOrigen} />
+        <View style={estilos.grupo}>
+          <View style={estilos.encabezadoSeccion}>
+            <Text style={[tipografia.titulo, { color: colores.tinta }]}>
+              {t('viajar.salidasDeHoy')}
+            </Text>
+            <EtiquetaMuestra />
+          </View>
+          {pendientes.length === 0 && (
+            <Text
+              style={[
+                tipografia.cuerpo,
+                estilos.vacio,
+                { color: colores.tintaSuave },
+              ]}
+            >
+              {t('viajar.sinSalidasOrigen')}
+            </Text>
+          )}
+          {pendientes.map((salida, indice) => (
+            <Aparece indice={indice} key={salida.viajeId}>
+              <FilaSalida alPresionar={alAbrirViaje} salida={salida} />
+            </Aparece>
+          ))}
         </View>
-      ) : null}
+
+        <Pressable
+          accessibilityHint={t('dias.selector')}
+          accessibilityRole="button"
+          onPress={alReservarOtroDia}
+        >
+          <Bloque estiloContenido={estilos.otroDia} hundido radio="loseta">
+            <Text style={[tipografia.subtitulo, { color: colores.ambarTexto }]}>
+              {t('viajar.otroDia')}
+            </Text>
+            <Icono
+              color={colores.ambarTexto}
+              nombre="siguiente"
+              tamano="mediano"
+            />
+          </Bloque>
+        </Pressable>
+
+        {terminalOrigen ? <EnlaceTerminal terminal={terminalOrigen} /> : null}
+      </View>
     </MarcoPestana>
   );
 }
@@ -327,25 +261,12 @@ const estilos = StyleSheet.create({
     padding: espacios.doce,
   },
   atajos: { flexDirection: 'row', gap: espacios.doce },
-  destino: {
-    alignItems: 'center',
-    gap: espacios.cuatro,
-    padding: espacios.doce,
-  },
-  destinoFijo: { width: 132 },
-  destinoRepartido: { flex: 1 },
-  repartidos: { flexGrow: 1 },
-  destinos: { gap: espacios.doce, paddingVertical: espacios.cuatro },
-  seccionSola: {
-    marginBottom: espacios.doce,
-    marginTop: espacios.veinticuatro,
-  },
   otroDia: {
     alignItems: 'center',
     flexDirection: 'row',
     gap: espacios.ocho,
     justifyContent: 'center',
-    minHeight: tamanosControl.toqueMinimo,
+    minHeight: tamanosControl.toqueMinimo + espacios.ocho,
   },
   puntoCampana: {
     borderRadius: 6,
@@ -367,12 +288,8 @@ const estilos = StyleSheet.create({
     width: 44,
   },
   saludo: { flex: 1 },
-  seccion: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: espacios.veinticuatro,
-  },
-  terminal: { marginTop: espacios.veinticuatro },
+  cuerpo: { gap: espacios.treintaYDos, marginTop: espacios.veinticuatro },
+  encabezadoSeccion: { gap: espacios.ocho },
+  grupo: { gap: espacios.doce },
   vacio: { marginTop: espacios.treintaYDos, textAlign: 'center' },
 });
