@@ -25,6 +25,7 @@ import { sincronizarViajes } from '@/datos/sincronizarViajes';
 import { useSalidas } from '@/datos/useSalidas';
 import { useSesion } from '@/datos/useSesion';
 import { publicarViaje } from '@/servicios/supabase/viajesSupabase';
+import { DIAS_RESERVA_PLUS } from '@/servicios/beneficios';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -53,7 +54,10 @@ export function ConductorNuevoViaje({
   const margenes = useSafeAreaInsets();
   const { sesion } = useSesion();
   const { ahora, datos } = useSalidas();
-  const dias = useMemo(() => diasDeReserva(inicioDelDia(ahora)), [ahora]);
+  const dias = useMemo(
+    () => diasDeReserva(inicioDelDia(ahora), DIAS_RESERVA_PLUS),
+    [ahora],
+  );
   const [borrador, establecerBorrador] = useState<BorradorViaje>({
     anden: '',
     dia: dias[0] ?? ahora,
