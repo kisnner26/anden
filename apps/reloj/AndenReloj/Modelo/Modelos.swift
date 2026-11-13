@@ -51,3 +51,33 @@ struct Reserva: Identifiable {
     let viaje: Viaje
     var id: String { boleto.id }
 }
+
+/// un paquete que enviaste, tal como lo guarda la tabla `encomiendas`
+struct Encomienda: Decodable, Identifiable {
+    struct Contenido: Decodable {
+        let codigo: String?
+        let descripcion: String?
+        let origen: String?
+        let destino: String?
+    }
+    let id: String
+    let estado: String
+    let motivo: String?
+    let contenido: Contenido?
+
+    /// el estado como se dice en voz alta
+    var estadoTexto: String {
+        switch estado {
+        case "solicitada": "Esperando al chofer"
+        case "aceptada": "Aceptada"
+        case "rechazada": "Rechazada"
+        case "recibida": "En el bus"
+        case "entregada": "Entregada"
+        case "cancelada": "Cancelada"
+        default: estado.capitalized
+        }
+    }
+
+    /// las que todavía se mueven van primero
+    var activa: Bool { ["solicitada", "aceptada", "recibida"].contains(estado) }
+}
