@@ -19,4 +19,13 @@ describe('rellenar', () => {
   it('deja el hueco si no hay valor', () => {
     expect(rellenar('Andén {anden}', {})).toBe('Andén {anden}');
   });
+
+  it('también entiende los huecos con doble llave y no deja llaves sueltas', () => {
+    expect(
+      rellenar('Tenés Plus desde {{fecha}}.', { fecha: 'viernes 13' }),
+    ).toBe('Tenés Plus desde viernes 13.');
+    expect(rellenar('Paso {{paso}} de {total}', { paso: 1, total: 3 })).toBe(
+      'Paso 1 de 3',
+    );
+  });
 });
