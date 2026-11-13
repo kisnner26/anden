@@ -83,6 +83,12 @@
           "microphonePermission": "Andén usa el micrófono solo mientras le hablás al asistente.",
           "speechRecognitionPermission": "Andén usa el dictado del teléfono para entender lo que le preguntás al asistente."
         }
+      ],
+      [
+        "expo-sensors",
+        {
+          "motionPermission": "Andén usa el movimiento del teléfono solo durante tu viaje, para detectar un posible choque y avisar a tu contacto de emergencia."
+        }
       ]
     ],
     "experiments": {
