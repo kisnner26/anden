@@ -167,6 +167,8 @@ describe('Asistente', () => {
       (contexto.preguntar as jest.Mock<ValorIA['preguntar']>).mock
         .calls[0]?.[1],
     ).toBe('¿cuándo sale el bus a Boaco?');
+    // le hablaste, así que contesta hablando aunque el interruptor esté apagado
+    await waitFor(() => expect(voz.hablar).toHaveBeenCalled());
   });
 
   it('avisa si no hay permiso para el micrófono', async () => {
