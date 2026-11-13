@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { Bus } from './svg/Bus';
 import { supabase } from './supabase';
 
 export function Ingreso({ alEntrar }: { alEntrar: () => void }) {
@@ -29,19 +30,19 @@ export function Ingreso({ alEntrar }: { alEntrar: () => void }) {
   return (
     <main className="ingreso">
       <div className="ingreso-fondo" aria-hidden="true" />
+      <div aria-hidden="true" className="ingreso-bus">
+        <Bus />
+      </div>
       <section className="ingreso-texto">
-        <p className="micro">ANDÉN · COOPERATIVA</p>
-        <h1 className="display">
-          <span>TORRE DE</span>
-          <em>CONTROL.</em>
-        </h1>
+        <p className="micro">Andén · cooperativa</p>
+        <h1 className="titular">Torre de control.</h1>
         <p className="lead">
           Pasajeros, conductores y encomiendas en un solo tablero, al instante.
         </p>
       </section>
       <form className="ingreso-form" onSubmit={(e) => void entrar(e)}>
         <label>
-          <span className="micro">USUARIO</span>
+          <span className="micro">Usuario</span>
           <input
             autoComplete="username"
             onChange={(e) => establecerUsuario(e.target.value)}
@@ -49,7 +50,7 @@ export function Ingreso({ alEntrar }: { alEntrar: () => void }) {
           />
         </label>
         <label>
-          <span className="micro">CONTRASEÑA</span>
+          <span className="micro">Contraseña</span>
           <input
             autoComplete="current-password"
             onChange={(e) => establecerClave(e.target.value)}
@@ -67,7 +68,7 @@ export function Ingreso({ alEntrar }: { alEntrar: () => void }) {
           disabled={cargando || usuario === '' || clave === ''}
           type="submit"
         >
-          {cargando ? 'ENTRANDO…' : 'ENTRAR ↗'}
+          {cargando ? 'Entrando…' : 'Entrar ↗'}
         </button>
       </form>
     </main>
