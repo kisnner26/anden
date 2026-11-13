@@ -1,0 +1,36 @@
+name: AndenReloj
+options:
+  bundleIdPrefix: com.kisnner.anden
+  developmentLanguage: es
+  createIntermediateGroups: true
+  deploymentTarget:
+    watchOS: "10.0"
+configFiles:
+  Debug: Config/Secrets.xcconfig
+  Release: Config/Secrets.xcconfig
+targets:
+  AndenReloj:
+    type: application
+    platform: watchOS
+    sources:
+      - AndenReloj
+    info:
+      path: AndenReloj/Info.plist
+      properties:
+        CFBundleDisplayName: Andén
+        CFBundleDevelopmentRegion: es
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        WKApplication: true
+        WKWatchOnly: true
+        AndenSupabaseHost: $(ANDEN_SUPABASE_HOST)
+        AndenSupabaseClave: $(ANDEN_SUPABASE_CLAVE)
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.kisnner.anden.reloj
+        SWIFT_VERSION: "5.0"
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: NO
+        CODE_SIGN_STYLE: Automatic

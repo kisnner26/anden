@@ -1,0 +1,4 @@
+Config/Secrets.xcconfig
+AndenReloj.xcodeproj
+build/
+.DS_Store
