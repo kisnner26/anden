@@ -70,7 +70,7 @@ describe('efectos visuales de la IA', () => {
   it('se dibujan sin romperse', async () => {
     const pantalla = await renderPantalla(
       <TarjetaIA trabajando>
-        <BordeLuminoso activo />
+        <BordeLuminoso modo="hablando" />
         <Chispas />
         <EsqueletoIA lineas={2} />
       </TarjetaIA>,
