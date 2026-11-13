@@ -20,7 +20,9 @@ import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { CampoTexto } from '@/componentes/CampoTexto';
+import { ExplosionConfirmacion } from '@/componentes/ExplosionConfirmacion';
 import { Icono } from '@/componentes/Icono';
+import { Rebote } from '@/componentes/Rebote';
 import { autenticar, consultarBiometria } from '@/datos/biometria';
 import { useSesion } from '@/datos/useSesion';
 import type { ErrorRegistro } from '@/servicios/sesion';
@@ -496,24 +498,31 @@ export function RegistroConductor({ alVolver }: PropiedadesRegistroConductor) {
             <Aparece>
               <View style={estilos.grupo}>
                 <Bloque estiloContenido={estilos.seguridad}>
-                  <View
-                    style={[
-                      estilos.sello3,
-                      {
-                        backgroundColor: confirmada
-                          ? conAlfa(colores.aTiempo, 0.16)
-                          : conAlfa(colores.ambar, 0.16),
-                        borderColor: confirmada
-                          ? colores.aTiempo
-                          : colores.ambar,
-                      },
-                    ]}
-                  >
-                    <Icono
-                      color={confirmada ? colores.aTiempo : colores.ambarTexto}
-                      nombre="confirmar"
-                      tamano="grande"
-                    />
+                  <View style={estilos.contenedorSello}>
+                    {confirmada && <ExplosionConfirmacion />}
+                    <Rebote activo={confirmada}>
+                      <View
+                        style={[
+                          estilos.sello3,
+                          {
+                            backgroundColor: confirmada
+                              ? conAlfa(colores.aTiempo, 0.16)
+                              : conAlfa(colores.ambar, 0.16),
+                            borderColor: confirmada
+                              ? colores.aTiempo
+                              : colores.ambar,
+                          },
+                        ]}
+                      >
+                        <Icono
+                          color={
+                            confirmada ? colores.aTiempo : colores.ambarTexto
+                          }
+                          nombre="confirmar"
+                          tamano="grande"
+                        />
+                      </View>
+                    </Rebote>
                   </View>
                   <Text
                     style={[
@@ -656,6 +665,7 @@ export function RegistroConductor({ alVolver }: PropiedadesRegistroConductor) {
 }
 
 const estilos = StyleSheet.create({
+  contenedorSello: { alignItems: 'center', justifyContent: 'center' },
   filaPaso: { alignItems: 'center', flexDirection: 'row', gap: espacios.doce },
   numero: {
     alignItems: 'center',
