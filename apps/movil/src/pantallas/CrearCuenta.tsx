@@ -31,12 +31,17 @@ import { t } from '@/textos/t';
 
 export interface PropiedadesCrearCuenta {
   alTerminar: () => void;
+  /** abre el registro de conductor, que pide cédula y confirmación biométrica */
+  alRegistrarConductor?: () => void;
 }
 
 const ANCHO_BUS = 180;
 
 /** crear la cuenta local: nombre, teléfono y, si el teléfono puede, el bloqueo con Face ID */
-export function CrearCuenta({ alTerminar }: PropiedadesCrearCuenta) {
+export function CrearCuenta({
+  alRegistrarConductor,
+  alTerminar,
+}: PropiedadesCrearCuenta) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const { guardar } = usePerfil();
@@ -174,6 +179,17 @@ export function CrearCuenta({ alTerminar }: PropiedadesCrearCuenta) {
             {t('cuenta.omitir')}
           </Text>
         </Pressable>
+        {alRegistrarConductor && (
+          <Pressable
+            accessibilityRole="button"
+            onPress={alRegistrarConductor}
+            style={estilos.omitir}
+          >
+            <Text style={[tipografia.subtitulo, { color: colores.ambarTexto }]}>
+              {t('registroConductor.entrada')}
+            </Text>
+          </Pressable>
+        )}
       </ScrollView>
     </KeyboardAvoidingView>
   );

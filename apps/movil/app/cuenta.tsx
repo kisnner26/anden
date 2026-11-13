@@ -7,6 +7,7 @@ export default function RutaCuenta() {
   const router = useRouter();
   return (
     <CrearCuenta
+      alRegistrarConductor={() => router.push('/registro-conductor')}
       alTerminar={() => {
         // sin servidor, crear la cuenta guarda el perfil en el teléfono: no hace falta volver a ingresar
         void marcarInvitado();

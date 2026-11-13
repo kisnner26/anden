@@ -61,4 +61,20 @@ describe('CrearCuenta', () => {
     await fireEvent.press(pantalla.getByRole('button', { name: 'Ahora no' }));
     expect(alTerminar).toHaveBeenCalledTimes(1);
   });
+
+  it('ofrece registrarse como conductor cuando se da el acceso', async () => {
+    const alRegistrarConductor = jest.fn();
+    const pantalla = await renderPantalla(
+      <ProveedorPerfil>
+        <CrearCuenta
+          alRegistrarConductor={alRegistrarConductor}
+          alTerminar={() => undefined}
+        />
+      </ProveedorPerfil>,
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: '¿Sos conductor? Registrate acá' }),
+    );
+    expect(alRegistrarConductor).toHaveBeenCalledTimes(1);
+  });
 });
