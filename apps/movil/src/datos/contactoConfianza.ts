@@ -20,9 +20,16 @@ export function armarContacto(
   return { nombre: nombre.trim(), telefono: digitos };
 }
 
+/** el enlace que abre el viaje dentro de Andén: quien lo recibe lo toca y ve la salida, la unidad y por dónde va */
+export function enlaceDeViaje(viajeId: string): string {
+  return `anden://viaje/${viajeId}`;
+}
+
 export interface DatosMensaje {
   chofer: string;
   destino: string;
+  /** enlace al viaje, ver `enlaceDeViaje` */
+  enlace: string;
   /** hora de llegada ya escrita, por ejemplo 3:26 p. m. */
   llegada: string;
   placa: string;
@@ -32,7 +39,7 @@ export interface DatosMensaje {
 
 /** el texto que se manda: a dónde va, en qué unidad y a qué hora llega; sin el código del boleto */
 export function mensajeDeViaje(datos: DatosMensaje): string {
-  return `Voy en el bus a ${datos.destino}. Sale a las ${datos.salida}, llega más o menos a las ${datos.llegada}. Placa ${datos.placa}, chofer ${datos.chofer}.`;
+  return `Voy en el bus a ${datos.destino}. Sale a las ${datos.salida}, llega más o menos a las ${datos.llegada}. Placa ${datos.placa}, chofer ${datos.chofer}.\nSeguí mi viaje en Andén: ${datos.enlace}`;
 }
 
 /** enlace para abrir Mensajes con el texto ya escrito; la persona lo revisa y lo envía */

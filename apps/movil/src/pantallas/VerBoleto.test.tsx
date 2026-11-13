@@ -355,6 +355,7 @@ describe('VerBoleto', () => {
     expect(url.startsWith('sms:+50588881234&body=')).toBe(true);
     expect(decodeURIComponent(url)).toContain('Voy en el bus a Boaco');
     expect(decodeURIComponent(url)).toContain('Placa M 222-114');
+    expect(decodeURIComponent(url)).toContain('anden://viaje/via_2');
     expect(decodeURIComponent(url)).not.toContain('K7RM');
     abrir.mockRestore();
   });

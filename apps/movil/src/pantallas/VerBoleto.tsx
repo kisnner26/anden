@@ -29,6 +29,7 @@ import { puedeGuardarHabitual } from '@/servicios/beneficios';
 import {
   guardarContacto,
   leerContacto,
+  enlaceDeViaje,
   mensajeDeViaje,
   urlSms,
   type ContactoConfianza,
@@ -185,6 +186,7 @@ export function VerBoleto({
     const mensaje = mensajeDeViaje({
       chofer: nombrePropio(guardado!.resumen.choferNombre),
       destino: guardado!.resumen.destino,
+      enlace: enlaceDeViaje(guardado!.boleto.viajeId),
       llegada: detalle ? formatoHoraCompleta(detalle.llegada) : '',
       placa: guardado!.resumen.placa,
       salida: formatoHoraCompleta(new Date(guardado!.resumen.salida)),
@@ -194,7 +196,7 @@ export function VerBoleto({
 
   const compartir = () =>
     Share.share({
-      message: `${t('boleto.titulo')} a ${guardado.resumen.destino}. ${t('boleto.sale')} ${new Date(guardado.resumen.salida).toLocaleString('es-NI')}. ${t('boleto.anden')} ${guardado.resumen.anden}. ${t('boleto.placa')} ${guardado.resumen.placa}.`,
+      message: `${t('boleto.titulo')} a ${guardado.resumen.destino}. ${t('boleto.sale')} ${new Date(guardado.resumen.salida).toLocaleString('es-NI')}. ${t('boleto.anden')} ${guardado.resumen.anden}. ${t('boleto.placa')} ${guardado.resumen.placa}.\n${enlaceDeViaje(guardado.boleto.viajeId)}`,
     });
 
   return (

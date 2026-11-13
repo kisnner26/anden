@@ -6,6 +6,7 @@ import {
   CLAVE_CONTACTO,
   guardarContacto,
   leerContacto,
+  enlaceDeViaje,
   mensajeDeViaje,
   urlSms,
 } from './contactoConfianza';
@@ -33,6 +34,7 @@ describe('mensaje y enlace', () => {
   const MENSAJE = mensajeDeViaje({
     chofer: 'Ernesto Calero',
     destino: 'Boaco',
+    enlace: 'anden://viaje/via_2',
     llegada: '3:26 p. m.',
     placa: 'M 211-107',
     salida: '1:45 p. m.',
@@ -44,6 +46,11 @@ describe('mensaje y enlace', () => {
     expect(MENSAJE).toContain('3:26 p. m.');
     expect(MENSAJE).toContain('M 211-107');
     expect(MENSAJE).toContain('Ernesto Calero');
+  });
+
+  it('incluye el enlace para seguir el viaje en Andén', () => {
+    expect(MENSAJE).toContain('anden://viaje/via_2');
+    expect(enlaceDeViaje('via_9')).toBe('anden://viaje/via_9');
   });
 
   it('arma el enlace de mensajes con el texto codificado', () => {
