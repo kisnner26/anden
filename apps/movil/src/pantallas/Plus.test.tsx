@@ -74,23 +74,35 @@ describe('Plus', () => {
     expect(pantalla.getByText(/sin cobro/)).toBeTruthy();
   });
 
-  it('lista los seis beneficios que incluye', async () => {
+  it('lista los siete beneficios que incluye', async () => {
     const pantalla = await dibujar();
     expect(pantalla.getByText('Avisos a tu medida')).toBeTruthy();
     expect(pantalla.getByText('Viajes habituales sin límite')).toBeTruthy();
     expect(pantalla.getByText('Resumen de tus viajes')).toBeTruthy();
-    expect(pantalla.getByText('Tu propio bus')).toBeTruthy();
+    expect(pantalla.getByText('Tu propio vehículo')).toBeTruthy();
     expect(pantalla.getByText('Más búsquedas guardadas')).toBeTruthy();
     expect(pantalla.getByText('Sello Plus en tus boletos')).toBeTruthy();
+    expect(pantalla.getByText('Reservá primero')).toBeTruthy();
   });
 
   it('sin Plus no deja elegir el bus', async () => {
     const pantalla = await dibujar();
-    expect(pantalla.getByText('Activá Plus para elegir tu bus.')).toBeTruthy();
+    expect(
+      pantalla.getByText('Activá Plus para elegir tu vehículo.'),
+    ).toBeTruthy();
     expect(
       pantalla.getByRole('button', { name: 'Coaster turquesa' }).props
         .accessibilityState,
     ).toMatchObject({ disabled: true });
+  });
+
+  it('ofrece vehículos exclusivos que solo se eligen con Plus', async () => {
+    const pantalla = await dibujar();
+    for (const nombre of ['Avión', 'Nave espacial', 'Tractor', 'Tren']) {
+      expect(
+        pantalla.getByRole('button', { name: nombre }).props.accessibilityState,
+      ).toMatchObject({ disabled: true });
+    }
   });
 
   it('con Plus el bus elegido se aplica y al cancelar deja de aplicarse', async () => {
