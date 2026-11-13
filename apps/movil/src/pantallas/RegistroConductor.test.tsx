@@ -18,6 +18,7 @@ jest.mock('@/datos/fotos', () => ({
 
 import { autenticar } from '@/datos/biometria';
 import { elegirFotoDeCedula } from '@/datos/fotos';
+import { ProveedorSesion } from '@/datos/ProveedorSesion';
 import { renderPantalla } from '@/pruebas/render';
 
 import { RegistroConductor } from './RegistroConductor';
@@ -35,7 +36,11 @@ beforeEach(async () => {
 });
 
 function dibujar(alVolver: () => void = () => undefined) {
-  return renderPantalla(<RegistroConductor alVolver={alVolver} />);
+  return renderPantalla(
+    <ProveedorSesion>
+      <RegistroConductor alVolver={alVolver} />
+    </ProveedorSesion>,
+  );
 }
 
 async function seguir(pantalla: Pantalla) {
@@ -46,6 +51,11 @@ async function paso1(pantalla: Pantalla) {
   await fireEvent.changeText(pantalla.getByLabelText('Nombre'), 'Iván');
   await fireEvent.changeText(pantalla.getByLabelText('Apellido'), 'Obando');
   await fireEvent.changeText(pantalla.getByLabelText('Teléfono'), '8888 1234');
+  await fireEvent.changeText(pantalla.getByLabelText('Usuario'), 'ivan.obando');
+  await fireEvent.changeText(
+    pantalla.getByLabelText('Contraseña'),
+    'Clave2026x',
+  );
   await seguir(pantalla);
 }
 
@@ -56,6 +66,22 @@ describe('RegistroConductor', () => {
     await seguir(pantalla);
     expect(pantalla.getByText('Escribí tu nombre.')).toBeTruthy();
     expect(pantalla.getByText('Escribí tu apellido.')).toBeTruthy();
+  });
+
+  it('sin cuenta pide usuario y contraseña en el primer paso', async () => {
+    const pantalla = await dibujar();
+    await fireEvent.changeText(pantalla.getByLabelText('Nombre'), 'Iván');
+    await fireEvent.changeText(pantalla.getByLabelText('Apellido'), 'Obando');
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Teléfono'),
+      '8888 1234',
+    );
+    await seguir(pantalla);
+    expect(
+      await pantalla.findByText(/Escribí de 3 a 20 letras sin tilde/),
+    ).toBeTruthy();
+    expect(pantalla.getByText(/Usá al menos 8 caracteres/)).toBeTruthy();
+    expect(pantalla.queryByText(/2\/3/)).toBeNull();
   });
 
   it('la cédula y las dos fotos son obligatorias para pasar del paso 2', async () => {
