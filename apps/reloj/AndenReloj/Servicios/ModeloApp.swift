@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import WatchKit
 
 /// el estado que ven todas las pantallas: la sesión, las reservas y dónde va el bus
 @MainActor
@@ -9,10 +10,12 @@ final class ModeloApp: ObservableObject {
     @Published var fase: Fase
     @Published var reservas: [Reserva] = []
     @Published var avanceBus: Double?
+    @Published var salidas: [Viaje] = []
     @Published var mensaje: String?
     @Published var entrando = false
 
     private let cliente = ClienteAnden()
+    private var avisados = Set<String>()
 
     init() {
         fase = cliente.tieneSesion ? .cargando : .ingreso
@@ -43,6 +46,7 @@ final class ModeloApp: ObservableObject {
     func salir() {
         cliente.salir()
         reservas = []
+        salidas = []
         avanceBus = nil
         fase = .ingreso
     }
@@ -51,6 +55,8 @@ final class ModeloApp: ObservableObject {
         guard cliente.tieneSesion else { fase = .ingreso; return }
         do {
             reservas = try await cliente.reservas()
+            salidas = (try? await cliente.salidas()) ?? salidas
+            avisarSiEstaPorSalir()
             mensaje = nil
             await actualizarBus()
             fase = .listo
@@ -60,6 +66,16 @@ final class ModeloApp: ObservableObject {
             // con datos viejos es mejor seguir mostrándolos que vaciar la pantalla
             if fase == .cargando { fase = .listo }
             mensaje = "Sin conexión."
+        }
+    }
+
+    /// una sola vez por viaje, un toque en la muñeca cuando faltan 10 minutos o menos
+    private func avisarSiEstaPorSalir() {
+        guard let r = proxima, r.viaje.salioEn == nil, !avisados.contains(r.viaje.id) else { return }
+        let falta = r.viaje.salida.timeIntervalSinceNow
+        if falta > 0 && falta <= 600 {
+            avisados.insert(r.viaje.id)
+            WKInterfaceDevice.current().play(.notification)
         }
     }
 
