@@ -62,6 +62,21 @@ export function Plus({ alVolver }: PropiedadesPlus) {
         </Text>
       </BloqueNegro>
 
+      {plus ? (
+        <BotonAccion
+          alPresionar={() => void cancelar()}
+          etiqueta={t('plus.cancelar')}
+        />
+      ) : (
+        <BotonAccion
+          alPresionar={() => void activar()}
+          etiqueta={t('plus.activar')}
+        />
+      )}
+      <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+        {t('plus.notaPrueba')}
+      </Text>
+
       <View style={estilos.seccion}>
         <Text style={[tipografia.titulo, { color: colores.tinta }]}>
           {t('plus.incluyeTitulo')}
@@ -131,21 +146,6 @@ export function Plus({ alVolver }: PropiedadesPlus) {
           })}
         </View>
       </View>
-
-      {plus ? (
-        <BotonAccion
-          alPresionar={() => void cancelar()}
-          etiqueta={t('plus.cancelar')}
-        />
-      ) : (
-        <BotonAccion
-          alPresionar={() => void activar()}
-          etiqueta={t('plus.activar')}
-        />
-      )}
-      <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-        {t('plus.notaPrueba')}
-      </Text>
     </ScrollView>
   );
 }
