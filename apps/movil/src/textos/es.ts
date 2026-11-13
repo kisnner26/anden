@@ -89,6 +89,8 @@ export const textos = {
     hablar: 'Hablarle a Andén',
     escuchando: 'Te escucho… hablá con calma y tocá Detener cuando termines.',
     detener: 'Detener y enviar',
+    confirmarReserva: 'Sí, reservar',
+    cancelarOrden: 'No, cancelar',
     respondiendo: 'Andén te responde',
     pensandoCaption: 'Andén está pensando',
     tocaElOrbe: 'Tocá el orbe para hablarle a Andén',
