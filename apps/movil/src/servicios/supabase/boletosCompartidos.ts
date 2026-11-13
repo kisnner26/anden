@@ -32,16 +32,17 @@ export async function publicarBoletos(
   return error === null;
 }
 
-/** los boletos de un viaje tal como los subieron los pasajeros; vacío si no hay conexión */
+/** los boletos de un viaje tal como los subieron los pasajeros; nulo si el servidor no respondió */
 export async function leerBoletosDelViaje(
   viajeId: string,
-): Promise<BoletoGuardado[]> {
+): Promise<BoletoGuardado[] | null> {
   const cliente = obtenerCliente();
+  // sin Supabase no hay nada compartido que traer, y no es un fallo
   if (!cliente) return [];
   const { data, error } = await cliente
     .from('boletos')
     .select('contenido')
     .eq('viaje_id', viajeId);
-  if (error || !data) return [];
+  if (error || !data) return null;
   return data.map((fila) => (fila as { contenido: BoletoGuardado }).contenido);
 }

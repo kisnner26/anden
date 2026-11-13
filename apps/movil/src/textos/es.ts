@@ -665,7 +665,7 @@ export const textos = {
     abrirViaje: 'Abrir el viaje a {destino}',
     iniciar: 'Iniciar viaje',
     terminar: 'Terminar viaje',
-    transmitiendo: 'Compartiendo tu ubicación',
+    transmitiendo: 'En vivo: los pasajeros ven tu bus en el mapa',
     detenido: 'Todavía no compartís tu ubicación',
     explicacion:
       'Los pasajeros ven dónde va la unidad y cuánto falta. Solo se comparte mientras el viaje está iniciado, con la pantalla encendida.',
@@ -676,7 +676,8 @@ export const textos = {
     kmRecorridos: '{km} km recorridos',
     kmRestantes: '{km} km restantes',
     llegadaEn: 'Llegás en unos {minutos} min (ETA)',
-    esperandoSenal: 'Esperando la señal del GPS…',
+    esperandoSenal:
+      'Buscando tu ubicación. Todavía no te ven en el mapa; puede tardar unos segundos. Si no aparece, salí a un lugar abierto y revisá que el GPS esté activo.',
     fueraDeRuta: 'Estás lejos de la ruta de este viaje.',
     pasajeros: 'Pasajeros',
     escenaSalida: 'Buen viaje',
@@ -702,7 +703,9 @@ export const textos = {
     codigo: 'Boleto',
     menorEnBrazos: 'Menor en brazos',
     pagoCorto: 'Pagó',
-    sinPasajeros: 'Todavía no hay boletos de este viaje en este teléfono.',
+    sinPasajeros: 'Todavía no hay boletos reservados para este viaje.',
+    falloPasajeros:
+      'No pudimos traer los pasajeros del servidor. Revisá tu conexión; se vuelve a intentar solo.',
     asientoPasajero: 'Asiento {asiento} · {nombre}',
     marcarPagado: 'Marcar pagado',
     pagado: 'Pagado en efectivo',

@@ -33,6 +33,9 @@ import { TRANSMISION } from '@/servicios/transmision';
 
 import { ConductorViaje } from './ConductorViaje';
 
+/** el conductor de la prueba guarda sus boletos bajo su propia cuenta */
+const CLAVE_BOLETOS_CONDUCTOR = 'anden.boletos.cho_2';
+
 beforeEach(async () => {
   jest.clearAllMocks();
   jest.mocked(verificarConductor).mockResolvedValue(true);
@@ -167,7 +170,9 @@ describe('ConductorViaje', () => {
       });
     });
 
-    expect(await pantalla.findByText('Compartiendo tu ubicación')).toBeTruthy();
+    expect(
+      await pantalla.findByText('En vivo: los pasajeros ven tu bus en el mapa'),
+    ).toBeTruthy();
     expect(pantalla.getByText(/^\d+ %$/)).toBeTruthy();
     expect(pantalla.getByText(/^Llegás en unos \d+ min \(ETA\)$/)).toBeTruthy();
     expect(pantalla.getByText(/km recorridos · .* km restantes/)).toBeTruthy();
@@ -184,21 +189,21 @@ describe('ConductorViaje', () => {
     await act(async () => {
       TRANSMISION.iniciar(VIAJE_BOACO, 'cho_2');
     });
-    expect(
-      await pantalla.findByText('Esperando la señal del GPS…'),
-    ).toBeTruthy();
+    expect(await pantalla.findByText(/Buscando tu ubicación/)).toBeTruthy();
   });
 
-  it('sin boletos dice que no hay pasajeros en este teléfono', async () => {
+  it('sin boletos dice que todavía no hay reservas', async () => {
     const pantalla = await dibujar();
     expect(
-      await pantalla.findByText(/Todavía no hay boletos de este viaje/),
+      await pantalla.findByText(
+        /Todavía no hay boletos reservados para este viaje/,
+      ),
     ).toBeTruthy();
   });
 
   it('marca y quita el pago en efectivo de un pasajero y suma lo cobrado', async () => {
     await AsyncStorage.setItem(
-      'anden.boletos',
+      CLAVE_BOLETOS_CONDUCTOR,
       JSON.stringify([boletoDePrueba(new Date(Date.now() + 3_600_000), 8)]),
     );
     const pantalla = await dibujar();
@@ -224,7 +229,7 @@ describe('ConductorViaje', () => {
 
   it('al terminar el viaje muestra el resumen del cobro antes de cerrar', async () => {
     await AsyncStorage.setItem(
-      'anden.boletos',
+      CLAVE_BOLETOS_CONDUCTOR,
       JSON.stringify([boletoDePrueba(new Date(Date.now() + 3_600_000), 8)]),
     );
     const pantalla = await dibujar();
@@ -243,7 +248,7 @@ describe('ConductorViaje', () => {
 
   it('cerrar el viaje lo deja de solo lectura con su resumen guardado', async () => {
     await AsyncStorage.setItem(
-      'anden.boletos',
+      CLAVE_BOLETOS_CONDUCTOR,
       JSON.stringify([boletoDePrueba(new Date(Date.now() + 3_600_000), 8)]),
     );
     const pantalla = await dibujar();
@@ -286,7 +291,7 @@ describe('ConductorViaje', () => {
 
   it('lista a los pasajeros con sus datos y deja marcar quién abordó', async () => {
     await AsyncStorage.setItem(
-      'anden.boletos',
+      CLAVE_BOLETOS_CONDUCTOR,
       JSON.stringify([boletoDePrueba(new Date(Date.now() + 3_600_000), 8)]),
     );
     const pantalla = await dibujar();

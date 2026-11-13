@@ -68,7 +68,8 @@ export function ConductorViaje({
   );
   const transmision = useTransmision(viajeId);
   const { boletos: locales } = useBoletos();
-  const remotos = useBoletosDelViaje(viajeId);
+  const { boletos: remotos, fallo: falloPasajeros } =
+    useBoletosDelViaje(viajeId);
   const boletos = unirBoletos(locales, remotos);
   const { estadoDe, marcarPagado, registro, revertir } = usePagos();
   const { abordo, alternar: alternarAbordaje } = useAbordaje();
@@ -245,7 +246,9 @@ export function ConductorViaje({
               {t('conductor.pasajeros')}
             </Text>
             <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
-              {t('conductor.sinPasajeros')}
+              {falloPasajeros
+                ? t('conductor.falloPasajeros')
+                : t('conductor.sinPasajeros')}
             </Text>
           </>
         ) : (

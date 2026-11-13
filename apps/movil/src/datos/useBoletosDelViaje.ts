@@ -17,15 +17,22 @@ export function unirBoletos(
   return [...porId.values()];
 }
 
-/** los boletos de un viaje que el conductor ve en su pantalla, renovados cada pocos segundos */
-export function useBoletosDelViaje(viajeId: string): BoletoGuardado[] {
+/** los boletos de un viaje que el conductor ve en su pantalla, renovados cada pocos segundos; `fallo` si el servidor no respondió */
+export function useBoletosDelViaje(viajeId: string): {
+  boletos: BoletoGuardado[];
+  fallo: boolean;
+} {
   const [remotos, establecerRemotos] = useState<BoletoGuardado[]>([]);
+  const [fallo, establecerFallo] = useState(false);
 
   useEffect(() => {
     let vigente = true;
     const traer = () => {
       void leerBoletosDelViaje(viajeId).then((leidos) => {
-        if (vigente) establecerRemotos(leidos);
+        if (!vigente) return;
+        establecerFallo(leidos === null);
+        // si falla una vez se conserva lo último que se vio
+        if (leidos !== null) establecerRemotos(leidos);
       });
     };
     traer();
@@ -36,5 +43,5 @@ export function useBoletosDelViaje(viajeId: string): BoletoGuardado[] {
     };
   }, [viajeId]);
 
-  return remotos;
+  return { boletos: remotos, fallo };
 }
