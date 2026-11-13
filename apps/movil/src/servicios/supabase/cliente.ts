@@ -7,6 +7,8 @@ let cliente: SupabaseClient | null | undefined;
 
 /** el cliente de Supabase, creado una sola vez; nulo si el entorno no está configurado */
 export function obtenerCliente(): SupabaseClient | null {
+  // en el paso de servidor del empaquetado no hay ventana ni almacenamiento: ahí no se crea el cliente
+  if (typeof window === 'undefined') return null;
   if (cliente !== undefined) return cliente;
   const configuracion = leerConfiguracion();
   cliente = configuracion

@@ -27,12 +27,18 @@ function servicioPorDefecto(): ServicioSesion {
   return cliente ? crearSesionSupabase(cliente) : SERVICIO_LOCAL;
 }
 
-const SERVICIO_PREDETERMINADO = servicioPorDefecto();
+let servicioElegido: ServicioSesion | null = null;
+
+/** se decide la primera vez que se necesita, ya dentro de la app, y no al cargar el módulo */
+function servicioPredeterminado(): ServicioSesion {
+  servicioElegido ??= servicioPorDefecto();
+  return servicioElegido;
+}
 
 /** comparte quién está usando la app y con qué rol; sin sesión, la persona es pasajera */
 export function ProveedorSesion({
   children,
-  servicio = SERVICIO_PREDETERMINADO,
+  servicio = servicioPredeterminado(),
 }: {
   children: ReactNode;
   servicio?: ServicioSesion;
