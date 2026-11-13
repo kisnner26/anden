@@ -32,6 +32,8 @@ import {
 import { inicioDelDia } from '@/datos/dias';
 import { armarRutas } from '@/datos/rutas';
 import { obtenerMuestra, useSalidas } from '@/datos/useSalidas';
+import { useSuscripcion } from '@/datos/useSuscripcion';
+import { limiteDeRecientes } from '@/servicios/beneficios';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -70,6 +72,7 @@ export function Buscador({
     ...SIN_FILTROS,
     texto: consultaInicial,
   });
+  const { plus } = useSuscripcion();
   const [recientes, establecerRecientes] = useState<string[]>([]);
   const frecuentes = useMemo(
     () => armarRutas(obtenerMuestra(), ahora).map((ruta) => ruta.destino),
@@ -98,7 +101,9 @@ export function Buscador({
 
   async function recordarBusqueda() {
     if (filtros.texto.trim().length >= 2) {
-      establecerRecientes(await guardarReciente(filtros.texto));
+      establecerRecientes(
+        await guardarReciente(filtros.texto, limiteDeRecientes(plus)),
+      );
     }
   }
 
