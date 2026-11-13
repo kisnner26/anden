@@ -62,7 +62,7 @@ describe('Ajustes', () => {
     expect(await AsyncStorage.getItem('anden.sesion')).toBeNull();
   });
 
-  it('con sesión de conductor también se cierra desde acá, sin mostrar el rol', async () => {
+  it('con sesión de conductor no repite el perfil ni ofrece Plus, y se cierra desde acá', async () => {
     await AsyncStorage.setItem(
       'anden.sesion',
       JSON.stringify({
@@ -76,10 +76,13 @@ describe('Ajustes', () => {
         <Ajustes alVolver={() => undefined} />
       </ProveedorSesion>,
     );
-    expect(await pantalla.findByText('Ernesto Calero')).toBeTruthy();
     expect(
-      pantalla.getByRole('button', { name: 'Cerrar sesión' }),
+      await pantalla.findByRole('button', { name: 'Cerrar sesión' }),
     ).toBeTruthy();
+    expect(
+      pantalla.queryByRole('button', { name: 'Tu perfil y tus pasajeros' }),
+    ).toBeNull();
+    expect(pantalla.queryByLabelText(/plus/i)).toBeNull();
     expect(pantalla.queryByText(/conductor/i)).toBeNull();
   });
 
