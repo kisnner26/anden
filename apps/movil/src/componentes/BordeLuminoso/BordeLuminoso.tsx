@@ -2,18 +2,22 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef } from 'react';
 import { Animated, Easing, StyleSheet, View } from 'react-native';
 
-import { coloresAura } from '@/tema/colores';
+import { coloresAura, coloresOro } from '@/tema/colores';
 import { movimiento } from '@/tema/movimiento';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 
+export type ModoBorde = 'apagado' | 'hablando' | 'pensando';
+
 export interface PropiedadesBordeLuminoso {
-  /** se enciende mientras la IA piensa, escucha o habla */
-  activo: boolean;
+  /** colores del aura mientras piensa o escucha, dorado mientras habla */
+  modo: ModoBorde;
 }
 
 const GROSOR = 46;
-const CAPA_A = [coloresAura[0], coloresAura[2], coloresAura[1]] as const;
-const CAPA_B = [coloresAura[4], coloresAura[5], coloresAura[3]] as const;
+const AURA_A = [coloresAura[0], coloresAura[2], coloresAura[1]] as const;
+const AURA_B = [coloresAura[4], coloresAura[5], coloresAura[3]] as const;
+const ORO_A = [coloresOro[0], coloresOro[1], coloresOro[2]] as const;
+const ORO_B = [coloresOro[3], coloresOro[4], coloresOro[5]] as const;
 
 function Borde({
   colores,
@@ -73,7 +77,10 @@ function Capa({ colores }: { colores: readonly [string, string, string] }) {
  * el resplandor en los bordes de la pantalla que enciende la IA, como el de Apple Intelligence:
  * dos capas de color que se turnan y respiran mientras trabaja
  */
-export function BordeLuminoso({ activo }: PropiedadesBordeLuminoso) {
+export function BordeLuminoso({ modo }: PropiedadesBordeLuminoso) {
+  const activo = modo !== 'apagado';
+  const capaA = modo === 'hablando' ? ORO_A : AURA_A;
+  const capaB = modo === 'hablando' ? ORO_B : AURA_B;
   const reducir = useMovimientoReducido();
   const presencia = useRef(new Animated.Value(0)).current;
   const mezcla = useRef(new Animated.Value(0)).current;
@@ -152,13 +159,13 @@ export function BordeLuminoso({ activo }: PropiedadesBordeLuminoso) {
           },
         ]}
       >
-        <Capa colores={CAPA_A} />
+        <Capa colores={capaA} />
       </Animated.View>
       <Animated.View
         pointerEvents="none"
         style={[StyleSheet.absoluteFill, { opacity: mezcla }]}
       >
-        <Capa colores={CAPA_B} />
+        <Capa colores={capaB} />
       </Animated.View>
     </Animated.View>
   );
