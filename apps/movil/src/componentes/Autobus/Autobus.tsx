@@ -14,6 +14,8 @@ import Svg, {
   Text as TextoSvg,
 } from 'react-native-svg';
 
+import { useBusPropio } from '@/datos/useBusPropio';
+import { EfectosDeBus } from '@/componentes/EfectosVehiculo';
 import {
   VehiculoPlus,
   esVehiculoPlus,
@@ -38,6 +40,10 @@ export interface PropiedadesAutobus extends PropiedadesAutobusBase {
 }
 
 interface PropiedadesAutobusBase {
+  /** si la persona tiene Plus y eligió un vehículo, se dibuja ese en lugar de este bus */
+  usarMiUnidad?: boolean;
+  /** con ruedas que giran, humo del escape y faros que laten; para los mapas y las escenas */
+  animado?: boolean;
   ancho: number;
   /** sin etiqueta el bus es decorativo y se oculta a los lectores de pantalla */
   etiquetaAccesible?: string;
@@ -48,11 +54,19 @@ interface PropiedadesAutobusBase {
 }
 
 /** el bus de Andén o, con Plus, el vehículo que la persona eligió en su lugar */
-export function Autobus({ variante, ...resto }: PropiedadesAutobus) {
+export function Autobus({
+  usarMiUnidad = false,
+  variante: varianteIndicada,
+  ...resto
+}: PropiedadesAutobus) {
+  const { efectivo } = useBusPropio();
+  const variante = usarMiUnidad && efectivo ? efectivo : varianteIndicada;
   if (esVehiculoPlus(variante)) {
     return (
       <VehiculoPlus
         ancho={resto.ancho}
+        animado={resto.animado}
+        espejo={resto.espejo}
         etiquetaAccesible={resto.etiquetaAccesible}
         id={variante}
       />
@@ -64,6 +78,7 @@ export function Autobus({ variante, ...resto }: PropiedadesAutobus) {
 /** el bus de personaje de Andén: carrocería crema con banda ámbar, vidrios oscuros, faro cálido y letrero */
 function AutobusDeCarretera({
   ancho,
+  animado = false,
   etiquetaAccesible,
   letrero = 'ANDÉN',
   variante = VARIANTE_POR_DEFECTO,
@@ -303,6 +318,14 @@ function AutobusDeCarretera({
           </G>
         </G>
       </Svg>
+      {animado && (
+        <EfectosDeBus
+          ancho={ancho}
+          dx={forma.dx}
+          espejo={espejo}
+          ruedas={forma.ruedas}
+        />
+      )}
     </View>
   );
 }
