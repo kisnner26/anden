@@ -162,6 +162,10 @@ export const textos = {
     volver: 'Volver',
   },
   registroConductor: {
+    necesitaCuenta:
+      'Para enviar la solicitud primero creá tu cuenta o ingresá con ella.',
+    falloEnvio:
+      'No pudimos enviar la solicitud. Revisá tu conexión y probá de nuevo.',
     titulo: 'Registro de conductor',
     detalle:
       'Para manejar con Andén pedimos tu cédula y una foto de cada lado. La cooperativa las revisa antes de activar tu cuenta.',

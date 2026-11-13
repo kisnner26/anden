@@ -16,14 +16,12 @@ import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { CampoTexto } from '@/componentes/CampoTexto';
 import { autenticar, consultarBiometria } from '@/datos/biometria';
+import { servicioSolicitud } from '@/datos/servicioSolicitud';
 import { resolverFoto } from '@/datos/almacenFotos';
 import { elegirFotoDeCedula } from '@/datos/fotos';
 import {
   cedulaOculta,
-  descartarSolicitud,
   erroresDeSolicitud,
-  guardarSolicitud,
-  leerSolicitud,
   nuevaSolicitud,
   type ErrorSolicitud,
   type SolicitudConductor,
@@ -80,12 +78,17 @@ export function RegistroConductor({ alVolver }: PropiedadesRegistroConductor) {
     null,
   );
   const [cargando, establecerCargando] = useState(true);
+  const [falloEnvio, establecerFalloEnvio] = useState<
+    'conexion' | 'sin-sesion' | null
+  >(null);
 
   useEffect(() => {
-    void leerSolicitud().then((guardada) => {
-      establecerSolicitud(guardada);
-      establecerCargando(false);
-    });
+    void servicioSolicitud()
+      .leer()
+      .then((guardada) => {
+        establecerSolicitud(guardada);
+        establecerCargando(false);
+      });
     void consultarBiometria().then((estado) =>
       establecerConBiometria(estado.disponible),
     );
@@ -140,12 +143,22 @@ export function RegistroConductor({ alVolver }: PropiedadesRegistroConductor) {
       return;
     }
     const nueva = nuevaSolicitud(datos);
-    await guardarSolicitud(nueva);
+    try {
+      await servicioSolicitud().guardar(nueva);
+    } catch (falla) {
+      establecerFalloEnvio(
+        falla instanceof Error && falla.message === 'sin-sesion'
+          ? 'sin-sesion'
+          : 'conexion',
+      );
+      return;
+    }
+    establecerFalloEnvio(null);
     establecerSolicitud(nueva);
   }
 
   async function descartar() {
-    await descartarSolicitud();
+    await servicioSolicitud().descartar();
     establecerSolicitud(null);
     establecerPaso(1);
     establecerConfirmada(false);
@@ -440,6 +453,16 @@ export function RegistroConductor({ alVolver }: PropiedadesRegistroConductor) {
                   {t('registroConductor.atras')}
                 </Text>
               </Pressable>
+            )}
+            {falloEnvio !== null && (
+              <Text
+                accessibilityLiveRegion="polite"
+                style={[tipografia.cuerpo, { color: colores.cancelado }]}
+              >
+                {falloEnvio === 'sin-sesion'
+                  ? t('registroConductor.necesitaCuenta')
+                  : t('registroConductor.falloEnvio')}
+              </Text>
             )}
             <View style={estilos.principal}>
               {paso < 3 ? (
