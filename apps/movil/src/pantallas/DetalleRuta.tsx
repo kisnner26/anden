@@ -174,6 +174,8 @@ function DetalleCorredor({
             <Animated.View style={estiloEntradaBus}>
               <Autobus
                 ancho={tamanosIlustracion.autobusCorredor}
+                animado
+                usarMiUnidad
                 letrero={corredor.destino.toUpperCase()}
                 variante={varianteDeClave(corredor.destino)}
               />
