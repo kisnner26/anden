@@ -222,4 +222,26 @@ describe('Asistente', () => {
     );
     expect(voz.callar).toHaveBeenCalled();
   });
+
+  it('mientras escucha el botón pasa a Detener y no se corta solo', async () => {
+    const { decir, terminar, voz } = vozFalsa();
+    const contexto = valor();
+    const pantalla = await abrir(contexto, voz);
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Hablarle a Andén' }),
+    );
+    const detener = await pantalla.findByRole('button', {
+      name: 'Detener y enviar',
+    });
+    // sigue abierto aunque llegue texto: no se envía hasta que la persona lo detiene
+    await act(async () => decir('primera parte'));
+    expect(contexto.preguntar).not.toHaveBeenCalled();
+    await fireEvent.press(detener);
+    expect(voz.detener).toHaveBeenCalled();
+    await act(async () => {
+      decir('primera parte y segunda parte');
+      terminar();
+    });
+    await waitFor(() => expect(contexto.preguntar).toHaveBeenCalled());
+  });
 });
