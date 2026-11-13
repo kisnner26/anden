@@ -2,7 +2,9 @@ import { BlurView } from 'expo-blur';
 import { useEffect, useRef, type ReactNode } from 'react';
 import {
   Animated,
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   PanResponder,
   Pressable,
   StyleSheet,
@@ -73,7 +75,10 @@ export function Hoja({
       transparent
       visible={abierta}
     >
-      <View style={estilos.modal}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={estilos.modal}
+      >
         <Pressable
           accessibilityLabel={etiquetaCerrar}
           accessibilityRole="button"
@@ -105,7 +110,7 @@ export function Hoja({
             {children}
           </BlurView>
         </Animated.View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
