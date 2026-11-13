@@ -99,12 +99,15 @@ export function CrearCuenta({
       establecerFalla(cuenta.error);
       return;
     }
-    await guardar({
-      apellido: apellido.trim(),
-      edad: edadLeida.valor,
-      nombre: nombre.trim(),
-      telefono: formatearTelefonoNi(telefono) ?? telefono.trim(),
-    });
+    await guardar(
+      {
+        apellido: apellido.trim(),
+        edad: edadLeida.valor,
+        nombre: nombre.trim(),
+        telefono: formatearTelefonoNi(telefono) ?? telefono.trim(),
+      },
+      cuenta.valor,
+    );
     if (proteger) await activar();
     establecerBienvenida(true);
   }
