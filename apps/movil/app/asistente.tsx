@@ -6,6 +6,18 @@ export default function RutaAsistente() {
   const router = useRouter();
   return (
     <Asistente
+      alAbrirPantalla={(pantalla) => {
+        const rutas = {
+          ajustes: '/ajustes',
+          avisos: '/avisos',
+          boletos: '/boletos',
+          encomienda: '/encomienda',
+          horarios: '/horarios',
+          plus: '/plus',
+          rutas: '/rutas',
+        } as const;
+        router.push(rutas[pantalla]);
+      }}
       alAbrirBoleto={(id) =>
         router.push({ params: { id }, pathname: '/boleto/[id]' })
       }
