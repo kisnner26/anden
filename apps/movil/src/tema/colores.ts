@@ -257,3 +257,18 @@ export const paletaVehiculos = {
     llamaClara: '#FFE066',
   },
 } as const;
+
+/** colores de los efectos que acompañan a los vehículos: humo, luces, burbujas, rayos y estelas */
+export const coloresEfectos = {
+  burbuja: 'rgba(190,230,255,0.85)',
+  estela: 'rgba(255,255,255,0.8)',
+  faro: '#FFE9A8',
+  humo: 'rgba(120,120,125,0.55)',
+  humoClaro: 'rgba(235,235,240,0.7)',
+  luzRoja: '#FF4B3A',
+  luzVerde: '#34D17A',
+  rayo: '#7DE8FF',
+  rayoIntenso: '#FFFFFF',
+  rayoViolenta: '#B58BFF',
+  vapor: 'rgba(255,255,255,0.75)',
+} as const;
