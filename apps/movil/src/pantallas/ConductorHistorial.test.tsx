@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { beforeEach, describe, expect, it } from '@jest/globals';
+import { fireEvent } from '@testing-library/react-native';
 
 import { ProveedorCierres } from '@/datos/ProveedorCierres';
 import { ProveedorSesion } from '@/datos/ProveedorSesion';
@@ -14,7 +15,7 @@ function cierre(
   cobrado: number,
 ): CierreViaje {
   return {
-    cerradoEn: '2026-11-12T20:00:00.000Z',
+    cerradoEn: new Date(Date.now() - 3_600_000).toISOString(),
     choferId,
     cobrado,
     pagados: 2,
@@ -52,7 +53,7 @@ describe('ConductorHistorial', () => {
     ).toBeTruthy();
   });
 
-  it('suma solo lo cobrado en sus propios viajes', async () => {
+  it('muestra las ganancias y los viajes solo de sus propios cierres', async () => {
     await AsyncStorage.setItem(
       CLAVE_CIERRES,
       JSON.stringify([
@@ -65,5 +66,17 @@ describe('ConductorHistorial', () => {
     expect(await pantalla.findByText('C$ 200')).toBeTruthy();
     expect(pantalla.queryByText('C$ 999')).toBeNull();
     expect(pantalla.getAllByText('Sin pagar: 1')).toHaveLength(2);
+    expect(pantalla.getByLabelText('Córdobas cobrados por día')).toBeTruthy();
+    expect(pantalla.getByLabelText('Pasajeros llevados por día')).toBeTruthy();
+  });
+
+  it('cambia el período del análisis', async () => {
+    await AsyncStorage.setItem(
+      CLAVE_CIERRES,
+      JSON.stringify([cierre('via_a', 'cho_2', 80)]),
+    );
+    const pantalla = await dibujar();
+    await fireEvent.press(await pantalla.findByText('30 días'));
+    expect((await pantalla.findAllByText('C$ 80')).length).toBeGreaterThan(0);
   });
 });
