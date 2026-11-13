@@ -383,6 +383,12 @@ export const textos = {
     volver: 'Volver',
   },
   registroConductor: {
+    cuentaTitulo: 'Tu cuenta de Andén',
+    seguridadPasos: 'Esto es lo que va a pasar',
+    seguridadPaso1: 'Confirmás con Face ID, tu huella o el código del teléfono.',
+    seguridadPaso2: 'Creamos tu cuenta y enviamos tu cédula a la cooperativa.',
+    seguridadPaso3: 'Cuando la cooperativa te apruebe, entrás como conductor.',
+    seguridadCifrado: 'Tu cédula se guarda cifrada y solo la ve la cooperativa.',
     necesitaCuenta:
       'Para enviar la solicitud primero creá tu cuenta o ingresá con ella.',
     falloEnvio:
