@@ -66,10 +66,11 @@ export function ConductorInicio({
 
   return (
     <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={[
         estilos.contenido,
         {
-          paddingBottom: espacios.cuarentaYOcho,
+          paddingBottom: 120,
           paddingTop: margenes.top + espacios.veinticuatro,
         },
       ]}
@@ -89,7 +90,7 @@ export function ConductorInicio({
           {rellenar(t('conductor.saludo'), { nombre })}
         </Text>
       </View>
-      <Text style={[tipografia.display, { color: colores.tinta }]}>
+      <Text style={[tipografia.titulo, { color: colores.tinta }]}>
         {t('conductor.titulo')}.
       </Text>
       <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
