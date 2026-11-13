@@ -190,6 +190,8 @@ export function TarjetaBusEnCamino({
             >
               <Autobus
                 ancho={ANCHO_BUS}
+                animado
+                usarMiUnidad
                 letrero=""
                 variante={varianteDeClave(salida.placa)}
               />
