@@ -19,6 +19,7 @@ export default function RutaConductor() {
         alAbrirViaje={(id) =>
           router.push({ params: { id }, pathname: '/conductor/viaje/[id]' })
         }
+        alNuevoViaje={() => router.push('/conductor/nuevo-viaje')}
         alSalir={() => router.replace('/ingresar')}
       />
     </PuertaBiometrica>
