@@ -77,7 +77,7 @@ describe('CrearCuenta', () => {
       timeout: 4000,
     });
     const guardado = JSON.parse(
-      (await AsyncStorage.getItem(CLAVE_PERFIL)) ?? '{}',
+      (await AsyncStorage.getItem(`${CLAVE_PERFIL}.ana.lopez`)) ?? '{}',
     );
     expect(guardado).toMatchObject({ apellido: 'Lopez', nombre: 'Ana' });
     expect(

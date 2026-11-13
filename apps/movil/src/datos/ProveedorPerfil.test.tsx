@@ -3,7 +3,11 @@ import { afterEach, describe, expect, it } from '@jest/globals';
 import { act, renderHook, waitFor } from '@testing-library/react-native';
 import type { ReactNode } from 'react';
 
+import { CUENTAS_MUESTRA } from '@/servicios/cuentasMuestra';
+import { crearSesionLocal } from '@/servicios/sesion';
+
 import { CLAVE_PERFIL, ProveedorPerfil } from './ProveedorPerfil';
+import { ProveedorSesion } from './ProveedorSesion';
 import { usePerfil } from './usePerfil';
 
 function envoltura({ children }: { children: ReactNode }) {
@@ -63,5 +67,43 @@ describe('ProveedorPerfil', () => {
       await result.current.quitarPasajero(id);
     });
     expect(result.current.perfil.pasajeros).toHaveLength(0);
+  });
+
+  describe('con una cuenta iniciada', () => {
+    const servicio = crearSesionLocal(CUENTAS_MUESTRA);
+    const conSesion = ({ children }: { children: ReactNode }) => (
+      <ProveedorSesion servicio={servicio}>
+        <ProveedorPerfil>{children}</ProveedorPerfil>
+      </ProveedorSesion>
+    );
+
+    it('muestra el nombre de la cuenta y no el perfil de otra persona del mismo teléfono', async () => {
+      // el perfil de antes de que existieran las cuentas, de otra persona
+      await AsyncStorage.setItem(
+        CLAVE_PERFIL,
+        JSON.stringify({ apellido: 'Obando', nombre: 'Kisnner' }),
+      );
+      await servicio.iniciar('ana', '2026');
+      const { result } = await renderHook(() => usePerfil(), {
+        wrapper: conSesion,
+      });
+      await waitFor(() => expect(result.current.perfil.nombre).toBe('Ana'));
+      expect(result.current.perfil.apellido).toBe('Ruiz');
+    });
+
+    it('guarda el perfil aparte para cada cuenta', async () => {
+      await servicio.iniciar('ana', '2026');
+      const { result } = await renderHook(() => usePerfil(), {
+        wrapper: conSesion,
+      });
+      await waitFor(() => expect(result.current.cargando).toBe(false));
+      await act(async () => {
+        await result.current.guardar({ telefono: '88881234' });
+      });
+      expect(await AsyncStorage.getItem(`${CLAVE_PERFIL}.ana`)).toContain(
+        '88881234',
+      );
+      expect(await AsyncStorage.getItem(CLAVE_PERFIL)).toBeNull();
+    });
   });
 });
