@@ -16,6 +16,7 @@ import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { CampoTexto } from '@/componentes/CampoTexto';
 import { autenticar, consultarBiometria } from '@/datos/biometria';
+import { resolverFoto } from '@/datos/almacenFotos';
 import { elegirFotoDeCedula } from '@/datos/fotos';
 import {
   cedulaOculta,
@@ -167,7 +168,7 @@ export function RegistroConductor({ alVolver }: PropiedadesRegistroConductor) {
         {uri ? (
           <Image
             accessibilityIgnoresInvertColors
-            source={{ uri }}
+            source={{ uri: resolverFoto(uri) }}
             style={estilos.foto}
           />
         ) : (
