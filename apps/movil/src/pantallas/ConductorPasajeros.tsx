@@ -1,5 +1,10 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { ControlSegmentado } from '@/componentes/ControlSegmentado';
+import { useEncomiendas } from '@/datos/useEncomiendas';
+import { ConductorEncomiendas } from './ConductorEncomiendas';
 
 import { Aparece } from '@/componentes/Aparece';
 import { Autobus, type IdVarianteBus } from '@/componentes/Autobus';
@@ -42,6 +47,13 @@ export function ConductorPasajeros({
   const margenes = useSafeAreaInsets();
   const { sesion } = useSesion();
   const ahora = useAhora();
+  const [vista, establecerVista] = useState<'encomiendas' | 'pasajeros'>(
+    'pasajeros',
+  );
+  const { encomiendas } = useEncomiendas();
+  const porResponder = encomiendas.filter(
+    (e) => e.choferId === sesion?.choferId && e.estado === 'solicitada',
+  ).length;
   const viajes = sesion?.choferId
     ? salidasDelDia(
         salidasDeChofer(obtenerMuestra(), ahora, sesion.choferId),
@@ -64,18 +76,37 @@ export function ConductorPasajeros({
       <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
         {t('conductorPasajeros.detalle')}
       </Text>
-      {viajes.length === 0 && (
+      <ControlSegmentado
+        alCambiar={establecerVista}
+        opciones={[
+          {
+            clave: 'pasajeros',
+            etiqueta: t('conductorPasajeros.segmentoPasajeros'),
+          },
+          {
+            clave: 'encomiendas',
+            etiqueta:
+              porResponder > 0
+                ? `${t('conductorEncomiendas.segmento')} (${porResponder})`
+                : t('conductorEncomiendas.segmento'),
+          },
+        ]}
+        valor={vista}
+      />
+      {vista === 'encomiendas' && <ConductorEncomiendas />}
+      {vista === 'pasajeros' && viajes.length === 0 && (
         <Bloque estiloContenido={estilos.vacio}>
           <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
             {t('conductorPasajeros.sinViajes')}
           </Text>
         </Bloque>
       )}
-      {viajes.map((viaje, indice) => (
-        <Aparece indice={indice} key={viaje.viajeId}>
-          <SeccionViaje alAbrir={alAbrirViaje} viaje={viaje} />
-        </Aparece>
-      ))}
+      {vista === 'pasajeros' &&
+        viajes.map((viaje, indice) => (
+          <Aparece indice={indice} key={viaje.viajeId}>
+            <SeccionViaje alAbrir={alAbrirViaje} viaje={viaje} />
+          </Aparece>
+        ))}
     </ScrollView>
   );
 }
