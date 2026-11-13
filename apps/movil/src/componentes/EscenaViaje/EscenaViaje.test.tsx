@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
-import { act, fireEvent } from '@testing-library/react-native';
+import { act, fireEvent, waitFor } from '@testing-library/react-native';
 import { useReducedMotion } from 'react-native-reanimated';
 
 import { renderPantalla } from '@/pruebas/render';
@@ -41,7 +41,10 @@ describe('EscenaViaje', () => {
     const alTerminar = jest.fn();
     const pantalla = await dibujar(alTerminar);
     await fireEvent.press(pantalla.getByTestId('escena-viaje'));
-    expect(alTerminar).toHaveBeenCalledTimes(1);
+    // se cierra con un fundido y recién al terminar avisa
+    await waitFor(() => expect(alTerminar).toHaveBeenCalledTimes(1), {
+      timeout: 3000,
+    });
   });
 
   it('con movimiento reducido se cierra sola enseguida', async () => {
@@ -54,5 +57,17 @@ describe('EscenaViaje', () => {
       jest.advanceTimersByTime(1500);
     });
     expect(alTerminar).toHaveBeenCalledTimes(1);
+  });
+
+  it('es opaca: tiene su propio fondo para no dejar ver la pantalla de atrás', async () => {
+    const pantalla = await dibujar();
+    const capa = pantalla.getByTestId('escena-viaje-capa');
+    const estilo = Object.assign(
+      {},
+      ...(Array.isArray(capa.props.style)
+        ? capa.props.style
+        : [capa.props.style]),
+    );
+    expect(estilo.backgroundColor).toMatch(/^#[0-9a-fA-F]{6}$/);
   });
 });

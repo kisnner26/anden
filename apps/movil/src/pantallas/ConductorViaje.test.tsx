@@ -303,6 +303,11 @@ describe('ConductorViaje', () => {
     expect(await pantalla.findByTestId('escena-viaje')).toBeTruthy();
     expect(pantalla.getByText('Buen viaje')).toBeTruthy();
     await fireEvent.press(pantalla.getByTestId('escena-viaje'));
-    expect(pantalla.queryByTestId('escena-viaje')).toBeNull();
+    await waitFor(
+      () => expect(pantalla.queryByTestId('escena-viaje')).toBeNull(),
+      {
+        timeout: 3000,
+      },
+    );
   });
 });
