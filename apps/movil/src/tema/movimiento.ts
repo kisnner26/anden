@@ -42,3 +42,14 @@ export const movimiento = {
 } as const;
 
 export const curvaSalida = [0.16, 1, 0.3, 1] as const;
+
+/** tiempos de los efectos de los vehículos: ruedas, humo, luces, burbujas y rayos */
+export const movimientoVehiculo = {
+  burbuja: 1700,
+  destello: 900,
+  giroRueda: 520,
+  giroRotor: 140,
+  humo: 1500,
+  parpadeo: 1100,
+  rayo: 260,
+} as const;
