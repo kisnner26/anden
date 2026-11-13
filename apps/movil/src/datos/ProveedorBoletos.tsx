@@ -11,6 +11,7 @@ import {
 import { claveDeCuenta, type Sesion } from '@/servicios/sesion';
 import { publicarBoletos } from '@/servicios/supabase/boletosCompartidos';
 
+import { sincronizarAsientos } from './asientosRemotos';
 import { crearReserva, ocupacionesDe, type BoletoGuardado } from './reserva';
 import { useSesion } from './useSesion';
 import { ContextoBoletos, type ValorBoletos } from './useBoletos';
@@ -96,6 +97,8 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
 
   const reservar = useCallback<ValorBoletos['reservar']>(
     async (viajeId, pasajeros) => {
+      // antes de vender se mira lo que ya vendieron los demás teléfonos
+      await sincronizarAsientos(viajeId);
       const resultado = crearReserva(
         obtenerMuestra(),
         viajeId,
@@ -103,10 +106,17 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
         new Date(),
         Math.random,
       );
-      if (resultado.ok) {
-        ocuparEnMuestra(resultado.valor);
-        await guardar([...boletos, ...resultado.valor]);
+      if (!resultado.ok) return resultado;
+      // el servidor es quien decide si el asiento sigue libre: si otro lo vendió justo antes, no se reserva
+      const publicacion = await publicarBoletos(resultado.valor).catch(
+        () => undefined,
+      );
+      if (publicacion && publicacion.conflictos.length > 0) {
+        await sincronizarAsientos(viajeId);
+        return { error: 'asiento-ocupado', ok: false };
       }
+      ocuparEnMuestra(resultado.valor);
+      await guardar([...boletos, ...resultado.valor]);
       return resultado;
     },
     [boletos, guardar],
