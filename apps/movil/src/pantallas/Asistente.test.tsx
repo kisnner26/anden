@@ -91,7 +91,8 @@ describe('Asistente', () => {
     const pantalla = await abrir(contexto);
     const sugerencias = pantalla.getAllByRole('button', { name: /^¿.*\?$/ });
     await fireEvent.press(sugerencias[0]!);
-    await waitFor(() => expect(contexto.preguntar).toHaveBeenCalledTimes(1));
+    // la sugerencia se contesta: con el modelo, o directo si es una orden que la app entiende
+    expect(await pantalla.findByText('Apple Intelligence')).toBeTruthy();
   });
 
   it('si el modelo falla lo dice y no inventa una respuesta', async () => {
@@ -243,5 +244,63 @@ describe('Asistente', () => {
       terminar();
     });
     await waitFor(() => expect(contexto.preguntar).toHaveBeenCalled());
+  });
+
+  it('ejecuta la orden de agregar un contacto sin pasar por el modelo', async () => {
+    const contexto = valor();
+    const pantalla = await abrir(contexto);
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Tu pregunta'),
+      'Agregar a Gross como contacto de emergencia',
+    );
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Preguntar' }));
+    expect(await pantalla.findByText(/teléfono de Gross/)).toBeTruthy();
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Tu pregunta'),
+      '8888 1234',
+    );
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Preguntar' }));
+    expect(
+      await pantalla.findByText(/Gross quedó como tu contacto/),
+    ).toBeTruthy();
+    expect(await AsyncStorage.getItem('anden.contactoConfianza')).toContain(
+      '88881234',
+    );
+    expect(contexto.preguntar).not.toHaveBeenCalled();
+  });
+
+  it('muestra el viaje más próximo a un destino cuando se lo piden', async () => {
+    const contexto = valor();
+    const pantalla = await abrir(contexto);
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Tu pregunta'),
+      'Mostrarme el viaje más próximo a Boaco desde Managua',
+    );
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Preguntar' }));
+    expect(
+      await pantalla.findByText(/El próximo bus a Boaco sale de Managua/),
+    ).toBeTruthy();
+    expect(contexto.preguntar).not.toHaveBeenCalled();
+  });
+
+  it('antes de reservar pide confirmación y no compra solo', async () => {
+    const pantalla = await abrir(valor());
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Tu pregunta'),
+      'Comprarme un boleto a Boaco',
+    );
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Preguntar' }));
+    expect(
+      await pantalla.findByText(/Puedo reservarte el asiento/),
+    ).toBeTruthy();
+    expect(pantalla.getByRole('button', { name: 'Sí, reservar' })).toBeTruthy();
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'No, cancelar' }),
+    );
+    await waitFor(() =>
+      expect(
+        pantalla.queryByRole('button', { name: 'Sí, reservar' }),
+      ).toBeNull(),
+    );
   });
 });
