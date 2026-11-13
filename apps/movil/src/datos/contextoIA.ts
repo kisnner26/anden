@@ -60,14 +60,33 @@ export function armarContexto(
   ].join('\n');
 }
 
-/** las reglas que se le dan al modelo: solo responde con lo que está en los datos */
-export function instruccionesDelAsistente(contexto: string): string {
+export interface OpcionesInstrucciones {
+  /** la persona dijo que es turista: se le recomienda qué visitar, comer y hacer */
+  turista?: boolean;
+}
+
+/**
+ * las reglas que se le dan al modelo: horarios, precios, andenes y boletos salen solo de los datos;
+ * sobre las ciudades y qué visitar puede contar lo que sabe, sin inventar nombres
+ */
+export function instruccionesDelAsistente(
+  contexto: string,
+  { turista = false }: OpcionesInstrucciones = {},
+): string {
   return [
     'Sos el asistente de Andén, una app de buses interlocales entre Managua, Boaco y Juigalpa, en Nicaragua.',
     'Respondé siempre en español, en tono cercano y en pocas frases.',
-    'Usá solamente los datos de abajo. Si la respuesta no está en los datos, decí que no lo sabés y sugerí mirar Horarios o Rutas en la app.',
-    'No inventes horarios, precios ni andenes. Los precios están en córdobas (C$). No des consejos médicos, legales ni financieros.',
+    'Para horarios, tarifas, andenes, asientos y boletos usá solamente los datos de abajo. Si ese dato no está, decí que no lo sabés y sugerí mirar Horarios o Rutas en la app. No inventes horarios, precios ni andenes. Los precios están en córdobas (C$).',
+    'Sobre las ciudades y el país (Managua, Boaco, Juigalpa, Nicaragua) sí podés contar lo que sabés: historia, datos curiosos, comida típica, lugares para visitar, clima y costumbres. Si no estás seguro de un nombre, un precio o un horario de un lugar, decilo en vez de inventarlo, y sugerí confirmar en el lugar.',
+    'No des consejos médicos, legales ni financieros.',
+    turista
+      ? 'La persona es turista: cuando pregunte por un destino, recomendale qué visitar, qué comer y qué hacer, con ideas concretas y cortas, y cómo llegar en bus desde Andén.'
+      : '',
     '',
     contexto,
-  ].join('\n');
+  ]
+    .filter(
+      (linea, indice, lineas) => linea !== '' || lineas[indice - 1] !== '',
+    )
+    .join('\n');
 }
