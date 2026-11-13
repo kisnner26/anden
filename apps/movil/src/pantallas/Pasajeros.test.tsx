@@ -6,6 +6,8 @@ import { Text } from 'react-native';
 
 import { CLAVE_PERFIL, ProveedorPerfil } from '@/datos/ProveedorPerfil';
 import { ProveedorReserva } from '@/datos/ProveedorReserva';
+import type { BoletoGuardado } from '@/datos/reserva';
+import { ContextoBoletos } from '@/datos/useBoletos';
 import { usePerfil } from '@/datos/usePerfil';
 import { useReserva } from '@/datos/useReserva';
 import { renderPantalla } from '@/pruebas/render';
@@ -201,5 +203,71 @@ describe('Pasajeros', () => {
     expect(
       pantalla.getByLabelText('Nombre completo · Asiento 9').props.value,
     ).toBe('Luis Rocha');
+  });
+});
+
+describe('Pasajeros repetidos en el mismo viaje', () => {
+  it('no deja poner a la misma persona en dos asientos de la compra', async () => {
+    const alContinuar = jest.fn();
+    const pantalla = await dibujar({ alContinuar });
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Nombre completo · Asiento 8'),
+      'Ana Ruiz',
+    );
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Nombre completo · Asiento 9'),
+      'ana  ruiz',
+    );
+    expect(
+      pantalla.getAllByText(
+        'Esta persona ya tiene boleto en este viaje. Escribí el nombre de otra persona.',
+      ).length,
+    ).toBeGreaterThan(0);
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Ir al pago' }));
+    expect(alContinuar).not.toHaveBeenCalled();
+  });
+
+  it('no deja comprar otro boleto a quien ya tiene uno vigente en el viaje', async () => {
+    const alContinuar = jest.fn();
+    const existente = {
+      boleto: {
+        estado: 'vigente',
+        pasajero: { esMenorEnBrazos: false, nombre: 'Kisnner Obando' },
+        viajeId: 'via_2',
+      },
+    } as unknown as BoletoGuardado;
+    const pantalla = await renderPantalla(
+      <ContextoBoletos.Provider
+        value={{
+          boletos: [existente],
+          cancelar: async () => undefined,
+          cargando: false,
+          reservar: async () => ({ error: 'viaje-inexistente', ok: false }),
+          validar: async () => undefined,
+        }}
+      >
+        <ProveedorReserva>
+          <Pasajeros
+            alContinuar={alContinuar}
+            alVolver={() => undefined}
+            asientos={[8]}
+            viajeId="via_2"
+          />
+        </ProveedorReserva>
+      </ContextoBoletos.Provider>,
+    );
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Nombre completo · Asiento 8'),
+      'Kisnner Obando',
+    );
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Ir al pago' }));
+    expect(alContinuar).not.toHaveBeenCalled();
+    // otra persona sí puede comprar en el mismo viaje
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Nombre completo · Asiento 8'),
+      'Alondra Obando',
+    );
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Ir al pago' }));
+    expect(alContinuar).toHaveBeenCalledTimes(1);
   });
 });
