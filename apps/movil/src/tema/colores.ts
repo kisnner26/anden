@@ -186,3 +186,6 @@ export const paletasAutobus: Readonly<
     '#3F2478',
   ),
 };
+
+/** el degradado que identifica todo lo que genera la IA del teléfono */
+export const coloresIA = ['#7B61FF', '#2EC4F1', '#FFB21E'] as const;
