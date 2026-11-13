@@ -10,6 +10,7 @@ import {
   JetBrainsMono_600SemiBold,
 } from '@expo-google-fonts/jetbrains-mono';
 import { useFonts } from 'expo-font';
+import '@/datos/configurarServicios';
 import { GuardiaDeSesion } from '@/datos/GuardiaDeSesion';
 import { AdaptacionPorEdad } from '@/datos/AdaptacionPorEdad';
 import { ProveedorBusPropio } from '@/datos/ProveedorBusPropio';
