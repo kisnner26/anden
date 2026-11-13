@@ -25,6 +25,8 @@ export interface PropiedadesEscenaViaje {
   /** el destino: sirve para elegir el modelo de bus y no se escribe en pantalla */
   destino: string;
   detalle: string;
+  /** milisegundos que dura; sin indicar, lo normal de cada tipo */
+  duracion?: number;
   tipo: TipoEscena;
   titulo: string;
 }
@@ -41,6 +43,7 @@ export function EscenaViaje({
   alTerminar,
   destino,
   detalle,
+  duracion: duracionPropia,
   tipo,
   titulo,
 }: PropiedadesEscenaViaje) {
@@ -51,7 +54,8 @@ export function EscenaViaje({
   const sol = useRef(new Animated.Value(0)).current;
   const texto = useRef(new Animated.Value(reducido ? 1 : 0)).current;
   const lineas = useRef(new Animated.Value(0)).current;
-  const duracion = tipo === 'salida' ? DURACION_SALIDA : DURACION_LLEGADA;
+  const duracion =
+    duracionPropia ?? (tipo === 'salida' ? DURACION_SALIDA : DURACION_LLEGADA);
   const anchoBus = Math.min(width * 0.62, 300);
   const altoCarretera = Math.max(90, height * 0.13);
 

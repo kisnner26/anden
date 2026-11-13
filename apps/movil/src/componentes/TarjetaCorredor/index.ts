@@ -1,1 +1,0 @@
-export { TarjetaCorredor } from './TarjetaCorredor';

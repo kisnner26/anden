@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { fireEvent, waitFor } from '@testing-library/react-native';
+import { fireEvent } from '@testing-library/react-native';
 
 import { ProveedorFavoritos } from '@/datos/ProveedorFavoritos';
 import { renderPantalla } from '@/pruebas/render';
@@ -11,24 +11,88 @@ beforeEach(async () => {
   await AsyncStorage.clear();
 });
 
+function activar(control: Parameters<typeof fireEvent>[0]) {
+  return fireEvent(control, 'accessibilityAction', {
+    nativeEvent: { actionName: 'activate' },
+  });
+}
+
 describe('Rutas', () => {
-  it('pone primero, dentro de su grupo, el corredor favorito', async () => {
-    await AsyncStorage.setItem(
-      'anden.favoritos',
-      JSON.stringify(['cor_man_boa']),
+  it('empieza con Boaco hacia Managua en el panel', async () => {
+    const pantalla = await renderPantalla(<Rutas />);
+    expect(pantalla.getByText('Rutas.')).toBeTruthy();
+    expect(
+      pantalla.getByRole('button', {
+        name: /^Cambiar el sentido: de Managua a Boaco/,
+      }),
+    ).toBeTruthy();
+  });
+
+  it('elegir Juigalpa en la red cambia el corredor', async () => {
+    const alAbrirRuta = jest.fn();
+    const pantalla = await renderPantalla(<Rutas alAbrirRuta={alAbrirRuta} />);
+    await fireEvent.press(
+      pantalla.getAllByRole('button', { name: 'Juigalpa' })[0]!,
     );
+    await activar(
+      pantalla.getByRole('button', { name: 'Deslizar para abrir' }),
+    );
+    await fireEvent.press(await pantalla.findByTestId('escena-viaje'));
+    expect(alAbrirRuta).toHaveBeenCalledWith('cor_jui_man');
+  });
+
+  it('tocar Managua o el botón central invierte el sentido', async () => {
+    const alAbrirRuta = jest.fn();
+    const pantalla = await renderPantalla(<Rutas alAbrirRuta={alAbrirRuta} />);
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: /^Cambiar el sentido/ }),
+    );
+    await activar(
+      pantalla.getByRole('button', { name: 'Deslizar para abrir' }),
+    );
+    await fireEvent.press(await pantalla.findByTestId('escena-viaje'));
+    expect(alAbrirRuta).toHaveBeenCalledWith('cor_man_boa');
+  });
+
+  it('abre el corredor elegido al deslizar', async () => {
+    const alAbrirRuta = jest.fn();
+    const pantalla = await renderPantalla(<Rutas alAbrirRuta={alAbrirRuta} />);
+    await activar(
+      pantalla.getByRole('button', { name: 'Deslizar para abrir' }),
+    );
+    // primero se ve la escena del bus y al terminar se abre el corredor
+    expect(await pantalla.findByTestId('escena-viaje')).toBeTruthy();
+    expect(alAbrirRuta).not.toHaveBeenCalled();
+    await fireEvent.press(pantalla.getByTestId('escena-viaje'));
+    expect(alAbrirRuta).toHaveBeenCalledWith('cor_boa_man');
+  });
+
+  it('marca el corredor como favorito desde el panel', async () => {
     const pantalla = await renderPantalla(
       <ProveedorFavoritos>
         <Rutas />
       </ProveedorFavoritos>,
     );
-    const nombres = () =>
-      pantalla
-        .getAllByRole('button', { name: /^Abrir / })
-        .map((boton) => boton.props.accessibilityLabel as string);
+    await fireEvent.press(
+      pantalla.getByRole('button', {
+        name: /^Marcar Boaco a Managua como favorita/,
+      }),
+    );
+    expect(
+      await pantalla.findByRole('button', {
+        name: /^Quitar Boaco a Managua de favoritas/,
+      }),
+    ).toBeTruthy();
+  });
 
-    await waitFor(() => expect(nombres()[0]).toBe('Abrir Managua a Boaco'));
-    expect(nombres()[1]).toBe('Abrir Boaco a Managua');
+  it('muestra la salida, el ETA estimado y los asientos libres', async () => {
+    const pantalla = await renderPantalla(<Rutas />);
+    expect(pantalla.getByText('Sale')).toBeTruthy();
+    expect(pantalla.getByText('ETA h:min')).toBeTruthy();
+    expect(pantalla.getByText('Libres')).toBeTruthy();
+    expect(pantalla.getAllByText(/^\d+:\d{2}$/)).toHaveLength(2);
+    expect(pantalla.getByText(/^Sale en \d+ min$/)).toBeTruthy();
+    expect(pantalla.getByText(/no garantizados/)).toBeTruthy();
   });
 
   it('ofrece enviar una encomienda y lleva a pedirla', async () => {
@@ -42,57 +106,11 @@ describe('Rutas', () => {
     expect(alAbrirEncomiendas).toHaveBeenCalledTimes(1);
   });
 
-  it('sin favoritos mantiene el orden de siempre', async () => {
-    const pantalla = await renderPantalla(
-      <ProveedorFavoritos>
-        <Rutas />
-      </ProveedorFavoritos>,
-    );
-    const nombres = pantalla
-      .getAllByRole('button', { name: /^Abrir / })
-      .map((boton) => boton.props.accessibilityLabel as string);
-    expect(nombres[0]).toBe('Abrir Boaco a Managua');
-  });
-
-  it('muestra los cuatro sentidos del corredor inicial', async () => {
+  it('dice que los datos son ilustrativos y no muestra otras ciudades', async () => {
     const pantalla = await renderPantalla(<Rutas />);
-    expect(pantalla.getAllByText('Boaco')).toHaveLength(2);
-    expect(pantalla.getAllByText('Juigalpa')).toHaveLength(2);
-    expect(pantalla.getAllByText('Managua')).toHaveLength(4);
+    expect(
+      pantalla.getByText(/ilustrativos hasta tener datos en vivo/),
+    ).toBeTruthy();
     expect(pantalla.queryByText('Granada')).toBeNull();
-    expect(pantalla.queryByText('Estelí')).toBeNull();
-  });
-
-  it('agrupa los sentidos en dos corredores reconocibles', async () => {
-    const pantalla = await renderPantalla(<Rutas />);
-    expect(pantalla.getByText('Boaco · Managua')).toBeTruthy();
-    expect(pantalla.getByText('Juigalpa · Managua')).toBeTruthy();
-    expect(pantalla.getAllByRole('button', { name: /^Abrir / })).toHaveLength(
-      4,
-    );
-  });
-
-  it('explica que faltan datos operativos sin mostrar un mapa radial', async () => {
-    const pantalla = await renderPantalla(<Rutas />);
-    expect(
-      pantalla.getAllByText('Horarios y ubicación por confirmar'),
-    ).toHaveLength(1);
-    expect(
-      pantalla.getAllByText(
-        'La hora, el estado y la llegada son ilustrativos hasta tener datos en vivo.',
-      ),
-    ).toHaveLength(1);
-    expect(pantalla.queryByLabelText('Mapa esquemático de rutas')).toBeNull();
-  });
-
-  it('abre el corredor elegido', async () => {
-    const alAbrirRuta = jest.fn();
-    const pantalla = await renderPantalla(<Rutas alAbrirRuta={alAbrirRuta} />);
-    await fireEvent.press(
-      pantalla.getByRole('button', {
-        name: 'Abrir Boaco a Managua',
-      }),
-    );
-    expect(alAbrirRuta).toHaveBeenCalledWith('cor_boa_man');
   });
 });
