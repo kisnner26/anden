@@ -46,7 +46,7 @@
         {
           "photosPermission": "Andén usa tu galería solo para que elijas la foto de tu perfil.",
           "cameraPermission": false,
-          "microphonePermission": false
+          "microphonePermission": "Andén usa el micrófono solo mientras le hablás al asistente."
         }
       ],
       [
@@ -73,7 +73,7 @@
       [
         "expo-audio",
         {
-          "microphonePermission": false
+          "microphonePermission": "Andén usa el micrófono solo mientras le hablás al asistente."
         }
       ],
       "@bacons/apple-targets",
