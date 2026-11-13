@@ -8,14 +8,22 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { formatearCedula } from '@anden/dominio';
+import {
+  claveValida,
+  formatearCedula,
+  formatearTelefonoNi,
+  usuarioValido,
+} from '@anden/dominio';
 
 import { Aparece } from '@/componentes/Aparece';
 import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { CampoTexto } from '@/componentes/CampoTexto';
+import { Icono } from '@/componentes/Icono';
 import { autenticar, consultarBiometria } from '@/datos/biometria';
+import { useSesion } from '@/datos/useSesion';
+import type { ErrorRegistro } from '@/servicios/sesion';
 import { servicioSolicitud } from '@/datos/servicioSolicitud';
 import { resolverFoto } from '@/datos/almacenFotos';
 import { elegirFotoDeCedula } from '@/datos/fotos';
@@ -62,6 +70,14 @@ const CAMPOS_DEL_PASO: Record<Paso, readonly ErrorSolicitud[]> = {
 export function RegistroConductor({ alVolver }: PropiedadesRegistroConductor) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
+  const { registrar, sesion } = useSesion();
+  // sin cuenta, el registro la crea: no hace falta dar vueltas por otra pantalla
+  const crearCuentaAqui = sesion === null;
+  const [usuario, establecerUsuario] = useState('');
+  const [clave, establecerClave] = useState('');
+  const [fallaCuenta, establecerFallaCuenta] = useState<ErrorRegistro | null>(
+    null,
+  );
   const [paso, establecerPaso] = useState<Paso>(1);
   const [nombre, establecerNombre] = useState('');
   const [apellido, establecerApellido] = useState('');
@@ -105,11 +121,19 @@ export function RegistroConductor({ alVolver }: PropiedadesRegistroConductor) {
   const error = (campo: ErrorSolicitud) =>
     errores.includes(campo) ? MENSAJES[campo]() : undefined;
 
+  const usuarioOk = usuarioValido(usuario);
+  const claveOk = claveValida(clave);
+  const [validarCuenta, establecerValidarCuenta] = useState(false);
+
   function seguir() {
     const fallos = erroresDeSolicitud(datos).filter((e) =>
       CAMPOS_DEL_PASO[paso].includes(e),
     );
     establecerErrores(fallos);
+    if (paso === 1 && crearCuentaAqui) {
+      establecerValidarCuenta(true);
+      if (!usuarioOk || !claveOk) return;
+    }
     if (fallos.length === 0 && paso < 3) establecerPaso((paso + 1) as Paso);
   }
 
@@ -141,6 +165,22 @@ export function RegistroConductor({ alVolver }: PropiedadesRegistroConductor) {
     if (!confirmada) {
       establecerFalloBiometria(true);
       return;
+    }
+    // si todavía no hay cuenta se crea acá mismo, con los datos del primer paso
+    if (crearCuentaAqui) {
+      const cuenta = await registrar({
+        apellido: apellido.trim(),
+        clave,
+        nombre: nombre.trim(),
+        telefono: formatearTelefonoNi(telefono) ?? telefono,
+        usuario: usuario.trim().toLowerCase(),
+      });
+      if (!cuenta.ok) {
+        establecerFallaCuenta(cuenta.error);
+        establecerPaso(1);
+        return;
+      }
+      establecerFallaCuenta(null);
     }
     const nueva = nuevaSolicitud(datos);
     try {
@@ -359,6 +399,61 @@ export function RegistroConductor({ alVolver }: PropiedadesRegistroConductor) {
                   teclado="phone-pad"
                   valor={telefono}
                 />
+                {crearCuentaAqui && (
+                  <>
+                    <Text
+                      style={[
+                        tipografia.etiqueta,
+                        { color: colores.ambarTexto },
+                      ]}
+                    >
+                      {t('registroConductor.cuentaTitulo')}
+                    </Text>
+                    <CampoTexto
+                      alCambiar={(valor) => {
+                        establecerUsuario(valor);
+                        establecerFallaCuenta(null);
+                      }}
+                      error={
+                        validarCuenta && !usuarioOk
+                          ? t('cuenta.usuarioInvalido')
+                          : fallaCuenta === 'usuario-tomado'
+                            ? t('cuenta.usuarioTomado')
+                            : fallaCuenta === 'telefono-tomado'
+                              ? t('cuenta.telefonoTomado')
+                              : undefined
+                      }
+                      etiqueta={t('cuenta.usuario')}
+                      marcador={t('cuenta.marcadorUsuario')}
+                      valor={usuario}
+                    />
+                    <CampoTexto
+                      alCambiar={establecerClave}
+                      error={
+                        validarCuenta && !claveOk
+                          ? t('cuenta.claveInvalida')
+                          : undefined
+                      }
+                      etiqueta={t('cuenta.clave')}
+                      oculto
+                      valor={clave}
+                    />
+                    {(fallaCuenta === 'conexion' ||
+                      fallaCuenta === 'confirmacion-pendiente') && (
+                      <Text
+                        accessibilityLiveRegion="polite"
+                        style={[
+                          tipografia.pequeno,
+                          { color: colores.cancelado },
+                        ]}
+                      >
+                        {fallaCuenta === 'conexion'
+                          ? t('cuenta.sinConexion')
+                          : t('cuenta.confirmacionPendiente')}
+                      </Text>
+                    )}
+                  </>
+                )}
               </Bloque>
             </Aparece>
           )}
@@ -399,44 +494,119 @@ export function RegistroConductor({ alVolver }: PropiedadesRegistroConductor) {
 
           {paso === 3 && (
             <Aparece>
-              <Bloque estiloContenido={estilos.formulario}>
-                <Text style={[tipografia.titulo, { color: colores.tinta }]}>
-                  {t('registroConductor.seguridadTitulo')}
-                </Text>
-                <Text
-                  style={[tipografia.cuerpo, { color: colores.tintaSuave }]}
-                >
-                  {t('registroConductor.seguridadDetalle')}
-                </Text>
-                {!conBiometria && (
-                  <Text
-                    style={[tipografia.pequeno, { color: colores.ambarTexto }]}
+              <View style={estilos.grupo}>
+                <Bloque estiloContenido={estilos.seguridad}>
+                  <View
+                    style={[
+                      estilos.sello3,
+                      {
+                        backgroundColor: confirmada
+                          ? conAlfa(colores.aTiempo, 0.16)
+                          : conAlfa(colores.ambar, 0.16),
+                        borderColor: confirmada
+                          ? colores.aTiempo
+                          : colores.ambar,
+                      },
+                    ]}
                   >
-                    {t('registroConductor.sinBiometria')}
-                  </Text>
-                )}
-                {confirmada ? (
+                    <Icono
+                      color={confirmada ? colores.aTiempo : colores.ambarTexto}
+                      nombre="confirmar"
+                      tamano="grande"
+                    />
+                  </View>
                   <Text
-                    accessibilityLiveRegion="polite"
-                    style={[tipografia.subtitulo, { color: colores.aTiempo }]}
+                    style={[
+                      tipografia.titulo,
+                      estilos.centrado,
+                      { color: colores.tinta },
+                    ]}
                   >
-                    {t('registroConductor.confirmado')}
+                    {confirmada
+                      ? t('registroConductor.confirmado')
+                      : t('registroConductor.seguridadTitulo')}
                   </Text>
-                ) : (
-                  <BotonAccion
-                    alPresionar={() => void confirmar()}
-                    etiqueta={t('registroConductor.confirmar')}
-                  />
-                )}
-                {falloBiometria && (
                   <Text
-                    accessibilityLiveRegion="polite"
-                    style={[tipografia.pequeno, { color: colores.cancelado }]}
+                    style={[
+                      tipografia.cuerpo,
+                      estilos.centrado,
+                      { color: colores.tintaSuave },
+                    ]}
                   >
-                    {t('registroConductor.falloBiometria')}
+                    {t('registroConductor.seguridadDetalle')}
                   </Text>
-                )}
-              </Bloque>
+                  {!conBiometria && (
+                    <Text
+                      style={[
+                        tipografia.pequeno,
+                        estilos.centrado,
+                        { color: colores.ambarTexto },
+                      ]}
+                    >
+                      {t('registroConductor.sinBiometria')}
+                    </Text>
+                  )}
+                  {!confirmada && (
+                    <BotonAccion
+                      alPresionar={() => void confirmar()}
+                      etiqueta={t('registroConductor.confirmar')}
+                    />
+                  )}
+                  {falloBiometria && (
+                    <Text
+                      accessibilityLiveRegion="polite"
+                      style={[
+                        tipografia.pequeno,
+                        estilos.centrado,
+                        { color: colores.cancelado },
+                      ]}
+                    >
+                      {t('registroConductor.falloBiometria')}
+                    </Text>
+                  )}
+                </Bloque>
+
+                <Bloque estiloContenido={estilos.pasosSeguridad}>
+                  <Text
+                    style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
+                  >
+                    {t('registroConductor.seguridadPasos')}
+                  </Text>
+                  {(['Paso1', 'Paso2', 'Paso3'] as const).map((clave, i) => (
+                    <View key={clave} style={estilos.filaPaso}>
+                      <View
+                        style={[
+                          estilos.numero,
+                          { backgroundColor: colores.bloqueNegro },
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            tipografia.etiqueta,
+                            { color: colores.ambar },
+                          ]}
+                        >
+                          {i + 1}
+                        </Text>
+                      </View>
+                      <Text
+                        style={[
+                          tipografia.cuerpo,
+                          estilos.textoPaso,
+                          { color: colores.tinta },
+                        ]}
+                      >
+                        {t(`registroConductor.seguridad${clave}`)}
+                      </Text>
+                    </View>
+                  ))}
+                  <Text
+                    style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                  >
+                    {t('registroConductor.seguridadCifrado')}
+                  </Text>
+                </Bloque>
+              </View>
             </Aparece>
           )}
 
@@ -486,6 +656,29 @@ export function RegistroConductor({ alVolver }: PropiedadesRegistroConductor) {
 }
 
 const estilos = StyleSheet.create({
+  filaPaso: { alignItems: 'center', flexDirection: 'row', gap: espacios.doce },
+  numero: {
+    alignItems: 'center',
+    borderRadius: radios.pildora,
+    height: 28,
+    justifyContent: 'center',
+    width: 28,
+  },
+  pasosSeguridad: { gap: espacios.doce, padding: espacios.dieciseis },
+  seguridad: {
+    alignItems: 'center',
+    gap: espacios.doce,
+    padding: espacios.veinticuatro,
+  },
+  sello3: {
+    alignItems: 'center',
+    borderRadius: radios.pildora,
+    borderWidth: 2,
+    height: 84,
+    justifyContent: 'center',
+    width: 84,
+  },
+  textoPaso: { flex: 1 },
   atras: {
     justifyContent: 'center',
     minHeight: 48,
