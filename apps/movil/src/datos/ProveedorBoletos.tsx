@@ -8,6 +8,8 @@ import {
   type ReactNode,
 } from 'react';
 
+import { publicarBoletos } from '@/servicios/supabase/boletosCompartidos';
+
 import { crearReserva, ocupacionesDe, type BoletoGuardado } from './reserva';
 import { ContextoBoletos, type ValorBoletos } from './useBoletos';
 import { obtenerMuestra } from './useSalidas';
@@ -70,6 +72,8 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
   const guardar = useCallback(async (nuevos: BoletoGuardado[]) => {
     establecerBoletos(nuevos);
     await AsyncStorage.setItem(CLAVE_BOLETOS, JSON.stringify(nuevos));
+    // copia para el conductor; si falla la red, el boleto sigue guardado en el teléfono
+    void publicarBoletos(nuevos).catch(() => undefined);
   }, []);
 
   const reservar = useCallback<ValorBoletos['reservar']>(
