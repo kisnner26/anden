@@ -11,6 +11,7 @@ import {
 } from '@expo-google-fonts/jetbrains-mono';
 import { useFonts } from 'expo-font';
 import '@/datos/configurarServicios';
+import { ProveedorEncomiendas } from '@/datos/ProveedorEncomiendas';
 import { ProveedorIA } from '@/datos/ProveedorIA';
 import { ProveedorMemoriaIA } from '@/datos/ProveedorMemoriaIA';
 import { ProveedorAjustesConductor } from '@/datos/ProveedorAjustesConductor';
@@ -88,34 +89,36 @@ export default function DisenoRaiz() {
                                           <ProveedorPagos>
                                             <ProveedorAbordaje>
                                               <ProveedorCierres>
-                                                <GuardiaDeSesion />
-                                                <Stack
-                                                  screenOptions={{
-                                                    headerShown: false,
-                                                  }}
-                                                >
-                                                  <Stack.Screen
-                                                    name="boleto/[id]"
-                                                    options={{
-                                                      animation:
-                                                        'fade_from_bottom',
-                                                      animationDuration: 420,
+                                                <ProveedorEncomiendas>
+                                                  <GuardiaDeSesion />
+                                                  <Stack
+                                                    screenOptions={{
+                                                      headerShown: false,
                                                     }}
-                                                  />
-                                                  <Stack.Screen
-                                                    name="ingresar"
-                                                    options={{
-                                                      animation: 'fade',
-                                                    }}
-                                                  />
-                                                  <Stack.Screen
-                                                    name="buscar"
-                                                    options={{
-                                                      animation:
-                                                        'fade_from_bottom',
-                                                    }}
-                                                  />
-                                                </Stack>
+                                                  >
+                                                    <Stack.Screen
+                                                      name="boleto/[id]"
+                                                      options={{
+                                                        animation:
+                                                          'fade_from_bottom',
+                                                        animationDuration: 420,
+                                                      }}
+                                                    />
+                                                    <Stack.Screen
+                                                      name="ingresar"
+                                                      options={{
+                                                        animation: 'fade',
+                                                      }}
+                                                    />
+                                                    <Stack.Screen
+                                                      name="buscar"
+                                                      options={{
+                                                        animation:
+                                                          'fade_from_bottom',
+                                                      }}
+                                                    />
+                                                  </Stack>
+                                                </ProveedorEncomiendas>
                                               </ProveedorCierres>
                                             </ProveedorAbordaje>
                                           </ProveedorPagos>
