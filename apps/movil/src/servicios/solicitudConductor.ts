@@ -118,3 +118,22 @@ export function cedulaOculta(cedula: string): string {
     ? cedula
     : `${'•'.repeat(cedula.length - 4)}${cedula.slice(-4)}`;
 }
+
+/**
+ * lo que necesita la app para llevar la solicitud de conductor; hoy lo cumple `crearSolicitudLocal` y
+ * con Supabase `crearSolicitudSupabase`, que sube las fotos al bucket privado y crea la fila en revisión
+ */
+export interface ServicioSolicitud {
+  descartar(): Promise<void>;
+  /** envía la solicitud; falla con `sin-sesion` si el servidor exige una cuenta y no hay */
+  guardar(solicitud: SolicitudConductor): Promise<void>;
+  leer(): Promise<SolicitudConductor | null>;
+}
+
+export function crearSolicitudLocal(): ServicioSolicitud {
+  return {
+    descartar: descartarSolicitud,
+    guardar: guardarSolicitud,
+    leer: leerSolicitud,
+  };
+}
