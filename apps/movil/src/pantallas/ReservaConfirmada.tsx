@@ -92,6 +92,28 @@ export function ReservaConfirmada({
           accessible
           style={estilos.encabezado}
         >
+          <Aparece indice={2}>
+            <Text
+              style={[
+                tipografia.display,
+                estilos.centrado,
+                { color: colores.tinta },
+              ]}
+            >
+              {t('pago.confirmadaTitulo')}.
+            </Text>
+          </Aparece>
+          <Aparece indice={3}>
+            <Text
+              style={[
+                tipografia.cuerpo,
+                estilos.centrado,
+                { color: colores.tintaSuave },
+              ]}
+            >
+              {t('pago.confirmadaDetalle')}
+            </Text>
+          </Aparece>
           <View style={estilos.insignia}>
             <ExplosionConfirmacion />
             <Animated.View style={estiloEntrada}>
@@ -107,16 +129,6 @@ export function ReservaConfirmada({
               </Loseta>
             </Animated.View>
           </View>
-          <Aparece indice={2}>
-            <Text style={[tipografia.display, { color: colores.tinta }]}>
-              {t('pago.confirmadaTitulo')}.
-            </Text>
-          </Aparece>
-          <Aparece indice={3}>
-            <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
-              {t('pago.confirmadaDetalle')}
-            </Text>
-          </Aparece>
         </View>
 
         {guardado ? (
@@ -183,10 +195,11 @@ const estilos = StyleSheet.create({
     gap: espacios.veinticuatro,
     paddingHorizontal: espacios.lateral,
   },
+  centrado: { textAlign: 'center' },
   encabezado: { gap: espacios.ocho },
   insignia: {
     alignItems: 'center',
-    height: tamanosIlustracion.confirmacionReserva,
+    height: tamanosIlustracion.confirmacionReserva * 2,
     justifyContent: 'center',
   },
   listo: {

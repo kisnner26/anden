@@ -280,17 +280,21 @@ const estilos = StyleSheet.create({
     borderRadius: radios.pildora,
     height: tamanosBoleto.muesca,
     position: 'absolute',
-    top: -tamanosBoleto.muesca / 2,
+    top: 0,
     width: tamanosBoleto.muesca,
   },
   muescaDerecha: { right: -tamanosBoleto.muesca / 2 },
   muescaIzquierda: { left: -tamanosBoleto.muesca / 2 },
   papel: { borderRadius: radios.bloque, overflow: 'hidden' },
-  perforacion: { alignItems: 'center', flexDirection: 'row', height: 1 },
+  /** una franja propia entre el negro y el crema: nada se encima y las muescas quedan centradas */
+  perforacion: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    height: tamanosBoleto.muesca,
+  },
   talon: {
     alignItems: 'center',
     flexDirection: 'row',
-    paddingTop: espacios.veinticuatro,
   },
   sello: {
     paddingBottom: espacios.dieciseis,

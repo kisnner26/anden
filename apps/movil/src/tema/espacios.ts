@@ -54,7 +54,7 @@ export const tamanosIlustracion = {
   autobusCorredor: 116,
   autobusProximo: 262,
   busDetalleSolape: 84,
-  confirmacionReserva: 88,
+  confirmacionReserva: 64,
   espacioAutobusProximo: 106,
   solapeAutobusProximo: 114,
 } as const;
