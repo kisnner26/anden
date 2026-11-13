@@ -1,12 +1,5 @@
 import Foundation
 
-enum ErrorAnden: Error {
-    case sinServidor
-    case credenciales
-    case sinRed
-    case servidor(Int)
-}
-
 struct SesionGuardada: Codable {
     var accessToken: String
     var refreshToken: String
