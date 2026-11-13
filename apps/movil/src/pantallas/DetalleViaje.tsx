@@ -3,6 +3,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Autobus, varianteDeClave } from '@/componentes/Autobus';
 import { Avatar } from '@/componentes/Avatar';
+import { ResumenIA } from '@/componentes/ResumenIA';
+import { lineaDeSalida } from '@/datos/contextoIA';
 import { Bloque } from '@/componentes/Bloque';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
@@ -296,6 +298,11 @@ export function DetalleViaje({
         <Bloque estiloContenido={estilos.recorrido}>
           <LineaRuta paradas={detalle.paradas} />
         </Bloque>
+        <ResumenIA
+          contexto={lineaDeSalida(salida)}
+          pedido={t('ia.pedidoResumenViaje')}
+          titulo={t('ia.resumirViaje')}
+        />
       </ScrollView>
 
       <View style={[estilos.pie, { bottom: margenes.bottom + 8 }]}>
