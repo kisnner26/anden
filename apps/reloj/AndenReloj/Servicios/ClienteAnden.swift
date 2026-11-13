@@ -84,6 +84,15 @@ final class ClienteAnden {
              ("estado", "neq.cancelado"), ("salio_en", "is.null"), ("order", "salida.asc"), ("limit", "12")])
     }
 
+    /// los paquetes que enviaste, del más nuevo al más viejo
+    func encomiendas() async throws -> [Encomienda] {
+        try await renovarSiHaceFalta()
+        guard let uid = sesion?.usuarioId else { throw ErrorAnden.credenciales }
+        return try await tabla(
+            "encomiendas",
+            [("select", "id,estado,motivo,contenido"), ("remitente_id", "eq.\(uid)"), ("order", "creada_en.desc"), ("limit", "10")])
+    }
+
     func transmision(viajeId: String) async throws -> Transmision? {
         try await renovarSiHaceFalta()
         let filas: [Transmision] = try await tabla(
