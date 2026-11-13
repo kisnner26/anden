@@ -1,4 +1,3 @@
-import type { ViajeFila } from '../resumen';
 import {
   corredorDe,
   extremosDeRuta,
@@ -8,26 +7,19 @@ import {
   TERMINALES,
   type Terminal,
 } from '../lib/ruta';
-
-export interface Transmision {
-  lat: number | null;
-  lng: number | null;
-  viaje_id: string;
-}
+import type { Transmision, Viaje } from '../tipos';
 
 const ESTACIONES: Terminal[] = ['managua', 'boaco', 'juigalpa'];
 
-/**
- * la red de Andén dibujada como un plano de línea: Managua al centro, Boaco y Juigalpa en los
- * extremos. Los buses en camino se mueven sobre el trazo según su ubicación real; los que
- * esperan pasajeros se ven como luces junto a su terminal.
- */
+/** la red de Andén como plano de línea: Managua al centro, Boaco y Juigalpa en los extremos, con los buses moviéndose según su ubicación real */
 export function LineaDeRed({
+  alto = 360,
   transmisiones,
   viajes,
 }: {
+  alto?: number;
   transmisiones: readonly Transmision[];
-  viajes: readonly ViajeFila[];
+  viajes: readonly Viaje[];
 }) {
   const enCamino = transmisiones
     .map((t) => {
@@ -35,34 +27,31 @@ export function LineaDeRed({
       const ciudad = viaje ? corredorDe(viaje.ruta_id) : null;
       if (!viaje || !ciudad || t.lat === null || t.lng === null) return null;
       return {
-        ciudad,
         punto: puntoEnDibujo(ciudad, fraccionEnCorredor(t.lat, t.lng, ciudad)),
         viaje,
       };
     })
     .filter((b): b is NonNullable<typeof b> => b !== null);
-
-  const esperando = viajes.filter(
-    (v) => v.estado !== 'cancelado' && !v.salio_en,
-  );
   const porTerminal = new Map<Terminal, number>();
-  for (const v of esperando) {
+  for (const v of viajes.filter(
+    (x) => x.estado !== 'cancelado' && !x.salio_en,
+  )) {
     const origen = extremosDeRuta(v.ruta_id)?.origen;
     if (origen) porTerminal.set(origen, (porTerminal.get(origen) ?? 0) + 1);
   }
-
   const m = PUNTOS_DIBUJO.managua;
   return (
     <figure className="red">
       <svg
-        aria-label="Plano de la red de Andén con los buses en camino"
+        aria-label="Plano de la red con los buses en camino"
         role="img"
+        style={{ maxHeight: alto }}
         viewBox="0 0 900 360"
       >
         <defs>
           <linearGradient id="trazo" x1="0" x2="1">
             <stop offset="0" stopColor="#ffb21e" stopOpacity="0.2" />
-            <stop offset="1" stopColor="#ffb21e" stopOpacity="0.9" />
+            <stop offset="1" stopColor="#ffb21e" stopOpacity="0.95" />
           </linearGradient>
         </defs>
         {(['boaco', 'juigalpa'] as const).map((c) => {
@@ -77,27 +66,28 @@ export function LineaDeRed({
         {ESTACIONES.map((e) => {
           const p = PUNTOS_DIBUJO[e];
           const n = porTerminal.get(e) ?? 0;
+          const izq = e === 'managua';
           return (
             <g key={e} transform={`translate(${p.x} ${p.y})`}>
               {n > 0 && <circle className="red-pulso" r="14" />}
               <circle className="red-estacion" r="9" />
               <text
                 className="red-nombre"
-                x={e === 'managua' ? -18 : 18}
+                textAnchor={izq ? 'end' : 'start'}
+                x={izq ? -18 : 18}
                 y="5"
-                textAnchor={e === 'managua' ? 'end' : 'start'}
               >
-                {TERMINALES[e].nombre.toUpperCase()}
+                {TERMINALES[e].nombre}
               </text>
               <text
                 className="red-mono"
-                x={e === 'managua' ? -18 : 18}
+                textAnchor={izq ? 'end' : 'start'}
+                x={izq ? -18 : 18}
                 y="24"
-                textAnchor={e === 'managua' ? 'end' : 'start'}
               >
                 {n === 0
-                  ? 'SIN BUSES EN ANDÉN'
-                  : `${n} ${n === 1 ? 'BUS' : 'BUSES'} EN ANDÉN`}
+                  ? 'sin buses en andén'
+                  : `${n} ${n === 1 ? 'bus' : 'buses'} en andén`}
               </text>
             </g>
           );
@@ -118,8 +108,8 @@ export function LineaDeRed({
       </svg>
       <figcaption className="micro">
         {enCamino.length === 0
-          ? '○ NINGÚN BUS EN CAMINO AHORA'
-          : `● ${enCamino.length} ${enCamino.length === 1 ? 'BUS EN CAMINO' : 'BUSES EN CAMINO'} · POSICIÓN REAL`}
+          ? '○ Ningún bus en camino ahora'
+          : `● ${enCamino.length} ${enCamino.length === 1 ? 'bus en camino' : 'buses en camino'} · posición real`}
       </figcaption>
     </figure>
   );
