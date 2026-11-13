@@ -52,7 +52,7 @@ export function armarCierre(
   };
 }
 
-function esCierre(valor: unknown): valor is CierreViaje {
+export function esCierre(valor: unknown): valor is CierreViaje {
   if (typeof valor !== 'object' || valor === null) return false;
   const c = valor as Record<string, unknown>;
   return (
@@ -90,4 +90,17 @@ export async function guardarCierre(
   ];
   await AsyncStorage.setItem(CLAVE_CIERRES, JSON.stringify(lista));
   return lista;
+}
+
+/**
+ * lo que necesita la app para guardar y leer los cierres de viaje; hoy lo cumple `crearCierresLocal` y
+ * con Supabase `crearCierresSupabase`, con las mismas pruebas de contrato
+ */
+export interface ServicioCierres {
+  guardar(cierre: CierreViaje): Promise<CierreViaje[]>;
+  leer(): Promise<CierreViaje[]>;
+}
+
+export function crearCierresLocal(): ServicioCierres {
+  return { guardar: guardarCierre, leer: leerCierres };
 }
