@@ -11,6 +11,7 @@ import {
 } from '@expo-google-fonts/jetbrains-mono';
 import { useFonts } from 'expo-font';
 import '@/datos/configurarServicios';
+import { ProveedorIA } from '@/datos/ProveedorIA';
 import { ProveedorAjustesConductor } from '@/datos/ProveedorAjustesConductor';
 import { GuardiaDeSesion } from '@/datos/GuardiaDeSesion';
 import { AdaptacionPorEdad } from '@/datos/AdaptacionPorEdad';
@@ -66,62 +67,64 @@ export default function DisenoRaiz() {
       <ProveedorModoUso>
         <ProveedorSesion>
           <ProveedorAjustesConductor>
-            <ProveedorSuscripcion>
-              <ProveedorBusPropio>
-                <ProveedorBloqueo>
-                  <ProveedorPerfil>
-                    <AdaptacionPorEdad />
-                    <ProveedorBoletos>
-                      <ProveedorEspera>
-                        <ProveedorAvisos>
-                          <ProveedorUbicacion>
-                            <ProveedorReserva>
-                              <ProveedorFavoritos>
-                                <ProveedorHabituales>
-                                  <ProveedorRecordatorios>
-                                    <ProveedorPagos>
-                                      <ProveedorAbordaje>
-                                        <ProveedorCierres>
-                                          <GuardiaDeSesion />
-                                          <Stack
-                                            screenOptions={{
-                                              headerShown: false,
-                                            }}
-                                          >
-                                            <Stack.Screen
-                                              name="boleto/[id]"
-                                              options={{
-                                                animation: 'fade_from_bottom',
-                                                animationDuration: 420,
+            <ProveedorIA>
+              <ProveedorSuscripcion>
+                <ProveedorBusPropio>
+                  <ProveedorBloqueo>
+                    <ProveedorPerfil>
+                      <AdaptacionPorEdad />
+                      <ProveedorBoletos>
+                        <ProveedorEspera>
+                          <ProveedorAvisos>
+                            <ProveedorUbicacion>
+                              <ProveedorReserva>
+                                <ProveedorFavoritos>
+                                  <ProveedorHabituales>
+                                    <ProveedorRecordatorios>
+                                      <ProveedorPagos>
+                                        <ProveedorAbordaje>
+                                          <ProveedorCierres>
+                                            <GuardiaDeSesion />
+                                            <Stack
+                                              screenOptions={{
+                                                headerShown: false,
                                               }}
-                                            />
-                                            <Stack.Screen
-                                              name="ingresar"
-                                              options={{ animation: 'fade' }}
-                                            />
-                                            <Stack.Screen
-                                              name="buscar"
-                                              options={{
-                                                animation: 'fade_from_bottom',
-                                              }}
-                                            />
-                                          </Stack>
-                                        </ProveedorCierres>
-                                      </ProveedorAbordaje>
-                                    </ProveedorPagos>
-                                  </ProveedorRecordatorios>
-                                </ProveedorHabituales>
-                              </ProveedorFavoritos>
-                            </ProveedorReserva>
-                          </ProveedorUbicacion>
-                        </ProveedorAvisos>
-                      </ProveedorEspera>
-                    </ProveedorBoletos>
-                  </ProveedorPerfil>
-                  <PuertaBloqueo />
-                </ProveedorBloqueo>
-              </ProveedorBusPropio>
-            </ProveedorSuscripcion>
+                                            >
+                                              <Stack.Screen
+                                                name="boleto/[id]"
+                                                options={{
+                                                  animation: 'fade_from_bottom',
+                                                  animationDuration: 420,
+                                                }}
+                                              />
+                                              <Stack.Screen
+                                                name="ingresar"
+                                                options={{ animation: 'fade' }}
+                                              />
+                                              <Stack.Screen
+                                                name="buscar"
+                                                options={{
+                                                  animation: 'fade_from_bottom',
+                                                }}
+                                              />
+                                            </Stack>
+                                          </ProveedorCierres>
+                                        </ProveedorAbordaje>
+                                      </ProveedorPagos>
+                                    </ProveedorRecordatorios>
+                                  </ProveedorHabituales>
+                                </ProveedorFavoritos>
+                              </ProveedorReserva>
+                            </ProveedorUbicacion>
+                          </ProveedorAvisos>
+                        </ProveedorEspera>
+                      </ProveedorBoletos>
+                    </ProveedorPerfil>
+                    <PuertaBloqueo />
+                  </ProveedorBloqueo>
+                </ProveedorBusPropio>
+              </ProveedorSuscripcion>
+            </ProveedorIA>
           </ProveedorAjustesConductor>
         </ProveedorSesion>
       </ProveedorModoUso>
