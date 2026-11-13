@@ -20,7 +20,7 @@ describe('motivoNoDisponible', () => {
   });
 });
 
-describe('Gemini sin módulo', () => {
+describe('Gemini sin módulo nativo (pruebas, web)', () => {
   it('dice que no está disponible y no inventa respuestas', async () => {
     const gemini = crearIAGemini();
     expect(await gemini.disponibilidad()).toBe('sin-modulo');

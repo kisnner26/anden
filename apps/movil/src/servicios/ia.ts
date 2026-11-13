@@ -29,17 +29,12 @@ export function crearIAApple(): ServicioIA {
   };
 }
 
-/**
- * Gemini en Android todavía no está conectado: en cuanto exista el módulo nativo reemplaza esta versión.
- * Mientras tanto dice que no está disponible en vez de fingir una respuesta.
- */
+/** Gemini Nano en Android: corre en el teléfono por AICore y las preguntas no salen de él */
 export function crearIAGemini(): ServicioIA {
   return {
-    disponibilidad: async () => 'sin-modulo',
+    disponibilidad: disponibilidadDelModelo,
     nombre: 'Gemini',
-    preguntar: async () => {
-      throw new Error('sin-modulo');
-    },
+    preguntar: responderConElModelo,
     proveedor: 'gemini',
   };
 }
