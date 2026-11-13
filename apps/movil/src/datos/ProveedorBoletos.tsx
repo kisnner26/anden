@@ -8,13 +8,21 @@ import {
   type ReactNode,
 } from 'react';
 
+import { claveDeCuenta, type Sesion } from '@/servicios/sesion';
 import { publicarBoletos } from '@/servicios/supabase/boletosCompartidos';
 
 import { crearReserva, ocupacionesDe, type BoletoGuardado } from './reserva';
+import { useSesion } from './useSesion';
 import { ContextoBoletos, type ValorBoletos } from './useBoletos';
 import { obtenerMuestra } from './useSalidas';
 
 export const CLAVE_BOLETOS = 'anden.boletos';
+
+/** cada cuenta guarda sus boletos aparte; sin cuenta se usa la lista de siempre del teléfono */
+export function claveBoletosDe(sesion: Sesion | null): string {
+  const cuenta = claveDeCuenta(sesion);
+  return cuenta ? `${CLAVE_BOLETOS}.${cuenta}` : CLAVE_BOLETOS;
+}
 
 function leerGuardados(texto: string | null): BoletoGuardado[] {
   if (!texto) return [];
@@ -50,15 +58,22 @@ function ocuparEnMuestra(boletos: readonly BoletoGuardado[]): void {
 export function ProveedorBoletos({ children }: { children: ReactNode }) {
   const [boletos, establecerBoletos] = useState<BoletoGuardado[]>([]);
   const [cargando, establecerCargando] = useState(true);
+  const { sesion } = useSesion();
+  const clave = claveBoletosDe(sesion);
 
   useEffect(() => {
     let activo = true;
-    AsyncStorage.getItem(CLAVE_BOLETOS)
+    establecerCargando(true);
+    // al cambiar de cuenta se muestran los boletos de esa cuenta y no los de la anterior
+    establecerBoletos([]);
+    AsyncStorage.getItem(clave)
       .then((texto) => {
         if (!activo) return;
         const guardados = leerGuardados(texto);
         ocuparEnMuestra(guardados);
         establecerBoletos(guardados);
+        // los boletos que no llegaron al servidor (sin conexión, o hechos antes de entrar) se suben ahora
+        if (sesion) void publicarBoletos(guardados).catch(() => undefined);
       })
       .catch(() => undefined)
       .finally(() => {
@@ -67,14 +82,17 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
     return () => {
       activo = false;
     };
-  }, []);
+  }, [clave, sesion]);
 
-  const guardar = useCallback(async (nuevos: BoletoGuardado[]) => {
-    establecerBoletos(nuevos);
-    await AsyncStorage.setItem(CLAVE_BOLETOS, JSON.stringify(nuevos));
-    // copia para el conductor; si falla la red, el boleto sigue guardado en el teléfono
-    void publicarBoletos(nuevos).catch(() => undefined);
-  }, []);
+  const guardar = useCallback(
+    async (nuevos: BoletoGuardado[]) => {
+      establecerBoletos(nuevos);
+      await AsyncStorage.setItem(clave, JSON.stringify(nuevos));
+      // copia para el conductor; si falla la red, el boleto sigue guardado y se sube la próxima vez
+      void publicarBoletos(nuevos).catch(() => undefined);
+    },
+    [clave],
+  );
 
   const reservar = useCallback<ValorBoletos['reservar']>(
     async (viajeId, pasajeros) => {
