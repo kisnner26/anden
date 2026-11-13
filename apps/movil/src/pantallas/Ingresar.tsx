@@ -24,19 +24,13 @@ export interface PropiedadesIngresar {
   alCrearCuenta?: () => void;
   /** la sesión quedó iniciada; el rol lo decidió la cuenta, no quien entró */
   alIngresar: (rol: Rol) => void;
-  /** seguir sin cuenta */
-  alInvitado?: () => void;
 }
 
 /**
  * el ingreso de todas las personas: no pregunta quién es ni con qué rol entra. Con el correo, el
  * teléfono o el código y la contraseña, la cuenta dice si es pasajero o conductor.
  */
-export function Ingresar({
-  alCrearCuenta,
-  alIngresar,
-  alInvitado,
-}: PropiedadesIngresar) {
+export function Ingresar({ alCrearCuenta, alIngresar }: PropiedadesIngresar) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const { iniciar } = useSesion();
@@ -122,18 +116,6 @@ export function Ingresar({
             </Text>
           </Pressable>
         )}
-        {alInvitado && (
-          <Pressable
-            accessibilityRole="button"
-            onPress={alInvitado}
-            style={estilos.enlace}
-          >
-            <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
-              {t('ingresar.invitado')}
-            </Text>
-          </Pressable>
-        )}
-
         <Bloque estiloContenido={estilos.prueba} hundido radio="loseta">
           <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
             {t('ingresar.pruebaTitulo')}

@@ -30,7 +30,7 @@ describe('Ingresar', () => {
     expect(pantalla.queryByText(/chofer/i)).toBeNull();
     expect(pantalla.queryByText(/conductor/i)).toBeNull();
     expect(pantalla.queryByText(/pasajero/i)).toBeNull();
-    expect(pantalla.getByLabelText('Correo, teléfono o código')).toBeTruthy();
+    expect(pantalla.getByLabelText('Usuario, teléfono o código')).toBeTruthy();
     expect(pantalla.getByLabelText('Contraseña')).toBeTruthy();
   });
 
@@ -46,7 +46,7 @@ describe('Ingresar', () => {
     const alIngresar = jest.fn();
     const pantalla = await dibujar(alIngresar);
     await fireEvent.changeText(
-      pantalla.getByLabelText('Correo, teléfono o código'),
+      pantalla.getByLabelText('Usuario, teléfono o código'),
       '1001',
     );
     await fireEvent.changeText(pantalla.getByLabelText('Contraseña'), '2026');
@@ -54,12 +54,12 @@ describe('Ingresar', () => {
     await waitFor(() => expect(alIngresar).toHaveBeenCalledWith('conductor'));
   });
 
-  it('con un correo de pasajero entra por la misma pantalla y la cuenta dice que es pasajero', async () => {
+  it('con un usuario de pasajero entra por la misma pantalla y la cuenta dice que es pasajero', async () => {
     const alIngresar = jest.fn();
     const pantalla = await dibujar(alIngresar);
     await fireEvent.changeText(
-      pantalla.getByLabelText('Correo, teléfono o código'),
-      'ana@correo.com',
+      pantalla.getByLabelText('Usuario, teléfono o código'),
+      'ana',
     );
     await fireEvent.changeText(pantalla.getByLabelText('Contraseña'), '2026');
     await fireEvent.press(pantalla.getByRole('button', { name: 'Ingresar' }));
@@ -70,7 +70,7 @@ describe('Ingresar', () => {
     const alIngresar = jest.fn();
     const pantalla = await dibujar(alIngresar);
     await fireEvent.changeText(
-      pantalla.getByLabelText('Correo, teléfono o código'),
+      pantalla.getByLabelText('Usuario, teléfono o código'),
       '1001',
     );
     await fireEvent.changeText(pantalla.getByLabelText('Contraseña'), 'mala');
@@ -88,26 +88,18 @@ describe('Ingresar', () => {
     );
   });
 
-  it('ofrece crear una cuenta y seguir sin cuenta cuando se le da cómo', async () => {
+  it('ofrece crear una cuenta cuando se le da cómo', async () => {
     const alCrearCuenta = jest.fn();
-    const alInvitado = jest.fn();
-    const pantalla = await dibujar(undefined, { alCrearCuenta, alInvitado });
+    const pantalla = await dibujar(undefined, { alCrearCuenta });
     await fireEvent.press(
       pantalla.getByRole('button', { name: 'Crear cuenta' }),
     );
-    await fireEvent.press(
-      pantalla.getByRole('button', { name: 'Continuar sin cuenta' }),
-    );
     expect(alCrearCuenta).toHaveBeenCalledTimes(1);
-    expect(alInvitado).toHaveBeenCalledTimes(1);
   });
 
   it('sin esas opciones no muestra los enlaces', async () => {
     const pantalla = await dibujar();
     expect(pantalla.queryByRole('button', { name: 'Crear cuenta' })).toBeNull();
-    expect(
-      pantalla.queryByRole('button', { name: 'Continuar sin cuenta' }),
-    ).toBeNull();
   });
 
   it('tocar fuera de los campos cierra el teclado', async () => {
