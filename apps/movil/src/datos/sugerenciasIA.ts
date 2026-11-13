@@ -9,6 +9,8 @@ export interface FactoresSugerencia {
   memoria: MemoriaIA;
   /** cambia en cada apertura para que las preguntas roten */
   semilla: number;
+  /** con el modo turista se suman preguntas sobre qué visitar */
+  turista?: boolean;
 }
 
 interface Candidata {
@@ -69,6 +71,13 @@ export function sugerenciasDelMomento(f: FactoresSugerencia): string[] {
   f.destinos.slice(0, 4).forEach((destino, indice) => {
     sumar(`precio-${destino}`, `¿Cuánto cuesta ir a ${destino}?`, 5 - indice);
   });
+  if (f.turista) {
+    const destino = habitual ?? f.destinos[0];
+    if (destino) {
+      sumar('visitar', `¿Qué puedo visitar en ${destino}?`, 12);
+      sumar('comer', `¿Qué se come en ${destino}?`, 9);
+    }
+  }
   const anterior = f.memoria.preguntas[0];
   if (anterior && f.memoria.usos > 0) sumar('repetir', anterior, 4);
 
