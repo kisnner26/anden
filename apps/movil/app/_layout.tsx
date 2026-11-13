@@ -31,6 +31,7 @@ import { ProveedorCierres } from '@/datos/ProveedorCierres';
 import { ProveedorAbordaje } from '@/datos/ProveedorAbordaje';
 import { ProveedorPagos } from '@/datos/ProveedorPagos';
 import { ProveedorSesion } from '@/datos/ProveedorSesion';
+import { ProveedorViajes } from '@/datos/ProveedorViajes';
 import { ProveedorRecordatorios } from '@/datos/ProveedorRecordatorios';
 import { ProveedorPerfil } from '@/datos/ProveedorPerfil';
 import { ProveedorReserva } from '@/datos/ProveedorReserva';
@@ -66,66 +67,72 @@ export default function DisenoRaiz() {
     <ProveedorTema>
       <ProveedorModoUso>
         <ProveedorSesion>
-          <ProveedorAjustesConductor>
-            <ProveedorIA>
-              <ProveedorSuscripcion>
-                <ProveedorBusPropio>
-                  <ProveedorBloqueo>
-                    <ProveedorPerfil>
-                      <AdaptacionPorEdad />
-                      <ProveedorBoletos>
-                        <ProveedorEspera>
-                          <ProveedorAvisos>
-                            <ProveedorUbicacion>
-                              <ProveedorReserva>
-                                <ProveedorFavoritos>
-                                  <ProveedorHabituales>
-                                    <ProveedorRecordatorios>
-                                      <ProveedorPagos>
-                                        <ProveedorAbordaje>
-                                          <ProveedorCierres>
-                                            <GuardiaDeSesion />
-                                            <Stack
-                                              screenOptions={{
-                                                headerShown: false,
-                                              }}
-                                            >
-                                              <Stack.Screen
-                                                name="boleto/[id]"
-                                                options={{
-                                                  animation: 'fade_from_bottom',
-                                                  animationDuration: 420,
+          <ProveedorViajes>
+            <ProveedorAjustesConductor>
+              <ProveedorIA>
+                <ProveedorSuscripcion>
+                  <ProveedorBusPropio>
+                    <ProveedorBloqueo>
+                      <ProveedorPerfil>
+                        <AdaptacionPorEdad />
+                        <ProveedorBoletos>
+                          <ProveedorEspera>
+                            <ProveedorAvisos>
+                              <ProveedorUbicacion>
+                                <ProveedorReserva>
+                                  <ProveedorFavoritos>
+                                    <ProveedorHabituales>
+                                      <ProveedorRecordatorios>
+                                        <ProveedorPagos>
+                                          <ProveedorAbordaje>
+                                            <ProveedorCierres>
+                                              <GuardiaDeSesion />
+                                              <Stack
+                                                screenOptions={{
+                                                  headerShown: false,
                                                 }}
-                                              />
-                                              <Stack.Screen
-                                                name="ingresar"
-                                                options={{ animation: 'fade' }}
-                                              />
-                                              <Stack.Screen
-                                                name="buscar"
-                                                options={{
-                                                  animation: 'fade_from_bottom',
-                                                }}
-                                              />
-                                            </Stack>
-                                          </ProveedorCierres>
-                                        </ProveedorAbordaje>
-                                      </ProveedorPagos>
-                                    </ProveedorRecordatorios>
-                                  </ProveedorHabituales>
-                                </ProveedorFavoritos>
-                              </ProveedorReserva>
-                            </ProveedorUbicacion>
-                          </ProveedorAvisos>
-                        </ProveedorEspera>
-                      </ProveedorBoletos>
-                    </ProveedorPerfil>
-                    <PuertaBloqueo />
-                  </ProveedorBloqueo>
-                </ProveedorBusPropio>
-              </ProveedorSuscripcion>
-            </ProveedorIA>
-          </ProveedorAjustesConductor>
+                                              >
+                                                <Stack.Screen
+                                                  name="boleto/[id]"
+                                                  options={{
+                                                    animation:
+                                                      'fade_from_bottom',
+                                                    animationDuration: 420,
+                                                  }}
+                                                />
+                                                <Stack.Screen
+                                                  name="ingresar"
+                                                  options={{
+                                                    animation: 'fade',
+                                                  }}
+                                                />
+                                                <Stack.Screen
+                                                  name="buscar"
+                                                  options={{
+                                                    animation:
+                                                      'fade_from_bottom',
+                                                  }}
+                                                />
+                                              </Stack>
+                                            </ProveedorCierres>
+                                          </ProveedorAbordaje>
+                                        </ProveedorPagos>
+                                      </ProveedorRecordatorios>
+                                    </ProveedorHabituales>
+                                  </ProveedorFavoritos>
+                                </ProveedorReserva>
+                              </ProveedorUbicacion>
+                            </ProveedorAvisos>
+                          </ProveedorEspera>
+                        </ProveedorBoletos>
+                      </ProveedorPerfil>
+                      <PuertaBloqueo />
+                    </ProveedorBloqueo>
+                  </ProveedorBusPropio>
+                </ProveedorSuscripcion>
+              </ProveedorIA>
+            </ProveedorAjustesConductor>
+          </ProveedorViajes>
         </ProveedorSesion>
       </ProveedorModoUso>
     </ProveedorTema>
