@@ -81,9 +81,9 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
     'sin-permiso' | 'no-disponible' | null
   >(null);
   const dicho = useRef('');
-  const enviarActual = useRef<(pregunta: string) => Promise<void>>(
-    async () => undefined,
-  );
+  const enviarActual = useRef<
+    (pregunta: string, porVoz?: boolean) => Promise<void>
+  >(async () => undefined);
   const hablarRespuesta = useRef(false);
 
   useEffect(() => {
@@ -150,7 +150,7 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
     [ahora, destinos, memoriaEfectiva, proximoBoleto, semilla],
   );
 
-  async function enviar(pregunta: string) {
+  async function enviar(pregunta: string, porVoz = false) {
     const limpia = pregunta.trim();
     if (limpia === '' || pensando) return;
     establecerPensando(true);
@@ -174,7 +174,8 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
       ]);
       establecerSiguienteId((id) => id + 1);
       establecerTexto('');
-      if (hablarRespuesta.current) {
+      // si le hablaste, te contesta hablando aunque el interruptor esté apagado
+      if (porVoz || hablarRespuesta.current) {
         void voz.hablar(respuesta.trim(), {
           alEstado: establecerHablando,
           enLinea: usarVozEnLinea.current,
@@ -203,7 +204,7 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
         establecerEscuchando(false);
         const pregunta = dicho.current;
         dicho.current = '';
-        if (pregunta.trim() !== '') void enviarActual.current(pregunta);
+        if (pregunta.trim() !== '') void enviarActual.current(pregunta, true);
       },
       alTexto: (reconocido) => {
         dicho.current = reconocido;
