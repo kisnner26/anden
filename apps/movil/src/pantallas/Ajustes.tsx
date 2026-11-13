@@ -17,6 +17,7 @@ import { OpcionSeleccion } from '@/componentes/OpcionSeleccion';
 import { iniciales, nombreCompleto, nombrePropio } from '@/datos/perfil';
 import { useBloqueo } from '@/datos/useBloqueo';
 import { useIA } from '@/datos/useIA';
+import { useSeguridad } from '@/datos/useSeguridad';
 import { useMemoriaIA } from '@/datos/useMemoriaIA';
 import { motivoNoDisponible } from '@/servicios/ia';
 import { usePerfil } from '@/datos/usePerfil';
@@ -99,6 +100,7 @@ export function Ajustes({
   const ubicacion = usePreferenciaUbicacion();
   const bloqueo = useBloqueo();
   const ia = useIA();
+  const seguridad = useSeguridad();
   const memoriaIA = useMemoriaIA();
   const [memoriaBorrada, establecerMemoriaBorrada] = useState(false);
   // lo que no tiene arreglo desde la app (teléfono sin soporte, sistema viejo, sin módulo) no se puede encender
@@ -311,6 +313,28 @@ export function Ajustes({
           </Pressable>
         </>
       )}
+
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+        {t('seguridad.titulo')}
+      </Text>
+      <Bloque estiloContenido={estilos.filaOpcion}>
+        <View style={estilos.texto}>
+          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+            {t('seguridad.titulo')}
+          </Text>
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {t('seguridad.detalle')}
+          </Text>
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {t('seguridad.notaAjuste')}
+          </Text>
+        </View>
+        <Interruptor
+          activo={seguridad.activa}
+          alCambiar={(activa) => void seguridad.cambiar(activa)}
+          etiqueta={t('seguridad.titulo')}
+        />
+      </Bloque>
 
       <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {t('ajustes.ubicacionSeccion')}
