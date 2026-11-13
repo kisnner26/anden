@@ -54,9 +54,7 @@ function Indicador({
       <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
         {etiqueta}
       </Text>
-      <Text style={[tipografia.datoGrande, { color: colores.tinta }]}>
-        {valor}
-      </Text>
+      <Text style={[tipografia.dato, { color: colores.tinta }]}>{valor}</Text>
       {detalle !== undefined && (
         <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
           {detalle}
@@ -88,16 +86,17 @@ export function ConductorHistorial() {
 
   return (
     <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={[
         estilos.contenido,
         {
-          paddingBottom: espacios.cuarentaYOcho,
+          paddingBottom: 120,
           paddingTop: margenes.top + espacios.veinticuatro,
         },
       ]}
       style={{ backgroundColor: colores.fondo }}
     >
-      <Text style={[tipografia.display, { color: colores.tinta }]}>
+      <Text style={[tipografia.titulo, { color: colores.tinta }]}>
         {t('conductorHistorial.titulo')}.
       </Text>
       <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
@@ -246,7 +245,7 @@ export function ConductorHistorial() {
 
 const estilos = StyleSheet.create({
   contenido: { gap: espacios.doce, paddingHorizontal: espacios.lateral },
-  contenidoIndicador: { gap: 2, padding: espacios.doce },
+  contenidoIndicador: { gap: 2, padding: espacios.ocho },
   fila: {
     alignItems: 'center',
     flexDirection: 'row',
@@ -254,7 +253,7 @@ const estilos = StyleSheet.create({
     padding: espacios.doce,
   },
   grafico: { gap: espacios.doce, padding: espacios.dieciseis },
-  indicador: { flexBasis: '47%', flexGrow: 1 },
+  indicador: { flexBasis: '30%', flexGrow: 1 },
   indicadores: { flexDirection: 'row', flexWrap: 'wrap', gap: espacios.doce },
   texto: { flex: 1, gap: 2 },
 });
