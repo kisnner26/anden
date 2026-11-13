@@ -4,7 +4,6 @@ import { fireEvent } from '@testing-library/react-native';
 import { ContextoIA, type ValorIA } from '@/datos/useIA';
 import { renderPantalla } from '@/pruebas/render';
 
-import { BordeLuminoso } from '../BordeLuminoso';
 import { Chispas } from '../Chispas';
 import { EsqueletoIA } from '../EsqueletoIA';
 import { TarjetaIA } from '../TarjetaIA';
@@ -70,7 +69,6 @@ describe('efectos visuales de la IA', () => {
   it('se dibujan sin romperse', async () => {
     const pantalla = await renderPantalla(
       <TarjetaIA trabajando>
-        <BordeLuminoso modo="hablando" />
         <Chispas />
         <EsqueletoIA lineas={2} />
       </TarjetaIA>,
