@@ -17,9 +17,12 @@ import { HojaObjetoOlvidado } from '@/componentes/HojaObjetoOlvidado';
 import { TalonBoleto } from '@/componentes/TalonBoleto';
 import { estadoVisibleBoleto } from '@/datos/estadoBoleto';
 import { useBoletos } from '@/datos/useBoletos';
-import { useAvisos } from '@/datos/useAvisos';
+import { HojaRecordatorio } from '@/componentes/HojaRecordatorio';
+import type { MinutosAntes } from '@/datos/recordatorios';
+import type { Salida } from '@/datos/salidas';
+import { useRecordatorios } from '@/datos/useRecordatorios';
 import { usePagos } from '@/datos/usePagos';
-import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
+import { obtenerMuestra, useAhora, useSalidas } from '@/datos/useSalidas';
 import { useSonidos } from '@/datos/useSonidos';
 import { useSuscripcion } from '@/datos/useSuscripcion';
 import { puedeGuardarHabitual } from '@/servicios/beneficios';
@@ -69,7 +72,13 @@ export function VerBoleto({
   const margenes = useSafeAreaInsets();
   const ahora = useAhora();
   const { boletos, cancelar } = useBoletos();
-  const { activar } = useAvisos();
+  const recordatorios = useRecordatorios();
+  const { salidas } = useSalidas();
+  const [eligiendoRecordatorio, establecerEligiendoRecordatorio] =
+    useState(false);
+  const [errorRecordatorio, establecerErrorRecordatorio] = useState<
+    'fallo' | 'permiso-negado' | 'ya-paso' | null
+  >(null);
   const { estadoDe } = usePagos();
   const { agregar: agregarHabitual, habituales } = useHabituales();
   const [confirmando, establecerConfirmando] = useState(false);
@@ -135,6 +144,32 @@ export function VerBoleto({
           ) && habitual.dias.includes(salidaGuardada.getDay()),
     );
   const cabeHabitual = puedeGuardarHabitual(plus, habituales.length);
+  // la hoja de recordatorio trabaja con una salida; la del boleto se arma con lo que el boleto guarda
+  const salidaVigente = salidas.find(
+    (candidata) => candidata.viajeId === guardado.boleto.viajeId,
+  );
+  const salidaDelBoleto = {
+    anden: guardado.resumen.anden,
+    destino: guardado.resumen.destino,
+    // el atraso lo trae la salida en vivo; la hora, la del boleto, que es la que la persona reservó
+    minutosAtraso: salidaVigente?.minutosAtraso ?? 0,
+    salida: salidaGuardada,
+    viajeId: guardado.boleto.viajeId,
+  } as unknown as Salida;
+  const recordatorioActivo = recordatorios.de(guardado.boleto.viajeId);
+
+  async function elegirRecordatorio(minutos: MinutosAntes) {
+    const resultado = await recordatorios.programar(salidaDelBoleto, minutos);
+    if (resultado === 'listo') {
+      establecerEligiendoRecordatorio(false);
+      establecerErrorRecordatorio(null);
+    } else establecerErrorRecordatorio(resultado);
+  }
+
+  async function quitarRecordatorio() {
+    await recordatorios.quitar(salidaDelBoleto.viajeId);
+    establecerEligiendoRecordatorio(false);
+  }
   const etiquetaEstado = {
     cancelado: t('boleto.cancelado'),
     usado: t('boleto.usado'),
@@ -375,14 +410,23 @@ export function VerBoleto({
             </Bloque>
           </Pressable>
           <Pressable
-            accessibilityLabel={t('boleto.recordatorio')}
+            accessibilityLabel={
+              recordatorioActivo
+                ? t('boleto.recordatorioActivo')
+                : t('boleto.recordatorio')
+            }
             accessibilityRole="button"
-            onPress={() => void activar()}
+            accessibilityState={{ selected: recordatorioActivo !== undefined }}
+            onPress={() => establecerEligiendoRecordatorio(true)}
             style={estilos.accionEnFila}
           >
             <Bloque estiloContenido={estilos.accion} radio="pildora">
               <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                {t('boleto.recordatorio')}
+                {recordatorioActivo
+                  ? rellenar(t('boleto.recordatorioPuesto'), {
+                      minutos: recordatorioActivo.minutosAntes,
+                    })
+                  : t('boleto.recordatorio')}
               </Text>
             </Bloque>
           </Pressable>
@@ -456,6 +500,19 @@ export function VerBoleto({
           ).then(establecerObjetos);
           establecerReportando(false);
         }}
+      />
+      <HojaRecordatorio
+        actual={recordatorioActivo}
+        ahora={ahora}
+        alCerrar={() => {
+          establecerEligiendoRecordatorio(false);
+          establecerErrorRecordatorio(null);
+        }}
+        alElegir={(minutos) => void elegirRecordatorio(minutos)}
+        alQuitar={() => void quitarRecordatorio()}
+        error={errorRecordatorio}
+        plus={plus}
+        salida={eligiendoRecordatorio ? salidaDelBoleto : null}
       />
     </ScrollView>
   );

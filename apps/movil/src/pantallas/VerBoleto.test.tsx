@@ -3,6 +3,16 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, waitFor } from '@testing-library/react-native';
 import { Linking, Share } from 'react-native';
 
+jest.mock('@/datos/notificaciones', () => ({
+  abrirAjustesDelSistema: jest.fn(async () => undefined),
+  cancelarRecordatorio: jest.fn(async () => undefined),
+  leerPermiso: jest.fn(async () => 'concedido'),
+  pedirPermiso: jest.fn(async () => 'concedido'),
+  programarRecordatorio: jest.fn(async () => 'notif_1'),
+}));
+
+import { programarRecordatorio } from '@/datos/notificaciones';
+import { ProveedorRecordatorios } from '@/datos/ProveedorRecordatorios';
 import { CLAVE_BOLETOS, ProveedorBoletos } from '@/datos/ProveedorBoletos';
 import { ProveedorHabituales } from '@/datos/ProveedorHabituales';
 import { ProveedorPagos } from '@/datos/ProveedorPagos';
@@ -386,5 +396,31 @@ describe('VerBoleto', () => {
         name: 'Avisar a mi persona de confianza',
       }),
     ).toBeNull();
+  });
+
+  it('el recordatorio del boleto abre la hoja, programa el aviso y lo muestra puesto', async () => {
+    const pantalla = await renderPantalla(
+      <ProveedorBoletos>
+        <ProveedorRecordatorios>
+          <VerBoleto
+            alCancelado={() => undefined}
+            alVerChofer={() => undefined}
+            alVolver={() => undefined}
+            boletoId="bol_K7RM4QX9"
+          />
+        </ProveedorRecordatorios>
+      </ProveedorBoletos>,
+    );
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Agregar recordatorio' }),
+    );
+    expect(
+      await pantalla.findByText('Avisarme antes de la salida'),
+    ).toBeTruthy();
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: '30 min antes' }),
+    );
+    await waitFor(() => expect(programarRecordatorio).toHaveBeenCalledTimes(1));
+    expect(await pantalla.findByText('Aviso 30 min antes')).toBeTruthy();
   });
 });

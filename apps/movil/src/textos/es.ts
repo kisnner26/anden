@@ -423,6 +423,8 @@ export const textos = {
     reservarOtra: 'Reservar otra salida a {destino}',
     pagadoEfectivo: 'Pagado en efectivo al conductor',
     recordatorio: 'Agregar recordatorio',
+    recordatorioActivo: 'Recordatorio activo, tocá para cambiarlo',
+    recordatorioPuesto: 'Aviso {minutos} min antes',
     cancelado: 'Boleto cancelado',
     usado: 'Boleto usado',
     vencido: 'Salida vencida',
