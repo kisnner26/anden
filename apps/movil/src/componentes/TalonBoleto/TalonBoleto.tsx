@@ -13,6 +13,7 @@ import Animated, {
 import { Autobus, varianteDeClave } from '@/componentes/Autobus';
 import { nombrePropio } from '@/datos/perfil';
 import { useBusPropio } from '@/datos/useBusPropio';
+import { useSuscripcion } from '@/datos/useSuscripcion';
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
 import type { BoletoGuardado } from '@/datos/reserva';
 import { espacios, radios, tamanosBoleto } from '@/tema/espacios';
@@ -68,6 +69,7 @@ function Campo({
 export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
   const { colores } = useTema();
   const { efectivo } = useBusPropio();
+  const { plus } = useSuscripcion();
   const { boleto, resumen } = guardado;
   const salida = new Date(resumen.salida);
   const reducirMovimiento = useMovimientoReducido();
@@ -107,7 +109,7 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
           <Text
             style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
           >
-            {`${t('boleto.titulo')} · ${t('boleto.reservado')}`}
+            {`${t('boleto.titulo')} · ${t('boleto.reservado')}${plus ? ` · ${t('plus.marca')}` : ''}`}
           </Text>
           <Text style={[tipografia.dato, { color: colores.ambar }]}>
             {`C$ ${boleto.precio}`}
