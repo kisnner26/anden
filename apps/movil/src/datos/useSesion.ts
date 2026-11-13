@@ -1,7 +1,13 @@
 import type { Resultado } from '@anden/dominio';
 import { createContext, useContext } from 'react';
 
-import type { ErrorSesion, Rol, Sesion } from '@/servicios/sesion';
+import type {
+  DatosRegistro,
+  ErrorRegistro,
+  ErrorSesion,
+  Rol,
+  Sesion,
+} from '@/servicios/sesion';
 
 export interface ValorSesion {
   cargando: boolean;
@@ -10,6 +16,9 @@ export interface ValorSesion {
     identificador: string,
     clave: string,
   ) => Promise<Resultado<Sesion, ErrorSesion>>;
+  registrar: (
+    datos: DatosRegistro,
+  ) => Promise<Resultado<Sesion, ErrorRegistro>>;
   rol: Rol;
   sesion: Sesion | null;
 }
@@ -18,6 +27,7 @@ export const ContextoSesion = createContext<ValorSesion>({
   cargando: false,
   cerrar: async () => undefined,
   iniciar: async () => ({ error: 'credenciales', ok: false }),
+  registrar: async () => ({ error: 'conexion', ok: false }),
   rol: 'pasajero',
   sesion: null,
 });

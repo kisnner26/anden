@@ -70,6 +70,15 @@ export function ProveedorSesion({
     [servicio],
   );
 
+  const registrar = useCallback<ValorSesion['registrar']>(
+    async (datos) => {
+      const resultado = await servicio.registrar(datos);
+      if (resultado.ok) establecerSesion(resultado.valor);
+      return resultado;
+    },
+    [servicio],
+  );
+
   const cerrar = useCallback(async () => {
     await servicio.cerrar();
     establecerSesion(null);
@@ -80,10 +89,11 @@ export function ProveedorSesion({
       cargando,
       cerrar,
       iniciar,
+      registrar,
       rol: rolDe(sesion),
       sesion,
     }),
-    [cargando, cerrar, iniciar, sesion],
+    [cargando, cerrar, iniciar, registrar, sesion],
   );
 
   return (
