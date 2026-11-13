@@ -10,6 +10,7 @@ import {
   formatoHoraCompleta,
 } from '@/datos/formato';
 import type { BoletoGuardado } from '@/datos/reserva';
+import { useBusPropio } from '@/datos/useBusPropio';
 import { conAlfa } from '@/tema/alfa';
 import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -34,6 +35,7 @@ export function TarjetaBoleto({
   pasado = false,
 }: PropiedadesTarjetaBoleto) {
   const { colores } = useTema();
+  const { efectivo } = useBusPropio();
   const { boleto, resumen } = guardado;
   const salida = new Date(resumen.salida);
   const minutos = minutosHastaSalida(guardado, ahora);
@@ -78,7 +80,7 @@ export function TarjetaBoleto({
           <Autobus
             ancho={104}
             letrero={resumen.destino.toUpperCase()}
-            variante={varianteDeClave(resumen.destino)}
+            variante={efectivo ?? varianteDeClave(resumen.destino)}
           />
         </View>
         <View

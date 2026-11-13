@@ -12,6 +12,7 @@ import Animated, {
 
 import { Autobus, varianteDeClave } from '@/componentes/Autobus';
 import { nombrePropio } from '@/datos/perfil';
+import { useBusPropio } from '@/datos/useBusPropio';
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
 import type { BoletoGuardado } from '@/datos/reserva';
 import { espacios, radios, tamanosBoleto } from '@/tema/espacios';
@@ -66,6 +67,7 @@ function Campo({
 /** el boleto en papel crema con su línea perforada, el código de abordaje y el QR; se lee sin conexión */
 export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
   const { colores } = useTema();
+  const { efectivo } = useBusPropio();
   const { boleto, resumen } = guardado;
   const salida = new Date(resumen.salida);
   const reducirMovimiento = useMovimientoReducido();
@@ -132,7 +134,7 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
           <Autobus
             ancho={118}
             letrero={resumen.destino.toUpperCase()}
-            variante={varianteDeClave(resumen.destino)}
+            variante={efectivo ?? varianteDeClave(resumen.destino)}
           />
         </View>
         <View style={estilos.fila}>

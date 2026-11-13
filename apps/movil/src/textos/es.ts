@@ -67,7 +67,24 @@ export const textos = {
     precio: 'US$ 5',
     periodo: 'al mes',
     detalle:
-      'Una suscripción para sacarle más a Andén. Los beneficios los vamos sumando; quien se suscribe los recibe todos.',
+      'Una suscripción para sacarle más a Andén. Se suma con el tiempo y quien se suscribe recibe todo lo que incluye.',
+    incluyeTitulo: 'Lo que incluye',
+    incluido: 'Incluido',
+    avisosPersonalizadosTitulo: 'Avisos a tu medida',
+    avisosPersonalizadosDetalle:
+      'Pedí el aviso de salida 15, 30 o 60 minutos antes. Sin Plus, solo el de 30.',
+    habitualesIlimitadosTitulo: 'Viajes habituales sin límite',
+    habitualesIlimitadosDetalle:
+      'Guardá todos los viajes que hacés seguido. Sin Plus, solo uno.',
+    resumenViajesTitulo: 'Resumen de tus viajes',
+    resumenViajesDetalle:
+      'Kilómetros recorridos, lo que gastaste, tu destino favorito y tu mes con más viajes.',
+    busPropioTitulo: 'Tu propio bus',
+    busPropioDetalle:
+      'Elegí el modelo de bus que aparece en tus boletos y en tu próximo viaje.',
+    busTitulo: 'Elegí tu bus',
+    busAuto: 'Automático',
+    busBloqueado: 'Activá Plus para elegir tu bus.',
     estadoGratis: 'Estás en el plan gratis.',
     estadoPlus: 'Tenés Plus desde {{fecha}}.',
     activar: 'Activar Plus',

@@ -4,6 +4,7 @@ import { Autobus, varianteDeClave } from '@/componentes/Autobus';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { formatoHora, formatoHoraCompleta, sufijoHora } from '@/datos/formato';
+import { useBusPropio } from '@/datos/useBusPropio';
 import type { Salida } from '@/datos/salidas';
 import { espacios, tamanosIlustracion } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -23,6 +24,7 @@ export function TarjetaProximoViaje({
   salida,
 }: PropiedadesTarjetaProximoViaje) {
   const { colores } = useTema();
+  const { efectivo } = useBusPropio();
   const salidaReal = salida.salida.getTime() + salida.minutosAtraso * 60_000;
   const minutos = Math.max(
     0,
@@ -35,7 +37,7 @@ export function TarjetaProximoViaje({
         <Autobus
           ancho={tamanosIlustracion.autobusProximo}
           letrero={salida.destino.toUpperCase()}
-          variante={varianteDeClave(salida.destino)}
+          variante={efectivo ?? varianteDeClave(salida.destino)}
         />
       </View>
       <BloqueNegro estiloContenido={estilos.tarjeta} testID="proximo-viaje">
