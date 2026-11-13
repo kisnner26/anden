@@ -98,7 +98,7 @@ const estilos = StyleSheet.create({
     flexDirection: 'row',
     gap: espacios.cuatro,
     justifyContent: 'center',
-    marginTop: espacios.doce,
+    marginTop: espacios.lateral,
   },
   recorte: { marginHorizontal: -espacios.lateral },
 });

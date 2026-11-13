@@ -214,7 +214,7 @@ const estilos = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingBottom: espacios.doce,
+    paddingBottom: espacios.dieciseis,
   },
   celda: {
     alignItems: 'center',
@@ -223,7 +223,7 @@ const estilos = StyleSheet.create({
     width: `${CELDA}%`,
   },
   celdaTexto: { textAlign: 'center', width: `${CELDA}%` },
-  contenedor: { gap: espacios.dieciseis },
+  contenedor: { gap: espacios.veinticuatro },
   cuenta: {
     alignItems: 'center',
     borderRadius: radios.pildora,
@@ -250,6 +250,6 @@ const estilos = StyleSheet.create({
     width: 38,
   },
   semana: { flexDirection: 'row' },
-  tarjeta: { padding: espacios.dieciseis },
+  tarjeta: { padding: espacios.veinticuatro },
   titulo: { alignItems: 'center', gap: 2 },
 });

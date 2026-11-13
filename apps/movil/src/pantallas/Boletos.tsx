@@ -47,7 +47,7 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
     proximos.length === 0 || (vista === 'historial' && pasados.length > 0);
 
   return (
-    <MarcoPestana>
+    <MarcoPestana estiloContenido={estilos.contenido}>
       <Text style={[tipografia.titularPantalla, { color: colores.tinta }]}>
         {t('boletos.titulo')}.
       </Text>
@@ -115,6 +115,7 @@ export function Boletos({ alAbrirBoleto, alBuscar }: PropiedadesBoletos) {
 const estilos = StyleSheet.create({
   bloque: { marginTop: espacios.veinticuatro },
   centrada: { alignItems: 'center' },
+  contenido: { gap: espacios.treintaYDos },
   detalle: { textAlign: 'center' },
   textos: { alignItems: 'center', gap: espacios.ocho },
   vacio: {
