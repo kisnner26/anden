@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 
 import { coloresClaros, coloresOscuros } from './colores';
-import { conAlfa } from './alfa';
+import { conAlfa, mezclar } from './alfa';
 
 describe('conAlfa', () => {
   it('convierte el blanco con media opacidad', () => {
@@ -18,5 +18,20 @@ describe('conAlfa', () => {
     expect(conAlfa(coloresClaros.sombraRelieve, 0.2)).toBe(
       'rgba(125, 105, 65, 0.2)',
     );
+  });
+});
+
+describe('mezclar', () => {
+  it('con peso 0 da el primer color y con 1 el segundo', () => {
+    expect(mezclar('#000000', '#ffffff', 0)).toBe('#000000');
+    expect(mezclar('#000000', '#ffffff', 1)).toBe('#ffffff');
+  });
+
+  it('a la mitad da el punto medio', () => {
+    expect(mezclar('#000000', '#ffffff', 0.5)).toBe('#808080');
+  });
+
+  it('siempre devuelve un color opaco de seis dígitos', () => {
+    expect(mezclar('#FFB21E', '#121210', 0.3)).toMatch(/^#[0-9a-f]{6}$/);
   });
 });
