@@ -14,6 +14,8 @@ export interface OyentesDeVoz {
   /** terminó de escuchar, por silencio o porque se detuvo */
   alTerminar: () => void;
   alFallar: () => void;
+  /** el volumen de lo que se dice, de 0 a 1, para animar el orbe mientras se habla */
+  alNivel?: (nivel: number) => void;
 }
 
 export interface OpcionesDeHabla {
@@ -197,11 +199,18 @@ export function crearVozDelSistema(): ServicioVoz {
             // el dictado se queda en el teléfono cuando el sistema lo permite
             requiresOnDeviceRecognition:
               ExpoSpeechRecognitionModule.supportsOnDeviceRecognition(),
+            volumeChangeEventOptions: { enabled: true, intervalMillis: 90 },
           });
         const suscripciones = [
           ExpoSpeechRecognitionModule.addListener('result', (evento) => {
             const texto = evento.results[0]?.transcript ?? '';
             oyentes.alTexto(acumulado.resultado(texto, evento.isFinal), false);
+          }),
+          ExpoSpeechRecognitionModule.addListener('volumechange', (evento) => {
+            // el valor llega entre -2 y 10 decibeles relativos
+            oyentes.alNivel?.(
+              Math.max(0, Math.min(1, (evento.value + 2) / 12)),
+            );
           }),
           ExpoSpeechRecognitionModule.addListener('error', (evento) => {
             // el silencio o un corte del sistema no son fallas: se vuelve a abrir en 'end'
@@ -224,6 +233,7 @@ export function crearVozDelSistema(): ServicioVoz {
               }
             }
             for (const suscripcion of suscripciones) suscripcion.remove();
+            oyentes.alNivel?.(0);
             oyentes.alTexto(acumulado.texto(), true);
             oyentes.alTerminar();
           }),
