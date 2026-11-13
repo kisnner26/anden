@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -9,6 +9,7 @@ import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { CampoTexto } from '@/componentes/CampoTexto';
 import { Chip } from '@/componentes/Chip';
+import { Interruptor } from '@/componentes/Interruptor';
 import { FilaSalida } from '@/componentes/FilaSalida';
 import { OrbeIA } from '@/componentes/OrbeIA';
 import { PuntosPensando } from '@/componentes/PuntosPensando';
@@ -23,7 +24,9 @@ import { formatoHoraCompleta } from '@/datos/formato';
 import { useBoletos } from '@/datos/useBoletos';
 import { useIA } from '@/datos/useIA';
 import { useSalidas } from '@/datos/useSalidas';
+import { useVoz } from '@/datos/useVoz';
 import { motivoNoDisponible } from '@/servicios/ia';
+import { guardarRespuestaHablada, leerRespuestaHablada } from '@/servicios/voz';
 import { coloresIA } from '@/tema/colores';
 import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -43,12 +46,6 @@ interface Intercambio {
   respuesta: string;
 }
 
-const SUGERENCIAS = [
-  'ia.sugerencias.proximo',
-  'ia.sugerencias.boleto',
-  'ia.sugerencias.asientos',
-] as const;
-
 /** el asistente: responde con las salidas y boletos reales de la app usando el modelo del teléfono */
 export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
   const { colores } = useTema();
@@ -61,6 +58,31 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
   const [fallo, establecerFallo] = useState(false);
   const [historial, establecerHistorial] = useState<Intercambio[]>([]);
   const [siguienteId, establecerSiguienteId] = useState(1);
+  const voz = useVoz();
+  const [respuestaEnVoz, establecerRespuestaEnVoz] = useState(false);
+  const [escuchando, establecerEscuchando] = useState(false);
+  const [avisoVoz, establecerAvisoVoz] = useState<
+    'sin-permiso' | 'no-disponible' | null
+  >(null);
+  const dicho = useRef('');
+  const enviarActual = useRef<(pregunta: string) => Promise<void>>(
+    async () => undefined,
+  );
+  const hablarRespuesta = useRef(false);
+
+  useEffect(() => {
+    let vigente = true;
+    void leerRespuestaHablada().then((activa) => {
+      if (!vigente) return;
+      establecerRespuestaEnVoz(activa);
+      hablarRespuesta.current = activa;
+    });
+    return () => {
+      vigente = false;
+      void voz.callar();
+      void voz.detener();
+    };
+  }, [voz]);
 
   const destinos = useMemo(
     () => destinosFrecuentes(salidas, ahora),
@@ -98,12 +120,55 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
       ]);
       establecerSiguienteId((id) => id + 1);
       establecerTexto('');
+      if (hablarRespuesta.current) void voz.hablar(respuesta.trim());
     } catch {
       establecerFallo(true);
     } finally {
       establecerPensando(false);
     }
   }
+
+  enviarActual.current = enviar;
+
+  async function alternarEscucha() {
+    if (escuchando) {
+      await voz.detener();
+      return;
+    }
+    await voz.callar();
+    establecerAvisoVoz(null);
+    dicho.current = '';
+    const resultado = await voz.escuchar({
+      alFallar: () => establecerEscuchando(false),
+      alTerminar: () => {
+        establecerEscuchando(false);
+        const pregunta = dicho.current;
+        dicho.current = '';
+        if (pregunta.trim() !== '') void enviarActual.current(pregunta);
+      },
+      alTexto: (reconocido) => {
+        dicho.current = reconocido;
+        establecerTexto(reconocido);
+      },
+    });
+    if (resultado === 'ok') establecerEscuchando(true);
+    else establecerAvisoVoz(resultado);
+  }
+
+  async function cambiarRespuestaEnVoz(activa: boolean) {
+    establecerRespuestaEnVoz(activa);
+    hablarRespuesta.current = activa;
+    if (!activa) await voz.callar();
+    await guardarRespuestaHablada(activa);
+  }
+
+  const sugerencias = [
+    t('ia.sugerencias.proximo'),
+    t('ia.sugerencias.boleto'),
+    destinos[0]
+      ? rellenar(t('ia.preguntaDestino'), { destino: destinos[0] })
+      : t('ia.sugerencias.asientos'),
+  ];
 
   const motivo = usable ? null : motivoNoDisponible(disponibilidad, nombre);
 
@@ -220,25 +285,14 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
           </Aparece>
 
           <View style={estilos.sugerencias}>
-            {SUGERENCIAS.map((clave) => (
+            {sugerencias.map((pregunta) => (
               <Chip
-                alCambiar={() => void enviar(t(clave))}
+                alCambiar={() => void enviar(pregunta)}
                 deshabilitado={pensando}
-                etiqueta={t(clave)}
-                key={clave}
+                etiqueta={pregunta}
+                key={pregunta}
               />
             ))}
-            {destinos.map((destino) => {
-              const pregunta = rellenar(t('ia.preguntaDestino'), { destino });
-              return (
-                <Chip
-                  alCambiar={() => void enviar(pregunta)}
-                  deshabilitado={pensando}
-                  etiqueta={pregunta}
-                  key={destino}
-                />
-              );
-            })}
           </View>
           <CampoTexto
             alCambiar={establecerTexto}
@@ -246,6 +300,47 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
             marcador={t('ia.marcador')}
             valor={texto}
           />
+          <Pressable
+            accessibilityLabel={
+              escuchando ? t('ia.dejarDeEscuchar') : t('ia.hablar')
+            }
+            accessibilityRole="button"
+            accessibilityState={{ selected: escuchando }}
+            onPress={() => void alternarEscucha()}
+            style={estilos.hablar}
+          >
+            <Bloque estiloContenido={estilos.hablarContenido} radio="pildora">
+              <OrbeIA pensando={escuchando} tamano={22} />
+              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                {escuchando ? t('ia.escuchando') : t('ia.hablar')}
+              </Text>
+            </Bloque>
+          </Pressable>
+          {avisoVoz && (
+            <Text
+              accessibilityLiveRegion="polite"
+              style={[tipografia.pequeno, { color: colores.cancelado }]}
+            >
+              {avisoVoz === 'sin-permiso'
+                ? t('ia.sinPermisoVoz')
+                : t('ia.vozNoDisponible')}
+            </Text>
+          )}
+          <Bloque estiloContenido={estilos.filaVoz}>
+            <View style={estilos.textoVoz}>
+              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                {t('ia.respuestaEnVoz')}
+              </Text>
+              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+                {t('ia.respuestaEnVozDetalle')}
+              </Text>
+            </View>
+            <Interruptor
+              activo={respuestaEnVoz}
+              alCambiar={(activa) => void cambiarRespuestaEnVoz(activa)}
+              etiqueta={t('ia.respuestaEnVoz')}
+            />
+          </Bloque>
           <BotonAccion
             alPresionar={() => void enviar(texto)}
             cargando={pensando}
@@ -372,7 +467,21 @@ const estilos = StyleSheet.create({
   centrado: { textAlign: 'center' },
   chispa: { borderRadius: radios.pildora, height: 14, width: 14 },
   contenido: { gap: espacios.dieciseis, paddingHorizontal: espacios.lateral },
+  filaVoz: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.dieciseis,
+    padding: espacios.dieciseis,
+  },
   firma: { alignItems: 'center', flexDirection: 'row', gap: espacios.ocho },
+  hablar: { minHeight: 52 },
+  hablarContenido: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.doce,
+    justifyContent: 'center',
+    paddingVertical: espacios.ocho,
+  },
   hero: { alignItems: 'center', gap: espacios.doce },
   insignia: {
     borderRadius: radios.pildora,
@@ -390,5 +499,6 @@ const estilos = StyleSheet.create({
   relacionadas: { gap: espacios.ocho },
   respuesta: { gap: espacios.ocho, padding: espacios.dieciseis },
   sugerencias: { flexDirection: 'row', flexWrap: 'wrap', gap: espacios.ocho },
+  textoVoz: { flex: 1, gap: 2 },
   tarjeta: { gap: espacios.cuatro, padding: espacios.dieciseis },
 });
