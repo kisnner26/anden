@@ -379,9 +379,7 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
               valor={texto}
             />
             <Pressable
-              accessibilityLabel={
-                escuchando ? t('ia.dejarDeEscuchar') : t('ia.hablar')
-              }
+              accessibilityLabel={escuchando ? t('ia.detener') : t('ia.hablar')}
               accessibilityRole="button"
               accessibilityState={{ selected: escuchando }}
               onPress={() => void alternarEscucha()}
@@ -390,10 +388,18 @@ export function Asistente({ alAbrirViaje, alVolver }: PropiedadesAsistente) {
               <Bloque estiloContenido={estilos.hablarContenido} radio="pildora">
                 {escuchando ? <OndaDeVoz /> : <OrbeIA tamano={22} />}
                 <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                  {escuchando ? t('ia.escuchando') : t('ia.hablar')}
+                  {escuchando ? t('ia.detener') : t('ia.hablar')}
                 </Text>
               </Bloque>
             </Pressable>
+            {escuchando && (
+              <Text
+                accessibilityLiveRegion="polite"
+                style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+              >
+                {t('ia.escuchando')}
+              </Text>
+            )}
             {avisoVoz && (
               <Text
                 accessibilityLiveRegion="polite"
