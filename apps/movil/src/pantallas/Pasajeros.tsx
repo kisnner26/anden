@@ -1,4 +1,8 @@
-import { cedulaOpcionalValida, nombrePersonaValido } from '@anden/dominio';
+import {
+  cedulaOpcionalValida,
+  nombrePersonaValido,
+  pasajeroRepetido,
+} from '@anden/dominio';
 import { useState } from 'react';
 import {
   KeyboardAvoidingView,
@@ -17,6 +21,7 @@ import { CampoTexto } from '@/componentes/CampoTexto';
 import { Chip } from '@/componentes/Chip';
 import { ProgresoReserva } from '@/componentes/ProgresoReserva';
 import { nombreCompleto, type PasajeroGuardado } from '@/datos/perfil';
+import { useBoletos } from '@/datos/useBoletos';
 import type { PasajeroReserva } from '@/datos/reserva';
 import { usePerfil } from '@/datos/usePerfil';
 import { useReserva } from '@/datos/useReserva';
@@ -43,6 +48,7 @@ export function Pasajeros({
   const margenes = useSafeAreaInsets();
   const { establecerBorrador } = useReserva();
   const { perfil } = usePerfil();
+  const { boletos } = useBoletos();
   const propio = nombreCompleto(perfil);
   // quien reserva viaja en el primer asiento: sus datos del perfil ya vienen escritos
   const [nombres, establecerNombres] = useState<Record<number, string>>(() =>
@@ -67,12 +73,33 @@ export function Pasajeros({
     }
   }
 
+  // quien ya tiene boleto vigente en este viaje no puede volver a comprar: una persona, un asiento
+  const yaConBoleto = boletos
+    .filter(
+      (guardado) =>
+        guardado.boleto.viajeId === viajeId &&
+        guardado.boleto.estado === 'vigente',
+    )
+    .map((guardado) => guardado.boleto.pasajero);
+
+  /** qué choca de lo escrito en un asiento: con boletos ya comprados o con otro asiento de esta misma compra */
+  function repeticionDe(asiento: number): 'cedula' | 'nombre' | null {
+    const otrosAsientos = asientos
+      .filter((otro) => otro !== asiento)
+      .map((otro) => ({ cedula: cedulas[otro], nombre: nombres[otro] ?? '' }));
+    return pasajeroRepetido(
+      { cedula: cedulas[asiento], nombre: nombres[asiento] ?? '' },
+      [...yaConBoleto, ...otrosAsientos],
+    );
+  }
+
   function continuar() {
     establecerValidar(true);
     const completos = asientos.every(
       (asiento) =>
         nombrePersonaValido(nombres[asiento] ?? '') &&
-        cedulaOpcionalValida(cedulas[asiento] ?? ''),
+        cedulaOpcionalValida(cedulas[asiento] ?? '') &&
+        repeticionDe(asiento) === null,
     );
     if (!completos) {
       establecerFaltan(true);
@@ -140,7 +167,9 @@ export function Pasajeros({
                 error={
                   validar && !nombrePersonaValido(nombres[asiento] ?? '')
                     ? t('pasajeros.nombreInvalido')
-                    : undefined
+                    : repeticionDe(asiento) === 'nombre'
+                      ? t('pasajeros.nombreRepetido')
+                      : undefined
                 }
                 marcador={t('pasajeros.marcadorNombre')}
                 valor={nombres[asiento] ?? ''}
@@ -153,7 +182,9 @@ export function Pasajeros({
                 error={
                   validar && !cedulaOpcionalValida(cedulas[asiento] ?? '')
                     ? t('pasajeros.cedulaInvalida')
-                    : undefined
+                    : repeticionDe(asiento) === 'cedula'
+                      ? t('pasajeros.cedulaRepetida')
+                      : undefined
                 }
                 marcador={t('pasajeros.marcadorCedula')}
                 valor={cedulas[asiento] ?? ''}
