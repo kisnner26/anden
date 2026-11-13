@@ -45,6 +45,9 @@ describe('Plus', () => {
     await fireEvent.press(
       pantalla.getByRole('button', { name: 'Activar Plus' }),
     );
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Empezar a usar Plus' }),
+    );
     expect(await pantalla.findByText(/^Tenés Plus desde/)).toBeTruthy();
     await fireEvent.press(
       pantalla.getByRole('button', { name: 'Cancelar Plus' }),
@@ -52,17 +55,33 @@ describe('Plus', () => {
     expect(await pantalla.findByText('Estás en el plan gratis.')).toBeTruthy();
   });
 
+  it('al activar Plus muestra la bienvenida y se cierra con el botón', async () => {
+    const pantalla = await dibujar();
+    expect(pantalla.queryByTestId('bienvenida-plus')).toBeNull();
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Activar Plus' }),
+    );
+    expect(await pantalla.findByTestId('bienvenida-plus')).toBeTruthy();
+    expect(pantalla.getByText('Ya sos Plus.')).toBeTruthy();
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Empezar a usar Plus' }),
+    );
+    expect(pantalla.queryByTestId('bienvenida-plus')).toBeNull();
+  });
+
   it('avisa que por ahora no se cobra', async () => {
     const pantalla = await dibujar();
     expect(pantalla.getByText(/sin cobro/)).toBeTruthy();
   });
 
-  it('lista los cuatro beneficios que incluye', async () => {
+  it('lista los seis beneficios que incluye', async () => {
     const pantalla = await dibujar();
     expect(pantalla.getByText('Avisos a tu medida')).toBeTruthy();
     expect(pantalla.getByText('Viajes habituales sin límite')).toBeTruthy();
     expect(pantalla.getByText('Resumen de tus viajes')).toBeTruthy();
     expect(pantalla.getByText('Tu propio bus')).toBeTruthy();
+    expect(pantalla.getByText('Más búsquedas guardadas')).toBeTruthy();
+    expect(pantalla.getByText('Sello Plus en tus boletos')).toBeTruthy();
   });
 
   it('sin Plus no deja elegir el bus', async () => {
@@ -78,6 +97,9 @@ describe('Plus', () => {
     const pantalla = await dibujar();
     await fireEvent.press(
       pantalla.getByRole('button', { name: 'Activar Plus' }),
+    );
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Empezar a usar Plus' }),
     );
     await pantalla.findByText(/^Tenés Plus desde/);
     await fireEvent.press(
