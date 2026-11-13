@@ -1,0 +1,1 @@
+export { OndaDeVoz } from './OndaDeVoz';
