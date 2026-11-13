@@ -10,6 +10,8 @@ import {
   type TipoServicio,
 } from '@anden/dominio';
 
+import { puedeReservarSalida } from '@/servicios/beneficios';
+
 import type { DatosMuestra } from './muestra';
 
 /** persona que usa la app; hasta que haya cuentas (T-053) es un identificador fijo */
@@ -32,8 +34,12 @@ export interface ResumenBoleto {
   /** terminal guardada al reservar; ausente en boletos creados antes de T-105 */
   origen?: string;
   placa: string;
+  /** la persona que reservó tiene Plus: el conductor ve su sello y su vehículo */
+  plus?: boolean;
   salida: string;
   servicio: TipoServicio;
+  /** el vehículo o bus que eligió con Plus, para que el conductor lo reconozca */
+  unidadPlus?: string;
 }
 
 export interface BoletoGuardado {
@@ -47,7 +53,11 @@ type ErrorRetencion = Extract<
 >['error'];
 
 export type ErrorReserva =
-  ErrorRetencion | 'faltan-nombres' | 'sin-tarifa' | 'viaje-inexistente';
+  | ErrorRetencion
+  | 'faltan-nombres'
+  | 'sin-plus-anticipado'
+  | 'sin-tarifa'
+  | 'viaje-inexistente';
 
 const LARGO_MINIMO_NOMBRE = 2;
 
@@ -61,6 +71,10 @@ export function crearReserva(
   pasajeros: readonly PasajeroReserva[],
   ahora: Date,
   aleatorio: () => number,
+  persona: { plus: boolean; unidad: string | null } = {
+    plus: false,
+    unidad: null,
+  },
 ): Resultado<BoletoGuardado[], ErrorReserva> {
   const viaje = datos.viajes.find((candidato) => candidato.id === viajeId);
   const ruta = datos.rutas.find((candidata) => candidata.id === viaje?.rutaId);
@@ -83,6 +97,10 @@ export function crearReserva(
     pasajeros.some((p) => p.nombre.trim().length < LARGO_MINIMO_NOMBRE)
   ) {
     return error('faltan-nombres');
+  }
+
+  if (!puedeReservarSalida(persona.plus, new Date(viaje.salida), ahora)) {
+    return error('sin-plus-anticipado');
   }
 
   const retencion = puedeRetener(
@@ -113,6 +131,12 @@ export function crearReserva(
     metodoPago: 'efectivo-al-abordar',
     origen: origen.nombre,
     placa: bus.placa,
+    ...(persona.plus
+      ? {
+          plus: true,
+          ...(persona.unidad ? { unidadPlus: persona.unidad } : {}),
+        }
+      : {}),
     salida: viaje.salida,
     servicio: bus.servicio,
   };
