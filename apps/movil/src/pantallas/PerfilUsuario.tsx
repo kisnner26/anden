@@ -8,7 +8,6 @@ import {
 import { useState } from 'react';
 import {
   KeyboardAvoidingView,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -129,7 +128,6 @@ function FormularioPerfil({ alVolver }: PropiedadesPerfilUsuario) {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={[estilos.pantalla, { backgroundColor: colores.fondo }]}
     >
       <ScrollView
@@ -140,6 +138,8 @@ function FormularioPerfil({ alVolver }: PropiedadesPerfilUsuario) {
             paddingTop: margenes.top + espacios.ocho,
           },
         ]}
+        automaticallyAdjustKeyboardInsets
+        keyboardDismissMode="interactive"
         keyboardShouldPersistTaps="handled"
       >
         <CabeceraPantalla alVolver={alVolver} titulo={t('perfil.titulo')} />

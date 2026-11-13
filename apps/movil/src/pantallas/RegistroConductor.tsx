@@ -208,6 +208,8 @@ export function RegistroConductor({ alVolver }: PropiedadesRegistroConductor) {
           paddingTop: margenes.top + espacios.ocho,
         },
       ]}
+      automaticallyAdjustKeyboardInsets
+      keyboardDismissMode="interactive"
       keyboardShouldPersistTaps="handled"
       style={{ backgroundColor: colores.fondo }}
     >
