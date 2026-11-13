@@ -59,9 +59,7 @@ describe('DondeViene', () => {
   it('dice siempre de dónde sale el dato y que la llegada es una estimación', async () => {
     const pantalla = await dibujar({ ciudadInicial: 'Boaco' });
     expect(pantalla.getAllByText('Según horario').length).toBeGreaterThan(0);
-    expect(
-      pantalla.getAllByText('Llegada estimada (ETA)').length,
-    ).toBeGreaterThan(0);
+    expect(pantalla.getAllByText('Llegada (ETA)').length).toBeGreaterThan(0);
     expect(pantalla.getByText('Cómo se calcula')).toBeTruthy();
   });
 

@@ -41,7 +41,14 @@ const DIBUJOS = {
 } satisfies Record<string, (propiedades: PropiedadesDibujo) => ReactElement>;
 
 /** glifos de un solo trazo: sin color propio se pintan con la tinta del tema, para que se vean en oscuro */
-const GLIFOS_DE_TINTA: readonly string[] = ['volver', 'siguiente'];
+const GLIFOS_DE_TINTA: readonly string[] = [
+  'pestanaBoletos',
+  'pestanaHorarios',
+  'pestanaRutas',
+  'pestanaViajar',
+  'siguiente',
+  'volver',
+];
 
 export type NombreIcono = keyof typeof DIBUJOS;
 export type TamanoIcono = keyof typeof tamanosIcono;

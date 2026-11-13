@@ -120,7 +120,12 @@ export function TarjetaBusEnCamino({
             <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
               {t('dondeViene.llegaEn')}
             </Text>
-            <Text style={[tipografia.display, { color: colores.tinta }]}>
+            <Text
+              adjustsFontSizeToFit
+              minimumFontScale={0.55}
+              numberOfLines={1}
+              style={[tipografia.display, { color: colores.tinta }]}
+            >
               {bus.minutosRestantes < 60
                 ? `${bus.minutosRestantes} min`
                 : formatoDuracion(bus.minutosRestantes)}
@@ -133,7 +138,10 @@ export function TarjetaBusEnCamino({
             <Text
               style={[tipografia.datoGrande, { color: colores.ambarTexto }]}
             >
-              {etiquetaLlegada}
+              {formatoHora(bus.llegada)}
+            </Text>
+            <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+              {sufijoHora(bus.llegada)}
             </Text>
           </View>
         </View>
@@ -214,7 +222,7 @@ export function TarjetaBusEnCamino({
 const estilos = StyleSheet.create({
   bus: { left: 0, position: 'absolute', top: -ANCHO_BUS * 0.3 },
   camino: { gap: espacios.ocho },
-  eta: { alignItems: 'flex-end', gap: 2 },
+  eta: { alignItems: 'flex-end', gap: 2, minWidth: 110 },
   extremos: { flexDirection: 'row', justifyContent: 'space-between' },
   fila: {
     alignItems: 'flex-end',
@@ -237,7 +245,7 @@ const estilos = StyleSheet.create({
     right: 0,
     top: 11,
   },
-  llega: { gap: 2 },
+  llega: { flex: 1, gap: 2, paddingRight: espacios.doce },
   pista: { height: 28, justifyContent: 'center' },
   punto: { borderRadius: radios.pildora, height: 8, width: 8 },
   recorrido: {

@@ -133,7 +133,7 @@ export function Plus({ alVolver }: PropiedadesPlus) {
                   estilos.bus,
                   {
                     backgroundColor: activo
-                      ? colores.bloqueNegro
+                      ? colores.barroOscuro
                       : colores.barroClaro,
                     borderColor: activo ? colores.ambar : colores.linea,
                     opacity: plus ? 1 : 0.5,

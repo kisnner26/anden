@@ -722,7 +722,7 @@ export const textos = {
     vienenHacia: 'Vienen hacia {terminal}',
     estasAca: 'Estás acá',
     llegaEn: 'Llega en',
-    llegadaEta: 'Llegada estimada (ETA)',
+    llegadaEta: 'Llegada (ETA)',
     unidades: 'a {km} km de {lugar}',
     saleDe: 'Sale de {origen} en {minutos} min',
     salioDe: 'Salió de {origen} a las {hora}',

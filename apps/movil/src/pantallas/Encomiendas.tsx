@@ -165,20 +165,20 @@ export function Encomiendas({ alVolver }: PropiedadesEncomiendas) {
           estilos.tamano,
           {
             backgroundColor: activa
-              ? colores.bloqueNegro
+              ? colores.fichaActiva
               : conAlfa(colores.tinta, 0.06),
-            borderColor: activa ? colores.ambar : colores.linea,
+            borderColor: activa ? colores.fichaActiva : colores.linea,
           },
         ]}
       >
         <FormaPaquete
-          color={activa ? colores.ambar : colores.tinta}
+          color={activa ? colores.sobreFichaActiva : colores.tinta}
           tamano={opcion}
         />
         <Text
           style={[
             tipografia.nombreLinea,
-            { color: activa ? colores.sobreNegro : colores.tinta },
+            { color: activa ? colores.sobreFichaActiva : colores.tinta },
           ]}
         >
           {t(`encomiendas.${opcion}`)}
@@ -187,7 +187,7 @@ export function Encomiendas({ alVolver }: PropiedadesEncomiendas) {
           style={[
             tipografia.etiqueta,
             estilos.centrado,
-            { color: activa ? colores.sobreNegroSuave : colores.tintaSuave },
+            { color: activa ? colores.sobreFichaActiva : colores.tintaSuave },
           ]}
         >
           {t(`encomiendas.${opcion}Detalle`)}

@@ -127,7 +127,7 @@ export function DondeViene({
       <View style={estilos.grupo}>
         <Text style={[tipografia.titulo, { color: colores.tinta }]}>
           {rellenar(t('dondeViene.vienenHacia'), {
-            terminal: terminal?.nombre ?? ciudad,
+            terminal: ciudad,
           })}
         </Text>
         {buses.length === 0 ? (
