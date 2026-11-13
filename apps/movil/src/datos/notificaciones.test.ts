@@ -1,19 +1,24 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import {
   SchedulableTriggerInputTypes,
+  addNotificationResponseReceivedListener,
+  setNotificationCategoryAsync,
   getPermissionsAsync,
   requestPermissionsAsync,
   scheduleNotificationAsync,
 } from 'expo-notifications';
 
 import {
+  mostrarAvisosConLaAppAbierta,
   leerPermiso,
   pedirPermiso,
   programarRecordatorio,
 } from './notificaciones';
 
 jest.mock('expo-notifications', () => ({
-  SchedulableTriggerInputTypes: { DATE: 'date' },
+  SchedulableTriggerInputTypes: { DATE: 'date', TIME_INTERVAL: 'timeInterval' },
+  addNotificationResponseReceivedListener: jest.fn(),
+  setNotificationCategoryAsync: jest.fn(async () => null),
   cancelScheduledNotificationAsync: jest.fn(),
   getPermissionsAsync: jest.fn(),
   requestPermissionsAsync: jest.fn(),
@@ -73,8 +78,55 @@ describe('programarRecordatorio', () => {
     });
     expect(id).toBe('id-1');
     expect(scheduleNotificationAsync).toHaveBeenCalledWith({
-      content: { body: 'Andén 4', title: 'Tu bus a Boaco' },
+      content: {
+        body: 'Andén 4',
+        categoryIdentifier: 'recordatorio',
+        title: 'Tu bus a Boaco',
+      },
       trigger: { date: cuando, type: SchedulableTriggerInputTypes.DATE },
     });
+  });
+});
+
+describe('acciones del recordatorio', () => {
+  it('registra ver boleto y posponer para el reloj', () => {
+    mostrarAvisosConLaAppAbierta();
+    const llamada = jest.mocked(setNotificationCategoryAsync).mock.calls[0];
+    expect(llamada?.[0]).toBe('recordatorio');
+    expect(llamada?.[1].map((a) => a.identifier)).toEqual([
+      'ver-boleto',
+      'posponer',
+    ]);
+  });
+
+  it('posponer reprograma el mismo aviso en 10 minutos', () => {
+    mostrarAvisosConLaAppAbierta();
+    const alResponder = jest.mocked(addNotificationResponseReceivedListener)
+      .mock.calls[0]?.[0];
+    alResponder?.({
+      actionIdentifier: 'posponer',
+      notification: {
+        request: { content: { body: 'Andén 4', title: 'Tu bus' } },
+      },
+    } as never);
+    expect(scheduleNotificationAsync).toHaveBeenCalledWith({
+      content: {
+        body: 'Andén 4',
+        categoryIdentifier: 'recordatorio',
+        title: 'Tu bus',
+      },
+      trigger: {
+        seconds: 600,
+        type: SchedulableTriggerInputTypes.TIME_INTERVAL,
+      },
+    });
+  });
+
+  it('ver boleto no reprograma nada', () => {
+    mostrarAvisosConLaAppAbierta();
+    const alResponder = jest.mocked(addNotificationResponseReceivedListener)
+      .mock.calls[0]?.[0];
+    alResponder?.({ actionIdentifier: 'ver-boleto' } as never);
+    expect(scheduleNotificationAsync).not.toHaveBeenCalled();
   });
 });
