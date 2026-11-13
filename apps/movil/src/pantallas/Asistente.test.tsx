@@ -1,7 +1,9 @@
 import { describe, expect, it, jest } from '@jest/globals';
-import { fireEvent, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, waitFor } from '@testing-library/react-native';
 
 import { ContextoIA, type ValorIA } from '@/datos/useIA';
+import { ContextoVoz } from '@/datos/useVoz';
+import type { OyentesDeVoz, ServicioVoz } from '@/servicios/voz';
 import { renderPantalla } from '@/pruebas/render';
 
 import { Asistente } from './Asistente';
@@ -19,10 +21,30 @@ function valor(cambios: Partial<ValorIA> = {}): ValorIA {
   };
 }
 
-function abrir(contexto: ValorIA) {
+function vozFalsa(resultado: 'ok' | 'sin-permiso' | 'no-disponible' = 'ok') {
+  let oyentes: OyentesDeVoz | null = null;
+  const voz = {
+    callar: jest.fn(async () => undefined),
+    detener: jest.fn(async () => undefined),
+    escuchar: jest.fn(async (o: OyentesDeVoz) => {
+      oyentes = o;
+      return resultado;
+    }),
+    hablar: jest.fn<ServicioVoz['hablar']>(async () => undefined),
+  } satisfies ServicioVoz;
+  return {
+    decir: (texto: string) => oyentes?.alTexto(texto, true),
+    terminar: () => oyentes?.alTerminar(),
+    voz,
+  };
+}
+
+function abrir(contexto: ValorIA, voz: ServicioVoz = vozFalsa().voz) {
   return renderPantalla(
     <ContextoIA.Provider value={contexto}>
-      <Asistente alVolver={() => undefined} />
+      <ContextoVoz.Provider value={voz}>
+        <Asistente alVolver={() => undefined} />
+      </ContextoVoz.Provider>
     </ContextoIA.Provider>,
   );
 }
@@ -121,6 +143,58 @@ describe('Asistente', () => {
       expect(
         pantalla.queryByText('El próximo bus a Boaco sale a las 2:30.'),
       ).toBeNull(),
+    );
+  });
+
+  it('deja solo tres preguntas sugeridas', async () => {
+    const pantalla = await abrir(valor());
+    expect(pantalla.getAllByRole('button', { name: /^¿.*\?$/ })).toHaveLength(
+      3,
+    );
+  });
+
+  it('se le habla: lo dictado se manda como pregunta al terminar de escuchar', async () => {
+    const { decir, terminar, voz } = vozFalsa();
+    const contexto = valor();
+    const pantalla = await abrir(contexto, voz);
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Hablarle a Andén' }),
+    );
+    await waitFor(() => expect(voz.escuchar).toHaveBeenCalled());
+    await act(async () => {
+      decir('¿cuándo sale el bus a Boaco?');
+      terminar();
+    });
+    await waitFor(() => expect(contexto.preguntar).toHaveBeenCalled());
+    expect(
+      (contexto.preguntar as jest.Mock<ValorIA['preguntar']>).mock
+        .calls[0]?.[1],
+    ).toBe('¿cuándo sale el bus a Boaco?');
+  });
+
+  it('avisa si no hay permiso para el micrófono', async () => {
+    const { voz } = vozFalsa('sin-permiso');
+    const pantalla = await abrir(valor(), voz);
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Hablarle a Andén' }),
+    );
+    expect(
+      await pantalla.findByText(/Sin permiso para usar el micrófono/),
+    ).toBeTruthy();
+  });
+
+  it('con la respuesta en voz alta encendida lee lo que contesta', async () => {
+    const { voz } = vozFalsa();
+    const pantalla = await abrir(valor(), voz);
+    await fireEvent.press(
+      pantalla.getByRole('switch', { name: 'Responder en voz alta' }),
+    );
+    await fireEvent.changeText(pantalla.getByLabelText('Tu pregunta'), 'hola');
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Preguntar' }));
+    await waitFor(() =>
+      expect(voz.hablar).toHaveBeenCalledWith(
+        'El próximo bus a Boaco sale a las 2:30.',
+      ),
     );
   });
 });
