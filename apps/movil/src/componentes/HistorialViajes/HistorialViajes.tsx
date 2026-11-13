@@ -75,7 +75,11 @@ export function HistorialViajes({
                 { backgroundColor: colorDeDestino(grupo.destino) },
               ]}
             />
-            <Autobus ancho={44} variante={varianteDeClave(grupo.destino)} />
+            <Autobus
+              ancho={44}
+              usarMiUnidad
+              variante={varianteDeClave(grupo.destino)}
+            />
             <Text style={[tipografia.nombreLinea, { color: colores.tinta }]}>
               {grupo.destino}
             </Text>
