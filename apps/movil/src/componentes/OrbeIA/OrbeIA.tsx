@@ -2,7 +2,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef } from 'react';
 import { Animated, Easing, StyleSheet, View } from 'react-native';
 
-import { coloresIA } from '@/tema/colores';
+import { Chispas } from '@/componentes/Chispas';
+import { coloresAura, coloresIA } from '@/tema/colores';
 import { movimiento } from '@/tema/movimiento';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 
@@ -57,6 +58,10 @@ export function OrbeIA({ pensando = false, tamano = 72 }: PropiedadesOrbeIA) {
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg'],
   });
+  const girarAlReves = giro.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['360deg', '0deg'],
+  });
   const escalaHalo = pulso.interpolate({
     inputRange: [0, 1],
     outputRange: [1, pensando ? 1.5 : 1.3],
@@ -97,9 +102,42 @@ export function OrbeIA({ pensando = false, tamano = 72 }: PropiedadesOrbeIA) {
         ]}
       >
         <LinearGradient
-          colors={[...coloresIA, coloresIA[0]]}
+          colors={[
+            coloresAura[0],
+            coloresAura[2],
+            coloresAura[1],
+            coloresAura[4],
+            coloresAura[0],
+          ]}
           end={{ x: 1, y: 1 }}
           start={{ x: 0, y: 0 }}
+          style={{ borderRadius: tamano, flex: 1 }}
+        />
+      </Animated.View>
+      <Animated.View
+        style={[
+          estilos.centro,
+          {
+            height: tamano * 0.82,
+            opacity: 0.75,
+            top: '19%',
+            transform: [
+              { rotate: girarAlReves },
+              { translateY: tamano * 0.09 },
+            ],
+            width: tamano * 0.82,
+          },
+        ]}
+      >
+        <LinearGradient
+          colors={[
+            coloresAura[5],
+            coloresAura[3],
+            coloresAura[2],
+            coloresAura[5],
+          ]}
+          end={{ x: 0, y: 1 }}
+          start={{ x: 1, y: 0 }}
           style={{ borderRadius: tamano, flex: 1 }}
         />
       </Animated.View>
@@ -114,6 +152,7 @@ export function OrbeIA({ pensando = false, tamano = 72 }: PropiedadesOrbeIA) {
           },
         ]}
       />
+      {tamano >= 56 && <Chispas tamano={tamano * 1.6} />}
     </View>
   );
 }
