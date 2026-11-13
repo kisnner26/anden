@@ -91,18 +91,23 @@ export const textos = {
     dejarDeEscuchar: 'Listo, ya hablé',
     respuestaEnVoz: 'Responder en voz alta',
     respuestaEnVozDetalle: 'Andén lee la respuesta con la voz de tu teléfono.',
-    sinPermisoVoz: 'Sin permiso para usar el micrófono o el dictado. Activalo en los ajustes del teléfono.',
+    sinPermisoVoz:
+      'Sin permiso para usar el micrófono o el dictado. Activalo en los ajustes del teléfono.',
     vozNoDisponible: 'El dictado por voz no está disponible en este teléfono.',
     callar: 'Callar la voz',
     vozNatural: 'Voz natural',
-    vozNaturalDetalle: 'Suena más humana, pero usa internet: el texto de la respuesta se envía a Google para convertirlo en voz. Apagada, se usa la voz del teléfono.',
+    vozNaturalDetalle:
+      'Suena más humana, pero usa internet: el texto de la respuesta se envía a Google para convertirlo en voz. Apagada, se usa la voz del teléfono.',
     resumirViaje: 'Resumir este viaje con IA',
-    pedidoResumenViaje: 'Resumí este viaje en dos frases: hora, andén, tarifa y una recomendación útil para quien va a viajar.',
+    pedidoResumenViaje:
+      'Resumí este viaje en dos frases: hora, andén, tarifa y una recomendación útil para quien va a viajar.',
     resumirBoleto: 'Qué debo saber de mi boleto, con IA',
-    pedidoResumenBoleto: 'Explicame en dos frases lo más importante de este boleto: cuándo llegar, el andén y el asiento.',
+    pedidoResumenBoleto:
+      'Explicame en dos frases lo más importante de este boleto: cuándo llegar, el andén y el asiento.',
     consejoTitulo: 'Para vos',
     memoriaTitulo: 'Que Andén recuerde lo que me interesa',
-    memoriaDetalle: 'Guarda en tu teléfono tus destinos y horarios habituales para sugerirte mejores preguntas. No sale de tu teléfono.',
+    memoriaDetalle:
+      'Guarda en tu teléfono tus destinos y horarios habituales para sugerirte mejores preguntas. No sale de tu teléfono.',
     memoriaBorrar: 'Borrar lo que recuerda',
     memoriaBorrada: 'Listo, Andén ya no recuerda nada.',
     sinUso: 'El asistente no está activado.',
@@ -114,13 +119,28 @@ export const textos = {
       asientos: '¿Hay asientos libres hoy?',
     },
   },
+  estimacion: {
+    titulo: 'Cuándo sale',
+    puesta: 'Se pone en andén a las {hora}',
+    vendidos: '{ocupados} de {capacidad} asientos vendidos',
+    estimada: 'Saldría alrededor de las {hora}, según cómo se llena.',
+    aproximada: 'Saldría más o menos a las {hora}. Es un cálculo aproximado.',
+    lleno: 'El bus está lleno: sale en cualquier momento.',
+    sinDatos: 'Todavía no hay datos para estimar la hora de salida.',
+    nota: 'El interlocal no tiene hora fija: sale cuando se llena.',
+    yaSalio: 'Ya salió',
+    yaSalioDetalle:
+      'Marcá cuando el bus arranque. Así Andén aprende cuánto tarda en llenarse cada ruta.',
+    salidaMarcada: 'Salida registrada. Gracias.',
+  },
   nuevoViaje: {
     titulo: 'Publicar un viaje',
-    detalle: 'Lo que publiques le aparece enseguida a los pasajeros para reservar.',
+    detalle:
+      'Lo que publiques le aparece enseguida a los pasajeros para reservar.',
     rutaSeccion: 'Ruta',
     servicioSeccion: 'Servicio',
     diaSeccion: 'Día de salida',
-    hora: 'Hora de salida (24 h)',
+    hora: 'Hora en que se pone en andén (24 h)',
     horaMarcador: 'Por ejemplo: 14:30',
     placa: 'Placa del bus',
     placaMarcador: 'Por ejemplo: M 123-456',
@@ -134,10 +154,16 @@ export const textos = {
     errorHora: 'Escribí la hora como 14:30.',
     errorPasado: 'Esa hora ya pasó. Elegí una salida a futuro.',
     errorServidor: 'No se pudo publicar. Revisá la conexión y probá de nuevo.',
-    sinServidor: 'Publicar viajes necesita conexión con el servidor.',
+    sinServidor:
+      'Esta versión de la app no está conectada al servidor, así que no puede publicar viajes.',
+    sinPermiso:
+      'Tu cuenta no tiene permiso de conductor para publicar. Revisá que tenga el rol y el código de chofer en Supabase.',
+    tablaFaltante:
+      'Falta preparar el servidor: corré el SQL de los viajes en Supabase y probá de nuevo.',
     publicado: 'Viaje publicado. Ya lo ven los pasajeros.',
     retirar: 'Retirar viaje',
-    retirarConfirmar: 'Retirar este viaje. Los pasajeros que ya reservaron lo verán cancelado.',
+    retirarConfirmar:
+      'Retirar este viaje. Los pasajeros que ya reservaron lo verán cancelado.',
     nuevo: 'Publicar un viaje',
   },
   conductorPasajeros: {
@@ -146,12 +172,17 @@ export const textos = {
     detalle: 'Quién viaja hoy en tus salidas, con su pago y su abordaje.',
     sinViajes: 'No tenés salidas hoy, así que no hay pasajeros por mostrar.',
     sinPasajeros: 'Todavía nadie reservó esta salida.',
-    resumen: '{pasajeros} pasajeros · {abordaron} a bordo · C$ {cobrado} cobrados',
+    resumen:
+      '{pasajeros} pasajeros · {abordaron} a bordo · C$ {cobrado} cobrados',
+    enAnden: 'Andén {anden} · en andén desde las {hora}',
+    cobrados: 'cobrados',
+    resumen2: '{abordaron} de {pasajeros} a bordo · por cobrar C$ {pendiente}',
     pagado: 'Pagó',
     pendiente: 'Por cobrar',
     abordo: 'A bordo',
     asiento: 'Asiento {asiento}',
-    sinConexion: 'No se pudo traer a todos los pasajeros. Se vuelve a intentar solo.',
+    sinConexion:
+      'No se pudo traer a todos los pasajeros. Se vuelve a intentar solo.',
   },
   conductorHistorial: {
     pestana: 'Análisis',
@@ -176,7 +207,8 @@ export const textos = {
     sinMejorDia: 'Sin viajes en el período',
     recientesSeccion: 'Últimos viajes cerrados',
     resumenSeccion: 'Resumen del período',
-    sinCierres: 'Todavía no cerraste ningún viaje. Cuando termines uno, acá ves cómo te va.',
+    sinCierres:
+      'Todavía no cerraste ningún viaje. Cuando termines uno, acá ves cómo te va.',
     fila: '{pasajeros} pasajeros · {pagados} pagaron',
     cobradoFila: 'C$ {cobrado}',
     sinPagar: 'Sin pagar: {cantidad}',
@@ -188,7 +220,8 @@ export const textos = {
     fotoDescripcion: 'Tu foto de perfil',
     cambiarFoto: 'Cambiar foto',
     quitarFoto: 'Quitar foto',
-    sinPermisoFoto: 'Sin permiso para ver tus fotos. Activalo en los ajustes del teléfono.',
+    sinPermisoFoto:
+      'Sin permiso para ver tus fotos. Activalo en los ajustes del teléfono.',
     personalesSeccion: 'Datos personales',
     telefono: 'Teléfono',
     cedula: 'Cédula',
@@ -237,7 +270,8 @@ export const textos = {
   },
   plus: {
     vehiculosTitulo: 'Vehículos exclusivos',
-    vehiculosDetalle: 'Elegí un avión, una nave espacial, un tractor y más. Los conductores y los demás lo ven junto a tu nombre.',
+    vehiculosDetalle:
+      'Elegí un avión, una nave espacial, un tractor y más. Los conductores y los demás lo ven junto a tu nombre.',
     marca: 'Plus',
     avisosHint: 'Con Plus elegís también 15 y 60 minutos antes.',
     habitualesLleno: 'Con Plus guardás más viajes habituales',
@@ -266,7 +300,8 @@ export const textos = {
     reservaAnticipadaTitulo: 'Reservá primero',
     reservaAnticipadaDetalle:
       'Reservá hasta 14 días antes. Sin Plus, solo los próximos 3 días.',
-    soloPlusAnticipado: 'Esa salida solo la pueden reservar quienes tienen Plus. Se abre para todos 3 días antes.',
+    soloPlusAnticipado:
+      'Esa salida solo la pueden reservar quienes tienen Plus. Se abre para todos 3 días antes.',
     sello: 'Plus',
     busquedasAmpliadasTitulo: 'Más búsquedas guardadas',
     busquedasAmpliadasDetalle:
@@ -847,7 +882,8 @@ export const textos = {
     titulo: 'Tus viajes',
     detalle:
       'Compartí tu ubicación en cada viaje para que los pasajeros te sigan.',
-    sinViajes: 'Todavía no publicaste ningún viaje para hoy. Publicá uno y aparece acá y a los pasajeros.',
+    sinViajes:
+      'Todavía no publicaste ningún viaje para hoy. Publicá uno y aparece acá y a los pasajeros.',
     enVivo: 'En vivo',
     cerrarSesion: 'Cerrar sesión',
     abrirViaje: 'Abrir el viaje a {destino}',
