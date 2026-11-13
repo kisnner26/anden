@@ -58,4 +58,26 @@ describe('sugerenciasDelMomento', () => {
   it('sin destinos ni historial igual ofrece tres', () => {
     expect(sugerenciasDelMomento({ ...BASE, destinos: [] })).toHaveLength(3);
   });
+
+  it('con el modo turista ofrece qué visitar en el destino', () => {
+    const todas = new Set<string>();
+    for (let semilla = 0; semilla < 15; semilla += 1) {
+      for (const p of sugerenciasDelMomento({
+        ...BASE,
+        semilla,
+        turista: true,
+      })) {
+        todas.add(p);
+      }
+    }
+    expect([...todas].some((p) => p.startsWith('¿Qué puedo visitar en'))).toBe(
+      true,
+    );
+    const sinModo = new Set<string>();
+    for (let semilla = 0; semilla < 15; semilla += 1) {
+      for (const p of sugerenciasDelMomento({ ...BASE, semilla }))
+        sinModo.add(p);
+    }
+    expect([...sinModo].some((p) => p.includes('visitar'))).toBe(false);
+  });
 });
