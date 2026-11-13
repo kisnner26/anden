@@ -7,6 +7,7 @@ import { TarjetaIA } from '@/componentes/TarjetaIA';
 import { TextoEscribiendo } from '@/componentes/TextoEscribiendo';
 import { instruccionesDelAsistente } from '@/datos/contextoIA';
 import { useIA } from '@/datos/useIA';
+import { useTurista } from '@/datos/useTurista';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -29,6 +30,7 @@ export interface PropiedadesResumenIA {
 export function ResumenIA({ contexto, pedido, titulo }: PropiedadesResumenIA) {
   const { colores } = useTema();
   const { nombre, preguntar, usable } = useIA();
+  const { turista } = useTurista();
   const [pensando, establecerPensando] = useState(false);
   const [respuesta, establecerRespuesta] = useState<string | null>(null);
   const [fallo, establecerFallo] = useState(false);
@@ -41,7 +43,12 @@ export function ResumenIA({ contexto, pedido, titulo }: PropiedadesResumenIA) {
     establecerFallo(false);
     try {
       establecerRespuesta(
-        (await preguntar(instruccionesDelAsistente(contexto), pedido)).trim(),
+        (
+          await preguntar(
+            instruccionesDelAsistente(contexto, { turista }),
+            pedido,
+          )
+        ).trim(),
       );
     } catch {
       establecerFallo(true);
