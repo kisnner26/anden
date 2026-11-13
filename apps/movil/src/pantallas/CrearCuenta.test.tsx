@@ -3,16 +3,41 @@ import { fireEvent, waitFor } from '@testing-library/react-native';
 
 import { CLAVE_PERFIL } from '@/datos/ProveedorPerfil';
 import { ProveedorPerfil } from '@/datos/ProveedorPerfil';
+import { ProveedorSesion } from '@/datos/ProveedorSesion';
+import { crearSesionLocal } from '@/servicios/sesion';
+import { CUENTAS_MUESTRA } from '@/servicios/cuentasMuestra';
 import { renderPantalla } from '@/pruebas/render';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { CrearCuenta } from './CrearCuenta';
 
+const SERVICIO = crearSesionLocal(CUENTAS_MUESTRA);
+
+async function llenar(
+  pantalla: Awaited<ReturnType<typeof renderPantalla>>,
+  cambios: Record<string, string> = {},
+) {
+  const campos: Record<string, string> = {
+    Nombre: 'Ana',
+    Apellido: 'Lopez',
+    Usuario: 'ana.lopez',
+    Teléfono: '88881234',
+    Contraseña: 'andén2026',
+    'Repetí la contraseña': 'andén2026',
+    ...cambios,
+  };
+  for (const [etiqueta, valor] of Object.entries(campos)) {
+    await fireEvent.changeText(pantalla.getByLabelText(etiqueta), valor);
+  }
+}
+
 async function dibujar(alTerminar = jest.fn()) {
   const pantalla = await renderPantalla(
-    <ProveedorPerfil>
-      <CrearCuenta alTerminar={alTerminar} />
-    </ProveedorPerfil>,
+    <ProveedorSesion servicio={SERVICIO}>
+      <ProveedorPerfil>
+        <CrearCuenta alTerminar={alTerminar} />
+      </ProveedorPerfil>
+    </ProveedorSesion>,
   );
   return { alTerminar, pantalla };
 }
@@ -41,25 +66,63 @@ describe('CrearCuenta', () => {
     ).toBeTruthy();
   });
 
-  it('guarda el perfil y termina', async () => {
+  it('crea la cuenta, guarda el perfil, celebra y termina', async () => {
     const { alTerminar, pantalla } = await dibujar();
-    await fireEvent.changeText(pantalla.getByLabelText('Nombre'), 'Ana');
-    await fireEvent.changeText(pantalla.getByLabelText('Apellido'), 'Lopez');
-    await fireEvent.changeText(pantalla.getByLabelText('Teléfono'), '88881234');
+    await llenar(pantalla);
     await fireEvent.press(
       pantalla.getByRole('button', { name: 'Crear cuenta' }),
     );
-    await waitFor(() => expect(alTerminar).toHaveBeenCalledTimes(1));
+    expect(await pantalla.findByTestId('cuenta-creada')).toBeTruthy();
+    await waitFor(() => expect(alTerminar).toHaveBeenCalledTimes(1), {
+      timeout: 4000,
+    });
     const guardado = JSON.parse(
       (await AsyncStorage.getItem(CLAVE_PERFIL)) ?? '{}',
     );
     expect(guardado).toMatchObject({ apellido: 'Lopez', nombre: 'Ana' });
+    expect(
+      JSON.parse((await AsyncStorage.getItem('anden.sesion')) ?? '{}'),
+    ).toMatchObject({ usuario: 'ana.lopez' });
   });
 
-  it('deja omitir la cuenta', async () => {
+  it('pide un usuario válido y una contraseña segura', async () => {
     const { alTerminar, pantalla } = await dibujar();
-    await fireEvent.press(pantalla.getByRole('button', { name: 'Ahora no' }));
-    expect(alTerminar).toHaveBeenCalledTimes(1);
+    await llenar(pantalla, { Usuario: 'a b', Contraseña: 'corta' });
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Crear cuenta' }),
+    );
+    expect(
+      pantalla.getByText(/Escribí de 3 a 20 letras sin tilde/),
+    ).toBeTruthy();
+    expect(pantalla.getByText(/al menos 8 caracteres/)).toBeTruthy();
+    expect(alTerminar).not.toHaveBeenCalled();
+  });
+
+  it('avisa si las contraseñas no coinciden', async () => {
+    const { alTerminar, pantalla } = await dibujar();
+    await llenar(pantalla, { 'Repetí la contraseña': 'otra2026clave' });
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Crear cuenta' }),
+    );
+    expect(pantalla.getByText('Las contraseñas no coinciden.')).toBeTruthy();
+    expect(alTerminar).not.toHaveBeenCalled();
+  });
+
+  it('avisa si el usuario ya está en uso', async () => {
+    const { alTerminar, pantalla } = await dibujar();
+    await llenar(pantalla, { Usuario: 'ana' });
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Crear cuenta' }),
+    );
+    expect(
+      await pantalla.findByText('Ese usuario ya está en uso. Probá con otro.'),
+    ).toBeTruthy();
+    expect(alTerminar).not.toHaveBeenCalled();
+  });
+
+  it('ya no deja omitir la cuenta', async () => {
+    const { pantalla } = await dibujar();
+    expect(pantalla.queryByRole('button', { name: 'Ahora no' })).toBeNull();
   });
 
   it('ofrece registrarse como conductor cuando se da el acceso', async () => {
