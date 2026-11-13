@@ -124,6 +124,8 @@ export function DetalleViaje({
           <View pointerEvents="none" style={estilos.heroBus}>
             <Autobus
               ancho={200}
+              animado
+              usarMiUnidad
               letrero={salida.destino.toUpperCase()}
               variante={varianteDeClave(salida.destino)}
             />
