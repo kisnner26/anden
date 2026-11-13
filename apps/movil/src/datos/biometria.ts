@@ -36,3 +36,31 @@ export async function autenticar(motivo: string): Promise<boolean> {
     return false;
   }
 }
+
+/** cuánto vale una verificación de conductor antes de pedirla otra vez, para no molestar entre pantallas */
+export const VENTANA_VERIFICACION_MS = 5 * 60_000;
+
+let ultimaVerificacion: number | null = null;
+
+/** si el conductor ya se identificó hace poco y no hace falta pedirlo de nuevo */
+export function verificacionVigente(ahora: number = Date.now()): boolean {
+  return (
+    ultimaVerificacion !== null &&
+    ahora - ultimaVerificacion < VENTANA_VERIFICACION_MS
+  );
+}
+
+/** pide Face ID o huella al conductor y recuerda el resultado un rato; `exigir` obliga a pedirlo aunque haya una verificación reciente */
+export async function verificarConductor(
+  motivo: string,
+  exigir = false,
+): Promise<boolean> {
+  if (!exigir && verificacionVigente()) return true;
+  const ok = await autenticar(motivo);
+  if (ok) ultimaVerificacion = Date.now();
+  return ok;
+}
+
+export function olvidarVerificacion(): void {
+  ultimaVerificacion = null;
+}
