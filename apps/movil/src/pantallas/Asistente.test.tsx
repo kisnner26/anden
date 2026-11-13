@@ -83,11 +83,8 @@ describe('Asistente', () => {
   it('una sugerencia pregunta de inmediato', async () => {
     const contexto = valor();
     const pantalla = await abrir(contexto);
-    await fireEvent.press(
-      pantalla.getByRole('button', {
-        name: '¿Cuál es el próximo bus a Boaco?',
-      }),
-    );
+    const sugerencias = pantalla.getAllByRole('button', { name: /^¿.*\?$/ });
+    await fireEvent.press(sugerencias[0]!);
     await waitFor(() => expect(contexto.preguntar).toHaveBeenCalledTimes(1));
   });
 
