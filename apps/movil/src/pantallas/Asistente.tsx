@@ -46,6 +46,7 @@ import { registrarReserva, resumenParaModelo } from '@/datos/memoriaIA';
 import { sugerenciasDelMomento } from '@/datos/sugerenciasIA';
 import { useIA } from '@/datos/useIA';
 import { useMemoriaIA } from '@/datos/useMemoriaIA';
+import { useTurista } from '@/datos/useTurista';
 import { useSalidas } from '@/datos/useSalidas';
 import { useVoz } from '@/datos/useVoz';
 import { motivoNoDisponible } from '@/servicios/ia';
@@ -110,6 +111,7 @@ export function Asistente({
   const [siguienteId, establecerSiguienteId] = useState(1);
   const voz = useVoz();
   const memoriaIA = useMemoriaIA();
+  const { cambiar: cambiarTurista, turista } = useTurista();
   // cambia en cada apertura de la pantalla para que las preguntas sugeridas roten
   const [semilla] = useState(() => Math.floor(Date.now() / 1000));
   const [respuestaEnVoz, establecerRespuestaEnVoz] = useState(false);
@@ -191,8 +193,9 @@ export function Asistente({
         destinos,
         memoria: memoriaEfectiva,
         semilla,
+        turista,
       }),
-    [ahora, destinos, memoriaEfectiva, proximoBoleto, semilla],
+    [ahora, destinos, memoriaEfectiva, proximoBoleto, semilla, turista],
   );
 
   /** agrega un intercambio sin pasar por el modelo y lo lee en voz alta si corresponde */
@@ -328,7 +331,7 @@ export function Asistente({
         .filter((parte) => parte !== '')
         .join('\n');
       const respuesta = await preguntar(
-        instruccionesDelAsistente(contexto),
+        instruccionesDelAsistente(contexto, { turista }),
         limpia,
       );
       establecerHistorial((previo) => [
@@ -591,6 +594,23 @@ export function Asistente({
                   : t('ia.vozNoDisponible')}
               </Text>
             )}
+            <Bloque estiloContenido={estilos.filaVoz}>
+              <View style={estilos.textoVoz}>
+                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                  {t('ia.turista')}
+                </Text>
+                <Text
+                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                >
+                  {t('ia.turistaDetalle')}
+                </Text>
+              </View>
+              <Interruptor
+                activo={turista}
+                alCambiar={(activo) => void cambiarTurista(activo)}
+                etiqueta={t('ia.turista')}
+              />
+            </Bloque>
             <Bloque estiloContenido={estilos.filaVoz}>
               <View style={estilos.textoVoz}>
                 <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
