@@ -1,0 +1,1 @@
+export { ResumenIA } from './ResumenIA';
