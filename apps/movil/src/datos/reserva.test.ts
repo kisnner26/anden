@@ -155,3 +155,53 @@ describe('totalReserva', () => {
     ).toBeNull();
   });
 });
+
+describe('reserva con Plus', () => {
+  const pasajeros = [{ asiento: 8, nombre: 'Pasajero Uno' }];
+
+  it('marca el boleto con el sello Plus y el vehículo elegido', () => {
+    const resultado = crearReserva(
+      crearMuestra(AHORA),
+      VIAJE_BOACO,
+      pasajeros,
+      AHORA,
+      generador(),
+      { plus: true, unidad: 'nave' },
+    );
+    expect(resultado.ok).toBe(true);
+    if (!resultado.ok) return;
+    expect(resultado.valor[0]?.resumen).toMatchObject({
+      plus: true,
+      unidadPlus: 'nave',
+    });
+  });
+
+  it('sin Plus el boleto no lleva sello ni vehículo', () => {
+    const resultado = crearReserva(
+      crearMuestra(AHORA),
+      VIAJE_BOACO,
+      pasajeros,
+      AHORA,
+      generador(),
+    );
+    if (!resultado.ok) throw new Error('debía reservar');
+    expect(resultado.valor[0]?.resumen.plus).toBeUndefined();
+    expect(resultado.valor[0]?.resumen.unidadPlus).toBeUndefined();
+  });
+
+  it('una salida lejana solo la reserva quien tiene Plus', () => {
+    const datos = crearMuestra(AHORA);
+    const lejano = datos.viajes.find(
+      (viaje) =>
+        new Date(viaje.salida).getTime() - AHORA.getTime() > 6 * 86_400_000,
+    );
+    if (!lejano) throw new Error('la muestra debe tener un viaje lejano');
+    const intento = (plus: boolean) =>
+      crearReserva(datos, lejano.id, pasajeros, AHORA, generador(), {
+        plus,
+        unidad: null,
+      });
+    expect(intento(false)).toEqual({ error: 'sin-plus-anticipado', ok: false });
+    expect(intento(true).ok).toBe(true);
+  });
+});
