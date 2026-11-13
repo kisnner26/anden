@@ -82,7 +82,7 @@ describe('Asistente', () => {
       contexto.preguntar as jest.Mock<ValorIA['preguntar']>
     ).mock.calls[0] as [string, string];
     expect(pregunta).toBe('¿Cuándo sale el bus a Boaco?');
-    expect(instrucciones).toContain('Usá solamente los datos de abajo');
+    expect(instrucciones).toContain('usá solamente los datos de abajo');
     expect(instrucciones).toContain('Próximas salidas:');
   });
 
