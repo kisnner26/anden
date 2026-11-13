@@ -652,6 +652,10 @@ export const textos = {
     destinosVisitados: 'destinos',
     historial: 'Historial',
     ultimoViaje: 'último',
+    viajeHecho: 'Viaje hecho',
+    mesAnterior: 'Mes anterior',
+    mesSiguiente: 'Mes siguiente',
+    verDia: 'Ver los viajes del {dia}',
     pestanaProximos: 'Próximos',
     solo: 'Tus boletos guardados',
     recoger: 'Recoger las tarjetas',
@@ -748,3 +752,21 @@ export const textos = {
     soloDesarrollo: 'La vitrina solo está disponible en desarrollo.',
   },
 } as const;
+
+/** los nombres de los meses y las iniciales de los días (lunes primero) para el calendario; van aparte del árbol de textos por ser listas */
+export const nombresMeses = [
+  'Enero',
+  'Febrero',
+  'Marzo',
+  'Abril',
+  'Mayo',
+  'Junio',
+  'Julio',
+  'Agosto',
+  'Septiembre',
+  'Octubre',
+  'Noviembre',
+  'Diciembre',
+] as const;
+
+export const inicialesDias = ['L', 'M', 'M', 'J', 'V', 'S', 'D'] as const;

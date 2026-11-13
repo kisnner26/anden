@@ -21,6 +21,8 @@ export interface PropiedadesCarruselBoletos {
   ahora: Date;
   alAbrirBoleto: (boletoId: string) => void;
   boletos: readonly BoletoGuardado[];
+  /** viajes ya hechos */
+  pasados?: boolean;
 }
 
 /** los boletos próximos, uno por pantalla y deslizables, con puntos que dicen cuál se ve */
@@ -28,6 +30,7 @@ export function CarruselBoletos({
   ahora,
   alAbrirBoleto,
   boletos,
+  pasados = false,
 }: PropiedadesCarruselBoletos) {
   const { colores } = useTema();
   const { width } = useWindowDimensions();
@@ -62,6 +65,7 @@ export function CarruselBoletos({
             ancho={ancho}
             guardado={guardado}
             key={guardado.boleto.id}
+            pasado={pasados}
           />
         ))}
       </ScrollView>

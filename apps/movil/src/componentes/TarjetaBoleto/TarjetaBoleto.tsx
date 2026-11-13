@@ -4,7 +4,11 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Autobus, varianteDeClave } from '@/componentes/Autobus';
 import { BarridoDeLuz } from '@/componentes/BarridoDeLuz';
 import { minutosHastaSalida } from '@/datos/estadoBoleto';
-import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
+import {
+  formatoDuracion,
+  formatoFechaCorta,
+  formatoHoraCompleta,
+} from '@/datos/formato';
 import type { BoletoGuardado } from '@/datos/reserva';
 import { conAlfa } from '@/tema/alfa';
 import { espacios, radios } from '@/tema/espacios';
@@ -17,6 +21,8 @@ export interface PropiedadesTarjetaBoleto {
   alPresionar: (boletoId: string) => void;
   ancho: number;
   guardado: BoletoGuardado;
+  /** un viaje ya hecho: en lugar de la cuenta regresiva dice que se hizo */
+  pasado?: boolean;
 }
 
 /** un boleto vigente como tarjeta con talón: destino, hora, bus, asiento y código */
@@ -25,6 +31,7 @@ export function TarjetaBoleto({
   alPresionar,
   ancho,
   guardado,
+  pasado = false,
 }: PropiedadesTarjetaBoleto) {
   const { colores } = useTema();
   const { boleto, resumen } = guardado;
@@ -50,9 +57,11 @@ export function TarjetaBoleto({
         <View style={estilos.superior}>
           <View style={estilos.textos}>
             <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
-              {minutos <= 0
-                ? t('boletos.ahora')
-                : `${t('boletos.saleEn')} ${minutos} ${t('viajar.minutos')}`}
+              {pasado
+                ? t('boletos.viajeHecho')
+                : minutos <= 0
+                  ? t('boletos.ahora')
+                  : `${t('boletos.saleEn')} ${formatoDuracion(minutos)}`}
             </Text>
             <Text
               numberOfLines={1}
@@ -110,7 +119,7 @@ export function TarjetaBoleto({
             </Text>
           </View>
         </View>
-        <BarridoDeLuz radio={radios.bloqueNegro} retraso={500} />
+        {!pasado && <BarridoDeLuz radio={radios.bloqueNegro} retraso={500} />}
       </LinearGradient>
     </Pressable>
   );
