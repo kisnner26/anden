@@ -1,129 +1,234 @@
 import { useState } from 'react';
 
+import { Cajon } from '../componentes/Cajon';
+import { Etiqueta } from '../componentes/Etiqueta';
+import { Medidor } from '../componentes/Medidor';
+import { Tabla, type Columna, type Filtro } from '../componentes/Tabla';
+import { useDatos } from '../DatosContexto';
+import { vendidosDe } from '../lib/analitica';
+import { fechaHora, minutosEntre } from '../lib/formato';
 import { nombreRuta, ocupacion } from '../lib/ruta';
-import type { ViajeFila } from '../resumen';
 import { supabase } from '../supabase';
-import { useLista } from '../useDatos';
+import type { Viaje } from '../tipos';
 
-const hora = (iso: string) =>
-  new Date(iso).toLocaleString('es-NI', {
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    month: 'short',
-  });
-const FILTROS = [
-  { clave: 'esperando', titulo: 'ESPERANDO' },
-  { clave: 'salieron', titulo: 'SALIERON' },
-  { clave: 'cancelados', titulo: 'CANCELADOS' },
-] as const;
+const estadoDe = (v: Viaje) =>
+  v.estado === 'cancelado' ? 'Cancelado' : v.salio_en ? 'Salió' : 'Esperando';
 
 export function Viajes() {
-  const { cargando, filas, recargar } = useLista<ViajeFila>(
-    'viajes',
-    'id, chofer_id, ruta_id, servicio, placa, anden, salida, estado, salio_en',
-    { columna: 'salida' },
-  );
-  const boletos = useLista<{ estado: string; viaje_id: string }>(
-    'boletos',
-    'viaje_id, estado',
-  );
-  const [filtro, establecerFiltro] =
-    useState<(typeof FILTROS)[number]['clave']>('esperando');
+  const d = useDatos();
+  const [abierto, establecerAbierto] = useState<Viaje | null>(null);
   const [mensaje, establecerMensaje] = useState<string | null>(null);
 
-  const grupo = {
-    cancelados: filas.filter((v) => v.estado === 'cancelado'),
-    esperando: filas.filter((v) => v.estado !== 'cancelado' && !v.salio_en),
-    salieron: filas.filter((v) => v.estado !== 'cancelado' && v.salio_en),
-  };
-  const visibles = grupo[filtro];
+  const columnas: Columna<Viaje>[] = [
+    {
+      celda: (v) => <strong>{nombreRuta(v.ruta_id)}</strong>,
+      clave: 'ruta',
+      titulo: 'Ruta',
+      valor: (v) => nombreRuta(v.ruta_id),
+    },
+    {
+      celda: (v) => fechaHora(v.salida),
+      clave: 'puesta',
+      titulo: 'Se puso en andén',
+      valor: (v) => v.salida,
+    },
+    {
+      celda: (v) => (v.salio_en ? fechaHora(v.salio_en) : '—'),
+      clave: 'salio',
+      titulo: 'Salió',
+      valor: (v) => v.salio_en,
+    },
+    {
+      celda: (v) =>
+        v.salio_en ? `${minutosEntre(v.salida, v.salio_en)} min` : '—',
+      clave: 'espera',
+      oculta: true,
+      titulo: 'Espera',
+      valor: (v) => (v.salio_en ? minutosEntre(v.salida, v.salio_en) : null),
+    },
+    {
+      celda: (v) => v.anden,
+      clave: 'anden',
+      titulo: 'Andén',
+      valor: (v) => v.anden,
+    },
+    {
+      celda: (v) => v.placa,
+      clave: 'placa',
+      titulo: 'Placa',
+      valor: (v) => v.placa,
+    },
+    {
+      celda: (v) => v.chofer_id,
+      clave: 'chofer',
+      titulo: 'Chofer',
+      valor: (v) => v.chofer_id,
+    },
+    {
+      celda: (v) => v.servicio,
+      clave: 'servicio',
+      oculta: true,
+      titulo: 'Servicio',
+      valor: (v) => v.servicio,
+    },
+    {
+      celda: (v) => {
+        const o = ocupacion(vendidosDe(d.boletos, v.id), v.servicio);
+        return <Medidor fraccion={o.fraccion} texto={o.texto} />;
+      },
+      clave: 'ocupacion',
+      titulo: 'Asientos',
+      valor: (v) => vendidosDe(d.boletos, v.id),
+    },
+    {
+      celda: (v) => (
+        <Etiqueta
+          tono={v.estado === 'cancelado' ? 'error' : v.salio_en ? 'azul' : 'ok'}
+        >
+          {estadoDe(v)}
+        </Etiqueta>
+      ),
+      clave: 'estado',
+      titulo: 'Estado',
+      valor: estadoDe,
+    },
+  ];
+  const filtros: Filtro<Viaje>[] = [
+    {
+      clave: 'espera',
+      prueba: (v) => estadoDe(v) === 'Esperando',
+      titulo: 'Esperando',
+    },
+    {
+      clave: 'salio',
+      prueba: (v) => estadoDe(v) === 'Salió',
+      titulo: 'Salieron',
+    },
+    {
+      clave: 'cancelado',
+      prueba: (v) => estadoDe(v) === 'Cancelado',
+      titulo: 'Cancelados',
+    },
+  ];
 
-  async function cancelar(v: ViajeFila) {
+  async function cancelar(lista: Viaje[], limpiar: () => void) {
     const { error } = await supabase!
       .from('viajes')
       .update({ estado: 'cancelado' })
-      .eq('id', v.id);
+      .in(
+        'id',
+        lista.map((v) => v.id),
+      );
     establecerMensaje(
       error
         ? `No se pudo cancelar: ${error.message}`
-        : 'Viaje cancelado. Los pasajeros lo ven al instante.',
+        : `${lista.length} ${lista.length === 1 ? 'viaje cancelado' : 'viajes cancelados'}. Los pasajeros lo ven al instante.`,
     );
-    await recargar();
+    limpiar();
+    await d.recargar();
   }
 
+  const boletos = abierto
+    ? d.boletos.filter(
+        (b) => b.viaje_id === abierto.id && b.estado !== 'cancelado',
+      )
+    : [];
   return (
-    <div className="pagina">
-      <header className="encabezado">
-        <p className="micro">04 / VIAJES</p>
-        <h1 className="display">
-          <span>CUÁNDO</span>
-          <em>SALE.</em>
-        </h1>
-        <p className="lead">
-          El interlocal no tiene hora fija: la hora que ves es cuando se pone en
-          andén. Sale cuando se llena.
-        </p>
-      </header>
-      <div className="filtros" role="tablist">
-        {FILTROS.map((f) => (
-          <button
-            aria-selected={filtro === f.clave}
-            key={f.clave}
-            onClick={() => establecerFiltro(f.clave)}
-            role="tab"
-            type="button"
-          >
-            {f.titulo} <span>{grupo[f.clave].length}</span>
-          </button>
-        ))}
-      </div>
+    <>
       {mensaje && (
         <p className="aviso" role="status">
           {mensaje}
         </p>
       )}
-      {cargando && <p className="vacio">Cargando…</p>}
-      {!cargando && visibles.length === 0 && (
-        <p className="vacio">No hay viajes en esta lista.</p>
-      )}
-      <ol className="tablero grande">
-        {visibles.map((v, i) => {
-          const o = ocupacion(
-            boletos.filas.filter(
-              (b) => b.viaje_id === v.id && b.estado !== 'cancelado',
-            ).length,
-            v.servicio,
-          );
-          return (
-            <li key={v.id} style={{ animationDelay: `${i * 40}ms` }}>
-              <span className="destino">
-                {nombreRuta(v.ruta_id).toUpperCase()}
-              </span>
-              <span className="micro">
-                PUESTA {hora(v.salida)}
-                {v.salio_en ? ` · SALIÓ ${hora(v.salio_en)}` : ''}
-              </span>
-              <span className="micro">
-                {v.placa} · ANDÉN {v.anden} · {v.chofer_id.toUpperCase()}
-              </span>
-              <span className="medidor">
-                <i style={{ width: `${o.fraccion * 100}%` }} />
-              </span>
-              <span className="micro">{o.texto}</span>
-              {filtro === 'esperando' && (
-                <button
-                  className="boton-linea"
-                  onClick={() => void cancelar(v)}
-                  type="button"
-                >
-                  CANCELAR
-                </button>
-              )}
-            </li>
-          );
-        })}
-      </ol>
-    </div>
+      <Tabla
+        accionesEnLote={(sel, limpiar) => (
+          <button
+            className="boton-t peligro"
+            onClick={() =>
+              void cancelar(
+                sel.filter((v) => !v.salio_en && v.estado !== 'cancelado'),
+                limpiar,
+              )
+            }
+            type="button"
+          >
+            Cancelar viajes
+          </button>
+        )}
+        alAbrir={establecerAbierto}
+        columnas={columnas}
+        filas={d.viajes}
+        filtros={filtros}
+        idDe={(v) => v.id}
+        nombreArchivo="viajes"
+        textoDe={(v) =>
+          `${nombreRuta(v.ruta_id)} ${v.placa} ${v.chofer_id} ${estadoDe(v)}`
+        }
+        vacio={{
+          detalle: 'Cuando un conductor publique un viaje aparece acá.',
+          titulo: 'Sin viajes todavía',
+        }}
+      />
+      <Cajon
+        abierto={abierto !== null}
+        alCerrar={() => establecerAbierto(null)}
+        titulo={abierto ? nombreRuta(abierto.ruta_id) : ''}
+      >
+        {abierto && (
+          <>
+            <dl className="ficha-datos">
+              <div>
+                <dt>Se puso en andén</dt>
+                <dd>{fechaHora(abierto.salida)}</dd>
+              </div>
+              <div>
+                <dt>Salió</dt>
+                <dd>
+                  {abierto.salio_en
+                    ? fechaHora(abierto.salio_en)
+                    : 'Todavía no'}
+                </dd>
+              </div>
+              <div>
+                <dt>Placa</dt>
+                <dd>{abierto.placa}</dd>
+              </div>
+              <div>
+                <dt>Andén</dt>
+                <dd>{abierto.anden}</dd>
+              </div>
+              <div>
+                <dt>Chofer</dt>
+                <dd>{abierto.chofer_id}</dd>
+              </div>
+              <div>
+                <dt>Servicio</dt>
+                <dd>{abierto.servicio}</dd>
+              </div>
+            </dl>
+            <h3 className="sub">Pasajeros ({boletos.length})</h3>
+            {boletos.length === 0 ? (
+              <p className="micro">Nadie reservó este viaje.</p>
+            ) : (
+              <ul className="lista-simple">
+                {boletos
+                  .sort((a, b) => a.asiento - b.asiento)
+                  .map((b) => (
+                    <li key={b.boleto_id}>
+                      <span>Asiento {b.asiento}</span>
+                      <span>
+                        {b.contenido?.boleto?.pasajero?.nombre ?? 'Pasajero'}
+                      </span>
+                      {b.contenido?.resumen?.plus && (
+                        <Etiqueta tono="aviso">Plus</Etiqueta>
+                      )}
+                    </li>
+                  ))}
+              </ul>
+            )}
+          </>
+        )}
+      </Cajon>
+    </>
   );
 }
