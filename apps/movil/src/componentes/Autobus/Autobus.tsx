@@ -14,6 +14,11 @@ import Svg, {
   Text as TextoSvg,
 } from 'react-native-svg';
 
+import {
+  VehiculoPlus,
+  esVehiculoPlus,
+  type IdVehiculoPlus,
+} from '@/componentes/VehiculoPlus';
 import { paletaAutobus, paletasAutobus } from '@/tema/colores';
 
 import { FORMAS } from './formas';
@@ -27,26 +32,43 @@ const ANCHO_BASE = 520;
 const ALTO_BASE = 300;
 const MAXIMO_LETRERO = 8;
 
-export interface PropiedadesAutobus {
+export interface PropiedadesAutobus extends PropiedadesAutobusBase {
+  /** silueta y color del bus, o uno de los vehículos exclusivos de Plus; sin indicar es el clásico ámbar */
+  variante?: IdVarianteBus | IdVehiculoPlus;
+}
+
+interface PropiedadesAutobusBase {
   ancho: number;
   /** sin etiqueta el bus es decorativo y se oculta a los lectores de pantalla */
   etiquetaAccesible?: string;
   /** destino que muestra el letrero ámbar del frente */
   letrero?: string;
-  /** silueta y color del bus; sin indicar es el clásico ámbar */
-  variante?: IdVarianteBus;
   /** lo dibuja mirando a la izquierda, para un bus que avanza hacia el oeste; el letrero se lee igual */
   espejo?: boolean;
 }
 
+/** el bus de Andén o, con Plus, el vehículo que la persona eligió en su lugar */
+export function Autobus({ variante, ...resto }: PropiedadesAutobus) {
+  if (esVehiculoPlus(variante)) {
+    return (
+      <VehiculoPlus
+        ancho={resto.ancho}
+        etiquetaAccesible={resto.etiquetaAccesible}
+        id={variante}
+      />
+    );
+  }
+  return <AutobusDeCarretera {...resto} variante={variante} />;
+}
+
 /** el bus de personaje de Andén: carrocería crema con banda ámbar, vidrios oscuros, faro cálido y letrero */
-export function Autobus({
+function AutobusDeCarretera({
   ancho,
   etiquetaAccesible,
   letrero = 'ANDÉN',
   variante = VARIANTE_POR_DEFECTO,
   espejo = false,
-}: PropiedadesAutobus) {
+}: PropiedadesAutobusBase & { variante?: IdVarianteBus }) {
   const { forma: nombreForma, paleta: nombrePaleta } = buscarVariante(variante);
   const forma = FORMAS[nombreForma];
   const p = { ...paletaAutobus, ...paletasAutobus[nombrePaleta] };
