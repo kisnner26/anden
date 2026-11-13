@@ -185,6 +185,20 @@ $$;
 grant execute on function public.correo_de_acceso(text) to anon, authenticated;
 grant execute on function public.acceso_disponible(text, text) to anon, authenticated;
 
+-- 0007
+-- el cierre guarda el resumen completo (quién pagó y quién no) y se puede rehacer
+alter table public.cierres add column contenido jsonb;
+
+create policy "conductores corrigen su cierre" on public.cierres for update
+  using (
+    public.es_conductor()
+    and chofer_id = (select chofer_id from public.perfiles where id = auth.uid())
+  )
+  with check (
+    public.es_conductor()
+    and chofer_id = (select chofer_id from public.perfiles where id = auth.uid())
+  );
+
 -- update public.perfiles
 --    set rol = 'conductor', chofer_id = 'cho_2', nombre = 'Marvin Lanzas'
 --  where id = (select id from auth.users where email = '1002@cuentas.anden.app');
