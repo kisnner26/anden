@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -52,6 +52,7 @@ export function Pago({
   const margenes = useSafeAreaInsets();
   const { borrador, limpiar } = useReserva();
   const { reservar } = useBoletos();
+  const enCurso = useRef(false);
   const { datos, salidas } = useSalidas();
   const [reservando, establecerReservando] = useState(false);
   const [error, establecerError] = useState<string | null>(null);
@@ -93,10 +94,13 @@ export function Pago({
   );
 
   async function confirmar() {
-    if (!borrador) return;
+    // un segundo toque antes de que el botón se bloquee no debe reservar dos veces
+    if (!borrador || enCurso.current) return;
+    enCurso.current = true;
     establecerReservando(true);
     establecerError(null);
     const resultado = await reservar(viajeId, borrador.pasajeros);
+    enCurso.current = false;
     establecerReservando(false);
     if (resultado.ok) {
       limpiar();
