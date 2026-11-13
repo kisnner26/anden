@@ -56,6 +56,9 @@ export const textos = {
     mapasNoAbrio: 'No pudimos abrir Apple Maps.',
     sinSalidasOrigen: 'Sin salidas de muestra desde esta terminal.',
   },
+  comun: {
+    eliminar: 'Eliminar',
+  },
   plus: {
     marca: 'Plus',
     avisosHint: 'Con Plus elegís también 15 y 60 minutos antes.',
@@ -576,6 +579,8 @@ export const textos = {
       'Las notificaciones están desactivadas para Andén en el teléfono. Activalas en los ajustes para recibir recordatorios.',
     abrirAjustes: 'Abrir ajustes del teléfono',
     marcarTodos: 'Marcar todo como leído',
+    eliminarTodos: 'Eliminar todos los avisos',
+    deslizaAyuda: 'Deslizá un aviso a la izquierda para eliminarlo.',
     noLeido: 'Sin leer',
     leido: 'Leído',
     vacioTitulo: 'Sin avisos por ahora',
