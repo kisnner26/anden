@@ -66,10 +66,21 @@ describe('validarViaje', () => {
     ).toBeNull();
   });
 
-  it('no deja publicar una salida que ya pasó', () => {
-    expect(validarViaje({ ...BUENO, hora: '09:00' }, AHORA)).toContain(
-      'pasado',
-    );
+  it('deja publicar una hora que ya pasó hoy, porque el bus ya espera en andén', () => {
+    expect(validarViaje({ ...BUENO, hora: '09:00' }, AHORA)).toEqual([]);
+  });
+
+  it('no deja publicar un día que ya pasó', () => {
+    const ayer = new Date(AHORA);
+    ayer.setDate(ayer.getDate() - 1);
+    expect(validarViaje({ ...BUENO, dia: ayer }, AHORA)).toContain('pasado');
+  });
+
+  it('entiende la hora escrita corta', () => {
+    expect(leerHora('10')).toEqual({ horas: 10, minutos: 0 });
+    expect(leerHora('930')).toEqual({ horas: 9, minutos: 30 });
+    expect(leerHora('1430')).toEqual({ horas: 14, minutos: 30 });
+    expect(leerHora('25')).toBeNull();
   });
 });
 
