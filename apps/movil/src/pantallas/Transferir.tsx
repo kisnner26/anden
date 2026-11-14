@@ -17,7 +17,6 @@ import { EstadoVacio } from '@/componentes/EstadoVacio';
 import { ExplosionConfirmacion } from '@/componentes/ExplosionConfirmacion';
 import { Presionable } from '@/componentes/Presionable';
 import { formatoHoraCompleta } from '@/datos/formato';
-import { emitirMascota } from '@/datos/mascotaEventos';
 import { reproducirSonido } from '@/datos/sonidos';
 import {
   codigoLegible,
@@ -232,7 +231,6 @@ export function Transferir({
   useEffect(() => {
     if (fase !== 'recibido') return;
     sentir('exito');
-    emitirMascota({ tipo: 'transferido' });
     void reproducirSonido('envio');
     const terminar = () => {
       void quitar(boletoId);

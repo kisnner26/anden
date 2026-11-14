@@ -22,6 +22,7 @@ import { Chip } from '@/componentes/Chip';
 import { ProgresoReserva } from '@/componentes/ProgresoReserva';
 import { Interruptor } from '@/componentes/Interruptor';
 import { nombreCompleto, type PasajeroGuardado } from '@/datos/perfil';
+import { emitirSenal } from '@/datos/senalesDeAyuda';
 import { useBoletos } from '@/datos/useBoletos';
 import type { PasajeroReserva } from '@/datos/reserva';
 import { usePerfil } from '@/datos/usePerfil';
@@ -115,6 +116,7 @@ export function Pasajeros({
     );
     if (!completos) {
       establecerFaltan(true);
+      emitirSenal('errorFormulario');
       return;
     }
     const pasajeros: PasajeroReserva[] = asientos.map((asiento) => ({

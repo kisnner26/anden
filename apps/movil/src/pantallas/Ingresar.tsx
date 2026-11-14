@@ -13,6 +13,7 @@ import { Autobus } from '@/componentes/Autobus';
 import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CampoTexto } from '@/componentes/CampoTexto';
+import { emitirSenal } from '@/datos/senalesDeAyuda';
 import { useSesion } from '@/datos/useSesion';
 import type { Rol } from '@/servicios/sesion';
 import { espacios, tamanosControl } from '@/tema/espacios';
@@ -47,7 +48,10 @@ export function Ingresar({ alCrearCuenta, alIngresar }: PropiedadesIngresar) {
     const resultado = await iniciar(identificador, clave);
     establecerIngresando(false);
     if (resultado.ok) alIngresar(resultado.valor.rol);
-    else establecerError(true);
+    else {
+      establecerError(true);
+      emitirSenal('errorIngreso');
+    }
   }
 
   return (
