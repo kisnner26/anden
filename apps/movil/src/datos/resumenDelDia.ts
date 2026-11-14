@@ -1,18 +1,6 @@
 import { formatoHoraCompleta } from './formato';
 import type { Salida } from './salidas';
 
-/** la hora del día en que empieza y termina la línea del día */
-export const HORA_INICIO_LINEA = 5;
-export const HORA_FIN_LINEA = 23;
-
-/** dónde cae una hora en la línea del día: 0 es el inicio y 1 el final; se queda dentro de esos límites */
-export function posicionEnElDia(fecha: Date): number {
-  const horas = fecha.getHours() + fecha.getMinutes() / 60;
-  const avance =
-    (horas - HORA_INICIO_LINEA) / (HORA_FIN_LINEA - HORA_INICIO_LINEA);
-  return Math.min(1, Math.max(0, avance));
-}
-
 const ACTIVAS: Salida['estado'][] = ['abordando', 'atrasado', 'programado'];
 
 export interface AtajosDelDia {
@@ -90,34 +78,11 @@ export function franjaDelDia(fecha: Date): FranjaDelDia {
   return 'noche';
 }
 
-export interface GrupoDeFranja {
-  franja: FranjaDelDia;
-  salidas: Salida[];
-}
-
-/** las salidas ordenadas por hora y juntas por momento del día, para dibujarlas por tramos */
-export function agruparPorFranja(salidas: readonly Salida[]): GrupoDeFranja[] {
-  const grupos: GrupoDeFranja[] = [];
-  const ordenadas = [...salidas].sort(
-    (a, b) => a.salida.getTime() - b.salida.getTime(),
-  );
-  for (const salida of ordenadas) {
-    const franja = franjaDelDia(salida.salida);
-    const ultimo = grupos[grupos.length - 1];
-    if (ultimo && ultimo.franja === franja) ultimo.salidas.push(salida);
-    else grupos.push({ franja, salidas: [salida] });
-  }
-  return grupos;
-}
-
-/** el alto de la barra de asientos libres, entre un mínimo visible y el máximo; las agotadas quedan en el mínimo */
-export function altoDeBarra(
+/** qué tan llena de asientos libres está una salida respecto de la que más tiene, de 0 a 1 */
+export function fraccionDeAsientos(
   libres: number,
   maximoLibres: number,
-  minimo = 8,
-  maximo = 72,
 ): number {
-  if (libres <= 0 || maximoLibres <= 0) return minimo;
-  const proporcion = Math.min(1, libres / maximoLibres);
-  return Math.round(minimo + (maximo - minimo) * proporcion);
+  if (libres <= 0 || maximoLibres <= 0) return 0;
+  return Math.min(1, libres / maximoLibres);
 }
