@@ -1,0 +1,1 @@
+export { PaisajePortada } from './PaisajePortada';
