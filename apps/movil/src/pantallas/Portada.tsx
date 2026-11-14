@@ -27,6 +27,7 @@ import Svg, {
 import { Autobus } from '@/componentes/Autobus';
 import { DeslizarParaEmpezar } from '@/componentes/DeslizarParaEmpezar';
 import { HumoEscape } from '@/componentes/HumoEscape';
+import { PaisajePortada } from '@/componentes/PaisajePortada';
 import { liberarSonidos, reproducirSonido } from '@/datos/sonidos';
 import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
@@ -46,6 +47,10 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
   const altoMarca = 150;
   const topMarca = height * 0.335;
   const reducirMovimiento = useMovimientoReducido();
+  const inicio = useInicioAutomatico();
+  // con el inicio automático todo corre más rápido; hasta saber el ajuste no se anima nada, para no arrancar lento y acelerar
+  const cargado = inicio.activo !== null;
+  const rapido = inicio.activo === true;
   const [saliendo, establecerSaliendo] = useState(false);
   const temporizador = useRef<ReturnType<typeof setTimeout> | null>(null);
   const posicionBus = useSharedValue(reducirMovimiento ? 0 : -(width + 40));
@@ -56,21 +61,23 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
   const lema = useSharedValue(reducirMovimiento ? 1 : 0);
 
   useEffect(() => {
-    if (reducirMovimiento) return undefined;
+    if (reducirMovimiento || !cargado) return undefined;
+    const llegada = rapido ? 650 : movimiento.llegadaBus;
+    const revelar = rapido ? 420 : movimiento.revelarMarca;
     void reproducirSonido('arranque');
     posicionBus.value = withTiming(0, {
-      duration: movimiento.llegadaBus,
+      duration: llegada,
       easing: Easing.out(Easing.cubic),
     });
     marcaVisible.value = withDelay(
-      movimiento.llegadaBus * 0.35,
+      llegada * 0.35,
       withTiming(1, {
-        duration: movimiento.revelarMarca,
+        duration: revelar,
         easing: Easing.out(Easing.cubic),
       }),
     );
     vaiven.value = withDelay(
-      movimiento.llegadaBus,
+      llegada,
       withRepeat(
         withSequence(
           withTiming(1, { duration: movimiento.vaivenBus / 2 }),
@@ -83,16 +90,22 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
     velo.value = withDelay(
       120,
       withTiming(0, {
-        duration: movimiento.portadaApertura,
+        duration: rapido ? 220 : movimiento.portadaApertura,
         easing: Easing.out(Easing.quad),
       }),
     );
-    lema.value = withDelay(
-      movimiento.llegadaBus,
-      withTiming(1, { duration: movimiento.revelarMarca }),
-    );
+    lema.value = withDelay(llegada, withTiming(1, { duration: revelar }));
     return undefined;
-  }, [lema, marcaVisible, posicionBus, reducirMovimiento, vaiven, velo]);
+  }, [
+    cargado,
+    lema,
+    marcaVisible,
+    posicionBus,
+    rapido,
+    reducirMovimiento,
+    vaiven,
+    velo,
+  ]);
 
   useEffect(
     () => () => {
@@ -102,8 +115,6 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
     [],
   );
 
-  const inicio = useInicioAutomatico();
-
   const empezar = () => {
     if (saliendo) return;
     establecerSaliendo(true);
@@ -112,14 +123,18 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
       return;
     }
     void reproducirSonido('bocina');
-    temporizador.current = setTimeout(() => {
-      void reproducirSonido('salida');
-      posicionBus.value = withTiming(width + 60, {
-        duration: movimiento.salidaBus,
-        easing: Easing.in(Easing.cubic),
-      });
-      temporizador.current = setTimeout(alEmpezar, movimiento.salidaBus * 0.8);
-    }, 420);
+    const salida = rapido ? 650 : movimiento.salidaBus;
+    temporizador.current = setTimeout(
+      () => {
+        void reproducirSonido('salida');
+        posicionBus.value = withTiming(width + 60, {
+          duration: salida,
+          easing: Easing.in(Easing.cubic),
+        });
+        temporizador.current = setTimeout(alEmpezar, salida * 0.8);
+      },
+      rapido ? 120 : 420,
+    );
   };
 
   // con el inicio automático encendido, la portada arranca sola cuando el bus ya llegó, sin esperar el deslizado
@@ -127,7 +142,7 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
     if (inicio.activo !== true) return;
     const espera = setTimeout(
       empezar,
-      reducirMovimiento ? 600 : ESPERA_INICIO_AUTOMATICO_MS,
+      reducirMovimiento ? 400 : ESPERA_INICIO_AUTOMATICO_MS,
     );
     return () => clearTimeout(espera);
   }, [inicio.activo]);
@@ -155,6 +170,13 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
         <LinearGradient
           colors={[colores.fondo, colores.fondoProfundo]}
           style={StyleSheet.absoluteFill}
+        />
+        <PaisajePortada
+          alto={height}
+          ancho={width}
+          rapido={rapido}
+          reducido={reducirMovimiento}
+          yMarca={topMarca}
         />
         <Svg height={height * 0.4} style={estilos.ruta} width={width}>
           <Path
@@ -243,10 +265,16 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
         </Animated.View>
 
         <View style={[estilos.pie, { bottom: margenes.bottom + 28 }]}>
-          <DeslizarParaEmpezar
-            alCompletar={empezar}
-            ancho={Math.min(width - 56, 340)}
-          />
+          {rapido ? (
+            <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+              {t('portada.iniciando')}
+            </Text>
+          ) : cargado ? (
+            <DeslizarParaEmpezar
+              alCompletar={empezar}
+              ancho={Math.min(width - 56, 340)}
+            />
+          ) : null}
         </View>
       </View>
 
