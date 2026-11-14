@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Path } from 'react-native-svg';
 
 import { Bloque } from '@/componentes/Bloque';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
@@ -14,7 +21,9 @@ import { sincronizarViajes } from '@/datos/sincronizarViajes';
 import { marcarSalida } from '@/servicios/supabase/viajesSupabase';
 import { ListaPasajeros } from '@/componentes/ListaPasajeros';
 import { HojaCierreViaje } from '@/componentes/HojaCierreViaje';
-import { MapaCorredor } from '@/componentes/MapaCorredor';
+import { Icono } from '@/componentes/Icono';
+import { MapaConductor } from '@/componentes/MapaConductor';
+import { PanelDeslizable } from '@/componentes/PanelDeslizable';
 import { PieReserva } from '@/componentes/PieReserva';
 import { formatoHoraCompleta } from '@/datos/formato';
 import { verificarConductor } from '@/datos/biometria';
@@ -42,6 +51,7 @@ import {
   radios,
   tamanosControl,
 } from '@/tema/espacios';
+import { conAlfa } from '@/tema/alfa';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { rellenar } from '@/textos/rellenar';
@@ -82,6 +92,14 @@ export function ConductorViaje({
   const [yaSalio, establecerYaSalio] = useState(false);
   const [problema, establecerProblema] = useState<string | null>(null);
   const [cerrando, establecerCerrando] = useState(false);
+  const [centrar, establecerCentrar] = useState(0);
+  const { height } = useWindowDimensions();
+  // las tres alturas del panel: recogido con el estado y el botón principal a la vista, a medias y abierto
+  const alturasPanel = [
+    Math.min(380, height * 0.46),
+    height * 0.64,
+    height - margenes.top - espacios.cuarentaYOcho,
+  ] as const;
   const [escena, establecerEscena] = useState<'llegada' | 'salida' | null>(
     null,
   );
@@ -195,77 +213,157 @@ export function ConductorViaje({
 
   return (
     <View style={[estilos.pantalla, { backgroundColor: colores.fondo }]}>
-      <ScrollView
-        contentContainerStyle={[
-          estilos.contenido,
+      {recorrido && (
+        <MapaConductor
+          bus={transmision.posicion}
+          centrar={centrar}
+          destino={{
+            coordenadas: recorrido.destino.coordenadas,
+            nombre: recorrido.destino.nombre,
+          }}
+          espacioInferior={alturasPanel[0]}
+          origen={{
+            coordenadas: recorrido.origen.coordenadas,
+            nombre: recorrido.origen.nombre,
+          }}
+          trazo={recorrido.trazo}
+        />
+      )}
+
+      <View
+        pointerEvents="box-none"
+        style={[estilos.controles, { top: margenes.top + espacios.ocho }]}
+      >
+        <Pressable
+          accessibilityLabel={t('asientos.volver')}
+          accessibilityRole="button"
+          onPress={alVolver}
+          style={[
+            estilos.botonCircular,
+            { backgroundColor: conAlfa(colores.bloqueNegro, 0.92) },
+          ]}
+        >
+          <Icono color={colores.sobreNegro} nombre="volver" tamano="mediano" />
+        </Pressable>
+        <View
+          style={[
+            estilos.titulo,
+            { backgroundColor: conAlfa(colores.bloqueNegro, 0.92) },
+          ]}
+        >
+          <Text
+            numberOfLines={1}
+            style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
+          >
+            {`${formatoHoraCompleta(salida.salida)} · ${salida.placa}`}
+          </Text>
+          <Text
+            numberOfLines={1}
+            style={[tipografia.subtitulo, { color: colores.sobreNegro }]}
+          >
+            {`${detalle.paradas[0]?.nombre ?? ''} → ${salida.destino}`}
+          </Text>
+        </View>
+      </View>
+
+      <Pressable
+        accessibilityLabel={t('conductor.centrarMapa')}
+        accessibilityRole="button"
+        onPress={() => establecerCentrar((n) => n + 1)}
+        style={[
+          estilos.botonCircular,
+          estilos.centrar,
           {
-            paddingBottom: margenes.bottom + disposicionPantalla.espacioPie,
-            paddingTop: margenes.top + espacios.ocho,
+            backgroundColor: conAlfa(colores.bloqueNegro, 0.92),
+            bottom: alturasPanel[0] + espacios.doce,
           },
         ]}
       >
-        <CabeceraPantalla alVolver={alVolver} titulo={salida.destino} />
-        <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
-          {`${detalle.paradas[0]?.nombre ?? ''} → ${salida.destino} · ${formatoHoraCompleta(salida.salida)} · ${salida.placa}`}
-        </Text>
+        <Svg height={22} viewBox="0 0 24 24" width={22}>
+          <Path
+            d="M3 11 L21 3 L13 21 L11 13 Z"
+            fill="none"
+            stroke={colores.sobreNegro}
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        </Svg>
+      </Pressable>
 
-        <BloqueNegro estiloContenido={estilos.estado}>
-          <View style={estilos.filaEstado}>
-            <View
-              style={[
-                estilos.punto,
-                {
-                  backgroundColor: transmision.activa
-                    ? colores.aTiempo
-                    : colores.sobreNegroSuave,
-                },
-              ]}
-            />
-            <Text
-              accessibilityLiveRegion="polite"
-              style={[tipografia.subtitulo, { color: colores.sobreNegro }]}
-            >
-              {transmision.activa
-                ? t('conductor.transmitiendo')
-                : t('conductor.detenido')}
-            </Text>
-          </View>
-          {!transmision.activa && (
-            <Text
-              style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
-            >
-              {t('conductor.explicacion')}
-            </Text>
-          )}
-          {transmision.activa && transmision.sinSenal && (
-            <Text style={[tipografia.cuerpo, { color: colores.ambar }]}>
-              {t('conductor.esperandoSenal')}
-            </Text>
-          )}
-          {progreso && !transmision.sinSenal && (
-            <View style={estilos.cifras}>
-              <Text style={[tipografia.display, { color: colores.ambar }]}>
-                {`${progreso.porcentaje} %`}
-              </Text>
-              <Text style={[tipografia.cuerpo, { color: colores.sobreNegro }]}>
-                {rellenar(t('conductor.llegadaEn'), {
-                  minutos: progreso.minutosRestantes,
-                })}
-              </Text>
-              <Text
-                style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
-              >
-                {`${rellenar(t('conductor.kmRecorridos'), { km: progreso.kmRecorridos })} · ${rellenar(t('conductor.kmRestantes'), { km: progreso.kmRestantes })}`}
-              </Text>
-              {progreso.fueraDeRuta && (
-                <Text style={[tipografia.pequeno, { color: colores.ambar }]}>
-                  {t('conductor.fueraDeRuta')}
+      <PanelDeslizable
+        alturas={alturasPanel}
+        cabecera={
+          <View style={estilos.cabeceraPanel}>
+            <BloqueNegro estiloContenido={estilos.estado}>
+              <View style={estilos.filaEstado}>
+                <View
+                  style={[
+                    estilos.punto,
+                    {
+                      backgroundColor: transmision.activa
+                        ? colores.aTiempo
+                        : colores.sobreNegroSuave,
+                    },
+                  ]}
+                />
+                <Text
+                  accessibilityLiveRegion="polite"
+                  style={[tipografia.subtitulo, { color: colores.sobreNegro }]}
+                >
+                  {transmision.activa
+                    ? t('conductor.transmitiendo')
+                    : t('conductor.detenido')}
+                </Text>
+              </View>
+              {!transmision.activa && (
+                <Text
+                  style={[
+                    tipografia.pequeno,
+                    { color: colores.sobreNegroSuave },
+                  ]}
+                >
+                  {t('conductor.explicacion')}
                 </Text>
               )}
-            </View>
-          )}
-        </BloqueNegro>
-
+              {transmision.activa && transmision.sinSenal && (
+                <Text style={[tipografia.cuerpo, { color: colores.ambar }]}>
+                  {t('conductor.esperandoSenal')}
+                </Text>
+              )}
+              {progreso && !transmision.sinSenal && (
+                <View style={estilos.cifras}>
+                  <Text style={[tipografia.display, { color: colores.ambar }]}>
+                    {`${progreso.porcentaje} %`}
+                  </Text>
+                  <Text
+                    style={[tipografia.cuerpo, { color: colores.sobreNegro }]}
+                  >
+                    {rellenar(t('conductor.llegadaEn'), {
+                      minutos: progreso.minutosRestantes,
+                    })}
+                  </Text>
+                  <Text
+                    style={[
+                      tipografia.pequeno,
+                      { color: colores.sobreNegroSuave },
+                    ]}
+                  >
+                    {`${rellenar(t('conductor.kmRecorridos'), { km: progreso.kmRecorridos })} · ${rellenar(t('conductor.kmRestantes'), { km: progreso.kmRestantes })}`}
+                  </Text>
+                  {progreso.fueraDeRuta && (
+                    <Text
+                      style={[tipografia.pequeno, { color: colores.ambar }]}
+                    >
+                      {t('conductor.fueraDeRuta')}
+                    </Text>
+                  )}
+                </View>
+              )}
+            </BloqueNegro>
+          </View>
+        }
+        espacioFinal={disposicionPantalla.espacioPie}
+      >
         <EstimacionSalida viajeId={viajeId} />
         <ResumenIA
           contexto={[
@@ -351,17 +449,6 @@ export function ConductorViaje({
           </>
         )}
 
-        {recorrido && (
-          <MapaCorredor
-            simulacion={{
-              bus: transmision.posicion ?? undefined,
-              destino: recorrido.destino,
-              origen: recorrido.origen,
-              trazo: recorrido.trazo,
-            }}
-          />
-        )}
-
         {cierre && (
           <Bloque estiloContenido={estilos.cerrado} hundido radio="loseta">
             <Text style={[tipografia.etiqueta, { color: colores.aTiempo }]}>
@@ -392,7 +479,7 @@ export function ConductorViaje({
             {problema}
           </Text>
         )}
-      </ScrollView>
+      </PanelDeslizable>
 
       {!cierre && (
         <PieReserva estiloContenido={estilos.pie}>
@@ -461,6 +548,29 @@ export function ConductorViaje({
 }
 
 const estilos = StyleSheet.create({
+  botonCircular: {
+    alignItems: 'center',
+    borderRadius: 26,
+    height: 52,
+    justifyContent: 'center',
+    width: 52,
+  },
+  cabeceraPanel: { paddingBottom: espacios.doce },
+  centrar: { position: 'absolute', right: espacios.dieciseis },
+  controles: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.doce,
+    left: espacios.dieciseis,
+    position: 'absolute',
+    right: espacios.dieciseis,
+  },
+  titulo: {
+    borderRadius: radios.loseta,
+    flex: 1,
+    paddingHorizontal: espacios.doce,
+    paddingVertical: espacios.cuatro,
+  },
   yaSalio: { minHeight: tamanosControl.toqueMinimo },
   yaSalioContenido: { gap: 2, padding: espacios.dieciseis },
   boton: {
