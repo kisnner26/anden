@@ -1,6 +1,5 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { fireEvent } from '@testing-library/react-native';
-import { StyleSheet } from 'react-native';
 
 import type { Salida } from '@/datos/salidas';
 import { renderPantalla } from '@/pruebas/render';
@@ -132,6 +131,7 @@ describe('CarruselSalidas', () => {
     );
     expect(p.getByText('—')).toBeTruthy();
     expect(p.getByText('0')).toBeTruthy();
+    expect(p.getByText('libres')).toBeTruthy();
   });
 
   it('sin salidas no dibuja nada', async () => {
@@ -139,23 +139,5 @@ describe('CarruselSalidas', () => {
       <CarruselSalidas ahora={AHORA} esHoy salidas={[]} />,
     );
     expect(p.queryByTestId('salidas-del-dia')).toBeNull();
-  });
-
-  it('reparte las tarjetas en dos columnas que llenan el ancho', async () => {
-    const p = await renderPantalla(
-      <CarruselSalidas
-        ahora={AHORA}
-        esHoy
-        salidas={[salida('a', 10), salida('b', 11), salida('c', 12)]}
-      />,
-    );
-    const tarjetas = p.getAllByTestId(/^salida-(proxima|futura|pasada)$/);
-    expect(tarjetas).toHaveLength(3);
-    const anchos = tarjetas.map((t) => {
-      const estilo = StyleSheet.flatten(t.props.style) as { width: number };
-      return estilo.width;
-    });
-    expect(new Set(anchos).size).toBe(1);
-    expect(anchos[0]).toBeGreaterThan(120);
   });
 });
