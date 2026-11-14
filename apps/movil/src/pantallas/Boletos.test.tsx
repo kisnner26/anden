@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent } from '@testing-library/react-native';
 
+import { ContextoIA, type ValorIA } from '@/datos/useIA';
 import { ProveedorBoletos, CLAVE_BOLETOS } from '@/datos/ProveedorBoletos';
 import { reiniciarMuestra } from '@/datos/useSalidas';
 import { boletoDePrueba } from '@/pruebas/boletos';
@@ -122,5 +123,72 @@ describe('Boletos', () => {
     expect(await pantalla.findAllByText('Viaje hecho')).toHaveLength(2);
     await fireEvent.press(pantalla.getByLabelText(/Asiento 3$/));
     expect(alAbrirBoleto).toHaveBeenCalledWith('bol_AAAA1111');
+  });
+
+  it('sin boletos muestra las ciudades con foto que llevan a buscar salidas', async () => {
+    const alBuscar = jest.fn();
+    const pantalla = await dibujar({ alBuscar });
+    await pantalla.findByText('Todavía no tenés boletos');
+    expect(pantalla.getByText('A dónde querés ir')).toBeTruthy();
+    await fireEvent.press(pantalla.getByRole('link', { name: 'Boaco' }));
+    expect(alBuscar).toHaveBeenCalledTimes(1);
+  });
+
+  describe('con la IA', () => {
+    const ia: ValorIA = {
+      activada: true,
+      cambiar: async () => undefined,
+      cargando: false,
+      disponibilidad: 'disponible',
+      nombre: 'Apple Intelligence',
+      preguntar: async () => '',
+      usable: true,
+    };
+
+    async function conBoleto(alPreguntar?: (p: string) => void) {
+      await AsyncStorage.setItem(
+        CLAVE_BOLETOS,
+        JSON.stringify([boletoDePrueba(EN_UNA_HORA())]),
+      );
+      return renderPantalla(
+        <ContextoIA.Provider value={ia}>
+          <ProveedorBoletos>
+            <Boletos
+              alAbrirBoleto={() => undefined}
+              alBuscar={() => undefined}
+              alPreguntar={alPreguntar}
+            />
+          </ProveedorBoletos>
+        </ContextoIA.Provider>,
+      );
+    }
+
+    it('ofrece resumir los viajes y preguntar sobre ellos', async () => {
+      const alPreguntar = jest.fn();
+      const pantalla = await conBoleto(alPreguntar);
+      expect(
+        await pantalla.findByRole('button', {
+          name: 'Resumir mis viajes con IA',
+        }),
+      ).toBeTruthy();
+      await fireEvent.press(
+        pantalla.getByRole('button', {
+          name: '¿A qué hora debo llegar al punto de encuentro?',
+        }),
+      );
+      expect(alPreguntar).toHaveBeenCalledWith(
+        '¿A qué hora debo llegar al punto de encuentro?',
+      );
+    });
+
+    it('sin la IA lista no aparece nada de eso', async () => {
+      await AsyncStorage.setItem(
+        CLAVE_BOLETOS,
+        JSON.stringify([boletoDePrueba(EN_UNA_HORA())]),
+      );
+      const pantalla = await dibujar();
+      await pantalla.findByText('Asiento');
+      expect(pantalla.queryByText('Resumir mis viajes con IA')).toBeNull();
+    });
   });
 });
