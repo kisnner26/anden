@@ -596,6 +596,10 @@ export const textos = {
     libres: 'Libres',
     nuevaConversacion: 'Nueva conversación',
     queVisitar: 'Qué visitar en {ciudad}',
+    preguntarViaje: 'Preguntale a Andén sobre este viaje',
+    preguntarViajeDetalle: 'Con {nombre}, en tu teléfono',
+    preguntaDelViaje:
+      '¿Qué debo saber de la salida de {origen} a {destino} de las {hora}?',
     seguirPreguntando: 'Seguí preguntando',
     sinTarifa: 'Sin tarifa',
     tarifa: 'Tarifa',

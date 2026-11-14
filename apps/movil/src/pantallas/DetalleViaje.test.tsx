@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
 import { act, fireEvent } from '@testing-library/react-native';
 
+import { ContextoIA, type ValorIA } from '@/datos/useIA';
 import { VIAJE_BOACO } from '@/datos/muestra';
 import { ProveedorEspera } from '@/datos/ProveedorEspera';
 import { trazoEntre } from '@/datos/trazoCorredor';
@@ -186,5 +187,57 @@ describe('DetalleViaje', () => {
     expect(
       pantalla.queryByRole('button', { name: 'Avisarme si se libera' }),
     ).toBeNull();
+  });
+
+  it('muestra la foto de la ciudad de destino', async () => {
+    const pantalla = await dibujar();
+    expect(pantalla.getByLabelText('Foto de Boaco')).toBeTruthy();
+  });
+
+  describe('preguntarle al asistente', () => {
+    const ia: ValorIA = {
+      activada: true,
+      cambiar: async () => undefined,
+      cargando: false,
+      disponibilidad: 'disponible',
+      nombre: 'Apple Intelligence',
+      preguntar: async () => '',
+      usable: true,
+    };
+
+    function conIA(valor: ValorIA, alPreguntar?: (p: string) => void) {
+      return renderPantalla(
+        <ContextoIA.Provider value={valor}>
+          <DetalleViaje
+            alElegirAsiento={() => undefined}
+            alPreguntar={alPreguntar}
+            alVerChofer={() => undefined}
+            alVolver={() => undefined}
+            viajeId={VIAJE_BOACO}
+          />
+        </ContextoIA.Provider>,
+      );
+    }
+
+    it('abre el asistente con una pregunta sobre esa salida', async () => {
+      const alPreguntar = jest.fn();
+      const pantalla = await conIA(ia, alPreguntar);
+      await fireEvent.press(
+        pantalla.getByRole('button', {
+          name: /Preguntale a Andén sobre este viaje/,
+        }),
+      );
+      expect(alPreguntar).toHaveBeenCalledTimes(1);
+      expect(alPreguntar.mock.calls[0]?.[0]).toMatch(
+        /^¿Qué debo saber de la salida de .+ a Boaco de las .+\?$/,
+      );
+    });
+
+    it('sin la IA lista no ofrece la pregunta', async () => {
+      const pantalla = await conIA({ ...ia, usable: false }, jest.fn());
+      expect(
+        pantalla.queryByText('Preguntale a Andén sobre este viaje'),
+      ).toBeNull();
+    });
   });
 });

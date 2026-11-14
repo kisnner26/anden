@@ -10,14 +10,22 @@ import { Bloque } from '@/componentes/Bloque';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
+import { FotoDestino } from '@/componentes/FotoDestino';
 import { Icono } from '@/componentes/Icono';
+import { OrbeIA } from '@/componentes/OrbeIA';
 import { LineaRuta } from '@/componentes/LineaRuta';
 import { LineaViaje } from '@/componentes/LineaViaje';
 import { MapaCorredor } from '@/componentes/MapaCorredor';
 import { SeguimientoEnVivo } from '@/componentes/SeguimientoEnVivo';
 import { Loseta } from '@/componentes/Loseta';
 import { estadoTablero } from '@/componentes/TableroSalidas';
-import { formatoDuracion, formatoFechaCorta } from '@/datos/formato';
+import {
+  formatoDuracion,
+  formatoFechaCorta,
+  formatoHoraCompleta,
+} from '@/datos/formato';
+import { fotoDeDestino } from '@/datos/fotosDestino';
+import { useIA } from '@/datos/useIA';
 import { useAvanceViaje } from '@/datos/useAvanceViaje';
 import { useRecorrido } from '@/datos/useRecorrido';
 import { useTurista } from '@/datos/useTurista';
@@ -35,6 +43,8 @@ import { rellenar } from '@/textos/rellenar';
 import { t } from '@/textos/t';
 
 export interface PropiedadesDetalleViaje {
+  /** abre el asistente con una pregunta sobre este viaje; solo se ofrece si la IA está lista */
+  alPreguntar?: (pregunta: string) => void;
   alElegirAsiento: (viajeId: string) => void;
   alVerChofer: (choferId: string) => void;
   alVolver: () => void;
@@ -44,11 +54,13 @@ export interface PropiedadesDetalleViaje {
 /** el viaje completo: horas, unidad con su placa, chofer, recorrido y la tarifa antes de elegir asiento */
 export function DetalleViaje({
   alElegirAsiento,
+  alPreguntar,
   alVerChofer,
   alVolver,
   viajeId,
 }: PropiedadesDetalleViaje) {
   const { colores } = useTema();
+  const ia = useIA();
   const margenes = useSafeAreaInsets();
   const detalle = useDetalleViaje(viajeId);
   const {
@@ -123,6 +135,14 @@ export function DetalleViaje({
           {`${origen} → ${salida.destino} · ${t(`servicios.${salida.servicio}`)} · ${formatoFechaCorta(salida.salida)}`}
         </Text>
 
+        {(fotoDeDestino(salida.destino) || fotoDeDestino(origen)) && (
+          <FotoDestino
+            destino={salida.destino}
+            estilo={estilos.fotoCiudad}
+            origen={origen}
+          />
+        )}
+
         <View style={estilos.contenedorHero}>
           <View pointerEvents="none" style={estilos.heroBus}>
             <Autobus
@@ -157,6 +177,39 @@ export function DetalleViaje({
             </Text>
           </BloqueNegro>
         </View>
+
+        {alPreguntar && ia.usable && (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() =>
+              alPreguntar(
+                rellenar(t('asistenteRico.preguntaDelViaje'), {
+                  destino: salida.destino,
+                  hora: formatoHoraCompleta(salida.salida),
+                  origen,
+                }),
+              )
+            }
+            style={({ pressed }) => pressed && estilos.presionada}
+          >
+            <Bloque estiloContenido={estilos.preguntar}>
+              <OrbeIA tamano={28} />
+              <View style={estilos.textoUnidad}>
+                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                  {t('asistenteRico.preguntarViaje')}
+                </Text>
+                <Text
+                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                >
+                  {rellenar(t('asistenteRico.preguntarViajeDetalle'), {
+                    nombre: ia.nombre,
+                  })}
+                </Text>
+              </View>
+              <Icono nombre="siguiente" tamano="mediano" />
+            </Bloque>
+          </Pressable>
+        )}
 
         <Text
           style={[
@@ -372,6 +425,14 @@ export function DetalleViaje({
 }
 
 const estilos = StyleSheet.create({
+  fotoCiudad: { height: 150 },
+  preguntar: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.dieciseis,
+    padding: espacios.dieciseis,
+  },
+  presionada: { opacity: 0.92, transform: [{ scale: 0.99 }] },
   sinDatos: {
     flex: 1,
     gap: espacios.dieciseis,

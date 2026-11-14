@@ -18,6 +18,9 @@ export default function RutaDetalleViaje() {
       alVerChofer={(choferId) =>
         router.push({ params: { id: choferId }, pathname: '/chofer/[id]' })
       }
+      alPreguntar={(pregunta) =>
+        router.push({ params: { pregunta }, pathname: '/asistente' })
+      }
       alVolver={() => router.back()}
       viajeId={viajeId}
     />
