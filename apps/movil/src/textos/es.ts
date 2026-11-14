@@ -585,6 +585,26 @@ export const textos = {
     previos: 'Tus reportes de este viaje',
     cerrar: 'Cerrar',
   },
+  vistaDia: {
+    ahora: 'Ahora',
+    atajos: 'Lo que te conviene',
+    destinos: 'Destinos',
+    lineaTitulo: 'El día en una línea',
+    marca: 'Salida a {destino} a las {hora}, {libres} asientos libres',
+    masBarata: 'Más barata',
+    masLibre: 'Más espacio',
+    masTemprana: 'Más temprana',
+    resumenPedido:
+      'Resumime las salidas de {terminal} y decime cuál me conviene según la tarifa y los asientos libres.',
+    resumenTitulo: 'Resumir el día con IA',
+    todosLosDestinos: 'Todos los destinos',
+  },
+  rutasVisual: {
+    conoce: 'Conocé {ciudad}',
+    resumenPedido:
+      'De estas salidas de {origen} a {destino}, decime cuál me conviene y por qué, según la hora y los asientos libres.',
+    resumenTitulo: 'Elegir la mejor salida con IA',
+  },
   asistenteRico: {
     actividadDe: '{actividad}…',
     boletosTitulo: 'Tus boletos',
