@@ -8,6 +8,7 @@ import { ConductorEncomiendas } from './ConductorEncomiendas';
 
 import { Aparece } from '@/componentes/Aparece';
 import { Autobus, type IdVarianteBus } from '@/componentes/Autobus';
+import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { Bloque } from '@/componentes/Bloque';
 import type { IdVehiculoPlus } from '@/componentes/VehiculoPlus';
 import { formatoHora } from '@/datos/formato';
@@ -29,6 +30,8 @@ import { t } from '@/textos/t';
 
 export interface PropiedadesConductorPasajeros {
   alAbrirViaje: (viajeId: string) => void;
+  /** con esto se muestra la flecha para volver: la pantalla ya no es una pestaña */
+  alVolver?: () => void;
 }
 
 function Pildora({ color, texto }: { color: string; texto: string }) {
@@ -42,6 +45,7 @@ function Pildora({ color, texto }: { color: string; texto: string }) {
 /** pasajeros del día: por cada salida, quién viaja, si pagó y si ya subió; los Plus van primero */
 export function ConductorPasajeros({
   alAbrirViaje,
+  alVolver,
 }: PropiedadesConductorPasajeros) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
@@ -70,6 +74,12 @@ export function ConductorPasajeros({
       contentInsetAdjustmentBehavior="automatic"
       style={{ backgroundColor: colores.fondo }}
     >
+      {alVolver && (
+        <CabeceraPantalla
+          alVolver={alVolver}
+          titulo={t('conductorPasajeros.pestana')}
+        />
+      )}
       <Text style={[tipografia.titulo, { color: colores.tinta }]}>
         {t('conductorPasajeros.titulo')}.
       </Text>

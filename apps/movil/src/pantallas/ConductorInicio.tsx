@@ -30,6 +30,8 @@ import { t } from '@/textos/t';
 import { etiquetaPunto } from '@/datos/puntoEncuentro';
 
 export interface PropiedadesConductorInicio {
+  /** abre los pasajeros y encomiendas del día; la tarjeta solo se ofrece si hay viajes */
+  alAbrirABordo?: () => void;
   alAbrirViaje: (viajeId: string) => void;
   /** abre el formulario para publicar un viaje nuevo */
   alNuevoViaje?: () => void;
@@ -39,6 +41,7 @@ export interface PropiedadesConductorInicio {
 
 /** los viajes del día del chofer; desde acá empieza a compartir su ubicación */
 export function ConductorInicio({
+  alAbrirABordo,
   alAbrirViaje,
   alNuevoViaje,
   alSalir,
@@ -124,6 +127,28 @@ export function ConductorInicio({
         />
       )}
 
+      {alAbrirABordo && viajes.length > 0 && (
+        <Pressable
+          accessibilityLabel={t('conductor.aBordoTitulo')}
+          accessibilityRole="button"
+          onPress={alAbrirABordo}
+          testID="tarjeta-a-bordo"
+        >
+          <Bloque estiloContenido={estilos.fila}>
+            <View style={estilos.texto}>
+              <Text
+                style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
+              >
+                {t('conductor.aBordoTitulo')}
+              </Text>
+              <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
+                {t('conductor.aBordoDetalle')}
+              </Text>
+            </View>
+            <Icono nombre="siguiente" tamano="mediano" />
+          </Bloque>
+        </Pressable>
+      )}
       {viajes.length === 0 && (
         <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
           {t('conductor.sinViajes')}

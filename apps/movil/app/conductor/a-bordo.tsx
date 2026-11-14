@@ -12,6 +12,7 @@ export default function RutaConductorPasajeros() {
 
   return (
     <ConductorPasajeros
+      alVolver={() => router.back()}
       alAbrirViaje={(id) =>
         router.push({ params: { id }, pathname: '/conductor/viaje/[id]' })
       }
