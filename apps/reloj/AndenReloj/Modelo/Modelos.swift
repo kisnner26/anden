@@ -28,14 +28,21 @@ struct Viaje: Decodable, Identifiable {
     let rutaId: String
     let servicio: String
     let placa: String
-    let anden: Int
+    /// Plus Code de dónde se sube al bus; nil en los viajes publicados antes de que existiera
+    let puntoEncuentro: String?
     let salida: Date
     let estado: String
     let salioEn: Date?
 
+    /// los últimos siete signos del código, como 4PPX+HC; "por confirmar" mientras el conductor no lo puso
+    var puntoCorto: String {
+        guard let p = puntoEncuentro, p.count > 4 else { return "por confirmar" }
+        return String(p.dropFirst(4))
+    }
+
     enum CodingKeys: String, CodingKey {
-        case id, servicio, placa, anden, salida, estado
-        case rutaId = "ruta_id", salioEn = "salio_en"
+        case id, servicio, placa, salida, estado
+        case rutaId = "ruta_id", salioEn = "salio_en", puntoEncuentro = "punto_encuentro"
     }
 }
 

@@ -67,7 +67,7 @@ final class ClienteAnden {
         let lista = boletos.map { "\"\($0.viajeId)\"" }.joined(separator: ",")
         let viajes: [Viaje] = try await tabla(
             "viajes",
-            [("select", "id,ruta_id,servicio,placa,anden,salida,estado,salio_en"), ("id", "in.(\(lista))")])
+            [("select", "id,ruta_id,servicio,placa,punto_encuentro,salida,estado,salio_en"), ("id", "in.(\(lista))")])
         return boletos.compactMap { b in
             guard let v = viajes.first(where: { $0.id == b.viajeId }), v.estado != "cancelado" else { return nil }
             return Reserva(boleto: b, viaje: v)
@@ -80,7 +80,7 @@ final class ClienteAnden {
         let desde = ISO8601DateFormatter().string(from: Date().addingTimeInterval(-600))
         return try await tabla(
             "viajes",
-            [("select", "id,ruta_id,servicio,placa,anden,salida,estado,salio_en"), ("salida", "gte.\(desde)"),
+            [("select", "id,ruta_id,servicio,placa,punto_encuentro,salida,estado,salio_en"), ("salida", "gte.\(desde)"),
              ("estado", "neq.cancelado"), ("salio_en", "is.null"), ("order", "salida.asc"), ("limit", "12")])
     }
 
