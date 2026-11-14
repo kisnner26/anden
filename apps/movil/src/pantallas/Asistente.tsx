@@ -15,7 +15,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Aparece } from '@/componentes/Aparece';
-import { AuraDePantalla, SurgeDelOrbe } from '@/componentes/AuraDePantalla';
+import { SurgeDelOrbe } from '@/componentes/SurgeDelOrbe';
 import { Bloque } from '@/componentes/Bloque';
 import { EsqueletoIA } from '@/componentes/EsqueletoIA';
 import { BotonAccion } from '@/componentes/BotonAccion';
@@ -1191,7 +1191,6 @@ export function Asistente({
           </>
         )}
       </ScrollView>
-      <AuraDePantalla activa={pensando} />
       {usable && (
         <View style={{ paddingBottom: margenes.bottom }}>
           <CompositorIA
