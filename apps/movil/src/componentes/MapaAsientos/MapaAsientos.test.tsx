@@ -1,6 +1,7 @@
 import type { EstadoAsiento } from '@anden/dominio';
 import { describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, render } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 
 import { MapaAsientos } from './MapaAsientos';
 
