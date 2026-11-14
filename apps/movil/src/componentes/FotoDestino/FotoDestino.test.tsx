@@ -12,15 +12,15 @@ describe('FotoDestino', () => {
 
   it('si el destino no tiene foto usa la de la ciudad de salida', async () => {
     const p = await renderPantalla(
-      <FotoDestino destino="Boaco" origen="Managua" />,
+      <FotoDestino destino="Granada" origen="Managua" />,
     );
-    expect(p.getByLabelText('Foto de Boaco')).toBeTruthy();
+    expect(p.getByLabelText('Foto de Granada')).toBeTruthy();
   });
 
   it('sin ninguna foto no se anuncia como imagen', async () => {
     const p = await renderPantalla(
-      <FotoDestino destino="Boaco" origen="Granada" />,
+      <FotoDestino destino="Granada" origen="León" />,
     );
-    expect(p.queryByLabelText('Foto de Boaco')).toBeNull();
+    expect(p.queryByLabelText('Foto de Granada')).toBeNull();
   });
 });

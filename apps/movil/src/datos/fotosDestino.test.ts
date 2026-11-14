@@ -6,9 +6,10 @@ describe('fotoDeDestino', () => {
   it('encuentra la foto sin importar mayúsculas ni espacios', () => {
     expect(fotoDeDestino('Juigalpa')).not.toBeNull();
     expect(fotoDeDestino('  MANAGUA ')).not.toBeNull();
+    expect(fotoDeDestino('Boaco')).not.toBeNull();
   });
 
   it('devuelve null para una ciudad sin foto', () => {
-    expect(fotoDeDestino('Boaco')).toBeNull();
+    expect(fotoDeDestino('Granada')).toBeNull();
   });
 });
