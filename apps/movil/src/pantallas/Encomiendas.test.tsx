@@ -87,6 +87,28 @@ describe('Encomiendas', () => {
     ).toBeTruthy();
   });
 
+  it('el trayecto no lleva texto en el medio: solo las dos ciudades y el círculo que las invierte', async () => {
+    const pantalla = await dibujar();
+    expect(pantalla.queryByText(/invertir/i)).toBeNull();
+    expect(pantalla.getAllByText('Managua').length).toBeGreaterThan(0);
+    const antes = pantalla.getByRole('button', { name: 'Managua → Boaco' });
+    await fireEvent.press(antes);
+    expect(
+      pantalla.getByRole('button', { name: 'Boaco → Managua' }),
+    ).toBeTruthy();
+  });
+
+  it('las tarjetas de tamaño usan rótulos cortos que no se cortan', async () => {
+    const pantalla = await dibujar();
+    for (const corto of ['Sobre', 'Chico', 'Grande']) {
+      expect(pantalla.getByText(corto)).toBeTruthy();
+    }
+    // el nombre completo sigue disponible para quien usa lector de pantalla
+    expect(
+      pantalla.getByRole('button', { name: 'Paquete chico' }),
+    ).toBeTruthy();
+  });
+
   it('el bus sale elegido solo: el primero que sale', async () => {
     const pantalla = await dibujar();
     const horas = pantalla.queryAllByText(/^\d{1,2}:\d{2} (a|p)\. m\.$/);
