@@ -15,6 +15,8 @@ export interface PropiedadesCompositorIA {
   alHablar: () => void;
   deshabilitado?: boolean;
   estado: EstadoOrbe;
+  /** el orbe para hablar; la pantalla vacía ya muestra uno grande */
+  mostrarOrbe?: boolean;
   nivel: Animated.Value;
   texto: string;
 }
@@ -26,6 +28,7 @@ export function CompositorIA({
   alHablar,
   deshabilitado = false,
   estado,
+  mostrarOrbe = true,
   nivel,
   texto,
 }: PropiedadesCompositorIA) {
@@ -34,15 +37,17 @@ export function CompositorIA({
 
   return (
     <View style={estilos.barra}>
-      <OrbeIA
-        alPresionar={alHablar}
-        estado={estado}
-        etiquetaAccesible={
-          estado === 'escuchando' ? t('ia.detener') : t('ia.hablar')
-        }
-        nivel={nivel}
-        tamano={tamanosControl.toqueMinimo + 8}
-      />
+      {mostrarOrbe && (
+        <OrbeIA
+          alPresionar={alHablar}
+          estado={estado}
+          etiquetaAccesible={
+            estado === 'escuchando' ? t('ia.detener') : t('ia.hablar')
+          }
+          nivel={nivel}
+          tamano={tamanosControl.toqueMinimo + 8}
+        />
+      )}
       <Bloque
         estilo={estilos.campo}
         estiloContenido={estilos.campoContenido}
@@ -50,7 +55,7 @@ export function CompositorIA({
         radio="pildora"
       >
         <TextInput
-          accessibilityLabel={t('asistenteRico.escribir')}
+          accessibilityLabel={t('ia.campo')}
           blurOnSubmit={false}
           onChangeText={alCambiar}
           onSubmitEditing={() => puedeEnviar && alEnviar()}
@@ -70,7 +75,7 @@ export function CompositorIA({
         />
       </Bloque>
       <Pressable
-        accessibilityLabel={t('asistenteRico.enviar')}
+        accessibilityLabel={t('ia.preguntar')}
         accessibilityRole="button"
         accessibilityState={{ disabled: !puedeEnviar }}
         disabled={!puedeEnviar}

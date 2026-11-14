@@ -24,21 +24,21 @@ describe('CompositorIA', () => {
   it('envía lo escrito al tocar el botón', async () => {
     const alEnviar = jest.fn();
     const p = await dibujar('hola', alEnviar);
-    await fireEvent.press(p.getByRole('button', { name: 'Enviar pregunta' }));
+    await fireEvent.press(p.getByRole('button', { name: 'Preguntar' }));
     expect(alEnviar).toHaveBeenCalledTimes(1);
   });
 
   it('sin texto no se puede enviar', async () => {
     const alEnviar = jest.fn();
     const p = await dibujar('   ', alEnviar);
-    await fireEvent.press(p.getByRole('button', { name: 'Enviar pregunta' }));
+    await fireEvent.press(p.getByRole('button', { name: 'Preguntar' }));
     expect(alEnviar).not.toHaveBeenCalled();
   });
 
   it('mientras el asistente piensa no deja enviar otra', async () => {
     const alEnviar = jest.fn();
     const p = await dibujar('hola', alEnviar, true);
-    await fireEvent.press(p.getByRole('button', { name: 'Enviar pregunta' }));
+    await fireEvent.press(p.getByRole('button', { name: 'Preguntar' }));
     expect(alEnviar).not.toHaveBeenCalled();
   });
 });

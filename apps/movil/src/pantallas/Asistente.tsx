@@ -3,8 +3,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   ScrollView,
+  type ScrollViewInstance,
   StyleSheet,
   Text,
   View,
@@ -16,7 +19,11 @@ import { Bloque } from '@/componentes/Bloque';
 import { EsqueletoIA } from '@/componentes/EsqueletoIA';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
-import { CampoTexto } from '@/componentes/CampoTexto';
+import { ActividadIA } from '@/componentes/ActividadIA';
+import { CompositorIA } from '@/componentes/CompositorIA';
+import { FichaCiudadIA } from '@/componentes/FichaCiudadIA';
+import { FotoDestino } from '@/componentes/FotoDestino';
+import { TarjetaSalidaIA } from '@/componentes/TarjetaSalidaIA';
 import { Chip } from '@/componentes/Chip';
 import { Interruptor } from '@/componentes/Interruptor';
 import { FilaSalida } from '@/componentes/FilaSalida';
@@ -40,6 +47,15 @@ import { nombreCompleto, nombrePropio } from '@/datos/perfil';
 import { usePerfil } from '@/datos/usePerfil';
 import { useSesion } from '@/datos/useSesion';
 import { armarContexto, instruccionesDelAsistente } from '@/datos/contextoIA';
+import {
+  actividadDeHerramienta,
+  armarDatosParaElModelo,
+  instruccionesDeConversacion,
+  leerRespuestaRica,
+  RESPUESTA_VACIA,
+  type RespuestaRica,
+} from '@/datos/conversacionIA';
+import { FICHAS } from '@/datos/fichasCiudad';
 import { formatoHoraCompleta } from '@/datos/formato';
 import { useBoletos } from '@/datos/useBoletos';
 import { registrarReserva, resumenParaModelo } from '@/datos/memoriaIA';
@@ -74,9 +90,15 @@ export interface PropiedadesAsistente {
 }
 
 interface Intercambio {
+  /** lo que consulta el modelo mientras responde, por ejemplo "Buscando salidas" */
+  actividad?: string | null;
+  /** la respuesta sigue llegando */
+  enCurso?: boolean;
   id: number;
   pregunta: string;
   respuesta: string;
+  /** respuesta con tarjetas, solo cuando conversó con herramientas */
+  rica?: RespuestaRica;
 }
 
 /** el asistente: responde con las salidas y boletos reales de la app usando el modelo del teléfono */
@@ -88,7 +110,15 @@ export function Asistente({
 }: PropiedadesAsistente) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
-  const { disponibilidad, nombre, preguntar, usable } = useIA();
+  const {
+    conversar,
+    disponibilidad,
+    nombre,
+    olvidar,
+    precalentar,
+    preguntar,
+    usable,
+  } = useIA();
   const { boletos, reservar } = useBoletos();
   const { ahora, datos, salidas } = useSalidas();
   const { perfil } = usePerfil();
@@ -108,7 +138,9 @@ export function Asistente({
   const [pensando, establecerPensando] = useState(false);
   const [fallo, establecerFallo] = useState(false);
   const [historial, establecerHistorial] = useState<Intercambio[]>([]);
-  const [siguienteId, establecerSiguienteId] = useState(1);
+  const contadorId = useRef(1);
+  const conversacionId = useRef(`conversacion-${Date.now()}`);
+  const scrollRef = useRef<ScrollViewInstance>(null);
   const voz = useVoz();
   const memoriaIA = useMemoriaIA();
   const { cambiar: cambiarTurista, turista } = useTurista();
@@ -118,6 +150,8 @@ export function Asistente({
   const [escuchando, establecerEscuchando] = useState(false);
   // el volumen de la voz mueve el orbe sin volver a dibujar toda la pantalla
   const nivel = useRef(new Animated.Value(0)).current;
+  // el orbe de la barra de abajo tiene su propio valor: compartirlo con el grande rompe la animación al cambiar de uno a otro
+  const nivelBarra = useRef(new Animated.Value(0)).current;
   const [hablando, establecerHablando] = useState(false);
   const [problemaVoz, establecerProblemaVoz] = useState<string | null>(null);
   const [vozEnLinea, establecerVozEnLinea] = useState(false);
@@ -200,11 +234,8 @@ export function Asistente({
 
   /** agrega un intercambio sin pasar por el modelo y lo lee en voz alta si corresponde */
   function responder(pregunta: string, respuesta: string, porVoz: boolean) {
-    establecerHistorial((previo) => [
-      { id: siguienteId, pregunta, respuesta },
-      ...previo,
-    ]);
-    establecerSiguienteId((id) => id + 1);
+    const id = contadorId.current++;
+    establecerHistorial((previo) => [...previo, { id, pregunta, respuesta }]);
     establecerTexto('');
     if (porVoz || hablarRespuesta.current) {
       void voz.hablar(respuesta, {
@@ -311,6 +342,90 @@ export function Asistente({
     }
   }
 
+  function actualizarIntercambio(id: number, cambios: Partial<Intercambio>) {
+    establecerHistorial((previo) =>
+      previo.map((intercambio) =>
+        intercambio.id === id ? { ...intercambio, ...cambios } : intercambio,
+      ),
+    );
+  }
+
+  /**
+   * conversa con el modelo usando herramientas que consultan los datos reales; va mostrando el texto y las
+   * tarjetas mientras llegan. Devuelve falso si no logró una respuesta, para caer en el modo sencillo.
+   */
+  async function conversarConHerramientas(
+    pregunta: string,
+    porVoz: boolean,
+  ): Promise<boolean> {
+    if (!conversar) return false;
+    const id = contadorId.current++;
+    establecerHistorial((previo) => [
+      ...previo,
+      {
+        actividad: null,
+        enCurso: true,
+        id,
+        pregunta,
+        respuesta: '',
+        rica: RESPUESTA_VACIA,
+      },
+    ]);
+    establecerTexto('');
+    try {
+      const final = await conversar({
+        alHerramienta: (herramienta) =>
+          actualizarIntercambio(id, {
+            actividad: actividadDeHerramienta(herramienta),
+          }),
+        alParcial: (json) =>
+          actualizarIntercambio(id, {
+            actividad: null,
+            rica: leerRespuestaRica(json, salidas),
+          }),
+        conversacion: conversacionId.current,
+        datosJson: JSON.stringify(
+          armarDatosParaElModelo(salidas, boletos, new Date()),
+        ),
+        instrucciones: instruccionesDeConversacion({ turista }),
+        pregunta,
+      });
+      const rica = leerRespuestaRica(final, salidas);
+      if (rica.texto === '') throw new Error('respuesta-vacia');
+      actualizarIntercambio(id, {
+        actividad: null,
+        enCurso: false,
+        respuesta: rica.texto,
+        rica,
+      });
+      if (porVoz || hablarRespuesta.current) {
+        void voz.hablar(rica.texto, {
+          alEstado: establecerHablando,
+          alProblema: (motivo) => {
+            establecerHablando(false);
+            establecerProblemaVoz(motivo);
+          },
+          enLinea: usarVozEnLinea.current,
+        });
+      }
+      return true;
+    } catch {
+      // se quita lo a medias y se responde con el modo sencillo
+      establecerHistorial((previo) =>
+        previo.filter((intercambio) => intercambio.id !== id),
+      );
+      return false;
+    }
+  }
+
+  function nuevaConversacion() {
+    void voz.callar();
+    establecerHablando(false);
+    establecerHistorial([]);
+    void olvidar?.(conversacionId.current);
+    conversacionId.current = `conversacion-${Date.now()}`;
+  }
+
   async function enviar(pregunta: string, porVoz = false) {
     const limpia = pregunta.trim();
     if (limpia === '' || pensando) return;
@@ -324,6 +439,7 @@ export function Asistente({
       }
       const todosLosDestinos = [...new Set(salidas.map((s) => s.destino))];
       memoriaIA.recordarPregunta(limpia, todosLosDestinos);
+      if (conversar && (await conversarConHerramientas(limpia, porVoz))) return;
       const contexto = [
         armarContexto(salidas, boletos, new Date()),
         resumenParaModelo(memoriaEfectiva),
@@ -334,11 +450,11 @@ export function Asistente({
         instruccionesDelAsistente(contexto, { turista }),
         limpia,
       );
+      const id = contadorId.current++;
       establecerHistorial((previo) => [
-        { id: siguienteId, pregunta: limpia, respuesta: respuesta.trim() },
         ...previo,
+        { id, pregunta: limpia, respuesta: respuesta.trim() },
       ]);
-      establecerSiguienteId((id) => id + 1);
       establecerTexto('');
       // si le hablaste, te contesta hablando aunque el interruptor esté apagado
       if (porVoz || hablarRespuesta.current) {
@@ -371,12 +487,15 @@ export function Asistente({
     establecerProblemaVoz(null);
     const resultado = await voz.escuchar({
       alFallar: () => establecerEscuchando(false),
-      alNivel: (valor) =>
-        Animated.timing(nivel, {
-          duration: 90,
-          toValue: valor,
-          useNativeDriver: true,
-        }).start(),
+      alNivel: (valor) => {
+        for (const animado of [nivel, nivelBarra]) {
+          Animated.timing(animado, {
+            duration: 90,
+            toValue: valor,
+            useNativeDriver: true,
+          }).start();
+        }
+      },
       alTerminar: () => {
         establecerEscuchando(false);
         const pregunta = dicho.current;
@@ -409,20 +528,43 @@ export function Asistente({
   }
 
   const motivo = usable ? null : motivoNoDisponible(disponibilidad, nombre);
+  const conversando = historial.length > 0;
+  const estadoOrbe = escuchando
+    ? 'escuchando'
+    : pensando
+      ? 'pensando'
+      : hablando
+        ? 'hablando'
+        : 'reposo';
+
+  useEffect(() => {
+    if (usable) {
+      void precalentar?.(
+        conversacionId.current,
+        instruccionesDeConversacion({ turista }),
+      );
+    }
+  }, [precalentar, turista, usable]);
 
   return (
-    <View style={[estilos.raiz, { backgroundColor: colores.fondo }]}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={[estilos.raiz, { backgroundColor: colores.fondo }]}
+    >
       <ScrollView
-        automaticallyAdjustKeyboardInsets
         contentContainerStyle={[
           estilos.contenido,
           {
-            paddingBottom: espacios.cuarentaYOcho,
+            paddingBottom: espacios.veinticuatro,
             paddingTop: margenes.top + espacios.ocho,
           },
         ]}
         keyboardDismissMode="interactive"
         keyboardShouldPersistTaps="handled"
+        onContentSizeChange={() => {
+          if (conversando) scrollRef.current?.scrollToEnd({ animated: true });
+        }}
+        ref={scrollRef}
         style={estilos.raiz}
       >
         <CabeceraPantalla
@@ -430,62 +572,68 @@ export function Asistente({
           titulo={t('ia.asistenteTitulo')}
         />
 
-        <View style={estilos.hero}>
-          <OrbeIA
-            alPresionar={() => void alternarEscucha()}
-            estado={
-              escuchando
-                ? 'escuchando'
-                : pensando
-                  ? 'pensando'
-                  : hablando
-                    ? 'hablando'
-                    : 'reposo'
-            }
-            etiquetaAccesible={escuchando ? t('ia.detener') : t('ia.hablar')}
-            nivel={nivel}
-            tamano={120}
-          />
-          <Text
-            accessibilityLiveRegion="polite"
-            style={[
-              tipografia.subtitulo,
-              estilos.centrado,
-              { color: colores.tinta },
-            ]}
+        {conversando && (
+          <Pressable
+            accessibilityRole="button"
+            onPress={nuevaConversacion}
+            style={estilos.nueva}
           >
-            {escuchando
-              ? t('ia.detener')
-              : pensando
-                ? t('ia.pensandoCaption')
-                : hablando
-                  ? t('ia.respondiendo')
-                  : t('ia.tocaElOrbe')}
-          </Text>
-          <LinearGradient
-            colors={[...coloresIA]}
-            end={{ x: 1, y: 0 }}
-            start={{ x: 0, y: 0 }}
-            style={estilos.borde}
-          >
-            <View
-              style={[estilos.insignia, { backgroundColor: colores.fondo }]}
+            <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+              {t('asistenteRico.nuevaConversacion')}
+            </Text>
+          </Pressable>
+        )}
+
+        {!conversando && (
+          <View style={estilos.hero}>
+            <OrbeIA
+              alPresionar={() => void alternarEscucha()}
+              estado={estadoOrbe}
+              etiquetaAccesible={escuchando ? t('ia.detener') : t('ia.hablar')}
+              nivel={nivel}
+              tamano={120}
+            />
+            <Text
+              accessibilityLiveRegion="polite"
+              style={[
+                tipografia.subtitulo,
+                estilos.centrado,
+                { color: colores.tinta },
+              ]}
             >
-              <Text style={[tipografia.etiqueta, { color: colores.tinta }]}>
-                {rellenar(t('ia.potenciadoPor'), { nombre })}
-              </Text>
-            </View>
-          </LinearGradient>
-          <Text
-            style={[
-              tipografia.cuerpo,
-              estilos.centrado,
-              { color: colores.tintaSuave },
-            ]}
-          >
-            {t('ia.asistenteDetalle')}
-          </Text>
-        </View>
+              {escuchando
+                ? t('ia.detener')
+                : pensando
+                  ? t('ia.pensandoCaption')
+                  : hablando
+                    ? t('ia.respondiendo')
+                    : t('ia.tocaElOrbe')}
+            </Text>
+            <LinearGradient
+              colors={[...coloresIA]}
+              end={{ x: 1, y: 0 }}
+              start={{ x: 0, y: 0 }}
+              style={estilos.borde}
+            >
+              <View
+                style={[estilos.insignia, { backgroundColor: colores.fondo }]}
+              >
+                <Text style={[tipografia.etiqueta, { color: colores.tinta }]}>
+                  {rellenar(t('ia.potenciadoPor'), { nombre })}
+                </Text>
+              </View>
+            </LinearGradient>
+            <Text
+              style={[
+                tipografia.cuerpo,
+                estilos.centrado,
+                { color: colores.tintaSuave },
+              ]}
+            >
+              {t('ia.asistenteDetalle')}
+            </Text>
+          </View>
+        )}
 
         {!usable ? (
           <Bloque estiloContenido={estilos.aviso}>
@@ -498,84 +646,353 @@ export function Asistente({
           </Bloque>
         ) : (
           <>
-            {proximoBoleto && (
-              <Aparece indice={0}>
-                <Bloque estiloContenido={estilos.tarjeta}>
+            {!conversando && (
+              <>
+                <View style={estilos.seccion}>
                   <Text
-                    style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
+                    style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
                   >
-                    {t('ia.proximoBoleto')}
+                    {t('asistenteRico.descubri')}
                   </Text>
-                  <Text
-                    style={[tipografia.subtitulo, { color: colores.tinta }]}
+                  <ScrollView
+                    contentContainerStyle={estilos.carrusel}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
                   >
-                    {rellenar(t('ia.proximoBoletoFila'), {
-                      puntoEncuentro: proximoBoleto.resumen.puntoEncuentro,
-                      asiento: proximoBoleto.boleto.asiento,
-                      destino: proximoBoleto.resumen.destino,
-                    })}
-                  </Text>
-                  <Text
-                    style={[tipografia.pequeno, { color: colores.tintaSuave }]}
-                  >
-                    {rellenar(t('ia.saleEn'), {
-                      hora: formatoHoraCompleta(
-                        new Date(proximoBoleto.resumen.salida),
-                      ),
-                    })}
-                  </Text>
-                </Bloque>
-              </Aparece>
-            )}
+                    {FICHAS.map((ficha) => (
+                      <Pressable
+                        accessibilityRole="button"
+                        disabled={pensando}
+                        key={ficha.ciudad}
+                        onPress={() =>
+                          void enviar(
+                            rellenar(t('asistenteRico.queVisitar'), {
+                              ciudad: ficha.ciudad,
+                            }),
+                          )
+                        }
+                        style={({ pressed }) => pressed && estilos.presionada}
+                      >
+                        <FotoDestino
+                          destino={ficha.ciudad}
+                          estilo={estilos.ciudad}
+                          radio="tarjeta"
+                        >
+                          <View style={estilos.ciudadTexto}>
+                            <Text
+                              style={[
+                                tipografia.pequeno,
+                                { color: colores.ambar },
+                              ]}
+                            >
+                              {rellenar(t('asistenteRico.queVisitar'), {
+                                ciudad: '',
+                              }).trim()}
+                            </Text>
+                            <Text
+                              style={[
+                                tipografia.subtitulo,
+                                { color: colores.sobreNegro },
+                              ]}
+                            >
+                              {ficha.ciudad}
+                            </Text>
+                          </View>
+                        </FotoDestino>
+                      </Pressable>
+                    ))}
+                  </ScrollView>
+                </View>
 
-            <Aparece indice={1}>
-              <Bloque estiloContenido={estilos.tarjeta}>
-                <Text
-                  style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
-                >
-                  {t('ia.masBarata')}
-                </Text>
-                {masBarata ? (
-                  <Pressable
-                    accessibilityRole="button"
-                    onPress={() => alAbrirViaje?.(masBarata.viajeId)}
-                  >
+                {proximoBoleto && (
+                  <Aparece indice={0}>
+                    <Bloque estiloContenido={estilos.tarjeta}>
+                      <Text
+                        style={[
+                          tipografia.etiqueta,
+                          { color: colores.ambarTexto },
+                        ]}
+                      >
+                        {t('ia.proximoBoleto')}
+                      </Text>
+                      <Text
+                        style={[tipografia.subtitulo, { color: colores.tinta }]}
+                      >
+                        {rellenar(t('ia.proximoBoletoFila'), {
+                          puntoEncuentro: proximoBoleto.resumen.puntoEncuentro,
+                          asiento: proximoBoleto.boleto.asiento,
+                          destino: proximoBoleto.resumen.destino,
+                        })}
+                      </Text>
+                      <Text
+                        style={[
+                          tipografia.pequeno,
+                          { color: colores.tintaSuave },
+                        ]}
+                      >
+                        {rellenar(t('ia.saleEn'), {
+                          hora: formatoHoraCompleta(
+                            new Date(proximoBoleto.resumen.salida),
+                          ),
+                        })}
+                      </Text>
+                    </Bloque>
+                  </Aparece>
+                )}
+
+                <Aparece indice={1}>
+                  <Bloque estiloContenido={estilos.tarjeta}>
+                    <Text
+                      style={[
+                        tipografia.etiqueta,
+                        { color: colores.ambarTexto },
+                      ]}
+                    >
+                      {t('ia.masBarata')}
+                    </Text>
+                    {masBarata ? (
+                      <Pressable
+                        accessibilityRole="button"
+                        onPress={() => alAbrirViaje?.(masBarata.viajeId)}
+                      >
+                        <Text
+                          style={[
+                            tipografia.subtitulo,
+                            { color: colores.tinta },
+                          ]}
+                        >
+                          {rellenar(t('ia.masBarataDetalle'), {
+                            destino: masBarata.destino,
+                            hora: formatoHoraCompleta(masBarata.salida),
+                            tarifa: masBarata.tarifa ?? 0,
+                          })}
+                        </Text>
+                      </Pressable>
+                    ) : (
+                      <Text
+                        style={[
+                          tipografia.pequeno,
+                          { color: colores.tintaSuave },
+                        ]}
+                      >
+                        {t('ia.sinMasBarata')}
+                      </Text>
+                    )}
+                  </Bloque>
+                </Aparece>
+
+                <View style={estilos.sugerencias}>
+                  {sugerencias.map((pregunta) => (
+                    <Chip
+                      alCambiar={() => void enviar(pregunta)}
+                      deshabilitado={pensando}
+                      etiqueta={pregunta}
+                      key={pregunta}
+                    />
+                  ))}
+                </View>
+
+                <Bloque estiloContenido={estilos.filaVoz}>
+                  <View style={estilos.textoVoz}>
                     <Text
                       style={[tipografia.subtitulo, { color: colores.tinta }]}
                     >
-                      {rellenar(t('ia.masBarataDetalle'), {
-                        destino: masBarata.destino,
-                        hora: formatoHoraCompleta(masBarata.salida),
-                        tarifa: masBarata.tarifa ?? 0,
-                      })}
+                      {t('ia.turista')}
                     </Text>
-                  </Pressable>
-                ) : (
-                  <Text
-                    style={[tipografia.pequeno, { color: colores.tintaSuave }]}
-                  >
-                    {t('ia.sinMasBarata')}
-                  </Text>
+                    <Text
+                      style={[
+                        tipografia.pequeno,
+                        { color: colores.tintaSuave },
+                      ]}
+                    >
+                      {t('ia.turistaDetalle')}
+                    </Text>
+                  </View>
+                  <Interruptor
+                    activo={turista}
+                    alCambiar={(activo) => void cambiarTurista(activo)}
+                    etiqueta={t('ia.turista')}
+                  />
+                </Bloque>
+                <Bloque estiloContenido={estilos.filaVoz}>
+                  <View style={estilos.textoVoz}>
+                    <Text
+                      style={[tipografia.subtitulo, { color: colores.tinta }]}
+                    >
+                      {t('ia.respuestaEnVoz')}
+                    </Text>
+                    <Text
+                      style={[
+                        tipografia.pequeno,
+                        { color: colores.tintaSuave },
+                      ]}
+                    >
+                      {t('ia.respuestaEnVozDetalle')}
+                    </Text>
+                  </View>
+                  <Interruptor
+                    activo={respuestaEnVoz}
+                    alCambiar={(activa) => void cambiarRespuestaEnVoz(activa)}
+                    etiqueta={t('ia.respuestaEnVoz')}
+                  />
+                </Bloque>
+                {respuestaEnVoz && (
+                  <Bloque estiloContenido={estilos.filaVoz}>
+                    <View style={estilos.textoVoz}>
+                      <Text
+                        style={[tipografia.subtitulo, { color: colores.tinta }]}
+                      >
+                        {t('ia.vozNatural')}
+                      </Text>
+                      <Text
+                        style={[
+                          tipografia.pequeno,
+                          { color: colores.tintaSuave },
+                        ]}
+                      >
+                        {t('ia.vozNaturalDetalle')}
+                      </Text>
+                    </View>
+                    <Interruptor
+                      activo={vozEnLinea}
+                      alCambiar={(activa) => void cambiarVozEnLinea(activa)}
+                      etiqueta={t('ia.vozNatural')}
+                    />
+                  </Bloque>
                 )}
-              </Bloque>
-            </Aparece>
+              </>
+            )}
 
-            <View style={estilos.sugerencias}>
-              {sugerencias.map((pregunta) => (
-                <Chip
-                  alCambiar={() => void enviar(pregunta)}
-                  deshabilitado={pensando}
-                  etiqueta={pregunta}
-                  key={pregunta}
-                />
-              ))}
-            </View>
-            <CampoTexto
-              alCambiar={establecerTexto}
-              etiqueta={t('ia.campo')}
-              marcador={t('ia.marcador')}
-              valor={texto}
-            />
+            {historial.map((intercambio, indice) => {
+              const esUltimo = indice === historial.length - 1;
+              const rica = intercambio.rica;
+              const relacionadas = rica
+                ? []
+                : salidasRelacionadas(
+                    `${intercambio.pregunta} ${intercambio.respuesta}`,
+                    salidas,
+                    ahora,
+                  );
+              return (
+                <View key={intercambio.id} style={estilos.intercambio}>
+                  <View
+                    style={[
+                      estilos.burbujaPregunta,
+                      { backgroundColor: colores.barroClaro },
+                    ]}
+                  >
+                    <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
+                      {intercambio.pregunta}
+                    </Text>
+                  </View>
+                  <Bloque estiloContenido={estilos.respuesta}>
+                    <View style={estilos.firma}>
+                      <LinearGradient
+                        colors={[...coloresIA]}
+                        end={{ x: 1, y: 1 }}
+                        start={{ x: 0, y: 0 }}
+                        style={estilos.chispa}
+                      />
+                      <Text
+                        style={[
+                          tipografia.etiqueta,
+                          { color: colores.ambarTexto },
+                        ]}
+                      >
+                        {rellenar(t('ia.respuestaDe'), { nombre })}
+                      </Text>
+                    </View>
+                    {intercambio.actividad ? (
+                      <ActividadIA actividad={intercambio.actividad} />
+                    ) : null}
+                    {rica ? (
+                      rica.texto !== '' ? (
+                        <Text
+                          style={[tipografia.cuerpo, { color: colores.tinta }]}
+                        >
+                          {rica.texto}
+                        </Text>
+                      ) : intercambio.enCurso && !intercambio.actividad ? (
+                        <PuntosPensando />
+                      ) : null
+                    ) : (
+                      <TextoEscribiendo
+                        animado={esUltimo}
+                        estilo={[tipografia.cuerpo, { color: colores.tinta }]}
+                        texto={intercambio.respuesta}
+                      />
+                    )}
+                  </Bloque>
+
+                  {rica?.ciudad ? (
+                    <Aparece>
+                      <FichaCiudadIA ciudad={rica.ciudad} />
+                    </Aparece>
+                  ) : null}
+                  {rica?.salidas.map((salida, posicion) => (
+                    <Aparece indice={posicion} key={salida.viajeId}>
+                      <TarjetaSalidaIA
+                        alAbrir={(viajeId) => alAbrirViaje?.(viajeId)}
+                        salida={salida}
+                      />
+                    </Aparece>
+                  ))}
+                  {rica?.mostrarBoletos && alAbrirPantalla ? (
+                    <Aparece>
+                      <BotonAccion
+                        alPresionar={() => alAbrirPantalla('boletos')}
+                        etiqueta={t('asistenteRico.boletosTitulo')}
+                      />
+                    </Aparece>
+                  ) : null}
+                  {relacionadas.length > 0 && (
+                    <View style={estilos.relacionadas}>
+                      <Text
+                        style={[
+                          tipografia.etiqueta,
+                          { color: colores.tintaSuave },
+                        ]}
+                      >
+                        {t('ia.relacionadas')}
+                      </Text>
+                      {relacionadas.map((salida) => (
+                        <FilaSalida
+                          alPresionar={alAbrirViaje}
+                          key={salida.viajeId}
+                          salida={salida}
+                        />
+                      ))}
+                    </View>
+                  )}
+                  {esUltimo &&
+                  !intercambio.enCurso &&
+                  rica &&
+                  rica.seguimientos.length > 0 ? (
+                    <View style={estilos.seccion}>
+                      <Text
+                        style={[
+                          tipografia.etiqueta,
+                          { color: colores.tintaSuave },
+                        ]}
+                      >
+                        {t('asistenteRico.seguirPreguntando')}
+                      </Text>
+                      <View style={estilos.sugerencias}>
+                        {rica.seguimientos.map((seguimiento) => (
+                          <Chip
+                            alCambiar={() => void enviar(seguimiento)}
+                            deshabilitado={pensando}
+                            etiqueta={seguimiento}
+                            key={seguimiento}
+                          />
+                        ))}
+                      </View>
+                    </View>
+                  ) : null}
+                </View>
+              );
+            })}
+
             {escuchando && (
               <Text
                 accessibilityLiveRegion="polite"
@@ -594,67 +1011,6 @@ export function Asistente({
                   : t('ia.vozNoDisponible')}
               </Text>
             )}
-            <Bloque estiloContenido={estilos.filaVoz}>
-              <View style={estilos.textoVoz}>
-                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                  {t('ia.turista')}
-                </Text>
-                <Text
-                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
-                >
-                  {t('ia.turistaDetalle')}
-                </Text>
-              </View>
-              <Interruptor
-                activo={turista}
-                alCambiar={(activo) => void cambiarTurista(activo)}
-                etiqueta={t('ia.turista')}
-              />
-            </Bloque>
-            <Bloque estiloContenido={estilos.filaVoz}>
-              <View style={estilos.textoVoz}>
-                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                  {t('ia.respuestaEnVoz')}
-                </Text>
-                <Text
-                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
-                >
-                  {t('ia.respuestaEnVozDetalle')}
-                </Text>
-              </View>
-              <Interruptor
-                activo={respuestaEnVoz}
-                alCambiar={(activa) => void cambiarRespuestaEnVoz(activa)}
-                etiqueta={t('ia.respuestaEnVoz')}
-              />
-            </Bloque>
-            {respuestaEnVoz && (
-              <Bloque estiloContenido={estilos.filaVoz}>
-                <View style={estilos.textoVoz}>
-                  <Text
-                    style={[tipografia.subtitulo, { color: colores.tinta }]}
-                  >
-                    {t('ia.vozNatural')}
-                  </Text>
-                  <Text
-                    style={[tipografia.pequeno, { color: colores.tintaSuave }]}
-                  >
-                    {t('ia.vozNaturalDetalle')}
-                  </Text>
-                </View>
-                <Interruptor
-                  activo={vozEnLinea}
-                  alCambiar={(activa) => void cambiarVozEnLinea(activa)}
-                  etiqueta={t('ia.vozNatural')}
-                />
-              </Bloque>
-            )}
-            <BotonAccion
-              alPresionar={() => void enviar(texto)}
-              cargando={pensando}
-              deshabilitado={texto.trim() === ''}
-              etiqueta={pensando ? t('ia.pensando') : t('ia.preguntar')}
-            />
             {fallo && (
               <Text
                 accessibilityLiveRegion="polite"
@@ -663,7 +1019,6 @@ export function Asistente({
                 {t('ia.error')}
               </Text>
             )}
-
             {problemaVoz !== null && (
               <Text
                 accessibilityLiveRegion="polite"
@@ -702,7 +1057,7 @@ export function Asistente({
               </Bloque>
             )}
 
-            {pensando && (
+            {pensando && !historial.some((i) => i.enCurso) && (
               <Bloque estiloContenido={estilos.pensandoColumna}>
                 <View style={estilos.pensando}>
                   <PuntosPensando />
@@ -737,70 +1092,7 @@ export function Asistente({
               </Bloque>
             )}
 
-            {historial.map((intercambio, indice) => {
-              const relacionadas = salidasRelacionadas(
-                `${intercambio.pregunta} ${intercambio.respuesta}`,
-                salidas,
-                ahora,
-              );
-              return (
-                <View key={intercambio.id} style={estilos.intercambio}>
-                  <View
-                    style={[
-                      estilos.burbujaPregunta,
-                      { backgroundColor: colores.barroClaro },
-                    ]}
-                  >
-                    <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
-                      {intercambio.pregunta}
-                    </Text>
-                  </View>
-                  <Bloque estiloContenido={estilos.respuesta}>
-                    <View style={estilos.firma}>
-                      <LinearGradient
-                        colors={[...coloresIA]}
-                        end={{ x: 1, y: 1 }}
-                        start={{ x: 0, y: 0 }}
-                        style={estilos.chispa}
-                      />
-                      <Text
-                        style={[
-                          tipografia.etiqueta,
-                          { color: colores.ambarTexto },
-                        ]}
-                      >
-                        {rellenar(t('ia.respuestaDe'), { nombre })}
-                      </Text>
-                    </View>
-                    <TextoEscribiendo
-                      animado={indice === 0}
-                      estilo={[tipografia.cuerpo, { color: colores.tinta }]}
-                      texto={intercambio.respuesta}
-                    />
-                    {relacionadas.length > 0 && (
-                      <View style={estilos.relacionadas}>
-                        <Text
-                          style={[
-                            tipografia.etiqueta,
-                            { color: colores.tintaSuave },
-                          ]}
-                        >
-                          {t('ia.relacionadas')}
-                        </Text>
-                        {relacionadas.map((salida) => (
-                          <FilaSalida
-                            alPresionar={alAbrirViaje}
-                            key={salida.viajeId}
-                            salida={salida}
-                          />
-                        ))}
-                      </View>
-                    )}
-                  </Bloque>
-                </View>
-              );
-            })}
-            {historial.length > 0 && (
+            {conversando && (
               <>
                 <Text
                   style={[tipografia.pequeno, { color: colores.tintaSuave }]}
@@ -809,7 +1101,7 @@ export function Asistente({
                 </Text>
                 <Pressable
                   accessibilityRole="button"
-                  onPress={() => establecerHistorial([])}
+                  onPress={nuevaConversacion}
                   style={estilos.limpiar}
                 >
                   <Text
@@ -823,11 +1115,31 @@ export function Asistente({
           </>
         )}
       </ScrollView>
-    </View>
+      {usable && (
+        <View style={{ paddingBottom: margenes.bottom }}>
+          <CompositorIA
+            alCambiar={establecerTexto}
+            alEnviar={() => void enviar(texto)}
+            alHablar={() => void alternarEscucha()}
+            deshabilitado={pensando}
+            estado={estadoOrbe}
+            mostrarOrbe={conversando}
+            nivel={nivelBarra}
+            texto={texto}
+          />
+        </View>
+      )}
+    </KeyboardAvoidingView>
   );
 }
 
 const estilos = StyleSheet.create({
+  carrusel: { gap: espacios.doce, paddingRight: espacios.lateral },
+  ciudad: { height: 120, justifyContent: 'flex-end', width: 190 },
+  ciudadTexto: { gap: 2, padding: espacios.doce },
+  nueva: { alignItems: 'flex-end', minHeight: 32, justifyContent: 'center' },
+  presionada: { opacity: 0.92, transform: [{ scale: 0.98 }] },
+  seccion: { gap: espacios.ocho },
   aviso: { gap: espacios.ocho, padding: espacios.veinticuatro },
   borde: { borderRadius: radios.pildora, padding: 2 },
   burbujaPregunta: {

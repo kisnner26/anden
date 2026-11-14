@@ -330,4 +330,111 @@ describe('Asistente', () => {
     ).toBeTruthy();
     expect(contexto.preguntar).not.toHaveBeenCalled();
   });
+
+  describe('conversación con herramientas', () => {
+    function conversacion(json: object, parciales: object[] = []) {
+      return jest.fn<NonNullable<ValorIA['conversar']>>(async (pedido) => {
+        pedido.alHerramienta?.('buscarSalidas');
+        for (const parcial of parciales) {
+          pedido.alParcial?.(JSON.stringify(parcial));
+        }
+        return JSON.stringify(json);
+      });
+    }
+
+    async function preguntar(contexto: ValorIA, texto = 'hola') {
+      const pantalla = await abrir(contexto);
+      await fireEvent.changeText(pantalla.getByLabelText('Tu pregunta'), texto);
+      await fireEvent.press(
+        pantalla.getByRole('button', { name: 'Preguntar' }),
+      );
+      return pantalla;
+    }
+
+    it('muestra la respuesta con la tarjeta de la salida real y las preguntas de seguimiento', async () => {
+      const conversar = conversacion({
+        ciudad: 'Boaco',
+        mostrarBoletos: false,
+        salidas: ['via_d1_0_0', 'via_inventada'],
+        seguimientos: ['¿Y a Juigalpa?'],
+        texto: 'Te sirve este bus.',
+      });
+      const pantalla = await preguntar(valor({ conversar }));
+      expect(await pantalla.findByText('Te sirve este bus.')).toBeTruthy();
+      expect(pantalla.getAllByTestId('tarjeta-salida-ia')).toHaveLength(1);
+      expect(pantalla.getByTestId('ficha-ciudad-ia')).toBeTruthy();
+      expect(
+        pantalla.getByRole('button', { name: '¿Y a Juigalpa?' }),
+      ).toBeTruthy();
+    });
+
+    it('manda los datos reales y las reglas, sin pasar por el modo sencillo', async () => {
+      const contexto = valor({
+        conversar: conversacion({ texto: 'Listo.' }),
+      });
+      await preguntar(contexto);
+      await waitFor(() => expect(contexto.conversar).toHaveBeenCalledTimes(1));
+      const pedido = jest.mocked(contexto.conversar!).mock.calls[0]![0];
+      expect(pedido.pregunta).toBe('hola');
+      expect(JSON.parse(pedido.datosJson)).toHaveProperty('salidas');
+      expect(pedido.instrucciones).toContain('SIEMPRE las herramientas');
+      expect(contexto.preguntar).not.toHaveBeenCalled();
+    });
+
+    it('muestra lo que consulta el modelo mientras responde', async () => {
+      let soltar: (valor: string) => void = () => undefined;
+      const conversar = jest.fn<NonNullable<ValorIA['conversar']>>(
+        (pedido) =>
+          new Promise<string>((resolver) => {
+            pedido.alHerramienta?.('misBoletos');
+            soltar = resolver;
+          }),
+      );
+      const pantalla = await preguntar(valor({ conversar }));
+      expect(await pantalla.findByText('Revisando tus boletos…')).toBeTruthy();
+      await act(async () => {
+        soltar(JSON.stringify({ texto: 'Tenés un boleto.' }));
+      });
+      expect(await pantalla.findByText('Tenés un boleto.')).toBeTruthy();
+      expect(pantalla.queryByText('Revisando tus boletos…')).toBeNull();
+    });
+
+    it('si el modelo falla cae en el modo sencillo y responde igual', async () => {
+      const contexto = valor({
+        conversar: jest.fn(async () => {
+          throw new Error('fallo');
+        }),
+      });
+      const pantalla = await preguntar(contexto);
+      expect(
+        await pantalla.findByText('El próximo bus a Boaco sale a las 2:30.'),
+      ).toBeTruthy();
+      expect(contexto.preguntar).toHaveBeenCalledTimes(1);
+    });
+
+    it('una ciudad de Descubrí pregunta qué visitar', async () => {
+      const contexto = valor({ conversar: conversacion({ texto: 'Mucho.' }) });
+      const pantalla = await abrir(contexto);
+      await fireEvent.press(
+        pantalla.getAllByRole('button', { name: /Boaco/ })[0]!,
+      );
+      await waitFor(() => expect(contexto.conversar).toHaveBeenCalled());
+      expect(jest.mocked(contexto.conversar!).mock.calls[0]![0].pregunta).toBe(
+        'Qué visitar en Boaco',
+      );
+    });
+
+    it('nueva conversación borra lo hablado y olvida la sesión del modelo', async () => {
+      const olvidar = jest.fn(async () => undefined);
+      const pantalla = await preguntar(
+        valor({ conversar: conversacion({ texto: 'Hola.' }), olvidar }),
+      );
+      await pantalla.findByText('Hola.');
+      await fireEvent.press(
+        pantalla.getByRole('button', { name: 'Nueva conversación' }),
+      );
+      expect(olvidar).toHaveBeenCalledTimes(1);
+      expect(pantalla.queryByText('Hola.')).toBeNull();
+    });
+  });
 });
