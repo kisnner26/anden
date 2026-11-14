@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   Easing,
-  PanResponder,
   Pressable,
   StyleSheet,
   Text,
@@ -29,6 +28,12 @@ import {
   limpiarRespuestaDeRumbo,
 } from '@/datos/mascotaIA';
 import { escucharMascota, type EventoMascota } from '@/datos/mascotaEventos';
+import {
+  medirPerchas,
+  medirPercha,
+  perchasUtiles,
+  type Percha,
+} from '@/datos/perchas';
 import { useConexion } from '@/datos/useConexion';
 import { useIA } from '@/datos/useIA';
 import { rellenar } from '@/textos/rellenar';
@@ -52,6 +57,7 @@ export const SEGUNDOS_PARA_DORMIR = 45;
 
 const TAMANO = 64;
 const MARGEN = 12;
+const ANCHO_GLOBO = 260;
 
 export interface PropiedadesGuiaMascota {
   /** qué pestaña está abierta: de ahí salen los consejos; sin ella solo reacciona y pasea */
@@ -88,21 +94,22 @@ export function GuiaMascota({ pantalla }: PropiedadesGuiaMascota) {
   const sonoHola = useRef<string | null>(null);
   const { enLinea } = useConexion();
   const { height, width } = useWindowDimensions();
-  // dónde está: x recorre el ancho de la pantalla y y sube cuando la persona la arrastra
+  // dónde está, en coordenadas de la ventana: sola se sube a las tarjetas de la pantalla o camina por el piso
+  const altoM = TAMANO * 0.86;
+  const pisoY = height - Math.max(margenes.bottom, MARGEN) - 78 - altoM;
   const x = useRef(new Animated.Value(MARGEN)).current;
   const y = useRef(new Animated.Value(0)).current;
+  const arco = useRef(new Animated.Value(0)).current;
   const paso = useRef(new Animated.Value(0)).current;
   const xActual = useRef(MARGEN);
   const yActual = useRef(0);
   const [mirandoA, establecerMirandoA] = useState<1 | -1>(1);
-  const arrastrando = useRef(false);
+  const [posado, establecerPosado] = useState({ x: MARGEN, y: 0 });
   const [animo, establecerAnimo] = useState<Humor | null>(null);
   const hablando = useRef(false);
-  const alturaMaxima = useRef(0);
-  alturaMaxima.current = Math.max(
-    0,
-    height - margenes.top - margenes.bottom - 260,
-  );
+  const moviendose = useRef(false);
+  const iniciada = useRef(false);
+  const perchaActual = useRef<{ dx: number; ref: Percha['ref'] } | null>(null);
 
   useEffect(() => {
     const a = x.addListener(({ value }) => {
@@ -246,136 +253,194 @@ export function GuiaMascota({ pantalla }: PropiedadesGuiaMascota) {
     return () => clearTimeout(temporizador);
   }, [dicho]);
 
-  /** camina hasta una posición: voltea hacia donde va y avanza a brinquitos */
-  function caminarA(destino: number, alTerminar?: () => void) {
-    const distancia = Math.abs(destino - xActual.current);
-    if (distancia < 4) {
-      alTerminar?.();
-      return;
-    }
-    establecerMirandoA(destino > xActual.current ? 1 : -1);
-    if (reducido) {
-      x.setValue(destino);
-      alTerminar?.();
-      return;
-    }
-    paso.setValue(0);
-    const brincos = Animated.loop(
-      Animated.sequence([
-        Animated.timing(paso, {
-          duration: 170,
-          easing: Easing.out(Easing.quad),
-          toValue: 1,
-          useNativeDriver: true,
-        }),
-        Animated.timing(paso, {
-          duration: 170,
-          easing: Easing.in(Easing.quad),
-          toValue: 0,
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-    brincos.start();
-    Animated.timing(x, {
-      duration: Math.max(700, distancia * 6),
-      easing: Easing.inOut(Easing.quad),
-      toValue: destino,
-      useNativeDriver: false,
-    }).start(() => {
-      brincos.stop();
+  /** va a un punto: si es lejos o está a otra altura salta en arco y aterriza con un brinco; si no, camina a pasitos */
+  function irA(destinoX: number, destinoY: number, alTerminar?: () => void) {
+    moviendose.current = true;
+    const dx = destinoX - xActual.current;
+    const dy = destinoY - yActual.current;
+    const distancia = Math.hypot(dx, dy);
+    if (Math.abs(dx) > 4) establecerMirandoA(dx > 0 ? 1 : -1);
+    const terminar = (aterrizo: boolean) => {
+      moviendose.current = false;
+      paso.stopAnimation();
       paso.setValue(0);
+      arco.setValue(0);
+      establecerPosado({ x: destinoX, y: destinoY });
+      if (aterrizo) establecerSalto((n) => n + 1);
       alTerminar?.();
+    };
+    if (reducido || distancia < 4) {
+      x.setValue(destinoX);
+      y.setValue(destinoY);
+      terminar(false);
+      return;
+    }
+    const salta = Math.abs(dy) > 24;
+    const duracion = Math.max(650, Math.min(1500, distancia * 5));
+    const piezas: Animated.CompositeAnimation[] = [
+      Animated.timing(x, {
+        duration: duracion,
+        easing: Easing.inOut(Easing.quad),
+        toValue: destinoX,
+        useNativeDriver: false,
+      }),
+      Animated.timing(y, {
+        duration: duracion,
+        easing: Easing.inOut(Easing.cubic),
+        toValue: destinoY,
+        useNativeDriver: false,
+      }),
+    ];
+    let brincos: Animated.CompositeAnimation | null = null;
+    if (salta) {
+      piezas.push(
+        Animated.sequence([
+          Animated.timing(arco, {
+            duration: duracion / 2,
+            easing: Easing.out(Easing.quad),
+            toValue: -(50 + Math.abs(dy) * 0.25),
+            useNativeDriver: false,
+          }),
+          Animated.timing(arco, {
+            duration: duracion / 2,
+            easing: Easing.in(Easing.quad),
+            toValue: 0,
+            useNativeDriver: false,
+          }),
+        ]),
+      );
+    } else {
+      brincos = Animated.loop(
+        Animated.sequence([
+          Animated.timing(paso, {
+            duration: 170,
+            easing: Easing.out(Easing.quad),
+            toValue: 1,
+            useNativeDriver: true,
+          }),
+          Animated.timing(paso, {
+            duration: 170,
+            easing: Easing.in(Easing.quad),
+            toValue: 0,
+            useNativeDriver: true,
+          }),
+        ]),
+      );
+      brincos.start();
+    }
+    Animated.parallel(piezas).start(() => {
+      brincos?.stop();
+      terminar(salta);
     });
+  }
+
+  /** elige adónde ir: casi siempre a la orilla de una tarjeta que esté a la vista, a veces al piso */
+  async function elegirDestino(): Promise<{
+    percha: { dx: number; ref: Percha['ref'] } | null;
+    x: number;
+    y: number;
+  }> {
+    const libreX = Math.max(MARGEN + 1, width - TAMANO - MARGEN);
+    const piso = () => ({
+      percha: null,
+      x: MARGEN + Math.random() * (libreX - MARGEN),
+      y: pisoY,
+    });
+    if (Math.random() < 0.25) return piso();
+    const utiles = perchasUtiles(await medirPerchas(), {
+      altoMascota: altoM,
+      anchoMascota: TAMANO,
+      anchoVentana: width,
+      pisoY: pisoY + altoM - 20,
+      topeY: margenes.top,
+    });
+    const actual = perchaActual.current?.ref;
+    const otras = utiles.filter((p) => p.ref !== actual);
+    const lista = otras.length > 0 ? otras : utiles;
+    const elegida = lista[Math.floor(Math.random() * lista.length)];
+    if (!elegida) return piso();
+    const dx =
+      10 + Math.random() * Math.max(0, elegida.rect.ancho - TAMANO - 20);
+    return {
+      percha: { dx, ref: elegida.ref },
+      x: elegida.rect.x + dx,
+      y: elegida.rect.y - altoM + 4,
+    };
   }
 
   const ocupada =
     dormida || pensando || preguntando || dicho !== null || hayConsejo;
   hablando.current = ocupada;
 
-  // pasea sola por el borde de abajo: cada tanto elige otro punto, camina y se queda un rato mirando
+  // la primera vez aparece en el piso, en el borde izquierdo
+  useEffect(() => {
+    if (!activa || iniciada.current) return;
+    iniciada.current = true;
+    x.setValue(MARGEN);
+    y.setValue(pisoY);
+    xActual.current = MARGEN;
+    yActual.current = pisoY;
+    establecerPosado({ x: MARGEN, y: pisoY });
+  }, [activa, pisoY, x, y]);
+
+  // pasea sola: cada tanto elige un lugar nuevo, salta hasta ahí y se queda un rato mirando
   useEffect(() => {
     if (!activa || ocupada) return;
     let activo = true;
     let espera: ReturnType<typeof setTimeout>;
-    const proxima = () => {
+    const siguiente = () => {
       espera = setTimeout(
-        () => {
-          if (!activo || arrastrando.current || hablando.current) return;
-          const libre = Math.max(MARGEN + 1, width - TAMANO - MARGEN);
-          let destino = MARGEN + Math.random() * (libre - MARGEN);
-          // que valga la pena caminar: al menos un buen trecho
-          if (Math.abs(destino - xActual.current) < 90) {
-            destino = xActual.current > libre / 2 ? MARGEN : libre;
-          }
-          caminarA(destino, () => {
-            if (activo) proxima();
+        async () => {
+          if (!activo || hablando.current || moviendose.current) return;
+          const destino = await elegirDestino();
+          if (!activo || hablando.current) return;
+          perchaActual.current = destino.percha;
+          irA(destino.x, destino.y, () => {
+            if (activo) siguiente();
           });
         },
-        4500 + Math.random() * 6000,
+        4500 + Math.random() * 5500,
       );
     };
-    proxima();
+    siguiente();
     return () => {
       activo = false;
       clearTimeout(espera);
-      x.stopAnimation();
-      paso.stopAnimation();
-      paso.setValue(0);
     };
-  }, [activa, ocupada, width]);
+  }, [activa, ocupada, width, height]);
 
-  // cuando tiene algo que decir se acerca al borde izquierdo para que el globo quepa a su lado
+  // mientras está sobre una tarjeta la sigue: si la pantalla se desplaza, ella se va con la tarjeta, y si la tarjeta sale de la vista baja al piso
   useEffect(() => {
     if (!activa) return;
-    if (hayConsejo || dicho !== null || preguntando || pensando) {
-      x.stopAnimation();
-      caminarA(MARGEN);
-    }
-  }, [activa, hayConsejo, dicho, preguntando, pensando]);
-
-  // al arrastrarla la sigue el dedo; al soltarla se queda ahí y celebra con un brinco
-  const arrastre = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (_e, g) =>
-        Math.abs(g.dx) > 8 || Math.abs(g.dy) > 8,
-      onPanResponderGrant: () => {
-        arrastrando.current = true;
-        x.stopAnimation();
-        paso.stopAnimation();
-        x.setOffset(xActual.current);
-        x.setValue(0);
-        y.setOffset(yActual.current);
-        y.setValue(0);
-      },
-      onPanResponderMove: (_e, g) => {
-        x.setValue(g.dx);
-        y.setValue(g.dy);
-      },
-      onPanResponderRelease: () => {
-        x.flattenOffset();
-        y.flattenOffset();
-        const fx = Math.min(
-          width - TAMANO - MARGEN,
-          Math.max(MARGEN, xActual.current),
-        );
-        const fy = Math.min(
-          0,
-          Math.max(-alturaMaxima.current, yActual.current),
-        );
-        x.setValue(fx);
-        y.setValue(fy);
-        arrastrando.current = false;
-        establecerSalto((n) => n + 1);
-        sonar('mascotaBoing');
-      },
-      onPanResponderTerminate: () => {
-        x.flattenOffset();
-        y.flattenOffset();
-        arrastrando.current = false;
-      },
-    }),
-  ).current;
+    const seguir = setInterval(async () => {
+      const percha = perchaActual.current;
+      if (!percha || moviendose.current) return;
+      const rect = await medirPercha(percha.ref);
+      if (moviendose.current || perchaActual.current !== percha) return;
+      if (
+        !rect ||
+        rect.y < margenes.top + altoM + 4 ||
+        rect.y > pisoY + altoM - 20
+      ) {
+        perchaActual.current = null;
+        irA(xActual.current, pisoY);
+        return;
+      }
+      const nx =
+        rect.x + Math.min(percha.dx, Math.max(0, rect.ancho - TAMANO - 10));
+      const ny = rect.y - altoM + 4;
+      if (
+        Math.abs(nx - xActual.current) > 1 ||
+        Math.abs(ny - yActual.current) > 1
+      ) {
+        x.setValue(nx);
+        y.setValue(ny);
+        if (Math.abs(ny - posado.y) > 12 || Math.abs(nx - posado.x) > 12)
+          establecerPosado({ x: nx, y: ny });
+      }
+    }, 250);
+    return () => clearInterval(seguir);
+  }, [activa, altoM, margenes.top, pisoY, posado.x, posado.y]);
 
   function despedir(id: string) {
     marcar(id);
@@ -455,33 +520,41 @@ export function GuiaMascota({ pantalla }: PropiedadesGuiaMascota) {
     ? t('mascota.preguntando')
     : (dicho ?? (hayConsejo && consejo ? consejo.texto : null));
 
+  const bubbleArriba = posado.y > 190;
+  const izquierdaGlobo =
+    Math.min(
+      width - MARGEN - ANCHO_GLOBO,
+      Math.max(MARGEN, posado.x + TAMANO / 2 - ANCHO_GLOBO / 2),
+    ) - posado.x;
+  const posicionGlobo = bubbleArriba
+    ? { bottom: altoM + 6, left: izquierdaGlobo }
+    : { left: izquierdaGlobo, top: altoM + 6 };
+
   return (
     <Animated.View
       pointerEvents="box-none"
       style={[
+        StyleSheet.absoluteFill,
         estilos.contenedor,
-        {
-          // por encima de la barra de pestañas flotante
-          bottom: Math.max(margenes.bottom, espacios.doce) + 78,
-          opacity: entrada,
-          transform: [
-            {
-              translateY: entrada.interpolate({
-                inputRange: [0, 1],
-                outputRange: [90, 0],
-              }),
-            },
-          ],
-        },
+        { opacity: entrada },
       ]}
       testID="guia-mascota"
     >
       <Animated.View
         pointerEvents="box-none"
-        style={[estilos.escenario, { transform: [{ translateY: y }] }]}
+        style={[
+          estilos.personaje,
+          {
+            transform: [
+              { translateX: x },
+              { translateY: y },
+              { translateY: arco },
+            ],
+          },
+        ]}
       >
         {preguntando ? (
-          <View style={estilos.globo}>
+          <View style={[estilos.globo, posicionGlobo]}>
             <Bloque estiloContenido={estilos.preguntar}>
               <CampoTexto
                 alCambiar={establecerPregunta}
@@ -508,7 +581,7 @@ export function GuiaMascota({ pantalla }: PropiedadesGuiaMascota) {
             </Bloque>
           </View>
         ) : texto !== null ? (
-          <View style={estilos.globo}>
+          <View style={[estilos.globo, posicionGlobo]}>
             <Bloque estiloContenido={estilos.textoGlobo}>
               <Text
                 accessibilityLiveRegion="polite"
@@ -520,36 +593,31 @@ export function GuiaMascota({ pantalla }: PropiedadesGuiaMascota) {
           </View>
         ) : null}
         <Animated.View
-          {...arrastre.panHandlers}
-          style={[estilos.mascota, { transform: [{ translateX: x }] }]}
+          style={{
+            transform: [
+              { scaleX: mirandoA },
+              {
+                translateY: paso.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, -7],
+                }),
+              },
+            ],
+          }}
         >
-          <Animated.View
-            style={{
-              transform: [
-                { scaleX: mirandoA },
-                {
-                  translateY: paso.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, -7],
-                  }),
-                },
-              ],
-            }}
+          <Pressable
+            accessibilityHint={t('mascota.pregunta')}
+            accessibilityLabel={texto ?? t('mascota.activar')}
+            accessibilityRole="button"
+            onLongPress={alMantener}
+            onPress={alTocar}
           >
-            <Pressable
-              accessibilityHint={t('mascota.pregunta')}
-              accessibilityLabel={texto ?? t('mascota.activar')}
-              accessibilityRole="button"
-              onLongPress={alMantener}
-              onPress={alTocar}
-            >
-              <MascotaRumbo
-                humor={animo ?? humor}
-                salto={salto}
-                tamano={TAMANO}
-              />
-            </Pressable>
-          </Animated.View>
+            <MascotaRumbo
+              humor={animo ?? humor}
+              salto={salto}
+              tamano={TAMANO}
+            />
+          </Pressable>
         </Animated.View>
       </Animated.View>
     </Animated.View>
@@ -558,21 +626,15 @@ export function GuiaMascota({ pantalla }: PropiedadesGuiaMascota) {
 
 const estilos = StyleSheet.create({
   cerrar: { alignItems: 'center', justifyContent: 'center', minHeight: 44 },
-  contenedor: {
+  contenedor: { zIndex: 40 },
+  globo: { position: 'absolute', width: ANCHO_GLOBO },
+  personaje: {
+    height: TAMANO,
     left: 0,
     position: 'absolute',
-    right: 0,
-    zIndex: 40,
+    top: 0,
+    width: TAMANO,
   },
-  escenario: { minHeight: TAMANO },
-  globo: {
-    alignSelf: 'flex-start',
-    marginBottom: espacios.cuatro,
-    marginLeft: MARGEN + TAMANO + espacios.cuatro,
-    marginRight: MARGEN,
-    maxWidth: 290,
-  },
-  mascota: { bottom: 0, left: 0, position: 'absolute', width: TAMANO },
   preguntar: { gap: espacios.ocho, padding: espacios.doce },
   textoGlobo: { padding: espacios.doce },
 });

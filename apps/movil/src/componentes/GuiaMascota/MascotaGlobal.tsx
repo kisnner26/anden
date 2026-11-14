@@ -4,9 +4,8 @@ import type { PantallaMascota } from '@/datos/mascota';
 
 import { GuiaMascota } from './GuiaMascota';
 
-/** qué pestaña es cada ruta; en las demás pantallas Rumbo se queda en su casa */
+/** qué pestaña es cada ruta; en las demás pantallas, como la portada de inicio ('/'), Rumbo no sale */
 const PANTALLAS: Readonly<Record<string, PantallaMascota>> = {
-  '/': 'viajar',
   '/boletos': 'boletos',
   '/horarios': 'horarios',
   '/rutas': 'rutas',
