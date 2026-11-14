@@ -53,6 +53,35 @@ describe('Pasajeros', () => {
     ).toBeTruthy();
   });
 
+  it('guarda en el borrador qué asiento es para otra persona', async () => {
+    const pantalla = await dibujar();
+    await fireEvent.press(
+      pantalla.getByRole('switch', {
+        name: 'Este boleto es para otra persona · Asiento 9',
+      }),
+    );
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Nombre completo · Asiento 8'),
+      'Ana Ruiz',
+    );
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Nombre completo · Asiento 9'),
+      'Luis Pérez',
+    );
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Ir al pago' }));
+    await waitFor(() => {
+      const borrador = JSON.parse(
+        pantalla.getByTestId('borrador').props.children as string,
+      ) as { pasajeros: { asiento: number; paraOtro?: boolean }[] };
+      expect(borrador.pasajeros.find((p) => p.asiento === 9)?.paraOtro).toBe(
+        true,
+      );
+      expect(borrador.pasajeros.find((p) => p.asiento === 8)?.paraOtro).toBe(
+        undefined,
+      );
+    });
+  });
+
   it('no avanza y avisa si falta algún nombre', async () => {
     const alContinuar = jest.fn();
     const pantalla = await dibujar({ alContinuar });
