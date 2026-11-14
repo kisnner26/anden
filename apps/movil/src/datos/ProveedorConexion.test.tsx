@@ -18,18 +18,21 @@ type Oyente = (estado: {
   isConnected?: boolean;
   isInternetReachable?: boolean;
 }) => void;
-let oyente: Oyente | null = null;
-let estadoInicial: { isConnected?: boolean; isInternetReachable?: boolean } = {
+let mockOyente: Oyente | null = null;
+let mockEstadoInicial: {
+  isConnected?: boolean;
+  isInternetReachable?: boolean;
+} = {
   isConnected: true,
   isInternetReachable: true,
 };
 
 jest.mock('expo-network', () => ({
   addNetworkStateListener: jest.fn((funcion: Oyente) => {
-    oyente = funcion;
+    mockOyente = funcion;
     return { remove: jest.fn() };
   }),
-  getNetworkStateAsync: jest.fn(async () => estadoInicial),
+  getNetworkStateAsync: jest.fn(async () => mockEstadoInicial),
 }));
 
 import { ProveedorConexion } from './ProveedorConexion';
@@ -42,8 +45,8 @@ function envoltura({ children }: { children: ReactNode }) {
 
 beforeEach(() => {
   jest.clearAllMocks();
-  oyente = null;
-  estadoInicial = { isConnected: true, isInternetReachable: true };
+  mockOyente = null;
+  mockEstadoInicial = { isConnected: true, isInternetReachable: true };
 });
 
 afterEach(() => {
@@ -60,7 +63,7 @@ describe('ProveedorConexion', () => {
   });
 
   it('si se abre sin señal lo sabe de entrada', async () => {
-    estadoInicial = { isConnected: false, isInternetReachable: false };
+    mockEstadoInicial = { isConnected: false, isInternetReachable: false };
     const { result } = await renderHook(() => useConexion(), {
       wrapper: envoltura,
     });
@@ -72,7 +75,7 @@ describe('ProveedorConexion', () => {
       wrapper: envoltura,
     });
     await act(async () => {
-      oyente?.({ isConnected: false, isInternetReachable: false });
+      mockOyente?.({ isConnected: false, isInternetReachable: false });
     });
     expect(result.current.enLinea).toBe(false);
     expect(sincronizarViajes).not.toHaveBeenCalled();
@@ -83,10 +86,10 @@ describe('ProveedorConexion', () => {
       wrapper: envoltura,
     });
     await act(async () => {
-      oyente?.({ isConnected: false, isInternetReachable: false });
+      mockOyente?.({ isConnected: false, isInternetReachable: false });
     });
     await act(async () => {
-      oyente?.({ isConnected: true, isInternetReachable: true });
+      mockOyente?.({ isConnected: true, isInternetReachable: true });
     });
     expect(result.current.enLinea).toBe(true);
     expect(result.current.recienVuelta).toBe(true);
