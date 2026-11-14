@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
 import {
   ActivityIndicator,
+  Animated,
   Pressable,
   StyleSheet,
   Text,
@@ -9,9 +9,10 @@ import {
 } from 'react-native';
 
 import { Icono, type NombreIcono } from '@/componentes/Icono';
+import { useResorte } from '@/componentes/Presionable';
+import { useSensaciones } from '@/datos/useSensaciones';
 import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
-import { movimiento } from '@/tema/movimiento';
 import { useTema } from '@/tema/useTema';
 
 export interface PropiedadesBotonAccion {
@@ -33,54 +34,59 @@ export function BotonAccion({
   icono = 'siguiente',
 }: PropiedadesBotonAccion) {
   const { colores } = useTema();
+  const resorte = useResorte(0.96);
+  const sentir = useSensaciones();
 
   function presionar() {
-    void impactAsync(ImpactFeedbackStyle.Light);
+    sentir('empuje');
     alPresionar();
   }
 
   return (
-    <Pressable
-      accessibilityLabel={etiqueta}
-      accessibilityRole="button"
-      accessibilityState={{ busy: cargando, disabled: deshabilitado }}
-      disabled={deshabilitado || cargando}
-      onPress={presionar}
-      style={({ pressed }) => [
-        estilos.contenedor,
-        { opacity: deshabilitado ? 0.5 : pressed ? 0.9 : 1 },
-        pressed && { transform: [{ scale: movimiento.escalaPresion }] },
-      ]}
-    >
-      <LinearGradient
-        colors={[colores.ambar, colores.ambarProfundo]}
-        end={{ x: 1, y: 1 }}
-        start={{ x: 0, y: 0 }}
-        style={estilos.degradado}
+    <Animated.View style={resorte.estilo}>
+      <Pressable
+        accessibilityLabel={etiqueta}
+        accessibilityRole="button"
+        accessibilityState={{ busy: cargando, disabled: deshabilitado }}
+        disabled={deshabilitado || cargando}
+        onPress={presionar}
+        onPressIn={resorte.alApretar}
+        onPressOut={resorte.alSoltar}
+        style={({ pressed }) => [
+          estilos.contenedor,
+          { opacity: deshabilitado ? 0.5 : pressed ? 0.92 : 1 },
+        ]}
       >
-        <Text style={[tipografia.subtitulo, { color: colores.sobreAmbar }]}>
-          {etiqueta}
-        </Text>
         <LinearGradient
-          colors={[colores.bloqueNegroClaro, colores.bloqueNegro]}
+          colors={[colores.ambar, colores.ambarProfundo]}
           end={{ x: 1, y: 1 }}
           start={{ x: 0, y: 0 }}
-          style={estilos.circulo}
+          style={estilos.degradado}
         >
-          <View>
-            {cargando ? (
-              <ActivityIndicator color={colores.ambar} />
-            ) : (
-              <Icono
-                color={colores.sobreNegro}
-                nombre={icono}
-                tamano="grande"
-              />
-            )}
-          </View>
+          <Text style={[tipografia.subtitulo, { color: colores.sobreAmbar }]}>
+            {etiqueta}
+          </Text>
+          <LinearGradient
+            colors={[colores.bloqueNegroClaro, colores.bloqueNegro]}
+            end={{ x: 1, y: 1 }}
+            start={{ x: 0, y: 0 }}
+            style={estilos.circulo}
+          >
+            <View>
+              {cargando ? (
+                <ActivityIndicator color={colores.ambar} />
+              ) : (
+                <Icono
+                  color={colores.sobreNegro}
+                  nombre={icono}
+                  tamano="grande"
+                />
+              )}
+            </View>
+          </LinearGradient>
         </LinearGradient>
-      </LinearGradient>
-    </Pressable>
+      </Pressable>
+    </Animated.View>
   );
 }
 

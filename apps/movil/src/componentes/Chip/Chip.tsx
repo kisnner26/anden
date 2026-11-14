@@ -1,8 +1,9 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { useResorte } from '@/componentes/Presionable';
 import { Rebote } from '@/componentes/Rebote';
+import { useSensaciones } from '@/datos/useSensaciones';
 import { espacios, radios, tamanosControl } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
@@ -23,59 +24,71 @@ export function Chip({
 }: PropiedadesChip) {
   const { colores } = useTema();
 
+  const resorte = useResorte(0.94);
+  const sentir = useSensaciones();
+
   function cambiar() {
-    void impactAsync(ImpactFeedbackStyle.Light);
+    sentir('seleccion');
     alCambiar(!seleccionado);
   }
 
   return (
     <Rebote activo={seleccionado} estilo={estilos.envoltura}>
-      <Pressable
-        accessibilityLabel={etiqueta}
-        accessibilityRole="button"
-        accessibilityState={{ disabled: deshabilitado, selected: seleccionado }}
-        disabled={deshabilitado}
-        onPress={cambiar}
-        style={({ pressed }) => [
-          estilos.base,
-          {
-            backgroundColor: seleccionado
-              ? colores.fichaActiva
-              : colores.barroClaro,
-            borderColor: seleccionado ? colores.fichaActiva : colores.linea,
-          },
-          deshabilitado && estilos.deshabilitado,
-          pressed && estilos.presionado,
-        ]}
-      >
-        {!seleccionado && (
-          <LinearGradient
-            colors={[colores.barroClaro, colores.barroOscuro]}
-            end={{ x: 1, y: 1 }}
-            pointerEvents="none"
-            start={{ x: 0, y: 0 }}
-            style={[StyleSheet.absoluteFill, estilos.fondoBarro]}
-            testID="chip-fondo-barro"
-          />
-        )}
-        {seleccionado && (
-          <View
-            style={[
-              estilos.indicador,
-              { backgroundColor: colores.sobreFichaActiva },
-            ]}
-            testID="chip-seleccionado-indicador"
-          />
-        )}
-        <Text
-          style={[
-            tipografia.pequeno,
-            { color: seleccionado ? colores.sobreFichaActiva : colores.tinta },
+      <Animated.View style={resorte.estilo}>
+        <Pressable
+          accessibilityLabel={etiqueta}
+          accessibilityRole="button"
+          accessibilityState={{
+            disabled: deshabilitado,
+            selected: seleccionado,
+          }}
+          disabled={deshabilitado}
+          onPress={cambiar}
+          onPressIn={resorte.alApretar}
+          onPressOut={resorte.alSoltar}
+          style={({ pressed }) => [
+            estilos.base,
+            {
+              backgroundColor: seleccionado
+                ? colores.fichaActiva
+                : colores.barroClaro,
+              borderColor: seleccionado ? colores.fichaActiva : colores.linea,
+            },
+            deshabilitado && estilos.deshabilitado,
+            pressed && estilos.presionado,
           ]}
         >
-          {etiqueta}
-        </Text>
-      </Pressable>
+          {!seleccionado && (
+            <LinearGradient
+              colors={[colores.barroClaro, colores.barroOscuro]}
+              end={{ x: 1, y: 1 }}
+              pointerEvents="none"
+              start={{ x: 0, y: 0 }}
+              style={[StyleSheet.absoluteFill, estilos.fondoBarro]}
+              testID="chip-fondo-barro"
+            />
+          )}
+          {seleccionado && (
+            <View
+              style={[
+                estilos.indicador,
+                { backgroundColor: colores.sobreFichaActiva },
+              ]}
+              testID="chip-seleccionado-indicador"
+            />
+          )}
+          <Text
+            style={[
+              tipografia.pequeno,
+              {
+                color: seleccionado ? colores.sobreFichaActiva : colores.tinta,
+              },
+            ]}
+          >
+            {etiqueta}
+          </Text>
+        </Pressable>
+      </Animated.View>
     </Rebote>
   );
 }
