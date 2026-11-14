@@ -7,7 +7,7 @@ import { t } from '@/textos/t';
 export const CLAVE_MASCOTA = 'anden.mascota';
 export const CLAVE_CONSEJOS_VISTOS = 'anden.mascotaVistos';
 
-/** el ánimo de Pito: cambia su cara y cómo se mueve */
+/** el ánimo de Rumbo: cambia su cara y cómo se mueve */
 export type Humor =
   'alerta' | 'celebrando' | 'dormido' | 'feliz' | 'pensando' | 'saludando';
 
@@ -48,7 +48,7 @@ function saludoDeLaHora(hora: number, nombre: string): string {
 }
 
 /**
- * lo que Pito le dice a la persona en cada pantalla, según lo que tenga en marcha: lo urgente primero (un bus
+ * lo que Rumbo le dice a la persona en cada pantalla, según lo que tenga en marcha: lo urgente primero (un bus
  * por salir), después lo útil (calificar, un truco) y, si no hay nada, un saludo; nunca dos veces lo mismo el
  * mismo día
  */

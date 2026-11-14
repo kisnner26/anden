@@ -16,7 +16,7 @@ import {
 } from './mascota';
 import { ContextoMascota } from './useMascota';
 
-/** recuerda si la persona activó a Pito y qué consejos ya le mostró hoy */
+/** recuerda si la persona activó a Rumbo y qué consejos ya le mostró hoy */
 export function ProveedorMascota({ children }: { children: ReactNode }) {
   const [activa, establecerActiva] = useState(false);
   const [vistos, establecerVistos] = useState<ConsejosVistos>({});
