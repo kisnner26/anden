@@ -35,6 +35,13 @@ export const textos = {
     pasoConfirmar: 'Confirmar',
   },
   viajar: {
+    lineaBoleto: 'Tu bus a {destino} sale a las {hora}',
+    lineaHabitual: 'Tu viaje de siempre a {destino} sale a las {hora}',
+    lineaMadrugada: 'Madrugando. ¿A dónde vas?',
+    lineaManana: 'Buenos días. ¿A dónde vas hoy?',
+    lineaTarde: 'Buenas tardes. ¿A dónde vas?',
+    lineaNoche: 'Buenas noches. ¿Viajás mañana?',
+    paraVos: 'Para vos',
     saludo: 'Hola',
     pregunta: '¿A dónde vas hoy?',
     avisos: 'Avisos',
