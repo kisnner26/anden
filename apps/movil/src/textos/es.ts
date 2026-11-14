@@ -613,7 +613,7 @@ export const textos = {
     madrugada: 'Madrugada',
     manana: 'Mañana',
     noche: 'Noche',
-    siguiente: 'La que sigue sale a las {hora}.',
+    siguiente: 'La que sigue sale a las {hora}',
     tarde: 'Tarde',
     atajos: 'Lo que te conviene',
     destinos: 'Destinos',
