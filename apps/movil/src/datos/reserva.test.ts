@@ -29,6 +29,23 @@ function reservar(
 }
 
 describe('crearReserva', () => {
+  it('marca en el resumen solo los boletos que son para otra persona', () => {
+    const resultado = crearReserva(
+      crearMuestra(AHORA),
+      VIAJE_BOACO,
+      [
+        { asiento: 8, nombre: 'Ana Ruiz' },
+        { asiento: 9, nombre: 'Luis Ruiz', paraOtro: true },
+      ],
+      AHORA,
+      () => 0.5,
+    );
+    expect(resultado.ok).toBe(true);
+    if (!resultado.ok) return;
+    expect(resultado.valor[0]?.resumen.paraOtro).toBeUndefined();
+    expect(resultado.valor[1]?.resumen.paraOtro).toBe(true);
+  });
+
   it('arma un boleto vigente por pasajero con la tarifa oficial', () => {
     const resultado = reservar([8, 9]);
     expect(resultado.ok).toBe(true);
