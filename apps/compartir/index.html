@@ -95,7 +95,7 @@
       const ahora = new Date();
       const conPosicion = d.lat !== null && d.lng !== null && d.registrada_en;
       const segundos = conPosicion ? (ahora - new Date(d.registrada_en)) / 1000 : Infinity;
-      const viva = conPosicion && segundos <= SEGUNDOS_SIN_SENAL && !d.salio_en === false ? true : conPosicion && segundos <= SEGUNDOS_SIN_SENAL;
+      const viva = conPosicion && segundos <= SEGUNDOS_SIN_SENAL;
       const primerNombre = String(d.nombre || "Alguien").split(" ")[0];
       q("titulo").innerHTML = primerNombre + " va a <em>" + d.destino + "</em>";
       q("origen").textContent = d.origen;
