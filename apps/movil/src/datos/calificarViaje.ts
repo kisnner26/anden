@@ -31,6 +31,9 @@ export function comentarioDeCalificacion(
   return partes.join(' · ');
 }
 
+/** hasta cuándo después de la salida se le pide la opinión a la persona */
+export const VENTANA_CALIFICAR_MS = 48 * 60 * 60 * 1000;
+
 /**
  * el boleto de un viaje ya hecho al que todavía no se le dejó opinión: usado o con la hora de salida
  * pasada, no cancelado; el más reciente primero. nulo si no hay ninguno
@@ -46,10 +49,10 @@ export function boletoPorCalificar(
       if (boleto.estado === 'cancelado' || calificados.has(boleto.id)) {
         return false;
       }
-      return (
-        boleto.estado === 'usado' ||
-        new Date(resumen.salida).getTime() < ahora.getTime()
-      );
+      const salio = new Date(resumen.salida).getTime();
+      // un viaje de hace más de dos días ya no se pide: no se acumulan encabezados viejos
+      if (ahora.getTime() - salio > VENTANA_CALIFICAR_MS) return false;
+      return boleto.estado === 'usado' || salio < ahora.getTime();
     })
     .sort(
       (a, b) =>
