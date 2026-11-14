@@ -13,6 +13,8 @@ import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
 import { Interruptor } from '@/componentes/Interruptor';
+import { MascotaPito } from '@/componentes/MascotaPito';
+import { useMascota } from '@/datos/useMascota';
 import { OpcionSeleccion } from '@/componentes/OpcionSeleccion';
 import { iniciales, nombreCompleto, nombrePropio } from '@/datos/perfil';
 import { useBloqueo } from '@/datos/useBloqueo';
@@ -100,6 +102,7 @@ export function Ajustes({
   const ubicacion = usePreferenciaUbicacion();
   const bloqueo = useBloqueo();
   const ia = useIA();
+  const mascota = useMascota();
   const seguridad = useSeguridad();
   const memoriaIA = useMemoriaIA();
   const [memoriaBorrada, establecerMemoriaBorrada] = useState(false);
@@ -246,6 +249,29 @@ export function Ajustes({
           }
           deshabilitado={!bloqueo.biometria.disponible && !bloqueo.activo}
           etiqueta={t('ajustes.bloqueoTitulo')}
+        />
+      </Bloque>
+
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+        {t('mascota.titulo')}
+      </Text>
+      <Bloque estiloContenido={estilos.filaOpcion}>
+        <MascotaPito
+          humor={mascota.activa ? 'saludando' : 'dormido'}
+          tamano={64}
+        />
+        <View style={estilos.texto}>
+          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+            {t('mascota.activar')}
+          </Text>
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {t('mascota.detalle')}
+          </Text>
+        </View>
+        <Interruptor
+          activo={mascota.activa}
+          alCambiar={(encender) => void mascota.cambiar(encender)}
+          etiqueta={t('mascota.activar')}
         />
       </Bloque>
 
