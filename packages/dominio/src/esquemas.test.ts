@@ -185,7 +185,7 @@ const viaje = {
   busId: 'bus_01',
   choferId: 'cho_01',
   salida: '2026-11-02T14:40:00-06:00',
-  anden: 4,
+  puntoEncuentro: '764M4PPX+HC',
   estado: 'programado',
   minutosAtraso: 0,
 };
@@ -227,6 +227,21 @@ describe('esquemaChofer', () => {
 });
 
 describe('esquemaViaje', () => {
+  it('acepta el punto de encuentro vacío mientras el conductor no lo confirma', () => {
+    expect(
+      esquemaViaje.safeParse({ ...viaje, puntoEncuentro: '' }).success,
+    ).toBe(true);
+  });
+
+  it('rechaza un punto de encuentro que no es un Plus Code completo', () => {
+    expect(
+      esquemaViaje.safeParse({ ...viaje, puntoEncuentro: 'andén 4' }).success,
+    ).toBe(false);
+    expect(
+      esquemaViaje.safeParse({ ...viaje, puntoEncuentro: 'M4PP+HC' }).success,
+    ).toBe(false);
+  });
+
   it('acepta un viaje con fecha ISO y con desfase horario', () => {
     expect(esquemaViaje.safeParse(viaje).success).toBe(true);
     expect(

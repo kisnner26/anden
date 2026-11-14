@@ -21,7 +21,7 @@ const viaje: Viaje = {
   busId: 'bus_01',
   choferId: 'cho_01',
   salida: '2026-11-02T14:00:00-06:00',
-  anden: 4,
+  puntoEncuentro: '764M4PPX+HC',
   estado: 'programado',
   minutosAtraso: 0,
 };
