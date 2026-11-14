@@ -5,6 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -33,6 +34,7 @@ export interface PropiedadesIngresar {
 export function Ingresar({ alCrearCuenta, alIngresar }: PropiedadesIngresar) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const { iniciar } = useSesion();
   const [identificador, establecerIdentificador] = useState('');
   const [clave, establecerClave] = useState('');
@@ -69,7 +71,7 @@ export function Ingresar({ alCrearCuenta, alIngresar }: PropiedadesIngresar) {
         style={estilos.envoltura}
         testID="ingresar-envoltura"
       >
-        <Autobus ancho={tamanosControl.toqueMinimo * 3} />
+        <Autobus ancho={Math.round(width * 0.45)} />
         <Text
           accessibilityRole="header"
           style={[tipografia.titularPantalla, { color: colores.tinta }]}
@@ -118,27 +120,23 @@ export function Ingresar({ alCrearCuenta, alIngresar }: PropiedadesIngresar) {
             </Text>
           </Pressable>
         )}
-        <Bloque estiloContenido={estilos.prueba} hundido radio="loseta">
-          <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-            {t('ingresar.pruebaTitulo')}
-          </Text>
-          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {t('ingresar.pruebaDetalle')}
-          </Text>
-        </Bloque>
       </Pressable>
     </ScrollView>
   );
 }
 
 const estilos = StyleSheet.create({
-  contenido: { paddingHorizontal: espacios.lateral },
+  contenido: { flexGrow: 1, paddingHorizontal: espacios.lateral },
   enlace: {
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: tamanosControl.toqueMinimo,
   },
-  envoltura: { gap: espacios.dieciseis },
+  // sin el recuadro de prueba el contenido se reparte y se centra según el alto de la pantalla
+  envoltura: {
+    flexGrow: 1,
+    gap: espacios.veinticuatro,
+    justifyContent: 'center',
+  },
   formulario: { gap: espacios.dieciseis, padding: espacios.veinticuatro },
-  prueba: { gap: espacios.cuatro, padding: espacios.dieciseis },
 });
