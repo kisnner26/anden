@@ -671,6 +671,12 @@ export const textos = {
     titulo: 'Recibir boleto',
     verBoleto: 'Ver mi boleto',
   },
+  inicioAutomatico: {
+    seccion: 'Inicio',
+    titulo: 'Inicio automático',
+    detalle:
+      'La app arranca sola al abrirla, sin deslizar para empezar. Dejá que el bus llegue y pasa directo a tus viajes.',
+  },
   mascota: {
     evCalificacion: '¡Gracias por calificar! Eso ayuda a otros pasajeros.',
     evConexion: 'Volvió la señal. Ya estoy al día.',
