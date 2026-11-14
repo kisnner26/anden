@@ -18,6 +18,7 @@ import { Campaneo } from '@/componentes/Campaneo';
 import { Aparece } from '@/componentes/Aparece';
 import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
+import { GuiaMascota } from '@/componentes/GuiaMascota';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { TarjetaHabitual } from '@/componentes/TarjetaHabitual';
 import { TarjetaProximoViaje } from '@/componentes/TarjetaProximoViaje';
@@ -113,7 +114,7 @@ export function Viajar({
   }, [preferenciaUbicacion.activada, preferenciaUbicacion.estado, ubicacion]);
 
   return (
-    <MarcoPestana>
+    <MarcoPestana guia={<GuiaMascota pantalla="viajar" />}>
       <View style={estilos.cabecera}>
         <Pressable
           accessibilityLabel={t('ajustes.titulo')}

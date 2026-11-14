@@ -11,6 +11,7 @@ import { FotoDestino } from '@/componentes/FotoDestino';
 import { HistorialViajes } from '@/componentes/HistorialViajes';
 import { ResumenIA } from '@/componentes/ResumenIA';
 import { IlustracionVacia } from '@/componentes/IlustracionVacia';
+import { GuiaMascota } from '@/componentes/GuiaMascota';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { lineaDeBoleto } from '@/datos/contextoIA';
 import { FICHAS } from '@/datos/fichasCiudad';
@@ -61,7 +62,10 @@ export function Boletos({
     proximos.length === 0 || (vista === 'historial' && pasados.length > 0);
 
   return (
-    <MarcoPestana estiloContenido={estilos.contenido}>
+    <MarcoPestana
+      estiloContenido={estilos.contenido}
+      guia={<GuiaMascota pantalla="boletos" />}
+    >
       <Text style={[tipografia.titularPantalla, { color: colores.tinta }]}>
         {t('boletos.titulo')}.
       </Text>

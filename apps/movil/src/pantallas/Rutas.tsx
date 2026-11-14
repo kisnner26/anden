@@ -13,6 +13,7 @@ import { ResumenIA } from '@/componentes/ResumenIA';
 import { SaltoAlCambiar } from '@/componentes/SaltoAlCambiar';
 import { SelectorCiudadFoto } from '@/componentes/SelectorCiudadFoto';
 import { Icono } from '@/componentes/Icono';
+import { GuiaMascota } from '@/componentes/GuiaMascota';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { SelectorSalida } from '@/componentes/SelectorSalida';
 import { TrayectoCorredor } from '@/componentes/TrayectoCorredor';
@@ -71,7 +72,10 @@ export function Rutas({
       : null;
 
   return (
-    <MarcoPestana estiloContenido={estilos.contenido}>
+    <MarcoPestana
+      estiloContenido={estilos.contenido}
+      guia={<GuiaMascota pantalla="rutas" />}
+    >
       <Aparece indice={0}>
         <View style={estilos.titular}>
           <Text style={[tipografia.display, { color: colores.tinta }]}>
