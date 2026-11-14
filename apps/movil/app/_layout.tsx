@@ -39,6 +39,7 @@ import { ProveedorSesion } from '@/datos/ProveedorSesion';
 import { ProveedorConexion } from '@/datos/ProveedorConexion';
 import { ProveedorViajes } from '@/datos/ProveedorViajes';
 import { AvisoConexion } from '@/componentes/AvisoConexion';
+import { MascotaGlobal } from '@/componentes/GuiaMascota';
 import { ProveedorRecordatorios } from '@/datos/ProveedorRecordatorios';
 import { ProveedorPerfil } from '@/datos/ProveedorPerfil';
 import { ProveedorReserva } from '@/datos/ProveedorReserva';
@@ -101,6 +102,7 @@ export default function DisenoRaiz() {
                                                         <ProveedorSeguridad>
                                                           <GuardiaDeSesion />
                                                           <AvisoConexion />
+                                                          <MascotaGlobal />
                                                           <Stack
                                                             screenOptions={{
                                                               headerShown: false,

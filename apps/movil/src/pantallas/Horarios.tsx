@@ -19,7 +19,6 @@ import { SelectorDia } from '@/componentes/SelectorDia';
 import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
-import { GuiaMascota } from '@/componentes/GuiaMascota';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { TableroSalidas } from '@/componentes/TableroSalidas';
 import { CORREDORES_INICIALES, TERMINAL_POR_CIUDAD } from '@/datos/corredores';
@@ -176,7 +175,7 @@ export function Horarios({
   const atajos = atajosDelDia(visibles, ahora);
 
   return (
-    <MarcoPestana guia={<GuiaMascota pantalla="horarios" />}>
+    <MarcoPestana>
       <View style={estilos.cabecera}>
         <Text style={[tipografia.display, { color: colores.tinta }]}>
           {t('horarios.titulo')}.
