@@ -299,3 +299,25 @@ describe('lineaDeHistorial', () => {
     expect(texto).toContain('Historial: hizo 1 viaje(s)');
   });
 });
+
+describe('contexto sin internet', () => {
+  it('avisa al modelo que los datos son los guardados y de hace cuánto', () => {
+    const texto = contextoPersonal(
+      estado({
+        conexion: {
+          enLinea: false,
+          ultimaSincronizacion: new Date(AHORA.getTime() - 20 * 60_000),
+        },
+      }),
+    ).join('\n');
+    expect(texto).toContain('No hay internet ahora');
+    expect(texto).toContain('hace 20 min');
+  });
+
+  it('con internet no dice nada de eso', () => {
+    const texto = contextoPersonal(
+      estado({ conexion: { enLinea: true, ultimaSincronizacion: AHORA } }),
+    ).join('\n');
+    expect(texto).not.toContain('No hay internet');
+  });
+});
