@@ -1,0 +1,1 @@
+export { CierreAutomatico } from './CierreAutomatico';
