@@ -1,13 +1,20 @@
 import { requireOptionalNativeModule } from 'expo';
 
 interface ModuloAndenActividad {
-  actualizar(id: string, puntoEncuentro: string, estado: string): Promise<boolean>;
+  actualizar(
+    id: string,
+    puntoEncuentro: string,
+    estado: string,
+    fase: string,
+  ): Promise<boolean>;
   disponible(): Promise<boolean>;
   iniciar(
     destino: string,
     salidaMs: number,
     puntoEncuentro: string,
     estado: string,
+    origen: string,
+    fase: string,
   ): Promise<string>;
   terminar(id: string): Promise<void>;
 }
@@ -30,6 +37,9 @@ export async function iniciarActividad(datos: {
   puntoEncuentro: string;
   destino: string;
   estado: string;
+  /** momento del viaje: espera, abordando, atrasado, ruta o llego */
+  fase?: string;
+  origen?: string;
   salida: Date;
 }): Promise<string | null> {
   if (!modulo) return null;
@@ -39,6 +49,8 @@ export async function iniciarActividad(datos: {
       datos.salida.getTime(),
       datos.puntoEncuentro,
       datos.estado,
+      datos.origen ?? '',
+      datos.fase ?? 'espera',
     );
   } catch {
     return null;
@@ -49,10 +61,11 @@ export async function actualizarActividad(
   id: string,
   puntoEncuentro: string,
   estado: string,
+  fase: string = 'espera',
 ): Promise<boolean> {
   if (!modulo) return false;
   try {
-    return await modulo.actualizar(id, puntoEncuentro, estado);
+    return await modulo.actualizar(id, puntoEncuentro, estado, fase);
   } catch {
     return false;
   }

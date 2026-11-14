@@ -19,7 +19,7 @@ public class AndenActividadModule: Module {
     }
 
     // inicia la actividad del viaje y devuelve su identificador
-    AsyncFunction("iniciar") { (destino: String, salidaMs: Double, puntoEncuentro: String, estado: String, promise: Promise) in
+    AsyncFunction("iniciar") { (destino: String, salidaMs: Double, puntoEncuentro: String, estado: String, origen: String, fase: String, promise: Promise) in
       #if canImport(ActivityKit)
       if #available(iOS 16.2, *) {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
@@ -27,8 +27,10 @@ public class AndenActividadModule: Module {
           return
         }
         let salida = Date(timeIntervalSince1970: salidaMs / 1000)
-        let atributos = AtributosViaje(destino: destino, salida: salida)
-        let estadoInicial = AtributosViaje.ContentState(puntoEncuentro: puntoEncuentro, estado: estado)
+        // la barra empieza a llenarse tres horas antes de la salida, o ahora si falta menos
+        let desde = min(max(salida.addingTimeInterval(-3 * 3600), Date()), salida.addingTimeInterval(-1))
+        let atributos = AtributosViaje(destino: destino, salida: salida, origen: origen, desde: desde)
+        let estadoInicial = AtributosViaje.ContentState(puntoEncuentro: puntoEncuentro, estado: estado, fase: fase)
         do {
           let actividad = try Activity.request(
             attributes: atributos,
@@ -45,7 +47,7 @@ public class AndenActividadModule: Module {
       promise.reject("ERR_ANDEN_ACTIVIDAD_NO_DISPONIBLE", "Este sistema no admite actividades en vivo.")
     }
 
-    AsyncFunction("actualizar") { (id: String, puntoEncuentro: String, estado: String, promise: Promise) in
+    AsyncFunction("actualizar") { (id: String, puntoEncuentro: String, estado: String, fase: String, promise: Promise) in
       #if canImport(ActivityKit)
       if #available(iOS 16.2, *) {
         Task {
@@ -53,7 +55,7 @@ public class AndenActividadModule: Module {
             promise.resolve(false)
             return
           }
-          await actividad.update(.init(state: .init(puntoEncuentro: puntoEncuentro, estado: estado), staleDate: nil))
+          await actividad.update(.init(state: .init(puntoEncuentro: puntoEncuentro, estado: estado, fase: fase), staleDate: nil))
           promise.resolve(true)
         }
         return

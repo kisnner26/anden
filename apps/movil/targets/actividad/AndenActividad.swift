@@ -9,57 +9,145 @@ struct AndenActividadBundle: WidgetBundle {
   }
 }
 
+/// el color de cada momento del viaje: ámbar mientras espera, verde al abordar o ir en ruta, rojo si se atrasa
+private func color(de fase: String) -> Color {
+  switch fase {
+  case "abordando": return Color(red: 0.44, green: 0.81, blue: 0.59)
+  case "atrasado": return Color(red: 1.0, green: 0.42, blue: 0.34)
+  case "ruta": return Color(red: 0.36, green: 0.78, blue: 0.85)
+  case "llego": return Color(white: 0.62)
+  default: return Color(red: 1.0, green: 0.70, blue: 0.12)
+  }
+}
+
+private func texto(de fase: String) -> String {
+  switch fase {
+  case "abordando": return "Abordando"
+  case "atrasado": return "Atrasado"
+  case "ruta": return "En ruta"
+  case "llego": return "Llegó"
+  default: return "A tiempo"
+  }
+}
+
+/// en la isla dinámica no cabe el código entero: se muestran los últimos siete signos, como "4PPX+HC"
+private func corto(_ punto: String) -> String {
+  punto.isEmpty ? "—" : String(punto.suffix(7))
+}
+
+/// la barra que se va llenando hacia la hora de salida; una vez que el bus sale queda llena
+private struct BarraDeRuta: View {
+  let contexto: ActivityViewContext<AtributosViaje>
+
+  var body: some View {
+    let tono = color(de: contexto.state.fase)
+    let enEspera = contexto.state.fase == "espera" || contexto.state.fase == "abordando" || contexto.state.fase == "atrasado"
+    HStack(spacing: 8) {
+      Image(systemName: "mappin.circle.fill").foregroundStyle(tono.opacity(0.6))
+      if enEspera && contexto.attributes.desde < contexto.attributes.salida {
+        ProgressView(timerInterval: contexto.attributes.desde...contexto.attributes.salida, countsDown: false) {
+          EmptyView()
+        } currentValueLabel: {
+          EmptyView()
+        }
+        .tint(tono)
+      } else {
+        ProgressView(value: contexto.state.fase == "llego" ? 1 : 0.5)
+          .tint(tono)
+      }
+      Image(systemName: "flag.checkered").foregroundStyle(tono)
+    }
+  }
+}
+
 struct ActividadDelViaje: Widget {
   var body: some WidgetConfiguration {
     ActivityConfiguration(for: AtributosViaje.self) { contexto in
-      HStack(alignment: .center) {
-        VStack(alignment: .leading, spacing: 4) {
-          Text("Bus a \(contexto.attributes.destino)")
-            .font(.headline)
-          Text(contexto.state.estado)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+      let tono = color(de: contexto.state.fase)
+      VStack(spacing: 12) {
+        HStack(alignment: .center, spacing: 12) {
+          ZStack {
+            Circle().fill(tono.opacity(0.2)).frame(width: 44, height: 44)
+            Image(systemName: "bus.fill").font(.title3).foregroundStyle(tono)
+          }
+          VStack(alignment: .leading, spacing: 2) {
+            Text("\(contexto.attributes.origen) → \(contexto.attributes.destino)")
+              .font(.headline)
+              .lineLimit(1)
+              .minimumScaleFactor(0.8)
+            Text(texto(de: contexto.state.fase))
+              .font(.caption.weight(.semibold))
+              .foregroundStyle(tono)
+          }
+          Spacer()
+          if contexto.state.fase == "espera" || contexto.state.fase == "abordando" || contexto.state.fase == "atrasado" {
+            Text(contexto.attributes.salida, style: .timer)
+              .font(.title2.monospacedDigit().weight(.semibold))
+              .multilineTextAlignment(.trailing)
+              .frame(maxWidth: 96, alignment: .trailing)
+          }
         }
-        Spacer()
-        VStack(alignment: .trailing, spacing: 4) {
-          Text("Punto \(corto(contexto.state.puntoEncuentro))")
-            .font(.title2.bold())
-          Text(contexto.attributes.salida, style: .timer)
-            .font(.subheadline.monospacedDigit())
-            .multilineTextAlignment(.trailing)
+        BarraDeRuta(contexto: contexto)
+        HStack {
+          Label("Punto \(corto(contexto.state.puntoEncuentro))", systemImage: "location.fill")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+          Spacer()
+          Text(contexto.state.estado)
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
         }
       }
       .padding()
       .activityBackgroundTint(Color(red: 0.07, green: 0.07, blue: 0.06))
       .activitySystemActionForegroundColor(.white)
     } dynamicIsland: { contexto in
-      DynamicIsland {
+      let tono = color(de: contexto.state.fase)
+      return DynamicIsland {
         DynamicIslandExpandedRegion(.leading) {
-          Text("Punto \(corto(contexto.state.puntoEncuentro))").font(.title3.bold())
+          HStack(spacing: 8) {
+            Image(systemName: "bus.fill").foregroundStyle(tono)
+            VStack(alignment: .leading, spacing: 0) {
+              Text(contexto.attributes.destino).font(.headline).lineLimit(1)
+              Text(texto(de: contexto.state.fase)).font(.caption2.weight(.semibold)).foregroundStyle(tono)
+            }
+          }
         }
         DynamicIslandExpandedRegion(.trailing) {
           Text(contexto.attributes.salida, style: .timer)
-            .monospacedDigit()
-            .frame(maxWidth: 80)
+            .font(.title3.monospacedDigit().weight(.semibold))
+            .frame(maxWidth: 84, alignment: .trailing)
+        }
+        DynamicIslandExpandedRegion(.center) {
+          EmptyView()
         }
         DynamicIslandExpandedRegion(.bottom) {
-          Text("\(contexto.attributes.destino) · \(contexto.state.estado)")
-            .font(.subheadline)
+          VStack(spacing: 8) {
+            BarraDeRuta(contexto: contexto)
+            HStack {
+              Label("Punto \(corto(contexto.state.puntoEncuentro))", systemImage: "location.fill")
+                .font(.caption)
+              Spacer()
+              Text(contexto.attributes.origen).font(.caption2).foregroundStyle(.secondary)
+            }
+          }
         }
       } compactLeading: {
-        Text(corto(contexto.state.puntoEncuentro)).bold()
+        Image(systemName: "bus.fill").foregroundStyle(tono)
       } compactTrailing: {
-        Text(contexto.attributes.salida, style: .timer)
-          .monospacedDigit()
-          .frame(maxWidth: 48)
+        if contexto.state.fase == "espera" || contexto.state.fase == "abordando" || contexto.state.fase == "atrasado" {
+          Text(contexto.attributes.salida, style: .timer)
+            .monospacedDigit()
+            .frame(maxWidth: 48)
+            .foregroundStyle(tono)
+        } else {
+          Text(texto(de: contexto.state.fase)).font(.caption2.weight(.bold)).foregroundStyle(tono)
+        }
       } minimal: {
-        Text(corto(contexto.state.puntoEncuentro)).bold()
+        Image(systemName: "bus.fill").foregroundStyle(tono)
       }
+      .keylineTint(tono)
     }
   }
-}
-
-/// en la isla dinámica no cabe el código entero: se muestran los últimos siete signos, como "4PPX+HC"
-private func corto(_ punto: String) -> String {
-    punto.isEmpty ? "—" : String(punto.suffix(7))
 }
