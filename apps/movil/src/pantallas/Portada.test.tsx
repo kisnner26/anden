@@ -72,18 +72,22 @@ describe('Portada', () => {
     expect(alEmpezar).toHaveBeenCalledTimes(1);
   });
 
-  it('con el inicio automático encendido arranca sola sin deslizar', async () => {
+  it('con el inicio automático encendido arranca sola, rápido y sin pedir deslizar', async () => {
     await AsyncStorage.setItem('anden.inicioAutomatico', '1');
     jest.useFakeTimers();
     const alEmpezar = jest.fn();
-    await renderPantalla(<Portada alEmpezar={alEmpezar} />);
+    const pantalla = await renderPantalla(<Portada alEmpezar={alEmpezar} />);
     await act(async () => {
-      await jest.advanceTimersByTimeAsync(2600);
+      await jest.advanceTimersByTimeAsync(50);
+    });
+    expect(
+      pantalla.queryByRole('button', { name: 'Deslizar para empezar' }),
+    ).toBeNull();
+    expect(pantalla.getByText('Arrancando…')).toBeTruthy();
+    await act(async () => {
+      await jest.advanceTimersByTimeAsync(2300);
     });
     expect(mockReproducir).toHaveBeenCalledWith('bocina');
-    await act(async () => {
-      await jest.advanceTimersByTimeAsync(4000);
-    });
     expect(alEmpezar).toHaveBeenCalledTimes(1);
     await AsyncStorage.clear();
   });
