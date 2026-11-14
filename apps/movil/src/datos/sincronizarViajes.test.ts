@@ -18,7 +18,7 @@ import {
   reiniciarUltimaSincronizacion,
   sincronizarViajes,
 } from './sincronizarViajes';
-import { armarTodasLasSalidas } from './salidas';
+import { armarSalidas, armarTodasLasSalidas } from './salidas';
 import { obtenerMuestra, reiniciarMuestra } from './useSalidas';
 
 const AHORA = new Date();
@@ -77,6 +77,29 @@ describe('aplicarViajesPublicados', () => {
       puntoEncuentro: '764M4PPX+HG',
       placa: 'M 123-456',
     });
+  });
+
+  it('un viaje publicado de Boaco hacia Managua aparece entre las salidas de la terminal de Boaco y no entre las de Mayoreo', () => {
+    const datos = crearBase();
+    const lunes = new Date(AHORA.getTime() + 2 * 86_400_000).toISOString();
+    aplicarViajesPublicados(datos, {
+      ...PUBLICADOS,
+      ocupacion: [],
+      viajes: [
+        {
+          ...PUBLICADOS.viajes[0]!,
+          id: 'via_lunes',
+          ruta_id: 'rut_boa_may',
+          salida: lunes,
+        },
+      ],
+    });
+    const desdeBoaco = armarSalidas(datos, AHORA, 'ter_boa');
+    const desdeMayoreo = armarSalidas(datos, AHORA, 'ter_may');
+    expect(desdeBoaco.map((s) => s.viajeId)).toContain('via_lunes');
+    expect(desdeBoaco[0]?.origen).toBe('Boaco');
+    expect(desdeBoaco[0]?.destino).toBe('Managua');
+    expect(desdeMayoreo.map((s) => s.viajeId)).not.toContain('via_lunes');
   });
 
   it('marca como vendidos los asientos que ya tomaron otros teléfonos', () => {
