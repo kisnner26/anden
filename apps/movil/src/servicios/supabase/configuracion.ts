@@ -24,3 +24,14 @@ export function leerConfiguracion(
   if (!/^https:\/\//.test(url)) return null;
   return { claveAnonima, url };
 }
+
+/**
+ * la página donde un familiar sigue el viaje sin tener la app; se lee con el nombre completo para que Expo la
+ * escriba en el empaquetado. Nula si no está configurada: entonces se comparte el enlace que abre la app
+ */
+export function leerUrlDeSeguimiento(
+  valor: string | undefined = process.env.EXPO_PUBLIC_URL_COMPARTIR,
+): string | null {
+  const limpia = valor?.trim().replace(/\/+$/, '');
+  return limpia && /^https:\/\//.test(limpia) ? limpia : null;
+}
