@@ -1,2 +1,2 @@
-export { MascotaPito } from './MascotaPito';
-export type { PropiedadesMascotaPito } from './MascotaPito';
+export { MascotaRumbo } from './MascotaRumbo';
+export type { PropiedadesMascotaRumbo } from './MascotaRumbo';

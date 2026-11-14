@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Animated, Easing } from 'react-native';
 import Svg, { Circle, Ellipse, G, Line, Path, Rect } from 'react-native-svg';
 
@@ -10,8 +10,10 @@ import { useTema } from '@/tema/useTema';
 
 const OjoAnimado = Animated.createAnimatedComponent(Ellipse);
 
-export interface PropiedadesMascotaPito {
+export interface PropiedadesMascotaRumbo {
   humor?: Humor;
+  /** cada vez que sube este número, la mascota pega un brinco: es la respuesta a que la toquen */
+  salto?: number;
   tamano?: number;
 }
 
@@ -68,18 +70,23 @@ function Boca({ color, humor }: { color: string; humor: Humor }) {
 }
 
 /**
- * Pito, la mascota de Andén: un microbús ámbar con la cara en el parabrisas. Respira, parpadea, y según su
+ * Rumbo, la mascota de Andén: un microbús ámbar con la cara en el parabrisas. Respira, parpadea, y según su
  * ánimo cambia la boca, la mirada y el movimiento: saluda moviéndose de lado, celebra saltando, se duerme
  */
-export function MascotaPito({
+export function MascotaRumbo({
   humor = 'feliz',
+  salto = 0,
   tamano = 96,
-}: PropiedadesMascotaPito) {
+}: PropiedadesMascotaRumbo) {
   const { colores } = useTema();
   const reducido = useMovimientoReducido();
   const flote = useRef(new Animated.Value(0)).current;
   const parpadeo = useRef(new Animated.Value(1)).current;
   const gesto = useRef(new Animated.Value(0)).current;
+  const brinco = useRef(new Animated.Value(0)).current;
+  const primerSalto = useRef(salto);
+  // a dónde mira cuando está tranquila: mueve los ojos de un lado a otro como quien curiosea
+  const [curioseo, establecerCurioseo] = useState({ x: 0, y: 0 });
 
   // respira siempre, un poco arriba y un poco abajo
   useEffect(() => {
@@ -111,24 +118,85 @@ export function MascotaPito({
       return;
     }
     parpadeo.setValue(1);
-    const bucle = Animated.loop(
-      Animated.sequence([
-        Animated.delay(2600),
+    let activo = true;
+    let espera: ReturnType<typeof setTimeout>;
+    // parpadea sin ritmo fijo, y a veces dos veces seguidas, como hace uno de verdad
+    const parpadear = () => {
+      const cierre = Animated.sequence([
         Animated.timing(parpadeo, {
-          duration: 90,
+          duration: 80,
           toValue: 0.08,
           useNativeDriver: false,
         }),
         Animated.timing(parpadeo, {
-          duration: 120,
+          duration: 110,
           toValue: 1,
           useNativeDriver: false,
         }),
-      ]),
-    );
-    bucle.start();
-    return () => bucle.stop();
+      ]);
+      cierre.start(() => {
+        if (!activo) return;
+        const doble = Math.random() < 0.25;
+        espera = setTimeout(
+          parpadear,
+          doble ? 160 : 1800 + Math.random() * 3200,
+        );
+      });
+    };
+    espera = setTimeout(parpadear, 1200 + Math.random() * 2000);
+    return () => {
+      activo = false;
+      clearTimeout(espera);
+    };
   }, [humor, parpadeo, reducido]);
+
+  // mira a los lados cada tanto cuando está de buen humor
+  useEffect(() => {
+    if (reducido || humor !== 'feliz') {
+      establecerCurioseo({ x: 0, y: 0 });
+      return;
+    }
+    const puntos = [
+      { x: -3, y: 0 },
+      { x: 3, y: 0 },
+      { x: 0, y: -2 },
+      { x: 3, y: -2 },
+      { x: -3, y: 1 },
+      { x: 0, y: 0 },
+    ];
+    let activo = true;
+    let espera: ReturnType<typeof setTimeout>;
+    const mirar = () => {
+      establecerCurioseo(puntos[Math.floor(Math.random() * puntos.length)]!);
+      if (activo) espera = setTimeout(mirar, 1500 + Math.random() * 3000);
+    };
+    espera = setTimeout(mirar, 1500);
+    return () => {
+      activo = false;
+      clearTimeout(espera);
+    };
+  }, [humor, reducido]);
+
+  // el brinco cuando la tocan: sube rápido, se estira, cae y rebota
+  useEffect(() => {
+    if (salto === primerSalto.current || reducido) return;
+    primerSalto.current = salto;
+    brinco.setValue(0);
+    Animated.sequence([
+      Animated.timing(brinco, {
+        duration: 150,
+        easing: Easing.out(Easing.quad),
+        toValue: 1,
+        useNativeDriver: true,
+      }),
+      Animated.spring(brinco, {
+        friction: 3,
+        tension: 200,
+        toValue: 0,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [brinco, reducido, salto]);
 
   // el gesto propio de cada ánimo: saludar de lado, saltar de alegría, un respingo de alerta
   useEffect(() => {
@@ -164,7 +232,11 @@ export function MascotaPito({
   }, [gesto, humor, reducido]);
 
   const cuerpo = paletaAutobus;
-  const mirada = MIRADA[humor];
+  const base = MIRADA[humor];
+  const mirada =
+    humor === 'feliz'
+      ? { x: base.x + curioseo.x, y: base.y + curioseo.y }
+      : base;
   const ojoAbierto = humor === 'celebrando' ? 7 : 9;
   const tinta = colores.bloqueNegro;
   const dormido = humor === 'dormido';
@@ -180,6 +252,18 @@ export function MascotaPito({
             translateY: flote.interpolate({
               inputRange: [0, 1],
               outputRange: [2, -3],
+            }),
+          },
+          {
+            translateY: brinco.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, -tamano * 0.3],
+            }),
+          },
+          {
+            scaleY: brinco.interpolate({
+              inputRange: [0, 1],
+              outputRange: [1, 1.1],
             }),
           },
           {
@@ -203,11 +287,11 @@ export function MascotaPito({
         ],
         width: tamano,
       }}
-      testID={`mascota-pito-${humor}`}
+      testID={`mascota-rumbo-${humor}`}
     >
       <Svg height={tamano * 0.86} viewBox="0 0 120 103" width={tamano}>
         <Ellipse cx={60} cy={99} fill={conAlfa(tinta, 0.16)} rx={44} ry={4} />
-        {/* la bocina de arriba, que da nombre a Pito */}
+        {/* la bocina de arriba, que da nombre a Rumbo */}
         <Rect
           fill={colores.ambarProfundo}
           height={7}
