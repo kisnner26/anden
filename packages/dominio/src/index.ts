@@ -10,4 +10,5 @@ export * from './tipos';
 export * from './telefono';
 export * from './franjas';
 export * from './ubicacion';
+export * from './plusCode';
 export * from './validacion';
