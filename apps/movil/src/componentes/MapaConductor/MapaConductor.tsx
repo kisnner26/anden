@@ -5,6 +5,7 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 import { Autobus } from '@/componentes/Autobus';
 import type { Punto } from '@/datos/busSimulado';
 import { regionQueEncierraTrazo } from '@/datos/busSimulado';
+import type { PuntosManuales } from '@/datos/rutaManual';
 import { orientacionBus } from '@/datos/orientacionBus';
 import { radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -19,6 +20,13 @@ export interface PropiedadesMapaConductor {
   origen: { coordenadas: Punto; nombre: string };
   trazo: readonly Punto[];
   bus?: Punto | null;
+  /** con esto encendido, tocar el mapa marca los puntos A y B */
+  marcando?: boolean;
+  /** los puntos A y B marcados a mano */
+  puntos?: PuntosManuales;
+  alMarcar?: (punto: Punto) => void;
+  /** se arrastró uno de los dos puntos hasta otro lugar */
+  alMoverPunto?: (cual: 'a' | 'b', punto: Punto) => void;
 }
 
 /** el rótulo negro con flecha que lleva cada punto: cómo se llama y que se puede tocar, como en las apps de viajes */
@@ -59,11 +67,15 @@ function Rotulo({ detalle, titulo }: { detalle: string; titulo: string }) {
  * en los extremos y el bus encima. El panel de abajo lo tapa, así que el centrado deja ese espacio libre
  */
 export function MapaConductor({
+  alMarcar,
+  alMoverPunto,
   bus,
   centrar,
   destino,
   espacioInferior,
+  marcando = false,
   origen,
+  puntos,
   trazo,
 }: PropiedadesMapaConductor) {
   const { colores, modo } = useTema();
@@ -96,6 +108,13 @@ export function MapaConductor({
     >
       <MapView
         initialRegion={regionQueEncierraTrazo([...trazo])}
+        onPress={(e) => {
+          if (marcando)
+            alMarcar?.({
+              lat: e.nativeEvent.coordinate.latitude,
+              lng: e.nativeEvent.coordinate.longitude,
+            });
+        }}
         mapPadding={{ bottom: espacioInferior, left: 0, right: 0, top: 96 }}
         pitchEnabled={false}
         ref={mapa}
@@ -142,6 +161,62 @@ export function MapaConductor({
         >
           <Rotulo detalle={destino.nombre} titulo="DESTINO" />
         </Marker>
+        {puntos?.a && puntos.b ? (
+          <Polyline
+            coordinates={[
+              { latitude: puntos.a.lat, longitude: puntos.a.lng },
+              { latitude: puntos.b.lat, longitude: puntos.b.lng },
+            ]}
+            lineCap="round"
+            lineDashPattern={[2, 10]}
+            strokeColor={colores.sobreNegro}
+            strokeWidth={5}
+          />
+        ) : null}
+        {(['a', 'b'] as const).map((cual) => {
+          const punto = puntos?.[cual];
+          if (!punto) return null;
+          return (
+            <Marker
+              anchor={{ x: 0.5, y: 0.5 }}
+              coordinate={{ latitude: punto.lat, longitude: punto.lng }}
+              draggable
+              key={cual}
+              onDragEnd={(e) =>
+                alMoverPunto?.(cual, {
+                  lat: e.nativeEvent.coordinate.latitude,
+                  lng: e.nativeEvent.coordinate.longitude,
+                })
+              }
+              testID={`punto-${cual}`}
+              tracksViewChanges={false}
+              zIndex={20}
+            >
+              <View
+                style={[
+                  estilos.letra,
+                  {
+                    backgroundColor:
+                      cual === 'a' ? colores.ambar : colores.bloqueNegro,
+                    borderColor:
+                      cual === 'a' ? colores.bloqueNegro : colores.ambar,
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    tipografia.subtitulo,
+                    {
+                      color: cual === 'a' ? colores.sobreAmbar : colores.ambar,
+                    },
+                  ]}
+                >
+                  {cual.toUpperCase()}
+                </Text>
+              </View>
+            </Marker>
+          );
+        })}
         {bus ? (
           <Marker
             anchor={{ x: 0.5, y: 0.5 }}
@@ -170,6 +245,14 @@ export function MapaConductor({
 }
 
 const estilos = StyleSheet.create({
+  letra: {
+    alignItems: 'center',
+    borderRadius: 18,
+    borderWidth: 3,
+    height: 36,
+    justifyContent: 'center',
+    width: 36,
+  },
   palito: { height: 8, width: 3 },
   punto: { borderRadius: 8, borderWidth: 3, height: 16, width: 16 },
   puntoCaja: { alignItems: 'center' },
