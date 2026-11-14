@@ -678,12 +678,20 @@ export const textos = {
       'La app arranca sola al abrirla, sin deslizar para empezar. Dejá que el bus llegue y pasa directo a tus viajes.',
   },
   mascota: {
-    evCalificacion: '¡Gracias por calificar! Eso ayuda a otros pasajeros.',
-    evConexion: 'Volvió la señal. Ya estoy al día.',
-    evRecibido: '¡Boleto recibido! Ya está en tus boletos.',
-    evReserva: '¡Listo! Tu boleto a {destino} quedó guardado.',
-    evSinConexion: 'Se fue la señal. Tus boletos siguen acá, sin internet.',
-    evTransferido: 'Boleto enviado. ¡Buen viaje a tu amigo!',
+    asoma: 'Rumbo quiere ayudarte',
+    asomaAyuda: 'Tocá los ojos para que te dé una mano',
+    ayuda: {
+      errorFormulario:
+        'Falta algún dato o está mal escrito. Mirá los campos marcados en rojo y probá de nuevo.',
+      errorIngreso:
+        'Parece que no entra. Revisá que tu usuario y tu contraseña estén bien escritos, o creá una cuenta nueva.',
+      reservaFallida:
+        'Ese asiento se ocupó justo antes. Elegí otro de los libres y reservá de nuevo.',
+      sinConexion:
+        'No hay señal. Tus boletos guardados se ven igual y lo demás vuelve cuando haya internet.',
+      toquesRepetidos:
+        'Parece que no responde. Esperá un momento o volvé atrás y probá de nuevo.',
+    },
     frase1: 'Los mejores viajes empiezan con un buen asiento. ¿Lo elegimos?',
     frase2: 'Si te quedás sin saber a dónde ir, mirá las salidas de hoy.',
     frase3: 'Llegá con tiempo al punto de encuentro, que el bus no espera.',
@@ -702,7 +710,7 @@ export const textos = {
       '¿Cómo te fue en tu último viaje? Contale a Andén con las estrellas.',
     descartar: 'Tocá para despedir a Rumbo',
     detalle:
-      'Una mascota viva que parpadea, hace sonidos, te avisa cuándo salir y responde lo que le preguntes con la IA del teléfono. Tocala para que te hable y mantenela apretada para preguntarle. Se puede apagar cuando quieras.',
+      'Rumbo se asoma por el borde de la pantalla solo cuando nota que algo no te sale: errores repetidos, una reserva que falla, toques que no responden o falta de señal. Si lo tocás, te ayuda con la IA del teléfono. Si no lo necesitás, no aparece.',
     inminente:
       '¡Ya casi! Tu bus a {destino} sale en {minutos} min. Andá al punto {punto}.',
     noche: 'Ya es tarde. Dejá tu viaje de mañana listo y descansá.',
@@ -713,7 +721,7 @@ export const textos = {
     sinBoletos:
       'Todavía no tenés boletos. Tocá Buscar salidas y armamos tu viaje.',
     sinSalidasHoy: 'Hoy ya no hay más salidas. Mirá las de mañana.',
-    titulo: 'Rumbo, tu guía',
+    titulo: 'Rumbo, tu ayudante',
     trucoArrastrar:
       'Truco: arrastrá tu boleto hacia arriba y se ve grande para el chofer.',
     trucoDeslizar:
