@@ -1,12 +1,16 @@
 import * as Haptics from 'expo-haptics';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
+import Svg, { Path } from 'react-native-svg';
 
 import { BarridoDeLuz } from '@/componentes/BarridoDeLuz';
 import Animated, {
+  Easing,
   useAnimatedStyle,
   useSharedValue,
+  withDelay,
+  withSequence,
   withTiming,
 } from 'react-native-reanimated';
 
@@ -17,7 +21,6 @@ import { useSuscripcion } from '@/datos/useSuscripcion';
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
 import type { BoletoGuardado } from '@/datos/reserva';
 import { espacios, radios, tamanosBoleto } from '@/tema/espacios';
-import { movimiento } from '@/tema/movimiento';
 import { tipografia } from '@/tema/tipografia';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import { useTema } from '@/tema/useTema';
@@ -26,6 +29,34 @@ import { puntoCorto } from '@/datos/puntoEncuentro';
 
 export interface PropiedadesTalonBoleto {
   guardado: BoletoGuardado;
+}
+
+/** cuánto tarda en caer la mitad que se queda el chofer; con el temblor previo y el sello, todo dura poco más de dos segundos */
+const DURACION_RASGADO = 900;
+const ESPERA_RASGADO = 320;
+const DIENTES = 22;
+
+/** el borde rasgado de la mitad que se desprende: una hilera de dientes que apuntan hacia arriba */
+function BordeRasgado({ color }: { color: string }) {
+  const ancho = 120;
+  const paso = ancho / DIENTES;
+  let trazo = `M0 8 `;
+  for (let i = 0; i < DIENTES; i += 1) {
+    const x = i * paso;
+    trazo += `L${x + paso / 2} ${i % 3 === 0 ? 0 : 2} L${x + paso} 8 `;
+  }
+  trazo += 'Z';
+  return (
+    <Svg
+      height={8}
+      preserveAspectRatio="none"
+      style={estilos.dientes}
+      viewBox={`0 0 ${ancho} 8`}
+      width="100%"
+    >
+      <Path d={trazo} fill={color} />
+    </Svg>
+  );
 }
 
 function Casilla({ etiqueta, valor }: { etiqueta: string; valor: string }) {
@@ -75,35 +106,91 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
   const salida = new Date(resumen.salida);
   const reducirMovimiento = useMovimientoReducido();
   const anterior = useRef(boleto.estado);
-  const separacion = useSharedValue(boleto.estado === 'usado' ? 1 : 0);
-  const sello = useSharedValue(boleto.estado === 'usado' ? 1 : 0);
-  const estiloTalon = useAnimatedStyle(() => ({
-    transform: [{ translateX: separacion.value * 10 }],
+  const yaUsado = boleto.estado === 'usado';
+  const rasgado = useSharedValue(yaUsado ? 1 : 0);
+  const temblor = useSharedValue(0);
+  const sello = useSharedValue(yaUsado ? 1 : 0);
+  // cuando el chofer escanea, la mitad del QR se desprende y se la queda: pasado un rato ya no se dibuja
+  const [retirada, establecerRetirada] = useState(yaUsado);
+  const estiloSuperior = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: temblor.value },
+      { translateY: -rasgado.value * 4 },
+    ],
   }));
-  const estiloSello = useAnimatedStyle(() => ({ opacity: sello.value }));
+  const estiloInferior = useAnimatedStyle(() => ({
+    opacity: 1 - rasgado.value * 0.92,
+    transform: [
+      { translateY: rasgado.value * 150 },
+      { translateX: rasgado.value * 26 },
+      { rotate: `${rasgado.value * 14}deg` },
+    ],
+    transformOrigin: 'left top',
+  }));
+  const estiloDientes = useAnimatedStyle(() => ({
+    opacity: Math.min(1, rasgado.value * 12),
+  }));
+  const estiloSello = useAnimatedStyle(() => ({
+    opacity: sello.value,
+    transform: [{ scale: 1.25 - sello.value * 0.25 }, { rotate: '-7deg' }],
+  }));
 
   useEffect(() => {
     if (anterior.current === boleto.estado) return;
     anterior.current = boleto.estado;
     if (boleto.estado !== 'usado') return;
     if (reducirMovimiento) {
-      separacion.value = 1;
+      rasgado.value = 1;
       sello.value = 1;
+      establecerRetirada(true);
       return;
     }
-    separacion.value = withTiming(1, { duration: movimiento.abordaje });
-    sello.value = withTiming(1, { duration: movimiento.abordaje });
+    // primero tiembla, como cuando el papel se tensa, y después se rasga y cae
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-  }, [boleto.estado, reducirMovimiento, sello, separacion]);
+    temblor.value = withSequence(
+      withTiming(-3, { duration: 45 }),
+      withTiming(3, { duration: 80 }),
+      withTiming(-3, { duration: 80 }),
+      withTiming(0, { duration: 45 }),
+    );
+    const rasgar = setTimeout(() => {
+      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    }, ESPERA_RASGADO);
+    rasgado.value = withDelay(
+      ESPERA_RASGADO,
+      withTiming(1, {
+        duration: DURACION_RASGADO,
+        easing: Easing.in(Easing.cubic),
+      }),
+    );
+    sello.value = withDelay(
+      ESPERA_RASGADO + DURACION_RASGADO * 0.6,
+      withTiming(1, { duration: 450 }),
+    );
+    const retirar = setTimeout(
+      () => establecerRetirada(true),
+      ESPERA_RASGADO + DURACION_RASGADO + 250,
+    );
+    return () => {
+      clearTimeout(rasgar);
+      clearTimeout(retirar);
+    };
+  }, [boleto.estado, rasgado, reducirMovimiento, sello, temblor]);
 
   return (
     <View
       accessibilityLabel={`${t('boleto.titulo')} ${resumen.destino}, ${t('boleto.codigo')} ${boleto.codigo}`}
-      style={[estilos.papel, { backgroundColor: colores.papel }]}
+      style={estilos.contenedor}
       testID="talon-boleto"
     >
-      <View
-        style={[estilos.cabecera, { backgroundColor: colores.bloqueNegro }]}
+      <Animated.View
+        style={[
+          estilos.mitadSuperior,
+          retirada && estilos.mitadSuperiorSola,
+          { backgroundColor: colores.bloqueNegro },
+          estiloSuperior,
+        ]}
+        testID="talon-mitad-superior"
       >
         <BarridoDeLuz radio={0} retraso={600} />
         <View style={estilos.fila}>
@@ -171,82 +258,99 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
             valor={String(boleto.asiento)}
           />
         </View>
-      </View>
-
-      <View style={estilos.perforacion}>
-        <View
-          style={[
-            estilos.muesca,
-            estilos.muescaIzquierda,
-            { backgroundColor: colores.fondo },
-          ]}
-        />
-        <View style={[estilos.linea, { borderColor: colores.tintaSuave }]} />
-        <View
-          style={[
-            estilos.muesca,
-            estilos.muescaDerecha,
-            { backgroundColor: colores.fondo },
-          ]}
-        />
-      </View>
-
-      <View style={[estilos.cuerpo, estilos.pasajeroFila]}>
-        <Campo
-          completo
-          etiqueta={t('boleto.pasajero')}
-          valor={nombrePropio(boleto.pasajero.nombre)}
-        />
-        <Campo etiqueta={t('boleto.placa')} valor={resumen.placa} />
-        <Campo etiqueta={t('boleto.chofer')} valor={resumen.choferNombre} />
-      </View>
-
-      <Animated.View style={[estilos.cuerpo, estilos.talon, estiloTalon]}>
-        <View style={estilos.codigo}>
-          <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
-            {t('boleto.codigo')}
-          </Text>
-          <Text
-            accessibilityLabel={boleto.codigo}
-            style={[tipografia.codigoBoleto, { color: colores.tintaPapel }]}
-          >
-            {`${boleto.codigo.slice(0, 4)} ${boleto.codigo.slice(4)}`}
-          </Text>
-          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {t('boleto.ayuda')}
-          </Text>
-        </View>
-        <View accessibilityLabel={`QR ${boleto.codigo}`} accessible>
-          <QRCode
-            backgroundColor={colores.papel}
-            color={colores.tintaPapel}
-            size={96}
-            value={`ANDEN:${boleto.codigo}`}
-          />
-        </View>
+        {boleto.estado === 'usado' && (
+          <Animated.View style={[estilos.sello, estiloSello]}>
+            <Text
+              style={[
+                tipografia.sello,
+                estilos.textoSello,
+                { color: colores.ambarTitular },
+              ]}
+            >
+              {t('boleto.usado')}
+            </Text>
+          </Animated.View>
+        )}
       </Animated.View>
-      {boleto.estado === 'usado' && (
-        <Animated.Text
+
+      {!retirada && (
+        <Animated.View
           style={[
-            tipografia.sello,
-            estilos.sello,
-            { color: colores.ambarTitular },
-            estiloSello,
+            estilos.mitadInferior,
+            { backgroundColor: colores.papel },
+            estiloInferior,
           ]}
+          testID="talon-mitad-inferior"
         >
-          {t('boleto.usado')}
-        </Animated.Text>
+          <Animated.View
+            pointerEvents="none"
+            style={[estilos.bordeRasgado, estiloDientes]}
+          >
+            <BordeRasgado color={colores.papel} />
+          </Animated.View>
+          <View style={estilos.perforacion}>
+            <View
+              style={[
+                estilos.muesca,
+                estilos.muescaIzquierda,
+                { backgroundColor: colores.fondo },
+              ]}
+            />
+            <View
+              style={[estilos.linea, { borderColor: colores.tintaSuave }]}
+            />
+            <View
+              style={[
+                estilos.muesca,
+                estilos.muescaDerecha,
+                { backgroundColor: colores.fondo },
+              ]}
+            />
+          </View>
+
+          <View style={[estilos.cuerpo, estilos.pasajeroFila]}>
+            <Campo
+              completo
+              etiqueta={t('boleto.pasajero')}
+              valor={nombrePropio(boleto.pasajero.nombre)}
+            />
+            <Campo etiqueta={t('boleto.placa')} valor={resumen.placa} />
+            <Campo etiqueta={t('boleto.chofer')} valor={resumen.choferNombre} />
+          </View>
+
+          <View style={[estilos.cuerpo, estilos.talon]}>
+            <View style={estilos.codigo}>
+              <Text
+                style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
+              >
+                {t('boleto.codigo')}
+              </Text>
+              <Text
+                accessibilityLabel={boleto.codigo}
+                style={[tipografia.codigoBoleto, { color: colores.tintaPapel }]}
+              >
+                {`${boleto.codigo.slice(0, 4)} ${boleto.codigo.slice(4)}`}
+              </Text>
+              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+                {t('boleto.ayuda')}
+              </Text>
+            </View>
+            <View accessibilityLabel={`QR ${boleto.codigo}`} accessible>
+              <QRCode
+                backgroundColor={colores.papel}
+                color={colores.tintaPapel}
+                size={96}
+                value={`ANDEN:${boleto.codigo}`}
+              />
+            </View>
+          </View>
+        </Animated.View>
       )}
     </View>
   );
 }
 
 const estilos = StyleSheet.create({
-  cabecera: {
-    gap: espacios.dieciseis,
-    overflow: 'hidden',
-    padding: espacios.veinticuatro,
-  },
   campo: { flex: 1, gap: 2, minWidth: '40%' },
   campoCompleto: { flexBasis: '100%', flexGrow: 0 },
   casilla: {
@@ -291,7 +395,35 @@ const estilos = StyleSheet.create({
   },
   muescaDerecha: { right: -tamanosBoleto.muesca / 2 },
   muescaIzquierda: { left: -tamanosBoleto.muesca / 2 },
-  papel: { borderRadius: radios.bloque, overflow: 'hidden' },
+  contenedor: { zIndex: 1 },
+  mitadSuperior: {
+    borderTopLeftRadius: radios.bloque,
+    borderTopRightRadius: radios.bloque,
+    gap: espacios.dieciseis,
+    overflow: 'hidden',
+    padding: espacios.veinticuatro,
+    zIndex: 1,
+  },
+  /** ya sin la otra mitad, el boleto se cierra con sus esquinas de abajo redondeadas */
+  mitadSuperiorSola: {
+    borderBottomLeftRadius: radios.bloque,
+    borderBottomRightRadius: radios.bloque,
+  },
+  mitadInferior: {
+    borderBottomLeftRadius: radios.bloque,
+    borderBottomRightRadius: radios.bloque,
+    zIndex: 2,
+  },
+  bordeRasgado: { height: 8, left: 0, position: 'absolute', right: 0, top: -7 },
+  dientes: { height: 8, width: '100%' },
+  sello: {
+    alignSelf: 'center',
+    borderRadius: radios.casilla,
+    borderWidth: 3,
+    paddingHorizontal: espacios.veinticuatro,
+    paddingVertical: espacios.ocho,
+  },
+  textoSello: { textAlign: 'center', textTransform: 'uppercase' },
   /** una franja propia entre el negro y el crema: nada se encima y las muescas quedan centradas */
   perforacion: {
     alignItems: 'center',
@@ -301,10 +433,5 @@ const estilos = StyleSheet.create({
   talon: {
     alignItems: 'center',
     flexDirection: 'row',
-  },
-  sello: {
-    paddingBottom: espacios.dieciseis,
-    textAlign: 'center',
-    textTransform: 'uppercase',
   },
 });

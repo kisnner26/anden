@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { render } from '@testing-library/react-native';
+import { render, waitFor } from '@testing-library/react-native';
 import { useReducedMotion, withTiming } from 'react-native-reanimated';
 
 import type { BoletoGuardado } from '@/datos/reserva';
@@ -111,5 +111,53 @@ describe('TalonBoleto', () => {
     );
     expect(withTiming).not.toHaveBeenCalled();
     expect(pantalla.getByText('Boleto usado')).toBeTruthy();
+  });
+
+  describe('cuando el chofer escanea el boleto', () => {
+    const USADO: BoletoGuardado = {
+      ...GUARDADO,
+      boleto: { ...GUARDADO.boleto, estado: 'usado' },
+    };
+
+    it('un boleto que ya estaba usado se muestra partido: solo la mitad de arriba con su sello', async () => {
+      const pantalla = await render(<TalonBoleto guardado={USADO} />);
+      expect(pantalla.getByTestId('talon-mitad-superior')).toBeTruthy();
+      expect(pantalla.queryByTestId('talon-mitad-inferior')).toBeNull();
+      expect(pantalla.queryByLabelText('QR K7RM4QX9')).toBeNull();
+      expect(pantalla.getByText('Boleto usado')).toBeTruthy();
+      expect(pantalla.getByText('Boaco')).toBeTruthy();
+    });
+
+    it('al escanearlo la mitad del QR se rasga y cae, y después se quita', async () => {
+      const pantalla = await render(<TalonBoleto guardado={GUARDADO} />);
+      expect(pantalla.getByTestId('talon-mitad-inferior')).toBeTruthy();
+      await pantalla.rerender(<TalonBoleto guardado={USADO} />);
+      // mientras cae todavía se ve
+      expect(pantalla.getByTestId('talon-mitad-inferior')).toBeTruthy();
+      expect(withTiming).toHaveBeenCalled();
+      await waitFor(
+        () => expect(pantalla.queryByTestId('talon-mitad-inferior')).toBeNull(),
+        { timeout: 3000 },
+      );
+      expect(pantalla.getByText('Boleto usado')).toBeTruthy();
+    });
+
+    it('con reducir movimiento la mitad desaparece de inmediato', async () => {
+      (
+        useReducedMotion as unknown as {
+          mockReturnValue: (v: boolean) => void;
+        }
+      ).mockReturnValue(true);
+      const pantalla = await render(<TalonBoleto guardado={GUARDADO} />);
+      await pantalla.rerender(<TalonBoleto guardado={USADO} />);
+      expect(pantalla.queryByTestId('talon-mitad-inferior')).toBeNull();
+    });
+
+    it('un boleto vigente conserva sus dos mitades', async () => {
+      const pantalla = await render(<TalonBoleto guardado={GUARDADO} />);
+      expect(pantalla.getByTestId('talon-mitad-superior')).toBeTruthy();
+      expect(pantalla.getByTestId('talon-mitad-inferior')).toBeTruthy();
+      expect(pantalla.getByLabelText('QR K7RM4QX9')).toBeTruthy();
+    });
   });
 });
