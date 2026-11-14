@@ -79,6 +79,8 @@ export function Horarios({
   const hoy = useMemo(() => inicioDelDia(new Date()), []);
   const [dia, establecerDia] = useState(hoy);
   const { ahora, datos, salidas } = useSalidas(terminalId, dia);
+  // las salidas del mismo día que salen de otras terminales: si no se mira la correcta, parece que no hay viajes
+  const { salidas: delDiaEnTodas } = useSalidas(undefined, dia);
   const proxima = proximaSalida(salidas);
   const esHoy = mismoDia(dia, ahora);
   const { plus } = useSuscripcion();
@@ -345,6 +347,48 @@ export function Horarios({
       </Hoja>
 
       <View style={estilos.graficos}>
+        {datos.terminales
+          .map((candidata) => ({
+            candidata,
+            cantidad: delDiaEnTodas.filter(
+              (salida) => salida.origen === candidata.ciudad,
+            ).length,
+          }))
+          .filter(
+            ({ candidata, cantidad }) =>
+              candidata.id !== terminalId && cantidad > 0,
+          )
+          .map(({ candidata, cantidad }) => (
+            <Pressable
+              accessibilityLabel={rellenar(t('horarios.cambiarTerminal'), {
+                terminal: candidata.ciudad,
+              })}
+              accessibilityRole="button"
+              key={candidata.id}
+              onPress={() => establecerTerminalId(candidata.id)}
+              testID={`otra-terminal-${candidata.id}`}
+            >
+              <Bloque estiloContenido={estilos.otraTerminal}>
+                <Text
+                  style={[
+                    tipografia.cuerpo,
+                    estilos.otraTerminalTexto,
+                    { color: colores.tinta },
+                  ]}
+                >
+                  {rellenar(t('horarios.tambienSalen'), {
+                    cantidad,
+                    terminal: candidata.ciudad,
+                  })}
+                </Text>
+                <Text
+                  style={[tipografia.subtitulo, { color: colores.ambarTexto }]}
+                >
+                  {t('horarios.verlas')}
+                </Text>
+              </Bloque>
+            </Pressable>
+          ))}
         <CarruselSalidas
           ahora={ahora}
           alElegir={alAbrirViaje}
@@ -453,6 +497,13 @@ export function Horarios({
 }
 
 const estilos = StyleSheet.create({
+  otraTerminal: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.doce,
+    padding: espacios.dieciseis,
+  },
+  otraTerminalTexto: { flex: 1 },
   barraFiltros: {
     alignItems: 'center',
     flexDirection: 'row',
