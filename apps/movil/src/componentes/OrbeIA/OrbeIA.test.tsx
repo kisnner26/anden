@@ -18,3 +18,25 @@ describe('animaciones de la IA', () => {
     expect(pantalla.toJSON()).not.toBeNull();
   });
 });
+
+describe('orbe con satélites', () => {
+  it('un orbe grande dibuja sus luces orbitando en todos los estados', async () => {
+    for (const estado of [
+      'reposo',
+      'escuchando',
+      'pensando',
+      'hablando',
+    ] as const) {
+      const p = await renderPantalla(<OrbeIA estado={estado} tamano={120} />);
+      expect(p.toJSON()).not.toBeNull();
+    }
+  });
+
+  it('uno chico no carga con satélites para no recargar la barra de mensaje', async () => {
+    const chico = await renderPantalla(<OrbeIA tamano={28} />);
+    const grande = await renderPantalla(<OrbeIA tamano={120} />);
+    expect(JSON.stringify(grande.toJSON()).length).toBeGreaterThan(
+      JSON.stringify(chico.toJSON()).length,
+    );
+  });
+});
