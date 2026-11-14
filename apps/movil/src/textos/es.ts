@@ -291,6 +291,8 @@ export const textos = {
     verComoPasajero: 'Así te ven los pasajeros',
   },
   conductorAjustes: {
+    perfilTitulo: 'Tu perfil',
+    perfilDetalle: 'Tu foto, tus datos y los de tu servicio',
     pestanaViajes: 'Viajes',
     pestanaAjustes: 'Ajustes',
     titulo: 'Ajustes',
