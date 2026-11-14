@@ -17,7 +17,10 @@ enum Respuestas {
         let ruta = Ruta(id: r.viaje.rutaId)
         let destino = ruta?.destino.nombre ?? "tu destino"
 
-        if tiene("anden") { return "Tu bus a \(destino) sale del andén \(r.viaje.anden)." }
+        if tiene("anden", "punto", "subo", "encuentro") {
+            guard let p = r.viaje.puntoEncuentro, !p.isEmpty else { return "El conductor todavía no confirmó el punto de encuentro." }
+            return "Tu bus a \(destino) sale del punto \(p). Abrilo en el mapa desde Andén en el iPhone."
+        }
         if tiene("asiento") { return "Tu asiento es el \(r.boleto.asiento)." }
         if tiene("codigo", "boleto") { return "Tu código de boleto es \(r.boleto.codigo.map(String.init).joined(separator: " "))." }
         if tiene("placa") { return "La placa del bus es \(r.viaje.placa)." }
@@ -33,8 +36,8 @@ enum Respuestas {
             return "Tu bus a \(destino) salió hace \(minutos(ahora.timeIntervalSince(salio)))."
         }
         let falta = r.viaje.salida.timeIntervalSince(ahora)
-        if falta <= 0 { return "Tu bus a \(destino) está por salir, del andén \(r.viaje.anden)." }
-        return "Tu bus a \(destino) sale a las \(hora(r.viaje.salida)), en \(minutos(falta)), del andén \(r.viaje.anden)."
+        if falta <= 0 { return "Tu bus a \(destino) está por salir, en el punto \(r.viaje.puntoCorto)." }
+        return "Tu bus a \(destino) sale a las \(hora(r.viaje.salida)), en \(minutos(falta)), en el punto \(r.viaje.puntoCorto)."
     }
 
     private static func hora(_ f: Date) -> String {
