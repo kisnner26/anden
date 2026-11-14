@@ -187,6 +187,14 @@ export const paletasAutobus: Readonly<
   ),
 };
 
+/** los colores de cada momento del día en el gráfico de salidas: cielo de madrugada, mañana, tarde y noche */
+export const coloresFranja = {
+  madrugada: ['#3B4A7A', '#6E7FB8'],
+  manana: ['#F2B84B', '#FFD98A'],
+  noche: ['#3C3A6E', '#6A67A8'],
+  tarde: ['#E8743B', '#F5A36B'],
+} as const;
+
 /** el degradado que identifica todo lo que genera la IA del teléfono */
 export const coloresIA = ['#7B61FF', '#2EC4F1', '#FFB21E'] as const;
 
