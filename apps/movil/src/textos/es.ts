@@ -172,7 +172,7 @@ export const textos = {
     servicioSeccion: 'Servicio',
     diaSeccion: 'Día de salida',
     hora: 'Hora en que se pone en andén (24 h)',
-    horaMarcador: 'Por ejemplo: 14:30',
+    horaMarcador: 'Ej: 14:30 o 1430. Vale una hora de hoy que ya pasó',
     placa: 'Placa del bus',
     placaMarcador: 'Por ejemplo: M 123-456',
     puntoEncuentro: 'Punto de encuentro (Plus Code)',
@@ -188,7 +188,7 @@ export const textos = {
     errorPunto:
       'Escribí un Plus Code como el de Google Maps, por ejemplo 6CCJ77GQ+XM.',
     errorHora: 'Escribí la hora como 14:30.',
-    errorPasado: 'Esa hora ya pasó. Elegí una salida a futuro.',
+    errorPasado: 'Ese día ya pasó. Elegí hoy o un día que viene.',
     errorServidor: 'No se pudo publicar. Revisá la conexión y probá de nuevo.',
     sinServidor:
       'Esta versión de la app no está conectada al servidor, así que no puede publicar viajes.',
@@ -985,6 +985,7 @@ export const textos = {
       'Esta persona ya tiene boleto en este viaje. Escribí el nombre de otra persona.',
     cedulaRepetida: 'Esa cédula ya tiene boleto en este viaje.',
     guardados: 'Tus pasajeros guardados',
+    paraOtro: 'Este boleto es para otra persona',
   },
   pago: {
     titulo: 'Pago',
@@ -1157,9 +1158,6 @@ export const textos = {
     entrar: 'Ingresar',
     error: 'Los datos no son correctos.',
     crear: 'Crear cuenta',
-    pruebaTitulo: 'Modo de prueba',
-    pruebaDetalle:
-      'Todavía no hay servidor. Para probar: 1001 o ana, con la contraseña 2026. También podés crear una cuenta.',
   },
   seguimiento: {
     enVivo: 'En vivo',
@@ -1172,6 +1170,8 @@ export const textos = {
     descripcion: 'El conductor comparte su ubicación durante el viaje.',
   },
   conductor: {
+    aBordoTitulo: 'A bordo',
+    aBordoDetalle: 'Quién viaja hoy, si ya subió y las encomiendas.',
     cierreTitulo: 'Cerrar el viaje',
     cierreDetalle:
       'Revisá el cobro antes de cerrar. Después no se puede cambiar.',
@@ -1305,6 +1305,10 @@ export const textos = {
   },
   boletos: {
     titulo: 'Tus boletos',
+    todos: 'Todos',
+    paraOtros: 'Para otros',
+    paraOtroEtiqueta: 'Para {nombre}',
+    paraOtroSinEnviar: 'Es para {nombre}. Mandáselo con Transferir.',
     proximos: 'Próximos',
     pasados: 'Pasados',
     verAnteriores: 'Ver los {{cantidad}} anteriores',
