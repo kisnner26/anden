@@ -15,6 +15,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Aparece } from '@/componentes/Aparece';
+import { AuraDePantalla, SurgeDelOrbe } from '@/componentes/AuraDePantalla';
 import { Bloque } from '@/componentes/Bloque';
 import { EsqueletoIA } from '@/componentes/EsqueletoIA';
 import { BotonAccion } from '@/componentes/BotonAccion';
@@ -949,44 +950,49 @@ export function Asistente({
                       {intercambio.pregunta}
                     </Text>
                   </View>
-                  <Bloque estiloContenido={estilos.respuesta}>
-                    <View style={estilos.firma}>
-                      <LinearGradient
-                        colors={[...coloresIA]}
-                        end={{ x: 1, y: 1 }}
-                        start={{ x: 0, y: 0 }}
-                        style={estilos.chispa}
-                      />
-                      <Text
-                        style={[
-                          tipografia.etiqueta,
-                          { color: colores.ambarTexto },
-                        ]}
-                      >
-                        {rellenar(t('ia.respuestaDe'), { nombre })}
-                      </Text>
-                    </View>
-                    {intercambio.actividad ? (
-                      <ActividadIA actividad={intercambio.actividad} />
-                    ) : null}
-                    {rica ? (
-                      rica.texto !== '' ? (
+                  <SurgeDelOrbe>
+                    <Bloque estiloContenido={estilos.respuesta}>
+                      <View style={estilos.firma}>
+                        <LinearGradient
+                          colors={[...coloresIA]}
+                          end={{ x: 1, y: 1 }}
+                          start={{ x: 0, y: 0 }}
+                          style={estilos.chispa}
+                        />
                         <Text
-                          style={[tipografia.cuerpo, { color: colores.tinta }]}
+                          style={[
+                            tipografia.etiqueta,
+                            { color: colores.ambarTexto },
+                          ]}
                         >
-                          {rica.texto}
+                          {rellenar(t('ia.respuestaDe'), { nombre })}
                         </Text>
-                      ) : intercambio.enCurso && !intercambio.actividad ? (
-                        <PuntosPensando />
-                      ) : null
-                    ) : (
-                      <TextoEscribiendo
-                        animado={esUltimo}
-                        estilo={[tipografia.cuerpo, { color: colores.tinta }]}
-                        texto={intercambio.respuesta}
-                      />
-                    )}
-                  </Bloque>
+                      </View>
+                      {intercambio.actividad ? (
+                        <ActividadIA actividad={intercambio.actividad} />
+                      ) : null}
+                      {rica ? (
+                        rica.texto !== '' ? (
+                          <Text
+                            style={[
+                              tipografia.cuerpo,
+                              { color: colores.tinta },
+                            ]}
+                          >
+                            {rica.texto}
+                          </Text>
+                        ) : intercambio.enCurso && !intercambio.actividad ? (
+                          <PuntosPensando />
+                        ) : null
+                      ) : (
+                        <TextoEscribiendo
+                          animado={esUltimo}
+                          estilo={[tipografia.cuerpo, { color: colores.tinta }]}
+                          texto={intercambio.respuesta}
+                        />
+                      )}
+                    </Bloque>
+                  </SurgeDelOrbe>
 
                   {rica?.ciudad ? (
                     <Aparece>
@@ -1179,6 +1185,7 @@ export function Asistente({
           </>
         )}
       </ScrollView>
+      <AuraDePantalla activa={pensando} />
       {usable && (
         <View style={{ paddingBottom: margenes.bottom }}>
           <CompositorIA
