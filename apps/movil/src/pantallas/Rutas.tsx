@@ -1,16 +1,22 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { Aparece } from '@/componentes/Aparece';
 import { Bloque } from '@/componentes/Bloque';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { ContadorPasajeros } from '@/componentes/ContadorPasajeros';
 import { ControlSegmentado } from '@/componentes/ControlSegmentado';
+import { FichaCiudadIA } from '@/componentes/FichaCiudadIA';
+import { ResumenIA } from '@/componentes/ResumenIA';
+import { SaltoAlCambiar } from '@/componentes/SaltoAlCambiar';
+import { SelectorCiudadFoto } from '@/componentes/SelectorCiudadFoto';
 import { Icono } from '@/componentes/Icono';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { SelectorSalida } from '@/componentes/SelectorSalida';
 import { TrayectoCorredor } from '@/componentes/TrayectoCorredor';
 import { formatoHora, sufijoHora } from '@/datos/formato';
+import { contextoDelDia } from '@/datos/resumenDelDia';
 import { llegadaEstimada } from '@/datos/planificador';
 import {
   CIUDADES_RED,
@@ -65,17 +71,19 @@ export function Rutas({
 
   return (
     <MarcoPestana estiloContenido={estilos.contenido}>
-      <View style={estilos.titular}>
-        <Text style={[tipografia.display, { color: colores.tinta }]}>
-          {t('rutas.titulo')}.
-        </Text>
-        <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
-          {t('rutas.subtitulo')}
-        </Text>
-      </View>
+      <Aparece indice={0}>
+        <View style={estilos.titular}>
+          <Text style={[tipografia.display, { color: colores.tinta }]}>
+            {t('rutas.titulo')}.
+          </Text>
+          <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
+            {t('rutas.subtitulo')}
+          </Text>
+        </View>
+      </Aparece>
 
       <View style={estilos.selectores}>
-        <ControlSegmentado
+        <SelectorCiudadFoto
           alCambiar={(clave) => {
             establecerCiudad(clave);
             establecerElegida(null);
@@ -99,13 +107,22 @@ export function Rutas({
         />
       </View>
 
-      <TrayectoCorredor
-        destino={corredor.destino}
-        distanciaKm={plan.distanciaKm}
-        duracionMin={plan.duracionMin}
-        origen={corredor.origen}
-        recorrido={`${corredor.id}${salida?.viajeId ?? ''}`}
-      />
+      <Aparece indice={1}>
+        <TrayectoCorredor
+          destino={corredor.destino}
+          distanciaKm={plan.distanciaKm}
+          duracionMin={plan.duracionMin}
+          origen={corredor.origen}
+          recorrido={`${corredor.id}${salida?.viajeId ?? ''}`}
+        />
+      </Aparece>
+
+      <View style={estilos.seccion}>
+        <Text style={[tipografia.titulo, { color: colores.tinta }]}>
+          {rellenar(t('rutasVisual.conoce'), { ciudad })}
+        </Text>
+        <FichaCiudadIA ciudad={ciudad} />
+      </View>
 
       <View style={estilos.seccion}>
         <Text style={[tipografia.titulo, { color: colores.tinta }]}>
@@ -130,6 +147,17 @@ export function Rutas({
         )}
       </View>
 
+      {plan.salidas.length > 0 && (
+        <ResumenIA
+          contexto={contextoDelDia(plan.salidas, corredor.origen)}
+          pedido={rellenar(t('rutasVisual.resumenPedido'), {
+            destino: corredor.destino,
+            origen: corredor.origen,
+          })}
+          titulo={t('rutasVisual.resumenTitulo')}
+        />
+      )}
+
       {salida && (
         <>
           <ContadorPasajeros
@@ -137,89 +165,103 @@ export function Rutas({
             cantidad={cantidad}
           />
 
-          <BloqueNegro estiloContenido={estilos.resumen}>
-            <View style={estilos.horas}>
-              <View style={estilos.hora}>
-                <Text
-                  style={[
-                    tipografia.etiqueta,
-                    { color: colores.sobreNegroSuave },
-                  ]}
-                >
-                  {t('rutas.salis')}
-                </Text>
-                <Text
-                  style={[tipografia.datoGrande, { color: colores.sobreNegro }]}
-                >
-                  {formatoHora(salida.salida)}
-                </Text>
-                <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
-                  {sufijoHora(salida.salida)}
-                </Text>
+          <Aparece indice={2}>
+            <BloqueNegro estiloContenido={estilos.resumen}>
+              <View style={estilos.horas}>
+                <View style={estilos.hora}>
+                  <Text
+                    style={[
+                      tipografia.etiqueta,
+                      { color: colores.sobreNegroSuave },
+                    ]}
+                  >
+                    {t('rutas.salis')}
+                  </Text>
+                  <Text
+                    style={[
+                      tipografia.datoGrande,
+                      { color: colores.sobreNegro },
+                    ]}
+                  >
+                    {formatoHora(salida.salida)}
+                  </Text>
+                  <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+                    {sufijoHora(salida.salida)}
+                  </Text>
+                </View>
+                <Icono
+                  color={colores.ambar}
+                  nombre="siguiente"
+                  tamano="grande"
+                />
+                <View style={estilos.hora}>
+                  <Text
+                    style={[
+                      tipografia.etiqueta,
+                      { color: colores.sobreNegroSuave },
+                    ]}
+                  >
+                    {t('rutas.llegas')}
+                  </Text>
+                  <Text
+                    style={[
+                      tipografia.datoGrande,
+                      { color: colores.sobreNegro },
+                    ]}
+                  >
+                    {llegada ? formatoHora(llegada) : '—'}
+                  </Text>
+                  <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+                    {llegada
+                      ? `${sufijoHora(llegada)}${llegada.getDate() !== salida.salida.getDate() ? ` · ${t('rutas.manana')}` : ''}`
+                      : ' '}
+                  </Text>
+                </View>
               </View>
-              <Icono color={colores.ambar} nombre="siguiente" tamano="grande" />
-              <View style={estilos.hora}>
-                <Text
-                  style={[
-                    tipografia.etiqueta,
-                    { color: colores.sobreNegroSuave },
-                  ]}
-                >
-                  {t('rutas.llegas')}
-                </Text>
-                <Text
-                  style={[tipografia.datoGrande, { color: colores.sobreNegro }]}
-                >
-                  {llegada ? formatoHora(llegada) : '—'}
-                </Text>
-                <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
-                  {llegada
-                    ? `${sufijoHora(llegada)}${llegada.getDate() !== salida.salida.getDate() ? ` · ${t('rutas.manana')}` : ''}`
-                    : ' '}
-                </Text>
-              </View>
-            </View>
 
-            <View
-              style={[
-                estilos.regla,
-                { backgroundColor: colores.sobreNegroSuave },
-              ]}
-            />
-
-            <View style={estilos.total}>
-              <Text
+              <View
                 style={[
-                  tipografia.etiqueta,
-                  { color: colores.sobreNegroSuave },
+                  estilos.regla,
+                  { backgroundColor: colores.sobreNegroSuave },
                 ]}
-              >
-                {t('rutas.totalAbordo')}
-              </Text>
-              <Text style={[tipografia.display, { color: colores.ambar }]}>
-                {precio ? `C$ ${precio.total}` : '—'}
-              </Text>
-              {precio && (
+              />
+
+              <View style={estilos.total}>
                 <Text
                   style={[
-                    tipografia.pequeno,
+                    tipografia.etiqueta,
                     { color: colores.sobreNegroSuave },
                   ]}
                 >
-                  {rellenar(t('rutas.porPasajero'), {
-                    unitario: precio.unitario,
-                  })}
+                  {t('rutas.totalAbordo')}
                 </Text>
-              )}
-            </View>
+                <SaltoAlCambiar valor={precio?.total ?? null}>
+                  <Text style={[tipografia.display, { color: colores.ambar }]}>
+                    {precio ? `C$ ${precio.total}` : '—'}
+                  </Text>
+                </SaltoAlCambiar>
+                {precio && (
+                  <Text
+                    style={[
+                      tipografia.pequeno,
+                      { color: colores.sobreNegroSuave },
+                    ]}
+                  >
+                    {rellenar(t('rutas.porPasajero'), {
+                      unitario: precio.unitario,
+                    })}
+                  </Text>
+                )}
+              </View>
 
-            <BotonAccion
-              alPresionar={() => alElegirAsientos?.(salida.viajeId)}
-              deshabilitado={salida.asientosLibres === 0}
-              etiqueta={t('rutas.elegirAsientos')}
-              icono="boleto"
-            />
-          </BloqueNegro>
+              <BotonAccion
+                alPresionar={() => alElegirAsientos?.(salida.viajeId)}
+                deshabilitado={salida.asientosLibres === 0}
+                etiqueta={t('rutas.elegirAsientos')}
+                icono="boleto"
+              />
+            </BloqueNegro>
+          </Aparece>
         </>
       )}
 
