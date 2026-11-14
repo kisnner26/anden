@@ -21,6 +21,8 @@ export interface PasajeroReserva {
   asiento: number;
   cedula?: string;
   nombre: string;
+  /** el boleto lo compra una persona para que viaje otra: luego se le puede mandar */
+  paraOtro?: boolean;
 }
 
 /** lo que se necesita para mostrar un boleto aunque el viaje cambie después */
@@ -33,6 +35,8 @@ export interface ResumenBoleto {
   metodoPago: 'efectivo-al-abordar';
   /** terminal guardada al reservar; ausente en boletos creados antes de T-105 */
   origen?: string;
+  /** el boleto es para otra persona, no para quien lo compró */
+  paraOtro?: boolean;
   placa: string;
   /** la persona que reservó tiene Plus: el conductor ve su sello y su vehículo */
   plus?: boolean;
@@ -163,7 +167,7 @@ export function crearReserva(
         precio: precio.valor.unitario,
         viajeId: viaje.id,
       },
-      resumen,
+      resumen: pasajero.paraOtro ? { ...resumen, paraOtro: true } : resumen,
     };
   });
 
