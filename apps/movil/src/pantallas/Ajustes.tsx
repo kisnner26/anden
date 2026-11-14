@@ -13,6 +13,7 @@ import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
 import { Interruptor } from '@/componentes/Interruptor';
+import { useInicioAutomatico } from '@/datos/inicioAutomatico';
 import { MascotaRumbo } from '@/componentes/MascotaRumbo';
 import { useMascota } from '@/datos/useMascota';
 import { OpcionSeleccion } from '@/componentes/OpcionSeleccion';
@@ -103,6 +104,7 @@ export function Ajustes({
   const bloqueo = useBloqueo();
   const ia = useIA();
   const mascota = useMascota();
+  const inicioAutomatico = useInicioAutomatico();
   const seguridad = useSeguridad();
   const memoriaIA = useMemoriaIA();
   const [memoriaBorrada, establecerMemoriaBorrada] = useState(false);
@@ -272,6 +274,26 @@ export function Ajustes({
           activo={mascota.activa}
           alCambiar={(encender) => void mascota.cambiar(encender)}
           etiqueta={t('mascota.activar')}
+        />
+      </Bloque>
+
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+        {t('inicioAutomatico.seccion')}
+      </Text>
+      <Bloque estiloContenido={estilos.filaOpcion}>
+        <View style={estilos.texto}>
+          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+            {t('inicioAutomatico.titulo')}
+          </Text>
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {t('inicioAutomatico.detalle')}
+          </Text>
+        </View>
+        <Interruptor
+          activo={inicioAutomatico.activo === true}
+          alCambiar={(encender) => void inicioAutomatico.cambiar(encender)}
+          deshabilitado={inicioAutomatico.activo === null}
+          etiqueta={t('inicioAutomatico.titulo')}
         />
       </Bloque>
 
