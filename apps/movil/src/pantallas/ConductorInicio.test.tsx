@@ -43,11 +43,16 @@ afterEach(() => {
 function dibujar(
   alAbrirViaje: (id: string) => void = () => undefined,
   alSalir: () => void = () => undefined,
+  alAbrirPerfil?: () => void,
 ) {
   return renderPantalla(
     <ProveedorSesion>
       <ProveedorCierres>
-        <ConductorInicio alAbrirViaje={alAbrirViaje} alSalir={alSalir} />
+        <ConductorInicio
+          alAbrirPerfil={alAbrirPerfil}
+          alAbrirViaje={alAbrirViaje}
+          alSalir={alSalir}
+        />
       </ProveedorCierres>
     </ProveedorSesion>,
   );
@@ -74,6 +79,14 @@ describe('ConductorInicio', () => {
     expect(
       pantalla.getAllByText(/^(Boaco|Juigalpa) → /).length,
     ).toBeGreaterThan(0);
+  });
+
+  it('tocar la foto del chofer abre su perfil', async () => {
+    const alAbrirPerfil = jest.fn();
+    const pantalla = await dibujar(undefined, undefined, alAbrirPerfil);
+    await pantalla.findByText('Hola, Marvin Lanzas');
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Tu perfil' }));
+    expect(alAbrirPerfil).toHaveBeenCalledTimes(1);
   });
 
   it('abre el viaje que se toca', async () => {
