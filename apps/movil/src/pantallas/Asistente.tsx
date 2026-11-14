@@ -65,6 +65,7 @@ import {
 import { FICHAS } from '@/datos/fichasCiudad';
 import { formatoHoraCompleta } from '@/datos/formato';
 import { useBoletos } from '@/datos/useBoletos';
+import { useConexion } from '@/datos/useConexion';
 import { useEncomiendas } from '@/datos/useEncomiendas';
 import { useHabituales } from '@/datos/useHabituales';
 import { useSuscripcion } from '@/datos/useSuscripcion';
@@ -138,6 +139,7 @@ export function Asistente({
   const { rol, sesion } = useSesion();
   const { encomiendas } = useEncomiendas();
   const { habituales } = useHabituales();
+  const conexion = useConexion();
   const { plus } = useSuscripcion();
   // lo que Andén espera antes de seguir una orden: un teléfono o un sí para reservar
   const [pendiente, establecerPendiente] = useState<
@@ -364,6 +366,10 @@ export function Asistente({
     return {
       ahora: ahoraReal,
       boletos,
+      conexion: {
+        enLinea: conexion.enLinea,
+        ultimaSincronizacion: conexion.ultimaSincronizacion,
+      },
       choferes: new Map(datos.choferes.map((c) => [c.id, c.nombre])),
       ciudades: [
         ...new Set(datos.terminales.map((terminal) => terminal.ciudad)),
