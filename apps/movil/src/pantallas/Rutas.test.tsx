@@ -1,6 +1,7 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { fireEvent } from '@testing-library/react-native';
 
+import { ContextoIA, type ValorIA } from '@/datos/useIA';
 import { renderPantalla } from '@/pruebas/render';
 
 import { Rutas } from './Rutas';
@@ -112,5 +113,38 @@ describe('Rutas', () => {
     expect(
       pantalla.getByText(/ilustrativos hasta tener datos en vivo/),
     ).toBeTruthy();
+  });
+
+  it('muestra la foto de cada ciudad y la ficha de la elegida', async () => {
+    const pantalla = await renderPantalla(<Rutas />);
+    expect(pantalla.getAllByLabelText('Foto de Boaco').length).toBeGreaterThan(
+      0,
+    );
+    expect(pantalla.getByText('Conocé Boaco')).toBeTruthy();
+    expect(pantalla.getByTestId('ficha-ciudad-ia')).toBeTruthy();
+    await fireEvent.press(pantalla.getByRole('tab', { name: 'Juigalpa' }));
+    expect(pantalla.getByText('Conocé Juigalpa')).toBeTruthy();
+  });
+
+  it('con la IA lista ofrece elegir la mejor salida; sin ella no', async () => {
+    const ia: ValorIA = {
+      activada: true,
+      cambiar: async () => undefined,
+      cargando: false,
+      disponibilidad: 'disponible',
+      nombre: 'Apple Intelligence',
+      preguntar: async () => '',
+      usable: true,
+    };
+    const con = await renderPantalla(
+      <ContextoIA.Provider value={ia}>
+        <Rutas />
+      </ContextoIA.Provider>,
+    );
+    expect(
+      con.getByRole('button', { name: 'Elegir la mejor salida con IA' }),
+    ).toBeTruthy();
+    const sin = await renderPantalla(<Rutas />);
+    expect(sin.queryByText('Elegir la mejor salida con IA')).toBeNull();
   });
 });
