@@ -61,6 +61,20 @@ describe('Horarios', () => {
     ).toHaveLength(8);
   });
 
+  it('la terminal de salida se puede cambiar a Boaco para ver el viaje de vuelta', async () => {
+    const pantalla = await renderPantalla(<Horarios />);
+    expect(pantalla.getByLabelText(/Sale desde Mercado Mayoreo/)).toBeTruthy();
+    await fireEvent.press(pantalla.getByTestId('terminal-de-salida'));
+    await fireEvent.press(
+      await pantalla.findByRole('button', {
+        name: 'Terminal de Buses de Boaco, Boaco',
+      }),
+    );
+    expect(
+      await pantalla.findByLabelText(/Sale desde Terminal de Buses de Boaco/),
+    ).toBeTruthy();
+  });
+
   it('filtra por servicio expreso', async () => {
     const pantalla = await renderPantalla(<Horarios />);
     await fireEvent.press(pantalla.getByRole('button', { name: /^Filtros/ }));
