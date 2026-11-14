@@ -3,10 +3,10 @@ import { useEffect, useRef } from 'react';
 import {
   Animated,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   View,
+  useWindowDimensions,
 } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
@@ -24,9 +24,9 @@ import { useTema } from '@/tema/useTema';
 import { rellenar } from '@/textos/rellenar';
 import { t } from '@/textos/t';
 
-const ANCHO = 128;
-const ALTO = 176;
+const ALTO = 184;
 const SEPARACION = espacios.doce;
+const COLUMNAS = 2;
 const RADIO_ANILLO = 15;
 const LARGO_ANILLO = 2 * Math.PI * RADIO_ANILLO;
 
@@ -79,6 +79,7 @@ function AnilloDeAsientos({
 function Tarjeta({
   alElegir,
   ahora,
+  ancho,
   esProxima,
   indice,
   maximo,
@@ -87,6 +88,7 @@ function Tarjeta({
 }: {
   ahora: Date;
   alElegir?: (viajeId: string) => void;
+  ancho: number;
   esProxima: boolean;
   indice: number;
   maximo: number;
@@ -139,6 +141,7 @@ function Tarjeta({
       style={[
         estilos.envoltura,
         {
+          width: ancho,
           opacity: Animated.multiply(entrada, salio ? 0.5 : 1),
           transform: [
             {
@@ -178,6 +181,7 @@ function Tarjeta({
           start={{ x: 0.1, y: 0 }}
           style={[
             estilos.tarjeta,
+            { width: ancho },
             esProxima && { borderColor: colores.sobreNegro, borderWidth: 2 },
           ]}
         >
@@ -188,7 +192,7 @@ function Tarjeta({
                 { color: conAlfa(colores.sobreNegro, 0.9) },
               ]}
             >
-              {salida.codigoDestino}
+              {salida.destino}
             </Text>
             {expreso ? (
               <Icono
@@ -247,8 +251,13 @@ export function CarruselSalidas({
   salidas,
 }: PropiedadesCarruselSalidas) {
   const { colores } = useTema();
+  const { width } = useWindowDimensions();
   if (salidas.length === 0) return null;
 
+  // dos columnas que llenan todo el ancho disponible, una fila tras otra
+  const ancho = Math.floor(
+    (width - 2 * espacios.lateral - SEPARACION * (COLUMNAS - 1)) / COLUMNAS,
+  );
   const ordenadas = [...salidas].sort(
     (a, b) => a.salida.getTime() - b.salida.getTime(),
   );
@@ -272,21 +281,12 @@ export function CarruselSalidas({
           )}
         </Text>
       </View>
-      <ScrollView
-        contentContainerStyle={estilos.pista}
-        contentOffset={{
-          x: Math.max(0, indiceProxima) * (ANCHO + SEPARACION),
-          y: 0,
-        }}
-        decelerationRate="fast"
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        snapToInterval={ANCHO + SEPARACION}
-      >
+      <View style={estilos.cuadricula}>
         {ordenadas.map((salida, indice) => (
           <Tarjeta
             ahora={ahora}
             alElegir={alElegir}
+            ancho={ancho}
             esProxima={esHoy && indice === indiceProxima}
             indice={indice}
             key={salida.viajeId}
@@ -295,7 +295,7 @@ export function CarruselSalidas({
             salio={salio(salida)}
           />
         ))}
-      </ScrollView>
+      </View>
     </View>
   );
 }
@@ -313,7 +313,12 @@ const estilos = StyleSheet.create({
     justifyContent: 'space-between',
   },
   contenedor: { gap: espacios.doce },
-  envoltura: { width: ANCHO },
+  cuadricula: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: SEPARACION,
+  },
+  envoltura: {},
   hora: { alignItems: 'flex-start', gap: 0 },
   inferior: {
     alignItems: 'center',
@@ -322,11 +327,10 @@ const estilos = StyleSheet.create({
   },
   numeral: {
     fontFamily: tipografia.display.fontFamily,
-    fontSize: 46,
-    lineHeight: 50,
+    fontSize: 56,
+    lineHeight: 60,
   },
   numeroAnillo: { position: 'absolute' },
-  pista: { gap: SEPARACION, paddingVertical: espacios.cuatro },
   presionada: { opacity: 0.92, transform: [{ scale: 0.97 }] },
   superior: {
     alignItems: 'center',
@@ -338,6 +342,5 @@ const estilos = StyleSheet.create({
     height: ALTO,
     justifyContent: 'space-between',
     padding: espacios.dieciseis,
-    width: ANCHO,
   },
 });
