@@ -585,6 +585,9 @@ export const textos = {
     previos: 'Tus reportes de este viaje',
     cerrar: 'Cerrar',
   },
+  fotoDestino: {
+    descripcion: 'Foto de {destino}',
+  },
   habitual: {
     titulo: 'Mi viaje habitual',
     proxima: 'Próxima: {cuando}',
