@@ -11,6 +11,9 @@ import envio from '../../assets/sonidos/envio.wav';
 import favorito from '../../assets/sonidos/favorito.wav';
 import fin from '../../assets/sonidos/fin.wav';
 import inicio from '../../assets/sonidos/inicio.wav';
+import mascotaBoing from '../../assets/sonidos/mascotaBoing.wav';
+import mascotaHola from '../../assets/sonidos/mascotaHola.wav';
+import mascotaZzz from '../../assets/sonidos/mascotaZzz.wav';
 import plus from '../../assets/sonidos/plus.wav';
 import pago from '../../assets/sonidos/pago.wav';
 import recordatorio from '../../assets/sonidos/recordatorio.wav';
@@ -28,6 +31,9 @@ const FUENTES = {
   favorito,
   fin,
   inicio,
+  mascotaBoing,
+  mascotaHola,
+  mascotaZzz,
   pago,
   plus,
   recordatorio,
