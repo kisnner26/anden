@@ -1,5 +1,6 @@
 import { leerPlus } from '@anden/dominio';
 
+import { inicioDelDia } from '@/datos/dias';
 import type { FilaViaje } from '@/servicios/supabase/viajesSupabase';
 
 export interface BorradorViaje {
@@ -22,9 +23,15 @@ const PLACA = /^[A-Za-z]{0,2}\s?\d{2,4}[-\s]?\d{0,4}$/;
 export function leerHora(
   texto: string,
 ): { horas: number; minutos: number } | null {
-  const coincide = HORA.exec(texto.trim());
+  const limpio = texto.trim();
+  // también se entiende escrita corta: 10, 930 o 1430
+  const corta = /^(\d{1,2})$/.exec(limpio) ?? /^(\d{1,2})(\d{2})$/.exec(limpio);
+  const coincide =
+    HORA.exec(limpio) ?? (corta ? [limpio, corta[1], corta[2] ?? '00'] : null);
   if (!coincide) return null;
-  return { horas: Number(coincide[1]), minutos: Number(coincide[2]) };
+  const horas = Number(coincide[1]);
+  const minutos = Number(coincide[2]);
+  return horas <= 23 && minutos <= 59 ? { horas, minutos } : null;
 }
 
 /** la fecha y hora de la salida con el día elegido y la hora escrita; nulo si la hora no es válida */
@@ -50,7 +57,9 @@ export function validarViaje(
   if (leerPlus(borrador.puntoEncuentro) === null) errores.push('punto');
   const fecha = fechaDeSalida(borrador);
   if (fecha === null) errores.push('hora');
-  else if (fecha.getTime() <= ahora.getTime()) errores.push('pasado');
+  // una hora que ya pasó hoy se acepta: el bus ya espera en andén y se publica con su hora real
+  else if (fecha.getTime() < inicioDelDia(ahora).getTime())
+    errores.push('pasado');
   return errores;
 }
 
