@@ -10,10 +10,10 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CampoTexto } from '@/componentes/CampoTexto';
 import { MascotaRumbo } from '@/componentes/MascotaRumbo';
+import { CuerpoQueSeTransforma } from './CuerpoQueSeTransforma';
 import {
   consejoDeLaMascota,
   yaSeVioHoy,
@@ -106,6 +106,11 @@ export function GuiaMascota({ pantalla }: PropiedadesGuiaMascota) {
   const [mirandoA, establecerMirandoA] = useState<1 | -1>(1);
   const [posado, establecerPosado] = useState({ x: MARGEN, y: 0 });
   const [animo, establecerAnimo] = useState<Humor | null>(null);
+  // la transformación: 0 es el microbús y 1 la tarjeta donde se materializa lo que dice
+  const forma = useRef(new Animated.Value(0)).current;
+  const [montada, establecerMontada] = useState(false);
+  const [abierto, establecerAbierto] = useState(false);
+  const [guardado, establecerGuardado] = useState<string | null>(null);
   const hablando = useRef(false);
   const moviendose = useRef(false);
   const iniciada = useRef(false);
@@ -520,15 +525,87 @@ export function GuiaMascota({ pantalla }: PropiedadesGuiaMascota) {
     ? t('mascota.preguntando')
     : (dicho ?? (hayConsejo && consejo ? consejo.texto : null));
 
-  const bubbleArriba = posado.y > 190;
-  const izquierdaGlobo =
+  const habla = preguntando || texto !== null;
+  const mostrado = texto ?? guardado;
+
+  useEffect(() => {
+    if (texto !== null) establecerGuardado(texto);
+  }, [texto]);
+
+  // abre o cierra la transformación: el cuerpo se estira, se vuelve tarjeta y al terminar se pliega otra vez
+  useEffect(() => {
+    if (!activa) return;
+    if (habla) {
+      establecerMontada(true);
+      if (reducido) {
+        forma.setValue(1);
+        establecerAbierto(true);
+        return;
+      }
+      Animated.sequence([
+        Animated.timing(forma, {
+          duration: 170,
+          easing: Easing.out(Easing.quad),
+          toValue: 0.45,
+          useNativeDriver: false,
+        }),
+        Animated.spring(forma, {
+          friction: 6,
+          tension: 85,
+          toValue: 1,
+          useNativeDriver: false,
+        }),
+      ]).start(() => establecerAbierto(true));
+    } else if (montada) {
+      establecerAbierto(false);
+      if (reducido) {
+        forma.setValue(0);
+        establecerMontada(false);
+        return;
+      }
+      Animated.timing(forma, {
+        duration: 280,
+        easing: Easing.inOut(Easing.cubic),
+        toValue: 0,
+        useNativeDriver: false,
+      }).start(() => establecerMontada(false));
+    }
+  }, [habla]);
+
+  const anchoCard = Math.min(ANCHO_GLOBO, width - 2 * MARGEN);
+  const altoCard = preguntando
+    ? 214
+    : Math.max(58, 28 + Math.ceil((mostrado?.length ?? 0) / 30) * 18);
+  const haciaArriba = posado.y > 190;
+  const desplazamientoX =
     Math.min(
-      width - MARGEN - ANCHO_GLOBO,
-      Math.max(MARGEN, posado.x + TAMANO / 2 - ANCHO_GLOBO / 2),
+      width - MARGEN - anchoCard,
+      Math.max(MARGEN, posado.x + TAMANO / 2 - anchoCard / 2),
     ) - posado.x;
-  const posicionGlobo = bubbleArriba
-    ? { bottom: altoM + 6, left: izquierdaGlobo }
-    : { left: izquierdaGlobo, top: altoM + 6 };
+  const formulario = preguntando ? (
+    <View style={estilos.preguntar}>
+      <CampoTexto
+        alCambiar={establecerPregunta}
+        etiqueta={t('mascota.pregunta')}
+        marcador={t('mascota.preguntaMarcador')}
+        valor={pregunta}
+      />
+      <BotonAccion
+        alPresionar={() => void enviarPregunta()}
+        deshabilitado={pregunta.trim() === ''}
+        etiqueta={t('mascota.enviarPregunta')}
+      />
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => establecerPreguntando(false)}
+        style={estilos.cerrar}
+      >
+        <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+          {t('mascota.cerrar')}
+        </Text>
+      </Pressable>
+    </View>
+  ) : undefined;
 
   return (
     <Animated.View
@@ -553,72 +630,58 @@ export function GuiaMascota({ pantalla }: PropiedadesGuiaMascota) {
           },
         ]}
       >
-        {preguntando ? (
-          <View style={[estilos.globo, posicionGlobo]}>
-            <Bloque estiloContenido={estilos.preguntar}>
-              <CampoTexto
-                alCambiar={establecerPregunta}
-                etiqueta={t('mascota.pregunta')}
-                marcador={t('mascota.preguntaMarcador')}
-                valor={pregunta}
-              />
-              <BotonAccion
-                alPresionar={() => void enviarPregunta()}
-                deshabilitado={pregunta.trim() === ''}
-                etiqueta={t('mascota.enviarPregunta')}
-              />
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => establecerPreguntando(false)}
-                style={estilos.cerrar}
-              >
-                <Text
-                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
-                >
-                  {t('mascota.cerrar')}
-                </Text>
-              </Pressable>
-            </Bloque>
-          </View>
-        ) : texto !== null ? (
-          <View style={[estilos.globo, posicionGlobo]}>
-            <Bloque estiloContenido={estilos.textoGlobo}>
-              <Text
-                accessibilityLiveRegion="polite"
-                style={[tipografia.pequeno, { color: colores.tinta }]}
-              >
-                {texto}
-              </Text>
-            </Bloque>
-          </View>
-        ) : null}
-        <Animated.View
-          style={{
-            transform: [
-              { scaleX: mirandoA },
-              {
-                translateY: paso.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, -7],
-                }),
-              },
-            ],
-          }}
-        >
-          <Pressable
-            accessibilityHint={t('mascota.pregunta')}
-            accessibilityLabel={texto ?? t('mascota.activar')}
-            accessibilityRole="button"
-            onLongPress={alMantener}
-            onPress={alTocar}
+        {montada ? (
+          <CuerpoQueSeTransforma
+            abierto={abierto}
+            alToque={
+              preguntando
+                ? undefined
+                : () => {
+                    if (hayConsejo && consejo) despedir(consejo.id);
+                    else establecerDicho(null);
+                  }
+            }
+            alto={altoCard}
+            altoBus={altoM}
+            ancho={anchoCard}
+            anchoBus={TAMANO}
+            contenido={formulario}
+            desplazamientoX={desplazamientoX}
+            forma={forma}
+            haciaArriba={haciaArriba}
+            humor={animo ?? humor}
+            salto={salto}
+            texto={mostrado}
+          />
+        ) : (
+          <Animated.View
+            style={{
+              transform: [
+                { scaleX: mirandoA },
+                {
+                  translateY: paso.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, -7],
+                  }),
+                },
+              ],
+            }}
           >
-            <MascotaRumbo
-              humor={animo ?? humor}
-              salto={salto}
-              tamano={TAMANO}
-            />
-          </Pressable>
-        </Animated.View>
+            <Pressable
+              accessibilityHint={t('mascota.pregunta')}
+              accessibilityLabel={texto ?? t('mascota.activar')}
+              accessibilityRole="button"
+              onLongPress={alMantener}
+              onPress={alTocar}
+            >
+              <MascotaRumbo
+                humor={animo ?? humor}
+                salto={salto}
+                tamano={TAMANO}
+              />
+            </Pressable>
+          </Animated.View>
+        )}
       </Animated.View>
     </Animated.View>
   );
@@ -627,7 +690,6 @@ export function GuiaMascota({ pantalla }: PropiedadesGuiaMascota) {
 const estilos = StyleSheet.create({
   cerrar: { alignItems: 'center', justifyContent: 'center', minHeight: 44 },
   contenedor: { zIndex: 40 },
-  globo: { position: 'absolute', width: ANCHO_GLOBO },
   personaje: {
     height: TAMANO,
     left: 0,
@@ -636,5 +698,4 @@ const estilos = StyleSheet.create({
     width: TAMANO,
   },
   preguntar: { gap: espacios.ocho, padding: espacios.doce },
-  textoGlobo: { padding: espacios.doce },
 });
