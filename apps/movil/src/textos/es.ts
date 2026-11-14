@@ -672,13 +672,25 @@ export const textos = {
     verBoleto: 'Ver mi boleto',
   },
   mascota: {
-    activar: 'Activar a Pito',
-    alerta: 'Pito avisa',
+    frase1: 'Los mejores viajes empiezan con un buen asiento. ¿Lo elegimos?',
+    frase2: 'Si te quedás sin saber a dónde ir, mirá las salidas de hoy.',
+    frase3: 'Llegá con tiempo al punto de encuentro, que el bus no espera.',
+    frase4: 'Tocá y mantené para preguntarme lo que quieras de tus viajes.',
+    frase5: 'Guardá tu viaje de siempre y te aviso cuando salga.',
+    pregunta: 'Preguntale a Rumbo',
+    preguntaMarcador: 'Por ejemplo: ¿a qué hora salgo?',
+    preguntando: 'Pensando…',
+    enviarPregunta: 'Preguntar',
+    sinIA: 'Activá la IA en Ajustes y te contesto lo que quieras.',
+    falloIA: 'No pude pensar ahora. Probá de nuevo en un momento.',
+    cerrar: 'Cerrar',
+    activar: 'Activar a Rumbo',
+    alerta: 'Rumbo avisa',
     calificar:
       '¿Cómo te fue en tu último viaje? Contale a Andén con las estrellas.',
-    descartar: 'Tocá para despedir a Pito',
+    descartar: 'Tocá para despedir a Rumbo',
     detalle:
-      'Una mascota que te avisa cuándo salir y te enseña los trucos de la app. Se puede apagar cuando quieras.',
+      'Una mascota viva que parpadea, hace sonidos, te avisa cuándo salir y responde lo que le preguntes con la IA del teléfono. Tocala para que te hable y mantenela apretada para preguntarle. Se puede apagar cuando quieras.',
     inminente:
       '¡Ya casi! Tu bus a {destino} sale en {minutos} min. Andá al punto {punto}.',
     noche: 'Ya es tarde. Dejá tu viaje de mañana listo y descansá.',
@@ -689,7 +701,7 @@ export const textos = {
     sinBoletos:
       'Todavía no tenés boletos. Tocá Buscar salidas y armamos tu viaje.',
     sinSalidasHoy: 'Hoy ya no hay más salidas. Mirá las de mañana.',
-    titulo: 'Pito, tu guía',
+    titulo: 'Rumbo, tu guía',
     trucoArrastrar:
       'Truco: arrastrá tu boleto hacia arriba y se ve grande para el chofer.',
     trucoDeslizar:
