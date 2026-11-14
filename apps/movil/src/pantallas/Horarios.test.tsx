@@ -241,7 +241,7 @@ describe('Horarios', () => {
   describe('vista gráfica del día', () => {
     it('muestra la línea del día, los atajos y la foto de la próxima salida', async () => {
       const pantalla = await renderPantalla(<Horarios />);
-      expect(pantalla.getByTestId('linea-del-dia')).toBeTruthy();
+      expect(pantalla.getByTestId('salidas-del-dia')).toBeTruthy();
       expect(pantalla.getByTestId('atajos-del-dia')).toBeTruthy();
       expect(pantalla.getByTestId('proxima-salida-foto')).toBeTruthy();
     });

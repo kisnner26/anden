@@ -1,12 +1,10 @@
 import { describe, expect, it } from '@jest/globals';
 
 import {
-  agruparPorFranja,
-  altoDeBarra,
   atajosDelDia,
   contextoDelDia,
+  fraccionDeAsientos,
   franjaDelDia,
-  posicionEnElDia,
 } from './resumenDelDia';
 import type { Salida } from './salidas';
 
@@ -32,22 +30,6 @@ function salida(id: string, hora: number, extra: Partial<Salida> = {}): Salida {
     ...extra,
   };
 }
-
-describe('posicionEnElDia', () => {
-  it('las 5 a. m. son el inicio y las 11 p. m. el final', () => {
-    expect(posicionEnElDia(new Date(2026, 10, 13, 5, 0))).toBe(0);
-    expect(posicionEnElDia(new Date(2026, 10, 13, 23, 0))).toBe(1);
-  });
-
-  it('las 2 p. m. caen a la mitad', () => {
-    expect(posicionEnElDia(new Date(2026, 10, 13, 14, 0))).toBe(0.5);
-  });
-
-  it('una hora fuera de la línea se queda en el borde', () => {
-    expect(posicionEnElDia(new Date(2026, 10, 13, 3, 10))).toBe(0);
-    expect(posicionEnElDia(new Date(2026, 10, 13, 23, 50))).toBe(1);
-  });
-});
 
 describe('atajosDelDia', () => {
   it('elige la más barata, la más temprana y la que tiene más asientos', () => {
@@ -117,37 +99,18 @@ describe('franjaDelDia', () => {
   });
 });
 
-describe('agruparPorFranja', () => {
-  it('ordena por hora y junta las salidas del mismo momento', () => {
-    const grupos = agruparPorFranja([
-      salida('t2', 16),
-      salida('m1', 7),
-      salida('t1', 13),
-      salida('n1', 19),
-    ]);
-    expect(grupos.map((g) => g.franja)).toEqual(['manana', 'tarde', 'noche']);
-    expect(grupos[1]?.salidas.map((s) => s.viajeId)).toEqual(['t1', 't2']);
+describe('fraccionDeAsientos', () => {
+  it('la que más tiene está llena y la agotada vacía', () => {
+    expect(fraccionDeAsientos(20, 20)).toBe(1);
+    expect(fraccionDeAsientos(0, 20)).toBe(0);
   });
 
-  it('sin salidas no hay grupos', () => {
-    expect(agruparPorFranja([])).toEqual([]);
-  });
-});
-
-describe('altoDeBarra', () => {
-  it('la que más asientos tiene llega al máximo', () => {
-    expect(altoDeBarra(20, 20)).toBe(72);
+  it('a la mitad es 0.5 y nunca pasa de 1', () => {
+    expect(fraccionDeAsientos(10, 20)).toBe(0.5);
+    expect(fraccionDeAsientos(50, 20)).toBe(1);
   });
 
-  it('a la mitad queda a media altura entre el mínimo y el máximo', () => {
-    expect(altoDeBarra(10, 20)).toBe(40);
-  });
-
-  it('una agotada se queda en el mínimo visible', () => {
-    expect(altoDeBarra(0, 20)).toBe(8);
-  });
-
-  it('nunca pasa del máximo', () => {
-    expect(altoDeBarra(50, 20)).toBe(72);
+  it('sin máximo no divide por cero', () => {
+    expect(fraccionDeAsientos(5, 0)).toBe(0);
   });
 });
