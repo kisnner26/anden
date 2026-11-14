@@ -128,7 +128,6 @@ export function DeslizarParaEliminar({
       style={{ opacity: opacidad }}
     >
       <Animated.View
-        pointerEvents={abierto ? 'auto' : 'none'}
         style={[
           estilos.accion,
           {
