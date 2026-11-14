@@ -11,7 +11,7 @@ import {
 import { claveDeCuenta, type Sesion } from '@/servicios/sesion';
 import { publicarBoletos } from '@/servicios/supabase/boletosCompartidos';
 
-import { emitirMascota } from './mascotaEventos';
+import { emitirSenal } from './senalesDeAyuda';
 import { sincronizarAsientos } from './asientosRemotos';
 import { crearReserva, ocupacionesDe, type BoletoGuardado } from './reserva';
 import { useBusPropio } from './useBusPropio';
@@ -128,14 +128,11 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
       );
       if (publicacion && publicacion.conflictos.length > 0) {
         await sincronizarAsientos(viajeId);
+        emitirSenal('reservaFallida');
         return { error: 'asiento-ocupado', ok: false };
       }
       ocuparEnMuestra(resultado.valor);
       await guardar([...boletos, ...resultado.valor]);
-      emitirMascota({
-        destino: resultado.valor[0]?.resumen.destino ?? '',
-        tipo: 'reserva',
-      });
       return resultado;
     },
     [boletos, guardar],
