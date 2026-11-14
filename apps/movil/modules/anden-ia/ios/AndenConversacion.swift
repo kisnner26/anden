@@ -15,9 +15,14 @@ struct SalidaAnden: Codable, Sendable {
 }
 
 struct DatosAnden: Codable, Sendable {
-  let salidas: [SalidaAnden]
-  let boletos: [String]
-  let fichas: [String: String]
+  var salidas: [SalidaAnden]
+  var boletos: [String]
+  var fichas: [String: String]
+  /// tarifas por trayecto y servicio
+  var tarifas: [String]? = nil
+  /// quién es la persona y qué tiene en marcha
+  var personal: [String]? = nil
+  var encomiendas: [String]? = nil
 }
 
 final class AlmacenAnden: @unchecked Sendable {
@@ -46,39 +51,50 @@ func plano(_ texto: String) -> String {
 
 #if canImport(FoundationModels)
 
+/// una salida que la app ya mostró; las herramientas nunca devuelven identificadores internos
 @available(iOS 26.0, *)
 struct BuscarSalidas: Tool {
   let name = "buscarSalidas"
-  let description = "Busca las salidas reales de buses de Andén. Usala siempre antes de decir horarios, tarifas, asientos libres o puntos de encuentro."
+  let description = "Busca las salidas reales de buses de Andén. Usala antes de decir horarios, tarifas, asientos libres o puntos de encuentro. Todos los filtros son opcionales: si no estás seguro, dejalos vacíos y se devuelven las próximas salidas."
 
   @Generable
   struct Arguments {
-    @Guide(description: "Ciudad de destino, por ejemplo Boaco. Texto vacío si no importa.")
+    @Guide(description: "Ciudad de destino (Managua, Boaco o Juigalpa). Texto vacío si no importa; no escribas otra cosa que no sea una ciudad.")
     var destino: String
-    @Guide(description: "Ciudad de origen, por ejemplo Managua. Texto vacío si no importa.")
+    @Guide(description: "Ciudad de origen (Managua, Boaco o Juigalpa). Texto vacío si no importa.")
     var origen: String
-    @Guide(description: "true para mostrar solo salidas que todavía tienen asientos libres.")
+    @Guide(description: "true solo si la persona pidió expresamente salidas con asientos libres.")
     var soloConAsientos: Bool
   }
 
   func call(arguments: Arguments) async throws -> String {
     AlmacenAnden.compartido.avisar(name)
+    let todas = AlmacenAnden.compartido.datos.salidas
+    // un filtro que no es una ciudad conocida se ignora: así "próximos" o "viajes" nunca vacían la lista
+    let ciudades = Set(todas.flatMap { [plano($0.destino), plano($0.origen)] })
     let destino = plano(arguments.destino)
     let origen = plano(arguments.origen)
-    let encontradas = AlmacenAnden.compartido.datos.salidas.filter { salida in
-      (destino.isEmpty || plano(salida.destino).contains(destino))
-        && (origen.isEmpty || plano(salida.origen).contains(origen))
+    let usarDestino = ciudades.contains(destino)
+    let usarOrigen = ciudades.contains(origen)
+    var encontradas = todas.filter { salida in
+      (!usarDestino || plano(salida.destino) == destino)
+        && (!usarOrigen || plano(salida.origen) == origen)
         && (!arguments.soloConAsientos || salida.libres > 0)
     }
-    if encontradas.isEmpty { return "No hay salidas que coincidan." }
-    return encontradas.prefix(5).map(\.linea).joined(separator: "\n")
+    var aviso = ""
+    if encontradas.isEmpty && !todas.isEmpty {
+      encontradas = todas
+      aviso = "No hay salidas con ese filtro exacto. Estas son las próximas salidas que existen:\n"
+    }
+    if encontradas.isEmpty { return "La app no tiene salidas próximas cargadas." }
+    return aviso + encontradas.prefix(6).map(\.linea).joined(separator: "\n")
   }
 }
 
 @available(iOS 26.0, *)
 struct SalidaMasBarata: Tool {
   let name = "salidaMasBarata"
-  let description = "Devuelve la salida con la tarifa más baja, opcionalmente hacia una ciudad."
+  let description = "Devuelve la salida con la tarifa más baja que todavía tiene asientos, opcionalmente hacia una ciudad."
 
   @Generable
   struct Arguments {
@@ -88,18 +104,41 @@ struct SalidaMasBarata: Tool {
 
   func call(arguments: Arguments) async throws -> String {
     AlmacenAnden.compartido.avisar(name)
+    let todas = AlmacenAnden.compartido.datos.salidas
     let destino = plano(arguments.destino)
-    let candidata = AlmacenAnden.compartido.datos.salidas
-      .filter { $0.tarifa != nil && $0.libres > 0 && (destino.isEmpty || plano($0.destino).contains(destino)) }
+    let usar = todas.contains { plano($0.destino) == destino }
+    let candidata = todas
+      .filter { $0.tarifa != nil && $0.libres > 0 && (!usar || plano($0.destino) == destino) }
       .min { ($0.tarifa ?? .max) < ($1.tarifa ?? .max) }
     return candidata?.linea ?? "No hay salidas con tarifa disponible."
   }
 }
 
 @available(iOS 26.0, *)
+struct TarifaDeRuta: Tool {
+  let name = "tarifaDeRuta"
+  let description = "Dice cuánto cuesta el boleto de un trayecto, por servicio (ordinario o expreso). Usala cuando pregunten por precios."
+
+  @Generable
+  struct Arguments {
+    @Guide(description: "Ciudad de destino, por ejemplo Boaco. Texto vacío para ver todas las tarifas.")
+    var destino: String
+  }
+
+  func call(arguments: Arguments) async throws -> String {
+    AlmacenAnden.compartido.avisar(name)
+    let tarifas = AlmacenAnden.compartido.datos.tarifas ?? []
+    let destino = plano(arguments.destino)
+    let filtradas = destino.isEmpty ? tarifas : tarifas.filter { plano($0).contains("a \(destino),") }
+    let lista = filtradas.isEmpty ? tarifas : filtradas
+    return lista.isEmpty ? "No hay tarifas cargadas." : lista.joined(separator: "\n")
+  }
+}
+
+@available(iOS 26.0, *)
 struct MisBoletos: Tool {
   let name = "misBoletos"
-  let description = "Devuelve los boletos vigentes de la persona: destino, hora, asiento y punto de encuentro."
+  let description = "Devuelve los boletos vigentes de la persona: destino, hora, asiento, punto de encuentro, bus y chofer."
 
   @Generable
   struct Arguments {}
@@ -108,6 +147,36 @@ struct MisBoletos: Tool {
     AlmacenAnden.compartido.avisar(name)
     let boletos = AlmacenAnden.compartido.datos.boletos
     return boletos.isEmpty ? "La persona no tiene boletos vigentes." : boletos.joined(separator: "\n")
+  }
+}
+
+@available(iOS 26.0, *)
+struct MisEncomiendas: Tool {
+  let name = "misEncomiendas"
+  let description = "Devuelve las encomiendas de la persona con su estado."
+
+  @Generable
+  struct Arguments {}
+
+  func call(arguments: Arguments) async throws -> String {
+    AlmacenAnden.compartido.avisar(name)
+    let lista = AlmacenAnden.compartido.datos.encomiendas ?? []
+    return lista.isEmpty ? "La persona no tiene encomiendas." : lista.joined(separator: "\n")
+  }
+}
+
+@available(iOS 26.0, *)
+struct MiContexto: Tool {
+  let name = "miContexto"
+  let description = "Dice quién es la persona, qué fecha y hora es, qué boleto tiene, si va en un viaje, su viaje habitual y sus encomiendas."
+
+  @Generable
+  struct Arguments {}
+
+  func call(arguments: Arguments) async throws -> String {
+    AlmacenAnden.compartido.avisar(name)
+    let lineas = AlmacenAnden.compartido.datos.personal ?? []
+    return lineas.isEmpty ? "No hay datos de la persona." : lineas.joined(separator: "\n")
   }
 }
 
@@ -134,10 +203,10 @@ struct FichaDeCiudad: Tool {
 @available(iOS 26.0, *)
 @Generable
 struct RespuestaAnden {
-  @Guide(description: "La respuesta en español, cercana, de una a cuatro frases. Horarios, tarifas, asientos y puntos de encuentro solo los que dieron las herramientas.")
+  @Guide(description: "La respuesta en español, cercana, de una a cuatro frases. Horarios, tarifas, asientos y puntos de encuentro solo los de los datos. Sin identificadores ni números entre corchetes.")
   var texto: String
-  @Guide(description: "Ids exactos (campo id) de hasta 3 salidas devueltas por las herramientas que apoyan la respuesta. Lista vacía si no aplica.")
-  var salidas: [String]
+  @Guide(description: "Los números entre corchetes [n] de hasta 3 salidas de la lista que apoyan la respuesta, por ejemplo [2, 5]. Solo números, nunca texto. Lista vacía si no aplica.")
+  var salidas: [Int]
   @Guide(description: "Ciudad de la que habla la respuesta: Managua, Boaco o Juigalpa. Texto vacío si no aplica.")
   var ciudad: String
   @Guide(description: "true solo si la respuesta trata de los boletos de la persona.")
@@ -157,7 +226,7 @@ final class ConversacionesAnden: @unchecked Sendable {
     if !nueva, let existente = sesiones[id] { return existente }
     let sesion = LanguageModelSession(
       model: SystemLanguageModel.default,
-      tools: [BuscarSalidas(), SalidaMasBarata(), MisBoletos(), FichaDeCiudad()],
+      tools: [BuscarSalidas(), SalidaMasBarata(), TarifaDeRuta(), MisBoletos(), MisEncomiendas(), MiContexto(), FichaDeCiudad()],
       instructions: instrucciones
     )
     sesiones[id] = sesion
