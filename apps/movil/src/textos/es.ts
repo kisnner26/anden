@@ -8,6 +8,7 @@ export const textos = {
     lema: 'Tu viaje en bus,\nsin hacer fila.',
     empezar: 'Empezar',
     deslizar: 'Deslizar para empezar',
+    iniciando: 'Arrancando…',
     deslizarAyuda: 'Desliza hacia la derecha o activa el control para empezar',
   },
   pestanas: {
