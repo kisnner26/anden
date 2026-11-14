@@ -20,6 +20,7 @@ import { ProveedorRecordatorios } from '@/datos/ProveedorRecordatorios';
 
 import { ProveedorFavoritos } from '@/datos/ProveedorFavoritos';
 import { reiniciarMuestra } from '@/datos/useSalidas';
+import { ContextoIA, type ValorIA } from '@/datos/useIA';
 import { renderPantalla } from '@/pruebas/render';
 
 import { ProveedorSuscripcion } from '@/datos/ProveedorSuscripcion';
@@ -235,5 +236,58 @@ describe('Horarios', () => {
       pantalla.getByRole('button', { name: '15 min antes · Plus' }).props
         .accessibilityState,
     ).toMatchObject({ disabled: true });
+  });
+
+  describe('vista gráfica del día', () => {
+    it('muestra la línea del día, los atajos y la foto de la próxima salida', async () => {
+      const pantalla = await renderPantalla(<Horarios />);
+      expect(pantalla.getByTestId('linea-del-dia')).toBeTruthy();
+      expect(pantalla.getByTestId('atajos-del-dia')).toBeTruthy();
+      expect(pantalla.getByTestId('proxima-salida-foto')).toBeTruthy();
+    });
+
+    it('elegir un destino deja solo sus salidas', async () => {
+      const pantalla = await renderPantalla(<Horarios />);
+      const antes = pantalla.getAllByLabelText(
+        /, (Salió|Abordando|A tiempo|\+\d+ min)$/,
+      ).length;
+      await fireEvent.press(pantalla.getByRole('button', { name: 'Boaco' }));
+      const despues = pantalla.getAllByLabelText(
+        /, (Salió|Abordando|A tiempo|\+\d+ min)$/,
+      );
+      expect(despues.length).toBeLessThan(antes);
+      expect(
+        pantalla.getByRole('button', { name: 'Boaco' }).props
+          .accessibilityState,
+      ).toMatchObject({ selected: true });
+      await fireEvent.press(
+        pantalla.getByRole('button', { name: 'Todos los destinos' }),
+      );
+      expect(
+        pantalla.getAllByLabelText(/, (Salió|Abordando|A tiempo|\+\d+ min)$/),
+      ).toHaveLength(antes);
+    });
+
+    it('con la IA lista ofrece resumir el día; sin ella no', async () => {
+      const ia: ValorIA = {
+        activada: true,
+        cambiar: async () => undefined,
+        cargando: false,
+        disponibilidad: 'disponible',
+        nombre: 'Apple Intelligence',
+        preguntar: async () => '',
+        usable: true,
+      };
+      const con = await renderPantalla(
+        <ContextoIA.Provider value={ia}>
+          <Horarios />
+        </ContextoIA.Provider>,
+      );
+      expect(
+        con.getByRole('button', { name: 'Resumir el día con IA' }),
+      ).toBeTruthy();
+      const sin = await renderPantalla(<Horarios />);
+      expect(sin.queryByText('Resumir el día con IA')).toBeNull();
+    });
   });
 });
