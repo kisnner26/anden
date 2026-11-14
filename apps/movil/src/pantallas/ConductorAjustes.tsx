@@ -1,42 +1,29 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
-import { Icono } from '@/componentes/Icono';
 import { Interruptor } from '@/componentes/Interruptor';
 import { autenticar } from '@/datos/biometria';
-import { iniciales, nombrePropio } from '@/datos/perfil';
-import { usePerfil } from '@/datos/usePerfil';
 import { useAjustesConductor } from '@/datos/useAjustesConductor';
 import { useBloqueo } from '@/datos/useBloqueo';
-import { useSesion } from '@/datos/useSesion';
 import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
+import { Ajustes } from './Ajustes';
+
 export interface PropiedadesConductorAjustes {
-  /** abre los ajustes generales: apariencia, letra, ubicación */
-  alAbrirAjustesGenerales: () => void;
   /** abre el perfil del conductor: es la primera opción de los ajustes */
   alAbrirPerfil: () => void;
   /** cierra la sesión y vuelve al ingreso */
   alSalir: () => void;
 }
 
-/** la pestaña de ajustes del conductor: seguridad, el viaje y la sesión */
-export function ConductorAjustes({
-  alAbrirAjustesGenerales,
-  alAbrirPerfil,
-  alSalir,
-}: PropiedadesConductorAjustes) {
+/** lo que solo tiene quien conduce: pedir su identidad para iniciar un viaje y no dejar que la pantalla se apague en ruta */
+function SeccionesDeConductor() {
   const { colores } = useTema();
-  const margenes = useSafeAreaInsets();
-  const { cerrar, sesion } = useSesion();
   const { ajustes, cambiar } = useAjustesConductor();
   const { biometria } = useBloqueo();
-  const { perfil } = usePerfil();
 
   async function cambiarBiometria(activar: boolean) {
     // para encender la verificación hay que pasarla una vez: así se sabe que funciona y que es quien dice
@@ -47,56 +34,9 @@ export function ConductorAjustes({
   }
 
   return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={[
-        estilos.contenido,
-        {
-          paddingBottom: 120,
-          paddingTop: margenes.top + espacios.veinticuatro,
-        },
-      ]}
-      style={{ backgroundColor: colores.fondo }}
-    >
+    <>
       <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-        {nombrePropio(sesion?.nombre ?? '')}
-      </Text>
-      <Text style={[tipografia.titulo, { color: colores.tinta }]}>
-        {t('conductorAjustes.titulo')}.
-      </Text>
-      <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
-        {t('conductorAjustes.detalle')}
-      </Text>
-
-      <Pressable
-        accessibilityLabel={t('conductorAjustes.perfilTitulo')}
-        accessibilityRole="button"
-        onPress={alAbrirPerfil}
-      >
-        <Bloque estiloContenido={estilos.fila}>
-          <Avatar
-            descripcion={t('conductorPerfil.fotoDescripcion')}
-            iniciales={iniciales({
-              apellido: perfil.apellido,
-              nombre: perfil.nombre || (sesion?.nombre ?? ''),
-            })}
-            tamano={48}
-            uri={perfil.fotoUri}
-          />
-          <View style={estilos.texto}>
-            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-              {t('conductorAjustes.perfilTitulo')}
-            </Text>
-            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-              {t('conductorAjustes.perfilDetalle')}
-            </Text>
-          </View>
-          <Icono nombre="siguiente" tamano="mediano" />
-        </Bloque>
-      </Pressable>
-
-      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-        {t('conductorAjustes.seguridadSeccion')}
+        {t('conductorAjustes.viajeSeccion')}
       </Text>
       <Bloque estiloContenido={estilos.fila}>
         <View style={estilos.texto}>
@@ -116,10 +56,6 @@ export function ConductorAjustes({
           etiqueta={t('conductorAjustes.biometriaTitulo')}
         />
       </Bloque>
-
-      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-        {t('conductorAjustes.viajeSeccion')}
-      </Text>
       <Bloque estiloContenido={estilos.fila}>
         <View style={estilos.texto}>
           <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
@@ -135,47 +71,29 @@ export function ConductorAjustes({
           etiqueta={t('conductorAjustes.pantallaTitulo')}
         />
       </Bloque>
+    </>
+  );
+}
 
-      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-        {t('conductorAjustes.generalesSeccion')}
-      </Text>
-      <Pressable
-        accessibilityLabel={t('conductorAjustes.generalesTitulo')}
-        accessibilityRole="button"
-        onPress={alAbrirAjustesGenerales}
-      >
-        <Bloque estiloContenido={estilos.fila}>
-          <View style={estilos.texto}>
-            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-              {t('conductorAjustes.generalesTitulo')}
-            </Text>
-            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-              {t('conductorAjustes.generalesDetalle')}
-            </Text>
-          </View>
-          <Icono nombre="siguiente" tamano="mediano" />
-        </Bloque>
-      </Pressable>
-
-      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-        {t('conductorAjustes.sesionSeccion')}
-      </Text>
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => void cerrar().then(alSalir)}
-      >
-        <Bloque estiloContenido={estilos.fila}>
-          <Text style={[tipografia.subtitulo, { color: colores.cancelado }]}>
-            {t('ajustes.cerrarSesion')}
-          </Text>
-        </Bloque>
-      </Pressable>
-    </ScrollView>
+/**
+ * la pestaña de ajustes del conductor: son los mismos ajustes del pasajero (modo de uso, seguridad, Rumbo, inicio, IA,
+ * detección de choques, ubicación, apariencia y sesión), con su perfil como primera opción y, antes de la sesión, lo
+ * que solo le toca a quien conduce
+ */
+export function ConductorAjustes({
+  alAbrirPerfil,
+  alSalir,
+}: PropiedadesConductorAjustes) {
+  return (
+    <Ajustes
+      alAbrirPerfilConductor={alAbrirPerfil}
+      alSalir={alSalir}
+      extra={<SeccionesDeConductor />}
+    />
   );
 }
 
 const estilos = StyleSheet.create({
-  contenido: { gap: espacios.dieciseis, paddingHorizontal: espacios.lateral },
   fila: {
     alignItems: 'center',
     flexDirection: 'row',

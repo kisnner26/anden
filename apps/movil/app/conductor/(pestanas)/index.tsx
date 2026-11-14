@@ -16,7 +16,7 @@ export default function RutaConductor() {
   return (
     <PuertaBiometrica motivo={t('conductor.motivoPanel')}>
       <ConductorInicio
-        alAbrirPerfil={() => router.push('/conductor/perfil')}
+        alAbrirPerfil={() => router.push('/ajustes')}
         alAbrirABordo={() => router.push('/conductor/a-bordo')}
         alAbrirViaje={(id) =>
           router.push({ params: { id }, pathname: '/conductor/viaje/[id]' })

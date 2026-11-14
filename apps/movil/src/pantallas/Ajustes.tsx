@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import {
   Linking,
   Pressable,
@@ -46,7 +46,12 @@ export interface PropiedadesAjustes {
   alSalir?: () => void;
   alAbrirPerfil?: () => void;
   alAbrirPlus?: () => void;
-  alVolver: () => void;
+  /** con sesión de conductor, abre su perfil: es la primera opción */
+  alAbrirPerfilConductor?: () => void;
+  /** sin esto no se dibuja la flecha: la pantalla es una pestaña */
+  alVolver?: () => void;
+  /** secciones propias de quien usa la pantalla, antes de la sesión: las del conductor */
+  extra?: ReactNode;
 }
 
 const NOMBRES_MODO: Record<
@@ -94,7 +99,9 @@ export function Ajustes({
   alSalir,
   alAbrirPerfil,
   alAbrirPlus,
+  alAbrirPerfilConductor,
   alVolver,
+  extra,
 }: PropiedadesAjustes) {
   const { cerrar, sesion } = useSesion();
   const { plus } = useSuscripcion();
@@ -148,16 +155,18 @@ export function Ajustes({
       ]}
       style={{ backgroundColor: colores.fondo }}
     >
-      <Pressable
-        accessibilityLabel={t('ajustes.volver')}
-        accessibilityRole="button"
-        onPress={alVolver}
-        style={estilos.volver}
-      >
-        <Bloque estiloContenido={estilos.circulo} radio="pildora">
-          <Icono nombre="volver" tamano="grande" />
-        </Bloque>
-      </Pressable>
+      {alVolver ? (
+        <Pressable
+          accessibilityLabel={t('ajustes.volver')}
+          accessibilityRole="button"
+          onPress={alVolver}
+          style={estilos.volver}
+        >
+          <Bloque estiloContenido={estilos.circulo} radio="pildora">
+            <Icono nombre="volver" tamano="grande" />
+          </Bloque>
+        </Pressable>
+      ) : null}
 
       <Text style={[tipografia.display, { color: colores.tinta }]}>
         {t('ajustes.titulo')}.
@@ -166,7 +175,35 @@ export function Ajustes({
         {t('ajustes.detalle')}
       </Text>
 
-      {/* el conductor ya tiene su pestaña de perfil, y Plus es de la cuenta de pasajero */}
+      {/* el conductor abre su perfil desde acá; Plus es de la cuenta de pasajero */}
+      {sesion?.rol === 'conductor' && alAbrirPerfilConductor && (
+        <Pressable
+          accessibilityLabel={t('conductorAjustes.perfilTitulo')}
+          accessibilityRole="button"
+          onPress={alAbrirPerfilConductor}
+        >
+          <Bloque estiloContenido={estilos.filaOpcion}>
+            <Avatar
+              descripcion={t('conductorPerfil.fotoDescripcion')}
+              iniciales={iniciales({
+                apellido: perfil.apellido,
+                nombre: perfil.nombre || (sesion.nombre ?? ''),
+              })}
+              tamano={tamanosIlustracion.avatarAjustes}
+              uri={perfil.fotoUri}
+            />
+            <View style={estilos.texto}>
+              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                {t('conductorAjustes.perfilTitulo')}
+              </Text>
+              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+                {t('conductorAjustes.perfilDetalle')}
+              </Text>
+            </View>
+            <Icono nombre="siguiente" tamano="mediano" />
+          </Bloque>
+        </Pressable>
+      )}
       {sesion?.rol !== 'conductor' && (
         <>
           <Pressable
@@ -513,6 +550,8 @@ export function Ajustes({
           {opcionActiva.detalle()}
         </Text>
       )}
+
+      {extra}
 
       <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {t('ajustes.sesionSeccion')}
