@@ -65,6 +65,7 @@ export function ConductorNuevoViaje({
     puntoEncuentro: '',
     dia: dias[0] ?? ahora,
     hora: '',
+    meridiano: ahora.getHours() >= 12 ? 'pm' : 'am',
     placa: '',
     rutaId: null,
     servicio: 'ordinario',
@@ -200,6 +201,14 @@ export function ConductorNuevoViaje({
             marcador={t('nuevoViaje.horaMarcador')}
             teclado="numbers-and-punctuation"
             valor={borrador.hora}
+          />
+          <ControlSegmentado
+            alCambiar={(meridiano) => cambiar({ meridiano })}
+            opciones={[
+              { clave: 'am', etiqueta: t('nuevoViaje.am') },
+              { clave: 'pm', etiqueta: t('nuevoViaje.pm') },
+            ]}
+            valor={borrador.meridiano ?? 'am'}
           />
           <CampoTexto
             alCambiar={(placa) => cambiar({ placa })}
