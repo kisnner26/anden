@@ -64,7 +64,7 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
     if (reducirMovimiento || !cargado) return undefined;
     const llegada = rapido ? 650 : movimiento.llegadaBus;
     const revelar = rapido ? 420 : movimiento.revelarMarca;
-    void reproducirSonido('arranque');
+    void reproducirSonido(rapido ? 'inicio' : 'arranque');
     posicionBus.value = withTiming(0, {
       duration: llegada,
       easing: Easing.out(Easing.cubic),
