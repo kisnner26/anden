@@ -39,13 +39,14 @@ beforeEach(async () => {
   );
 });
 
-function dibujar(alSalir = jest.fn()) {
+function dibujar(alSalir = jest.fn(), alAbrirPerfil = jest.fn()) {
   return renderPantalla(
     <ProveedorSesion servicio={crearSesionLocal(CUENTAS_MUESTRA)}>
       <ProveedorBloqueo>
         <ProveedorAjustesConductor>
           <ConductorAjustes
             alAbrirAjustesGenerales={() => undefined}
+            alAbrirPerfil={alAbrirPerfil}
             alSalir={alSalir}
           />
         </ProveedorAjustesConductor>
@@ -55,6 +56,15 @@ function dibujar(alSalir = jest.fn()) {
 }
 
 describe('ConductorAjustes', () => {
+  it('el perfil es la primera opción y se abre desde acá', async () => {
+    const alAbrirPerfil = jest.fn();
+    const pantalla = await dibujar(jest.fn(), alAbrirPerfil);
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Tu perfil' }),
+    );
+    expect(alAbrirPerfil).toHaveBeenCalledTimes(1);
+  });
+
   it('muestra su nombre y arranca con Face ID apagado', async () => {
     const pantalla = await dibujar();
     expect(await pantalla.findByText('Marvin Lanzas')).toBeTruthy();
