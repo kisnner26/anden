@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -87,6 +87,14 @@ export function ConductorViaje({
   );
   const sonar = useSonidos();
   const { cerrar: guardarCierreViaje, cierreDe } = useCierres();
+
+  // si el viaje se cierra solo al llegar al destino con esta pantalla abierta, se muestra la escena de llegada
+  const hayCierre = cierreDe(viajeId) !== undefined;
+  const habiaCierre = useRef(hayCierre);
+  useEffect(() => {
+    if (hayCierre && !habiaCierre.current) establecerEscena('llegada');
+    habiaCierre.current = hayCierre;
+  }, [hayCierre]);
 
   if (!detalle || !sesion?.choferId) {
     return (
@@ -399,6 +407,15 @@ export function ConductorViaje({
                 : t('conductor.iniciar')
             }
           />
+          {transmision.activa && (
+            <Text
+              style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
+            >
+              {rellenar(t('conductor.cierreAutomatico'), {
+                destino: salida.destino,
+              })}
+            </Text>
+          )}
           {!transmision.activa && (
             <Pressable
               accessibilityRole="button"
