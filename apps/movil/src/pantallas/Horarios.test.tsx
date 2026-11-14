@@ -290,4 +290,40 @@ describe('Horarios', () => {
       expect(sin.queryByText('Resumir el día con IA')).toBeNull();
     });
   });
+
+  describe('preguntarle al asistente desde horarios', () => {
+    const ia: ValorIA = {
+      activada: true,
+      cambiar: async () => undefined,
+      cargando: false,
+      disponibilidad: 'disponible',
+      nombre: 'Apple Intelligence',
+      preguntar: async () => '',
+      usable: true,
+    };
+
+    it('ofrece preguntas sugeridas y las lleva al asistente', async () => {
+      const alPreguntar = jest.fn();
+      const pantalla = await renderPantalla(
+        <ContextoIA.Provider value={ia}>
+          <Horarios alPreguntar={alPreguntar} />
+        </ContextoIA.Provider>,
+      );
+      await fireEvent.press(
+        pantalla.getByRole('button', {
+          name: '¿Cuál es la salida más barata?',
+        }),
+      );
+      expect(alPreguntar).toHaveBeenCalledWith(
+        '¿Cuál es la salida más barata?',
+      );
+    });
+
+    it('sin la IA lista no muestra la barra', async () => {
+      const pantalla = await renderPantalla(
+        <Horarios alPreguntar={() => undefined} />,
+      );
+      expect(pantalla.queryByTestId('barra-pregunta-ia')).toBeNull();
+    });
+  });
 });
