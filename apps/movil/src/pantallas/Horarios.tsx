@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Aparece } from '@/componentes/Aparece';
+import { DeslizarParaAcciones } from '@/componentes/DeslizarParaAcciones';
 import { AtajosDelDia } from '@/componentes/AtajosDelDia';
 import { BarraPreguntaIA } from '@/componentes/BarraPreguntaIA';
 import { FiltroDestinos } from '@/componentes/FiltroDestinos';
@@ -52,6 +53,14 @@ const FILTROS: readonly { clave: Filtro; etiqueta: () => string }[] = [
   { clave: 'expreso', etiqueta: () => t('servicios.expreso') },
 ];
 
+/** el corredor (ruta con sentido) al que pertenece una salida, para marcarlo como favorito */
+function corredorDe(salida: Salida) {
+  return CORREDORES_INICIALES.find(
+    (corredor) =>
+      corredor.origen === salida.origen && corredor.destino === salida.destino,
+  );
+}
+
 export interface PropiedadesHorarios {
   /** abre el asistente con una pregunta; solo se ofrece con la IA lista */
   alPreguntar?: (pregunta: string) => void;
@@ -78,7 +87,7 @@ export function Horarios({
     [hoy, plus],
   );
   const memoriaIA = useMemoriaIA();
-  const { favoritos } = useFavoritos();
+  const { alternar: alternarFavorito, esFavorito, favoritos } = useFavoritos();
   const [soloFavoritas, establecerSoloFavoritas] = useState(false);
   const recordatorios = useRecordatorios();
   const sonar = useSonidos();
@@ -382,23 +391,48 @@ export function Horarios({
           </Text>
           {disponibles.map((salida, indice) => (
             <Aparece indice={indice} key={salida.viajeId}>
-              <FilaSalida
-                alPresionar={alAbrirViaje}
-                mostrarDisponibilidad
-                recordatorio={{
-                  activo: recordatorios.de(salida.viajeId) !== undefined,
-                  alPresionar: () => establecerEligiendo(salida),
-                  etiqueta: t(
-                    recordatorios.de(salida.viajeId)
-                      ? 'recordatorios.quitarEtiqueta'
-                      : 'recordatorios.abrir',
-                  ).replace('{{destino}}', salida.destino),
+              <DeslizarParaAcciones
+                derecha={{
+                  alActivar: () => establecerEligiendo(salida),
+                  color: colores.bloqueNegro,
+                  colorTexto: colores.sobreNegro,
+                  etiqueta: t('gestos.avisar'),
+                  icono: 'campana',
                 }}
-                salida={salida}
-                sugerida={
-                  salida.viajeId === sugeridaId ? t('ia.paraVos') : undefined
+                izquierda={
+                  corredorDe(salida)
+                    ? {
+                        alActivar: () =>
+                          void alternarFavorito(corredorDe(salida)!.id),
+                        color: colores.ambar,
+                        colorTexto: colores.sobreAmbar,
+                        etiqueta: esFavorito(corredorDe(salida)!.id)
+                          ? t('gestos.quitarFavorita')
+                          : t('gestos.favorita'),
+                        icono: 'estrella',
+                      }
+                    : undefined
                 }
-              />
+                margenSuperior={espacios.doce}
+              >
+                <FilaSalida
+                  alPresionar={alAbrirViaje}
+                  mostrarDisponibilidad
+                  recordatorio={{
+                    activo: recordatorios.de(salida.viajeId) !== undefined,
+                    alPresionar: () => establecerEligiendo(salida),
+                    etiqueta: t(
+                      recordatorios.de(salida.viajeId)
+                        ? 'recordatorios.quitarEtiqueta'
+                        : 'recordatorios.abrir',
+                    ).replace('{{destino}}', salida.destino),
+                  }}
+                  salida={salida}
+                  sugerida={
+                    salida.viajeId === sugeridaId ? t('ia.paraVos') : undefined
+                  }
+                />
+              </DeslizarParaAcciones>
             </Aparece>
           ))}
         </View>
