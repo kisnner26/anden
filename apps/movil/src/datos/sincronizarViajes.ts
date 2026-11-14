@@ -50,7 +50,7 @@ export function aplicarViajesPublicados(
       servicio: fila.servicio,
     });
     viajes.push({
-      anden: fila.anden,
+      puntoEncuentro: fila.punto_encuentro ?? '',
       busId,
       choferId: fila.chofer_id,
       estado: 'programado',

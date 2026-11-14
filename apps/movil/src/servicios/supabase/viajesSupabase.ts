@@ -4,7 +4,8 @@ import { obtenerCliente } from './cliente';
 
 /** un viaje tal como lo publica el conductor */
 export interface FilaViaje {
-  anden: number;
+  /** Plus Code de dónde se sube al bus; nulo en los viajes publicados antes de que existiera */
+  punto_encuentro: string | null;
   chofer_id: string;
   estado: string;
   id: string;
@@ -56,7 +57,7 @@ export async function leerViajesPublicadosCon(
         cliente
           .from('viajes')
           .select(
-            'id, chofer_id, ruta_id, servicio, placa, anden, salida, estado, salio_en',
+            'id, chofer_id, ruta_id, servicio, placa, punto_encuentro, salida, estado, salio_en',
           )
           .gte('salida', desde.toISOString())
           .neq('estado', 'cancelado')
