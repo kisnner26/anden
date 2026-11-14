@@ -14,6 +14,8 @@ import { useTema } from '@/tema/useTema';
 
 export interface PropiedadesMarcoPestana {
   children: ReactNode;
+  /** lo que flota sobre la pestaña sin moverse con el desplazamiento, como la mascota guía */
+  guia?: ReactNode;
   estiloContenido?: StyleProp<ViewStyle>;
   testID?: string;
 }
@@ -22,6 +24,7 @@ export interface PropiedadesMarcoPestana {
 export function MarcoPestana({
   children,
   estiloContenido,
+  guia,
   testID,
 }: PropiedadesMarcoPestana) {
   const { colores } = useTema();
@@ -58,6 +61,7 @@ export function MarcoPestana({
           {children}
         </View>
       </ScrollView>
+      {guia}
     </View>
   );
 }
