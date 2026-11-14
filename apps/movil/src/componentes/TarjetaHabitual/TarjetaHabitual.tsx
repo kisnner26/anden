@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Bloque } from '@/componentes/Bloque';
 import { DeslizarParaEliminar } from '@/componentes/DeslizarParaEliminar';
+import { FotoDestino } from '@/componentes/FotoDestino';
 import { type Habitual } from '@/datos/habituales';
 import {
   formatoDiasSemana,
@@ -53,15 +54,25 @@ export function TarjetaHabitual({
       alEliminar={alQuitar}
     >
       <Bloque estiloContenido={estilos.contenido} testID="tarjeta-habitual">
-        <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-          {t('habitual.titulo')}
-        </Text>
-        <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-          {`${habitual.origen} → ${habitual.destino}`}
-        </Text>
-        <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-          {`${formatoDiasSemana(habitual.dias)} · ${horaHabitual}`}
-        </Text>
+        <FotoDestino
+          destino={habitual.destino}
+          estilo={estilos.foto}
+          radio="tarjeta"
+        >
+          <View style={estilos.sobreFoto}>
+            <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+              {t('habitual.titulo')}
+            </Text>
+            <Text style={[tipografia.titulo, { color: colores.sobreNegro }]}>
+              {`${habitual.origen} → ${habitual.destino}`}
+            </Text>
+            <Text
+              style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
+            >
+              {`${formatoDiasSemana(habitual.dias)} · ${horaHabitual}`}
+            </Text>
+          </View>
+        </FotoDestino>
 
         <View style={estilos.fila}>
           {proxima ? (
@@ -98,13 +109,16 @@ export function TarjetaHabitual({
 }
 
 const estilos = StyleSheet.create({
-  contenido: { gap: espacios.cuatro, padding: espacios.dieciseis },
+  contenido: { gap: espacios.cuatro, padding: espacios.ocho },
+  foto: { height: 148, justifyContent: 'flex-end' },
+  sobreFoto: { gap: 2, padding: espacios.dieciseis },
   fila: {
     alignItems: 'center',
     flexDirection: 'row',
     gap: espacios.doce,
     justifyContent: 'space-between',
-    marginTop: espacios.ocho,
+    paddingHorizontal: espacios.ocho,
+    paddingVertical: espacios.ocho,
   },
   reservar: { flex: 1, gap: 2, minHeight: tamanosControl.toqueMinimo },
 });
