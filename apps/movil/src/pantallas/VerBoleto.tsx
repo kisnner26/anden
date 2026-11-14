@@ -48,7 +48,14 @@ import {
 } from '@/datos/contactoConfianza';
 import { armarDetalle } from '@/datos/detalle';
 import { formatoHoraCompleta } from '@/datos/formato';
-import { nombrePropio } from '@/datos/perfil';
+import { nombreCompleto, nombrePropio } from '@/datos/perfil';
+import { usePerfil } from '@/datos/usePerfil';
+import {
+  enlaceDeSeguimiento,
+  mensajeDeSeguimiento,
+} from '@/datos/viajeCompartido';
+import { crearCompartido } from '@/servicios/supabase/compartidosSupabase';
+import { leerUrlDeSeguimiento } from '@/servicios/supabase/configuracion';
 import {
   guardarObjeto,
   leerObjetos,
@@ -114,6 +121,7 @@ export function VerBoleto({
   );
   const [pidiendoContacto, establecerPidiendoContacto] = useState(false);
 
+  const { perfil } = usePerfil();
   const sonar = useSonidos();
   const progresoAmpliado = useRef(new Animated.Value(0)).current;
   const { plus } = useSuscripcion();
@@ -238,10 +246,29 @@ export function VerBoleto({
     await Linking.openURL(urlSms(destinatario, mensaje)).catch(() => undefined);
   }
 
-  const compartir = () =>
-    Share.share({
-      message: `${t('boleto.titulo')} a ${guardado.resumen.destino}. ${t('boleto.sale')} ${new Date(guardado.resumen.salida).toLocaleString('es-NI')}. ${t('boleto.puntoEncuentro')} ${guardado.resumen.puntoEncuentro}. ${t('boleto.placa')} ${guardado.resumen.placa}.\n${enlaceDeViaje(guardado.boleto.viajeId)}`,
+  const compartir = async () => {
+    // con servidor y página de seguimiento se arma un enlace que cualquiera abre en el navegador, sin la app
+    const nombre =
+      nombrePropio(nombreCompleto(perfil)).split(' ')[0] || 'Un pasajero';
+    const token = await crearCompartido({
+      destino: guardado.resumen.destino,
+      nombre,
+      origen: guardado.resumen.origen ?? '',
+      viajeId: guardado.boleto.viajeId,
     });
+    const enlaceWeb = token
+      ? enlaceDeSeguimiento(leerUrlDeSeguimiento(), token)
+      : null;
+    await Share.share({
+      message: mensajeDeSeguimiento({
+        destino: guardado.resumen.destino,
+        enlaceWeb,
+        placa: guardado.resumen.placa,
+        salida: formatoHoraCompleta(new Date(guardado.resumen.salida)),
+        viajeId: guardado.boleto.viajeId,
+      }),
+    });
+  };
 
   return (
     <View style={estilos.raiz}>
