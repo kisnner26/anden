@@ -9,6 +9,8 @@ import { consejoDelMomento } from '@/datos/ayudasIA';
 import { destinoHabitual } from '@/datos/memoriaIA';
 import { useBoletos } from '@/datos/useBoletos';
 import { useMemoriaIA } from '@/datos/useMemoriaIA';
+import { CalificarViaje } from '@/componentes/CalificarViaje';
+import { useBoletoPorCalificar } from '@/datos/useBoletoPorCalificar';
 import { EstadoVacio } from '@/componentes/EstadoVacio';
 import { EtiquetaMuestra } from '@/componentes/EtiquetaMuestra';
 import { EnlaceTerminal } from '@/componentes/EnlaceTerminal';
@@ -68,6 +70,7 @@ export function Viajar({
   const ia = useIA();
   const memoriaIA = useMemoriaIA();
   const { boletos } = useBoletos();
+  const porCalificar = useBoletoPorCalificar();
   const { colores } = useTema();
   const { perfil } = usePerfil();
   const [origenId, establecerOrigenId] = useState('ter_may');
@@ -158,6 +161,7 @@ export function Viajar({
       </View>
 
       <View style={estilos.cuerpo}>
+        {porCalificar && <CalificarViaje guardado={porCalificar} />}
         {proxima ? (
           <TarjetaProximoViaje
             ahora={ahora}

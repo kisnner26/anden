@@ -16,6 +16,7 @@ import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { HojaContacto } from '@/componentes/HojaContacto';
 import { HojaObjetoOlvidado } from '@/componentes/HojaObjetoOlvidado';
 import { PuntoDeEncuentro } from '@/componentes/PuntoDeEncuentro';
+import { CalificarViaje } from '@/componentes/CalificarViaje';
 import { OverlayBoleto, TalonAmpliable } from '@/componentes/TalonAmpliable';
 import { TalonBoleto } from '@/componentes/TalonBoleto';
 import { estadoVisibleBoleto } from '@/datos/estadoBoleto';
@@ -265,6 +266,9 @@ export function VerBoleto({
         <TalonAmpliable habilitado={puedeOperar} progreso={progresoAmpliado}>
           <TalonBoleto guardado={guardado} />
         </TalonAmpliable>
+        {(estado === 'usado' || estado === 'vencido') && (
+          <CalificarViaje guardado={guardado} />
+        )}
         <PuntoDeEncuentro codigo={guardado.resumen.puntoEncuentro} />
 
         {puedeOperar && (
