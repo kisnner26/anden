@@ -1,4 +1,4 @@
-import { Andenes } from '../componentes/Andenes';
+import { Esperando } from '../componentes/Esperando';
 import { Etiqueta } from '../componentes/Etiqueta';
 import { LineaDeRed } from '../componentes/LineaDeRed';
 import { Tabla, type Columna } from '../componentes/Tabla';
@@ -102,9 +102,9 @@ export function EnVivo() {
       </section>
       <section className="panel">
         <header className="panel-cabeza">
-          <h2>Andenes</h2>
+          <h2>Esperando pasajeros</h2>
         </header>
-        <Andenes boletos={d.boletos} viajes={d.viajes} />
+        <Esperando boletos={d.boletos} viajes={d.viajes} />
       </section>
     </>
   );

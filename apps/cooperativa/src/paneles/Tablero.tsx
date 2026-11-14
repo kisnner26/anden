@@ -1,4 +1,4 @@
-import { Andenes } from '../componentes/Andenes';
+import { Esperando } from '../componentes/Esperando';
 import { Contador } from '../componentes/Contador';
 import { LineaDeRed } from '../componentes/LineaDeRed';
 import { Sparkline } from '../componentes/Sparkline';
@@ -127,10 +127,10 @@ export function Tablero({ irA }: { irA: (seccion: string) => void }) {
 
       <section className="panel">
         <header className="panel-cabeza">
-          <h2>Andenes</h2>
+          <h2>Esperando pasajeros</h2>
           <span className="micro">El bus sale cuando se llena</span>
         </header>
-        <Andenes boletos={d.boletos} compacto viajes={d.viajes} />
+        <Esperando boletos={d.boletos} compacto viajes={d.viajes} />
       </section>
     </>
   );

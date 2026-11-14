@@ -129,8 +129,8 @@ export function LineaDeRed({
               </text>
               <text className="red-mono" textAnchor="middle" y="16">
                 {n === 0
-                  ? 'sin buses en andén'
-                  : `${n} ${n === 1 ? 'bus' : 'buses'} en andén`}
+                  ? 'sin buses esperando'
+                  : `${n} ${n === 1 ? 'bus' : 'buses'} esperando`}
               </text>
             </g>
           );
