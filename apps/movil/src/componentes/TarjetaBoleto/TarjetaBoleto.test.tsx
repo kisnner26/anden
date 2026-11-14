@@ -52,4 +52,17 @@ describe('TarjetaBoleto', () => {
     );
     expect(alPresionar).toHaveBeenCalledWith('bol_K7RM4QX9');
   });
+
+  it('asiento, encuentro y código van en tres columnas iguales con rótulos cortos', async () => {
+    const p = await dibujar(EN_MINUTOS(90));
+    expect(p.getByText('Asiento')).toBeTruthy();
+    expect(p.getByText('Encuentro')).toBeTruthy();
+    expect(p.getByText('Código')).toBeTruthy();
+    expect(p.getByText('4PPX+HH')).toBeTruthy();
+    for (const valor of ['8', '4PPX+HH', 'K7RM4QX9']) {
+      const texto = p.getByText(valor);
+      expect(texto.props.numberOfLines).toBe(1);
+      expect(texto.props.adjustsFontSizeToFit).toBe(true);
+    }
+  });
 });

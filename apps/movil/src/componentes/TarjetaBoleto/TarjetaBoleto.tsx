@@ -125,36 +125,59 @@ export function TarjetaBoleto({
           />
         </View>
         <View style={estilos.inferior}>
-          <View style={estilos.dato}>
-            <Text
-              style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
+          {(
+            [
+              {
+                color: colores.sobreNegro,
+                etiqueta: t('boletos.asientoCorto'),
+                valor: String(boleto.asiento),
+              },
+              {
+                color: colores.sobreNegro,
+                etiqueta: t('boletos.encuentroCorto'),
+                valor: puntoCorto(resumen.puntoEncuentro) || '—',
+              },
+              {
+                color: colores.ambar,
+                etiqueta: t('boletos.codigoCorto'),
+                valor: boleto.codigo,
+              },
+            ] as const
+          ).map((dato, indice) => (
+            <View
+              key={dato.etiqueta}
+              style={[
+                estilos.dato,
+                indice > 0 && {
+                  borderLeftColor: conAlfa(colores.luzRelieve, 0.14),
+                  borderLeftWidth: 1,
+                },
+              ]}
             >
-              {t('boletos.asientoCorto')}
-            </Text>
-            <Text style={[tipografia.dato, { color: colores.sobreNegro }]}>
-              {boleto.asiento}
-            </Text>
-          </View>
-          <View style={estilos.dato}>
-            <Text
-              style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
-            >
-              {t('boleto.puntoEncuentro')}
-            </Text>
-            <Text style={[tipografia.dato, { color: colores.sobreNegro }]}>
-              {puntoCorto(resumen.puntoEncuentro) || '—'}
-            </Text>
-          </View>
-          <View style={estilos.dato}>
-            <Text
-              style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
-            >
-              {t('boletos.codigoCorto')}
-            </Text>
-            <Text style={[tipografia.dato, { color: colores.ambar }]}>
-              {boleto.codigo}
-            </Text>
-          </View>
+              <Text
+                numberOfLines={1}
+                style={[
+                  tipografia.etiqueta,
+                  estilos.centrado,
+                  { color: colores.sobreNegroSuave },
+                ]}
+              >
+                {dato.etiqueta}
+              </Text>
+              <Text
+                adjustsFontSizeToFit
+                minimumFontScale={0.7}
+                numberOfLines={1}
+                style={[
+                  tipografia.dato,
+                  estilos.centrado,
+                  { color: dato.color },
+                ]}
+              >
+                {dato.valor}
+              </Text>
+            </View>
+          ))}
         </View>
         {!pasado && minutos <= 180 && (
           <View
@@ -208,7 +231,14 @@ const estilos = StyleSheet.create({
     padding: espacios.lateral,
     paddingTop: espacios.doce,
   },
-  dato: { alignItems: 'center', flex: 1, gap: espacios.cuatro },
+  centrado: { alignSelf: 'stretch', textAlign: 'center' },
+  dato: {
+    alignItems: 'center',
+    flex: 1,
+    gap: espacios.cuatro,
+    minWidth: 0,
+    paddingHorizontal: espacios.cuatro,
+  },
   inferior: { flexDirection: 'row' },
   perforacion: { borderStyle: 'dashed', borderTopWidth: 1, flex: 1 },
   superior: {

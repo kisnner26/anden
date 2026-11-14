@@ -1240,6 +1240,7 @@ export const textos = {
     estado: 'Estado',
     cantidad: 'Ver los {{cantidad}} boletos',
     codigoCorto: 'Código',
+    encuentroCorto: 'Encuentro',
     ahora: 'Sale ahora',
     viajesHechos: 'viajes',
     destinosVisitados: 'destinos',
