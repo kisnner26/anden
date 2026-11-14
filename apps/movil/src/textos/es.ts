@@ -938,6 +938,7 @@ export const textos = {
     sinConexionConHora: 'Sin conexión · datos de {hace}',
   },
   calificarViaje: {
+    ahoraNo: 'Ahora no',
     gracias: 'Gracias, tu opinión ayuda a otros pasajeros',
     titulo: '¿Cómo te fue con {chofer}?',
   },
