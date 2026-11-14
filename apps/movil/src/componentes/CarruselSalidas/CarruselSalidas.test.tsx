@@ -1,5 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { fireEvent } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 
 import type { Salida } from '@/datos/salidas';
 import { renderPantalla } from '@/pruebas/render';
@@ -45,7 +46,7 @@ describe('CarruselSalidas', () => {
     expect(p.getByText('3:00')).toBeTruthy();
     expect(p.getByText('C$ 70')).toBeTruthy();
     expect(p.getByText('C$ 90')).toBeTruthy();
-    expect(p.getAllByText('BOA')).toHaveLength(2);
+    expect(p.getAllByText('Boaco')).toHaveLength(2);
   });
 
   it('cada tarjeta se anuncia con su destino, hora y asientos', async () => {
@@ -138,5 +139,23 @@ describe('CarruselSalidas', () => {
       <CarruselSalidas ahora={AHORA} esHoy salidas={[]} />,
     );
     expect(p.queryByTestId('salidas-del-dia')).toBeNull();
+  });
+
+  it('reparte las tarjetas en dos columnas que llenan el ancho', async () => {
+    const p = await renderPantalla(
+      <CarruselSalidas
+        ahora={AHORA}
+        esHoy
+        salidas={[salida('a', 10), salida('b', 11), salida('c', 12)]}
+      />,
+    );
+    const tarjetas = p.getAllByTestId(/^salida-(proxima|futura|pasada)$/);
+    expect(tarjetas).toHaveLength(3);
+    const anchos = tarjetas.map((t) => {
+      const estilo = StyleSheet.flatten(t.props.style) as { width: number };
+      return estilo.width;
+    });
+    expect(new Set(anchos).size).toBe(1);
+    expect(anchos[0]).toBeGreaterThan(120);
   });
 });
