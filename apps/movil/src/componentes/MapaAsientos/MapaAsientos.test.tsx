@@ -1,7 +1,6 @@
 import type { EstadoAsiento } from '@anden/dominio';
 import { describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, render } from '@testing-library/react-native';
-import { StyleSheet } from 'react-native';
 
 import { MapaAsientos } from './MapaAsientos';
 
@@ -97,5 +96,20 @@ describe('MapaAsientos', () => {
     expect(estiloDe('2').textDecorationLine).toBe('line-through');
     expect(estiloDe('6').textDecorationLine).toBeUndefined();
     expect(estiloDe('8').textDecorationLine).toBeUndefined();
+  });
+
+  it('las filas entran una tras otra: todos los asientos están dibujados', async () => {
+    const pantalla = await render(
+      <MapaAsientos
+        alElegir={() => undefined}
+        configuracion="coaster26"
+        elegidos={[8]}
+        estados={ESTADOS}
+      />,
+    );
+    expect(
+      pantalla.getByLabelText('Asiento 8, pasillo, tuyo').props
+        .accessibilityState,
+    ).toMatchObject({ selected: true });
   });
 });
