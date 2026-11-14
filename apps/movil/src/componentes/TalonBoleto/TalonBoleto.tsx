@@ -22,6 +22,7 @@ import { tipografia } from '@/tema/tipografia';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
+import { puntoCorto } from '@/datos/puntoEncuentro';
 
 export interface PropiedadesTalonBoleto {
   guardado: BoletoGuardado;
@@ -161,7 +162,10 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
               {formatoHoraCompleta(salida)}
             </Text>
           </View>
-          <Casilla etiqueta={t('boleto.anden')} valor={String(resumen.anden)} />
+          <Casilla
+            etiqueta={t('boleto.puntoEncuentro')}
+            valor={puntoCorto(resumen.puntoEncuentro) || '—'}
+          />
           <Casilla
             etiqueta={t('boleto.asiento')}
             valor={String(boleto.asiento)}

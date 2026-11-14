@@ -27,6 +27,7 @@ import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { rellenar } from '@/textos/rellenar';
 import { t } from '@/textos/t';
+import { etiquetaPunto } from '@/datos/puntoEncuentro';
 
 export interface PropiedadesConductorInicio {
   alAbrirViaje: (viajeId: string) => void;
@@ -158,7 +159,7 @@ export function ConductorInicio({
                   <Text
                     style={[tipografia.pequeno, { color: colores.tintaSuave }]}
                   >
-                    {`${t(`servicios.${viaje.servicio}`)} · ${t('viajar.andenMayusculas').toLowerCase()} ${viaje.anden} · ${viaje.placa}`}
+                    {`${t(`servicios.${viaje.servicio}`)} · ${etiquetaPunto(viaje.puntoEncuentro)} · ${viaje.placa}`}
                   </Text>
                   {cierreDe(viaje.viajeId) && (
                     <Text

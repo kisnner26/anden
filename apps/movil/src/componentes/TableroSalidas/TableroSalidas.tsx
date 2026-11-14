@@ -10,6 +10,7 @@ import { tipografia } from '@/tema/tipografia';
 import { t } from '@/textos/t';
 
 import { FichaFlap } from './FichaFlap';
+import { puntoCorto } from '@/datos/puntoEncuentro';
 
 export interface PropiedadesTableroSalidas {
   alElegir?: (salida: Salida) => void;
@@ -182,7 +183,7 @@ export function TableroSalidas({
             <View style={estilos.colAnden}>
               <View style={estilos.caja}>
                 <Text style={[tipografia.dato, { color: negro.sobreNegro }]}>
-                  {salida.anden}
+                  {puntoCorto(salida.puntoEncuentro) || '—'}
                 </Text>
               </View>
             </View>

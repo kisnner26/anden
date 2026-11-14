@@ -214,7 +214,7 @@ export function Viajar({
               todasLasSalidas,
               vigente
                 ? {
-                    anden: vigente.resumen.anden,
+                    puntoEncuentro: vigente.resumen.puntoEncuentro,
                     destino: vigente.resumen.destino,
                     salida: new Date(vigente.resumen.salida),
                     viajeId: vigente.boleto.viajeId,

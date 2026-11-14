@@ -12,6 +12,7 @@ import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
+import { etiquetaPunto } from '@/datos/puntoEncuentro';
 
 export interface PropiedadesFilaSalida {
   alPresionar?: (viajeId: string) => void;
@@ -43,7 +44,7 @@ export function FilaSalida({
 }: PropiedadesFilaSalida) {
   const { colores } = useTema();
   const servicio = t(`servicios.${salida.servicio}`);
-  const anden = `${t('viajar.andenMayusculas').toLowerCase()} ${salida.anden}`;
+  const puntoEncuentro = etiquetaPunto(salida.puntoEncuentro);
   const nivel = nivelDisponibilidad(salida.asientosLibres);
   const textoDisponibilidad =
     nivel === 'agotado'
@@ -55,7 +56,7 @@ export function FilaSalida({
   return (
     <Bloque estilo={estilos.fila} estiloContenido={estilos.contenido}>
       <Pressable
-        accessibilityLabel={`${salida.destino}, ${formatoHoraCompleta(salida.salida)}, ${servicio}, ${anden}`}
+        accessibilityLabel={`${salida.destino}, ${formatoHoraCompleta(salida.salida)}, ${servicio}, ${puntoEncuentro}`}
         accessibilityRole="button"
         onPress={() => alPresionar?.(salida.viajeId)}
         style={estilos.principal}
@@ -68,7 +69,7 @@ export function FilaSalida({
             {salida.destino}
           </Text>
           <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {`${servicio} · ${anden}`}
+            {`${servicio} · ${puntoEncuentro}`}
           </Text>
           {sugerida ? (
             <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>

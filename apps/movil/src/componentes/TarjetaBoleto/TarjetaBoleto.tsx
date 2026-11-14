@@ -16,6 +16,7 @@ import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
+import { puntoCorto } from '@/datos/puntoEncuentro';
 
 export interface PropiedadesTarjetaBoleto {
   ahora: Date;
@@ -104,10 +105,10 @@ export function TarjetaBoleto({
             <Text
               style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
             >
-              {t('boleto.anden')}
+              {t('boleto.puntoEncuentro')}
             </Text>
             <Text style={[tipografia.dato, { color: colores.sobreNegro }]}>
-              {resumen.anden}
+              {puntoCorto(resumen.puntoEncuentro) || '—'}
             </Text>
           </View>
           <View style={estilos.dato}>

@@ -156,7 +156,7 @@ function SeccionViaje({
           </Text>
           <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
             {rellenar(t('conductorPasajeros.enAnden'), {
-              anden: viaje.anden,
+              puntoEncuentro: viaje.puntoEncuentro,
               hora: formatoHora(viaje.salida),
             })}
           </Text>

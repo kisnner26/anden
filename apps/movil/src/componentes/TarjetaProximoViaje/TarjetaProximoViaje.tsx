@@ -10,6 +10,7 @@ import { espacios, tamanosIlustracion } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
+import { etiquetaPunto } from '@/datos/puntoEncuentro';
 
 export interface PropiedadesTarjetaProximoViaje {
   ahora: Date;
@@ -54,7 +55,7 @@ export function TarjetaProximoViaje({
             <Text
               style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
             >
-              {`${t('viajar.andenMayusculas')} ${salida.anden} · ${t(`servicios.${salida.servicio}`)}`}
+              {`${etiquetaPunto(salida.puntoEncuentro).toUpperCase()} · ${t(`servicios.${salida.servicio}`)}`}
             </Text>
           </View>
           <View style={estilos.derecha}>
