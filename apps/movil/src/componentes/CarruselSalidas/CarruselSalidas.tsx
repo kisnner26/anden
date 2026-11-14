@@ -1,22 +1,12 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef } from 'react';
-import {
-  Animated,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  useWindowDimensions,
-} from 'react-native';
-import Svg, { Circle } from 'react-native-svg';
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Icono } from '@/componentes/Icono';
-import { minutosParaSalir } from '@/datos/disponibilidad';
+import { minutosParaSalir, nivelDisponibilidad } from '@/datos/disponibilidad';
 import { formatoHora, formatoHoraCompleta, sufijoHora } from '@/datos/formato';
-import { fraccionDeAsientos, franjaDelDia } from '@/datos/resumenDelDia';
+import { fraccionDeAsientos } from '@/datos/resumenDelDia';
 import type { Salida } from '@/datos/salidas';
 import { conAlfa } from '@/tema/alfa';
-import { coloresFranja } from '@/tema/colores';
 import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
@@ -24,14 +14,69 @@ import { useTema } from '@/tema/useTema';
 import { rellenar } from '@/textos/rellenar';
 import { t } from '@/textos/t';
 
-const ALTO = 184;
-const SEPARACION = espacios.doce;
-const COLUMNAS = 2;
-const RADIO_ANILLO = 15;
-const LARGO_ANILLO = 2 * Math.PI * RADIO_ANILLO;
+const COLUMNA_HORA = 76;
+const NODO = 14;
 
-/** el anillo de asientos: se llena según cuántos quedan y lleva el número en el centro */
-function AnilloDeAsientos({
+/** el nodo de la línea: lleno y latiendo si es la que sigue, hueco si falta, apagado si ya salió */
+function Nodo({ esProxima, salio }: { esProxima: boolean; salio: boolean }) {
+  const { colores } = useTema();
+  const reducido = useMovimientoReducido();
+  const onda = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (reducido || !esProxima) return;
+    const bucle = Animated.loop(
+      Animated.timing(onda, {
+        duration: 1600,
+        toValue: 1,
+        useNativeDriver: true,
+      }),
+    );
+    bucle.start();
+    return () => bucle.stop();
+  }, [esProxima, onda, reducido]);
+
+  return (
+    <View style={estilos.nodoCaja}>
+      {esProxima && !reducido ? (
+        <Animated.View
+          style={[
+            estilos.onda,
+            {
+              backgroundColor: colores.ambar,
+              opacity: onda.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0.45, 0],
+              }),
+              transform: [
+                {
+                  scale: onda.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [1, 2.4],
+                  }),
+                },
+              ],
+            },
+          ]}
+        />
+      ) : null}
+      <View
+        style={[
+          estilos.nodo,
+          esProxima
+            ? { backgroundColor: colores.ambar, borderColor: colores.ambar }
+            : {
+                backgroundColor: salio ? colores.linea : colores.fondo,
+                borderColor: salio ? colores.linea : colores.tintaSuave,
+              },
+        ]}
+      />
+    </View>
+  );
+}
+
+/** la barra de asientos: una pista con el tramo que queda libre, del color de qué tan llena está */
+function BarraDeAsientos({
   fraccion,
   libres,
 }: {
@@ -39,128 +84,88 @@ function AnilloDeAsientos({
   libres: number;
 }) {
   const { colores } = useTema();
+  const nivel = nivelDisponibilidad(libres);
+  const color =
+    nivel === 'agotado'
+      ? colores.cancelado
+      : nivel === 'pocos'
+        ? colores.ambar
+        : colores.aTiempo;
   return (
-    <View style={estilos.anillo}>
-      <Svg height={40} viewBox="0 0 40 40" width={40}>
-        <Circle
-          cx={20}
-          cy={20}
-          fill="none"
-          r={RADIO_ANILLO}
-          stroke={conAlfa(colores.sobreNegro, 0.28)}
-          strokeWidth={4}
-        />
-        <Circle
-          cx={20}
-          cy={20}
-          fill="none"
-          origin="20, 20"
-          r={RADIO_ANILLO}
-          rotation={-90}
-          stroke={colores.sobreNegro}
-          strokeDasharray={`${LARGO_ANILLO * fraccion} ${LARGO_ANILLO}`}
-          strokeLinecap="round"
-          strokeWidth={4}
-        />
-      </Svg>
-      <Text
+    <View style={estilos.barraFila}>
+      <View
         style={[
-          tipografia.etiqueta,
-          estilos.numeroAnillo,
-          { color: colores.sobreNegro },
+          estilos.pista,
+          { backgroundColor: conAlfa(colores.tinta, 0.1) },
         ]}
       >
+        <View
+          style={[
+            estilos.relleno,
+            { backgroundColor: color, width: `${Math.round(fraccion * 100)}%` },
+          ]}
+        />
+      </View>
+      <Text style={[tipografia.etiqueta, { color: colores.tinta }]}>
         {libres}
+      </Text>
+      <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+        {t('horarios.libres')}
       </Text>
     </View>
   );
 }
 
-function Tarjeta({
+function Fila({
   alElegir,
   ahora,
-  ancho,
   esProxima,
   indice,
   maximo,
   salio,
   salida,
+  ultima,
 }: {
   ahora: Date;
   alElegir?: (viajeId: string) => void;
-  ancho: number;
   esProxima: boolean;
   indice: number;
   maximo: number;
   salida: Salida;
   salio: boolean;
+  ultima: boolean;
 }) {
   const { colores } = useTema();
   const reducido = useMovimientoReducido();
   const entrada = useRef(new Animated.Value(reducido ? 1 : 0)).current;
-  const pulso = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (reducido) return;
     Animated.spring(entrada, {
-      delay: Math.min(indice, 8) * 70,
-      friction: 8,
-      tension: 70,
+      delay: Math.min(indice, 8) * 60,
+      friction: 9,
+      tension: 80,
       toValue: 1,
       useNativeDriver: true,
     }).start();
   }, [entrada, indice, reducido]);
 
-  // la que sigue respira despacio para que se note cuál es sin leer nada
-  useEffect(() => {
-    if (reducido || !esProxima) return;
-    const bucle = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulso, {
-          duration: 1300,
-          toValue: 1,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulso, {
-          duration: 1300,
-          toValue: 0,
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-    bucle.start();
-    return () => bucle.stop();
-  }, [esProxima, pulso, reducido]);
-
-  const [claro, oscuro] = coloresFranja[franjaDelDia(salida.salida)];
-  const expreso = salida.servicio === 'expreso';
   const falta = minutosParaSalir(salida, ahora);
+  const expreso = salida.servicio === 'expreso';
 
   return (
     <Animated.View
-      style={[
-        estilos.envoltura,
-        {
-          width: ancho,
-          opacity: Animated.multiply(entrada, salio ? 0.5 : 1),
-          transform: [
-            {
-              translateY: entrada.interpolate({
-                inputRange: [0, 1],
-                outputRange: [24, 0],
-              }),
-            },
-            {
-              scale: esProxima
-                ? pulso.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [1, 1.035],
-                  })
-                : 1,
-            },
-          ],
-        },
-      ]}
+      style={{
+        opacity: Animated.multiply(entrada, salio ? 0.5 : 1),
+        transform: [
+          {
+            translateX: entrada.interpolate({
+              inputRange: [0, 1],
+              outputRange: [-18, 0],
+            }),
+          },
+        ],
+      }}
       testID={
         esProxima ? 'salida-proxima' : salio ? 'salida-pasada' : 'salida-futura'
       }
@@ -173,60 +178,68 @@ function Tarjeta({
         })}
         accessibilityRole="button"
         onPress={() => alElegir?.(salida.viajeId)}
-        style={({ pressed }) => pressed && estilos.presionada}
+        style={({ pressed }) => [
+          estilos.fila,
+          esProxima && { backgroundColor: conAlfa(colores.ambar, 0.12) },
+          pressed && estilos.presionada,
+        ]}
       >
-        <LinearGradient
-          colors={[claro, oscuro]}
-          end={{ x: 0.9, y: 1 }}
-          start={{ x: 0.1, y: 0 }}
-          style={[
-            estilos.tarjeta,
-            { width: ancho },
-            esProxima && { borderColor: colores.sobreNegro, borderWidth: 2 },
-          ]}
-        >
-          <View style={estilos.superior}>
+        <View style={estilos.hora}>
+          <Text style={[estilos.numeral, { color: colores.tinta }]}>
+            {formatoHora(salida.salida)}
+          </Text>
+          <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+            {sufijoHora(salida.salida)}
+          </Text>
+        </View>
+        <View style={estilos.columnaLinea}>
+          <View
+            style={[
+              estilos.hilo,
+              { backgroundColor: colores.linea, opacity: indice === 0 ? 0 : 1 },
+            ]}
+          />
+          <Nodo esProxima={esProxima} salio={salio} />
+          <View
+            style={[
+              estilos.hilo,
+              { backgroundColor: colores.linea, opacity: ultima ? 0 : 1 },
+            ]}
+          />
+        </View>
+        <View style={estilos.detalle}>
+          <View style={estilos.titulo}>
             <Text
+              numberOfLines={1}
               style={[
-                tipografia.etiqueta,
-                { color: conAlfa(colores.sobreNegro, 0.9) },
+                tipografia.subtitulo,
+                estilos.destino,
+                { color: colores.tinta },
               ]}
             >
               {salida.destino}
             </Text>
             {expreso ? (
               <Icono
-                color={colores.sobreNegro}
+                color={colores.ambarTexto}
                 nombre="rayo"
                 tamano="mediano"
               />
             ) : null}
-          </View>
-          <View style={estilos.hora}>
-            <Text style={[estilos.numeral, { color: colores.sobreNegro }]}>
-              {formatoHora(salida.salida)}
-            </Text>
-            <Text
-              style={[
-                tipografia.etiqueta,
-                { color: conAlfa(colores.sobreNegro, 0.85) },
-              ]}
-            >
-              {esProxima && falta > 0
-                ? rellenar(t('vistaDia.enMinutos'), { minutos: falta })
-                : sufijoHora(salida.salida)}
-            </Text>
-          </View>
-          <View style={estilos.inferior}>
-            <AnilloDeAsientos
-              fraccion={fraccionDeAsientos(salida.asientosLibres, maximo)}
-              libres={salida.asientosLibres}
-            />
-            <Text style={[tipografia.dato, { color: colores.sobreNegro }]}>
+            <Text style={[tipografia.dato, { color: colores.tinta }]}>
               {salida.tarifa === null ? '—' : `C$ ${salida.tarifa}`}
             </Text>
           </View>
-        </LinearGradient>
+          {esProxima && falta > 0 ? (
+            <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+              {rellenar(t('vistaDia.enMinutos'), { minutos: falta })}
+            </Text>
+          ) : null}
+          <BarraDeAsientos
+            fraccion={fraccionDeAsientos(salida.asientosLibres, maximo)}
+            libres={salida.asientosLibres}
+          />
+        </View>
       </Pressable>
     </Animated.View>
   );
@@ -241,8 +254,8 @@ export interface PropiedadesCarruselSalidas {
 }
 
 /**
- * las salidas del día como tarjetas que se deslizan: cada una toma el color del momento del día
- * (amanecer, mañana, tarde, noche), lleva la hora grande, un anillo con los asientos libres y la tarifa
+ * las salidas del día como una línea de tiempo: la hora a la izquierda, un hilo con un nodo por salida
+ * (el que sigue late) y a la derecha el destino, la tarifa y una barra con los asientos que quedan
  */
 export function CarruselSalidas({
   ahora,
@@ -251,13 +264,8 @@ export function CarruselSalidas({
   salidas,
 }: PropiedadesCarruselSalidas) {
   const { colores } = useTema();
-  const { width } = useWindowDimensions();
   if (salidas.length === 0) return null;
 
-  // dos columnas que llenan todo el ancho disponible, una fila tras otra
-  const ancho = Math.floor(
-    (width - 2 * espacios.lateral - SEPARACION * (COLUMNAS - 1)) / COLUMNAS,
-  );
   const ordenadas = [...salidas].sort(
     (a, b) => a.salida.getTime() - b.salida.getTime(),
   );
@@ -281,18 +289,18 @@ export function CarruselSalidas({
           )}
         </Text>
       </View>
-      <View style={estilos.cuadricula}>
+      <View>
         {ordenadas.map((salida, indice) => (
-          <Tarjeta
+          <Fila
             ahora={ahora}
             alElegir={alElegir}
-            ancho={ancho}
             esProxima={esHoy && indice === indiceProxima}
             indice={indice}
             key={salida.viajeId}
             maximo={maximo}
             salida={salida}
             salio={salio(salida)}
+            ultima={indice === ordenadas.length - 1}
           />
         ))}
       </View>
@@ -301,46 +309,52 @@ export function CarruselSalidas({
 }
 
 const estilos = StyleSheet.create({
-  anillo: {
+  barraFila: {
     alignItems: 'center',
-    height: 40,
-    justifyContent: 'center',
-    width: 40,
+    flexDirection: 'row',
+    gap: espacios.cuatro,
   },
   cabecera: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  contenedor: { gap: espacios.doce },
-  cuadricula: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: SEPARACION,
-  },
-  envoltura: {},
-  hora: { alignItems: 'flex-start', gap: 0 },
-  inferior: {
+  columnaLinea: {
     alignItems: 'center',
+    alignSelf: 'stretch',
+    width: NODO + 12,
+  },
+  contenedor: { gap: espacios.doce },
+  destino: { flex: 1 },
+  detalle: { flex: 1, gap: espacios.cuatro, paddingVertical: espacios.doce },
+  fila: {
+    alignItems: 'stretch',
+    borderRadius: radios.bloque,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    paddingRight: espacios.doce,
+  },
+  hilo: { flex: 1, width: 2 },
+  hora: {
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    paddingLeft: espacios.doce,
+    width: COLUMNA_HORA,
+  },
+  nodo: { borderRadius: NODO, borderWidth: 2, height: NODO, width: NODO },
+  nodoCaja: {
+    alignItems: 'center',
+    height: NODO,
+    justifyContent: 'center',
+    width: NODO,
   },
   numeral: {
     fontFamily: tipografia.display.fontFamily,
-    fontSize: 56,
-    lineHeight: 60,
+    fontSize: 30,
+    lineHeight: 32,
   },
-  numeroAnillo: { position: 'absolute' },
-  presionada: { opacity: 0.92, transform: [{ scale: 0.97 }] },
-  superior: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  tarjeta: {
-    borderRadius: radios.bloque,
-    height: ALTO,
-    justifyContent: 'space-between',
-    padding: espacios.dieciseis,
-  },
+  onda: { borderRadius: NODO, height: NODO, position: 'absolute', width: NODO },
+  pista: { borderRadius: 3, flex: 1, height: 6, overflow: 'hidden' },
+  presionada: { opacity: 0.85 },
+  relleno: { borderRadius: 3, height: 6 },
+  titulo: { alignItems: 'center', flexDirection: 'row', gap: espacios.ocho },
 });

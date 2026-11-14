@@ -1,8 +1,9 @@
 import * as Haptics from 'expo-haptics';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { nivelDisponibilidad } from '@/datos/disponibilidad';
 import { formatoFechaCorta, formatoHora, sufijoHora } from '@/datos/formato';
+import { fraccionDeAsientos } from '@/datos/resumenDelDia';
 import type { Salida } from '@/datos/salidas';
 import { conAlfa } from '@/tema/alfa';
 import { espacios, radios } from '@/tema/espacios';
@@ -18,7 +19,10 @@ export interface PropiedadesSelectorSalida {
   salidas: readonly Salida[];
 }
 
-/** las salidas como fichas grandes que se deslizan; la elegida se oscurece y las que se llenan lo dicen */
+/**
+ * las salidas como una lista de renglones que ocupa todo el ancho: hora, servicio y una barra con los asientos
+ * que quedan; la elegida lleva un marcador ámbar a la izquierda y un punto lleno a la derecha
+ */
 export function SelectorSalida({
   alElegir,
   conDia = false,
@@ -26,13 +30,10 @@ export function SelectorSalida({
   salidas,
 }: PropiedadesSelectorSalida) {
   const { colores } = useTema();
+  const maximo = Math.max(1, ...salidas.map((s) => s.asientosLibres));
 
   return (
-    <ScrollView
-      contentContainerStyle={estilos.pista}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-    >
+    <View style={estilos.lista}>
       {salidas.map((salida) => {
         const activa = salida.viajeId === elegida;
         const nivel = nivelDisponibilidad(salida.asientosLibres);
@@ -53,92 +54,102 @@ export function SelectorSalida({
               alElegir(salida.viajeId);
             }}
             style={({ pressed }) => [
-              estilos.ficha,
+              estilos.renglon,
               {
                 backgroundColor: activa
-                  ? colores.fichaActiva
-                  : conAlfa(colores.tinta, 0.06),
-                borderColor: activa ? colores.fichaActiva : colores.linea,
+                  ? conAlfa(colores.ambar, 0.14)
+                  : conAlfa(colores.tinta, 0.05),
+                borderColor: activa ? colores.ambar : colores.linea,
               },
               pressed && estilos.presionada,
             ]}
           >
-            {conDia && (
-              <Text
-                style={[
-                  tipografia.etiqueta,
-                  {
-                    color: activa
-                      ? colores.sobreFichaActiva
-                      : colores.tintaSuave,
-                  },
-                ]}
-              >
-                {formatoFechaCorta(salida.salida)}
+            <View style={estilos.hora}>
+              {conDia && (
+                <Text
+                  style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
+                >
+                  {formatoFechaCorta(salida.salida)}
+                </Text>
+              )}
+              <View style={estilos.horaFila}>
+                <Text style={[tipografia.datoGrande, { color: colores.tinta }]}>
+                  {formatoHora(salida.salida)}
+                </Text>
+                <Text
+                  style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
+                >
+                  {sufijoHora(salida.salida)}
+                </Text>
+              </View>
+            </View>
+            <View style={estilos.centro}>
+              <Text style={[tipografia.pequeno, { color: colores.tinta }]}>
+                {t(`servicios.${salida.servicio}`)}
               </Text>
-            )}
-            <Text
+              <View style={estilos.barraFila}>
+                <View
+                  style={[
+                    estilos.pista,
+                    { backgroundColor: conAlfa(colores.tinta, 0.1) },
+                  ]}
+                >
+                  <View
+                    style={[
+                      estilos.relleno,
+                      {
+                        backgroundColor: colorNivel,
+                        width: `${Math.round(fraccionDeAsientos(salida.asientosLibres, maximo) * 100)}%`,
+                      },
+                    ]}
+                  />
+                </View>
+                <Text
+                  style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
+                >
+                  {nivel === 'agotado'
+                    ? t('horarios.agotado')
+                    : `${salida.asientosLibres} ${t('horarios.libres')}`}
+                </Text>
+              </View>
+            </View>
+            <View
               style={[
-                tipografia.datoGrande,
-                { color: activa ? colores.sobreFichaActiva : colores.tinta },
-              ]}
-            >
-              {formatoHora(salida.salida)}
-            </Text>
-            <Text
-              style={[
-                tipografia.etiqueta,
+                estilos.marca,
                 {
-                  color: activa ? colores.sobreFichaActiva : colores.ambarTexto,
+                  backgroundColor: activa ? colores.ambar : 'transparent',
+                  borderColor: activa ? colores.ambar : colores.tintaSuave,
                 },
               ]}
-            >
-              {sufijoHora(salida.salida)}
-            </Text>
-            <Text
-              style={[
-                tipografia.pequeno,
-                { color: activa ? colores.sobreFichaActiva : colores.tinta },
-              ]}
-            >
-              {t(`servicios.${salida.servicio}`)}
-            </Text>
-            <View style={estilos.libres}>
-              <View style={[estilos.punto, { backgroundColor: colorNivel }]} />
-              <Text
-                style={[
-                  tipografia.etiqueta,
-                  {
-                    color: activa
-                      ? colores.sobreFichaActiva
-                      : colores.tintaSuave,
-                  },
-                ]}
-              >
-                {nivel === 'agotado'
-                  ? t('horarios.agotado')
-                  : `${salida.asientosLibres} ${t('horarios.libres')}`}
-              </Text>
-            </View>
+            />
           </Pressable>
         );
       })}
-    </ScrollView>
+    </View>
   );
 }
 
 const estilos = StyleSheet.create({
-  ficha: {
+  barraFila: { alignItems: 'center', flexDirection: 'row', gap: espacios.ocho },
+  centro: { flex: 1, gap: espacios.cuatro },
+  hora: { gap: 0, minWidth: 86 },
+  horaFila: {
+    alignItems: 'baseline',
+    flexDirection: 'row',
+    gap: espacios.cuatro,
+  },
+  lista: { gap: espacios.ocho },
+  marca: { borderRadius: 11, borderWidth: 2, height: 22, width: 22 },
+  pista: { borderRadius: 3, flex: 1, height: 6, overflow: 'hidden' },
+  presionada: { opacity: 0.85 },
+  relleno: { borderRadius: 3, height: 6 },
+  renglon: {
     alignItems: 'center',
     borderRadius: radios.bloque,
     borderWidth: 2,
-    gap: espacios.cuatro,
-    minWidth: 112,
+    flexDirection: 'row',
+    gap: espacios.dieciseis,
     paddingHorizontal: espacios.dieciseis,
-    paddingVertical: espacios.dieciseis,
+    paddingVertical: espacios.doce,
   },
-  libres: { alignItems: 'center', flexDirection: 'row', gap: espacios.cuatro },
-  pista: { gap: espacios.doce, paddingVertical: espacios.cuatro },
-  presionada: { opacity: 0.85, transform: [{ scale: 0.97 }] },
-  punto: { borderRadius: radios.pildora, height: 8, width: 8 },
 });
