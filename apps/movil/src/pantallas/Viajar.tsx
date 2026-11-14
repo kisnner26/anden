@@ -18,7 +18,7 @@ import { EnlaceTerminal } from '@/componentes/EnlaceTerminal';
 import { Campaneo } from '@/componentes/Campaneo';
 import { Aparece } from '@/componentes/Aparece';
 import { FilaSalida } from '@/componentes/FilaSalida';
-import { FotoDestino } from '@/componentes/FotoDestino';
+import { IlustracionAtajo } from '@/componentes/IlustracionAtajo';
 import { Icono } from '@/componentes/Icono';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { TarjetaHabitual } from '@/componentes/TarjetaHabitual';
@@ -102,13 +102,6 @@ export function Viajar({
           new Date(a.resumen.salida).getTime() -
           new Date(b.resumen.salida).getTime(),
       )[0] ?? null;
-  /** la foto de cada atajo: la del destino que le importa a esa pestaña */
-  const fotoAtajo = (atajo: 'boletos' | 'horarios' | 'rutas'): string =>
-    atajo === 'boletos'
-      ? (boletoCercano?.resumen.destino ?? 'Boaco')
-      : atajo === 'horarios'
-        ? (proxima?.destino ?? habitual ?? 'Juigalpa')
-        : 'Managua';
   const linea = lineaDelMomento({
     ahora,
     boletoProximo: boletoCercano
@@ -311,11 +304,11 @@ export function Viajar({
           <View style={estilos.atajos}>
             {(
               [
-                ['boletos', 'viajar.atajoBoletos', 'boleto'],
-                ['horarios', 'viajar.atajoHorarios', 'reloj'],
-                ['rutas', 'viajar.atajoRutas', 'pestanaRutas'],
+                ['boletos', 'viajar.atajoBoletos'],
+                ['horarios', 'viajar.atajoHorarios'],
+                ['rutas', 'viajar.atajoRutas'],
               ] as const
-            ).map(([destino, texto, icono]) => (
+            ).map(([destino, texto]) => (
               <Pressable
                 accessibilityLabel={t(texto)}
                 accessibilityRole="button"
@@ -326,28 +319,15 @@ export function Viajar({
                   pressed && estilos.presionado,
                 ]}
               >
-                <FotoDestino
-                  destino={fotoAtajo(destino)}
-                  estilo={estilos.atajoFoto}
-                  radio="bloque"
-                >
-                  <View style={estilos.atajoTexto}>
-                    <Icono
-                      color={colores.sobreNegro}
-                      nombre={icono}
-                      tamano="mediano"
-                    />
-                    <Text
-                      numberOfLines={1}
-                      style={[
-                        tipografia.pequeno,
-                        { color: colores.sobreNegro },
-                      ]}
-                    >
-                      {t(texto)}
-                    </Text>
-                  </View>
-                </FotoDestino>
+                <Bloque estiloContenido={estilos.atajoContenido}>
+                  <IlustracionAtajo alto={72} tipo={destino} />
+                  <Text
+                    numberOfLines={1}
+                    style={[tipografia.pequeno, { color: colores.tinta }]}
+                  >
+                    {t(texto)}
+                  </Text>
+                </Bloque>
               </Pressable>
             ))}
           </View>
@@ -438,8 +418,6 @@ const estilos = StyleSheet.create({
   },
   textoDondeViene: { flex: 1, gap: espacios.cuatro },
   atajo: { flex: 1 },
-  atajoFoto: { height: 104, justifyContent: 'flex-end' },
-  atajoTexto: { gap: espacios.cuatro, padding: espacios.doce },
   atajoContenido: {
     alignItems: 'center',
     gap: espacios.ocho,
