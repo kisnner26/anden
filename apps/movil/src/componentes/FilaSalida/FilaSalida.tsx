@@ -3,8 +3,10 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Autobus } from '@/componentes/Autobus';
 import { Bloque } from '@/componentes/Bloque';
 import { BotonRecordatorio } from '@/componentes/BotonRecordatorio';
+import { FotoDestino } from '@/componentes/FotoDestino';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
+import { fotoDeDestino } from '@/datos/fotosDestino';
 import { nivelDisponibilidad } from '@/datos/disponibilidad';
 import { formatoHora, formatoHoraCompleta, sufijoHora } from '@/datos/formato';
 import type { Salida } from '@/datos/salidas';
@@ -61,9 +63,17 @@ export function FilaSalida({
         onPress={() => alPresionar?.(salida.viajeId)}
         style={estilos.principal}
       >
-        <Loseta>
-          <IconoServicio servicio={salida.servicio} />
-        </Loseta>
+        {fotoDeDestino(salida.destino) ? (
+          <FotoDestino
+            destino={salida.destino}
+            estilo={estilos.miniatura}
+            radio="loseta"
+          />
+        ) : (
+          <Loseta>
+            <IconoServicio servicio={salida.servicio} />
+          </Loseta>
+        )}
         <View style={estilos.texto}>
           <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
             {salida.destino}
@@ -129,6 +139,7 @@ const estilos = StyleSheet.create({
   },
   fila: { marginTop: espacios.doce },
   hora: { alignItems: 'flex-end' },
+  miniatura: { height: 64, width: 64 },
   principal: {
     alignItems: 'center',
     flex: 1,
