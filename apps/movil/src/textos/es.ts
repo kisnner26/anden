@@ -672,6 +672,12 @@ export const textos = {
     verBoleto: 'Ver mi boleto',
   },
   mascota: {
+    evCalificacion: '¡Gracias por calificar! Eso ayuda a otros pasajeros.',
+    evConexion: 'Volvió la señal. Ya estoy al día.',
+    evRecibido: '¡Boleto recibido! Ya está en tus boletos.',
+    evReserva: '¡Listo! Tu boleto a {destino} quedó guardado.',
+    evSinConexion: 'Se fue la señal. Tus boletos siguen acá, sin internet.',
+    evTransferido: 'Boleto enviado. ¡Buen viaje a tu amigo!',
     frase1: 'Los mejores viajes empiezan con un buen asiento. ¿Lo elegimos?',
     frase2: 'Si te quedás sin saber a dónde ir, mirá las salidas de hoy.',
     frase3: 'Llegá con tiempo al punto de encuentro, que el bus no espera.',
