@@ -24,6 +24,7 @@ import { Chip } from '@/componentes/Chip';
 import { ControlSegmentado } from '@/componentes/ControlSegmentado';
 import { FormaPaquete } from '@/componentes/FormaPaquete';
 import { Icono } from '@/componentes/Icono';
+import { IlustracionVacia } from '@/componentes/IlustracionVacia';
 import { LineaEstadoEncomienda } from '@/componentes/LineaEstadoEncomienda';
 import {
   erroresDeEncomienda,
@@ -546,12 +547,19 @@ export function Encomiendas({ alPreguntar, alVolver }: PropiedadesEncomiendas) {
             </Bloque>
 
             {falloEnvio && (
-              <Text
-                accessibilityLiveRegion="polite"
-                style={[tipografia.cuerpo, { color: colores.cancelado }]}
-              >
-                {t('encomiendas.falloEnvio')}
-              </Text>
+              <View style={estilos.fallo}>
+                <IlustracionVacia tamano={96} tipo="error" />
+                <Text
+                  accessibilityLiveRegion="polite"
+                  style={[
+                    tipografia.cuerpo,
+                    estilos.centrado,
+                    { color: colores.cancelado },
+                  ]}
+                >
+                  {t('encomiendas.falloEnvio')}
+                </Text>
+              </View>
             )}
             <BotonAccion
               alPresionar={() => void solicitar()}
@@ -680,6 +688,7 @@ export function Encomiendas({ alPreguntar, alVolver }: PropiedadesEncomiendas) {
 }
 
 const estilos = StyleSheet.create({
+  fallo: { alignItems: 'center', gap: espacios.ocho },
   buses: { gap: espacios.ocho },
   filaOpciones: {
     alignItems: 'center',

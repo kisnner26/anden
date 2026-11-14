@@ -7,6 +7,7 @@ import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { ContadorPasajeros } from '@/componentes/ContadorPasajeros';
 import { ControlSegmentado } from '@/componentes/ControlSegmentado';
+import { EstadoVacio } from '@/componentes/EstadoVacio';
 import { FichaCiudadIA } from '@/componentes/FichaCiudadIA';
 import { ResumenIA } from '@/componentes/ResumenIA';
 import { SaltoAlCambiar } from '@/componentes/SaltoAlCambiar';
@@ -134,9 +135,11 @@ export function Rutas({
           </Text>
         )}
         {plan.salidas.length === 0 ? (
-          <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
-            {t('rutas.sinSalidas')}
-          </Text>
+          <EstadoVacio
+            tamano={120}
+            tipo="salidas"
+            titulo={t('rutas.sinSalidas')}
+          />
         ) : (
           <SelectorSalida
             alElegir={establecerElegida}

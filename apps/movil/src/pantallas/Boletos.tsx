@@ -10,8 +10,7 @@ import { ControlSegmentado } from '@/componentes/ControlSegmentado';
 import { FotoDestino } from '@/componentes/FotoDestino';
 import { HistorialViajes } from '@/componentes/HistorialViajes';
 import { ResumenIA } from '@/componentes/ResumenIA';
-import { Icono } from '@/componentes/Icono';
-import { Loseta } from '@/componentes/Loseta';
+import { IlustracionVacia } from '@/componentes/IlustracionVacia';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { lineaDeBoleto } from '@/datos/contextoIA';
 import { FICHAS } from '@/datos/fichasCiudad';
@@ -70,9 +69,7 @@ export function Boletos({
       {boletos.length === 0 ? (
         <Bloque estilo={estilos.bloque} estiloContenido={estilos.vacio}>
           <View style={estilos.centrada}>
-            <Loseta tamano={72}>
-              <Icono nombre="boleto" tamano="ilustracion" />
-            </Loseta>
+            <IlustracionVacia tamano={170} tipo="boletos" />
           </View>
           <View style={estilos.textos}>
             <Text

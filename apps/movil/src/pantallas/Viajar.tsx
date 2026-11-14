@@ -9,6 +9,7 @@ import { consejoDelMomento } from '@/datos/ayudasIA';
 import { destinoHabitual } from '@/datos/memoriaIA';
 import { useBoletos } from '@/datos/useBoletos';
 import { useMemoriaIA } from '@/datos/useMemoriaIA';
+import { EstadoVacio } from '@/componentes/EstadoVacio';
 import { EtiquetaMuestra } from '@/componentes/EtiquetaMuestra';
 import { EnlaceTerminal } from '@/componentes/EnlaceTerminal';
 import { Campaneo } from '@/componentes/Campaneo';
@@ -164,15 +165,7 @@ export function Viajar({
             salida={proxima}
           />
         ) : (
-          <Text
-            style={[
-              tipografia.cuerpo,
-              estilos.vacio,
-              { color: colores.tintaSuave },
-            ]}
-          >
-            {t('viajar.sinSalidas')}
-          </Text>
+          <EstadoVacio tipo="salidas" titulo={t('viajar.sinSalidas')} />
         )}
 
         {alAbrirDondeViene && (
