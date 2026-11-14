@@ -6,6 +6,8 @@ import {
   varianteDeClave,
 } from '@/componentes/Autobus';
 import { Bloque } from '@/componentes/Bloque';
+import { FotoDestino } from '@/componentes/FotoDestino';
+import { fotoDeDestino } from '@/datos/fotosDestino';
 import { ResumenPlus } from '@/componentes/ResumenPlus';
 import { CalendarioViajes } from '@/componentes/CalendarioViajes';
 import { agruparPorDestino } from '@/datos/historialViajes';
@@ -75,11 +77,19 @@ export function HistorialViajes({
                 { backgroundColor: colorDeDestino(grupo.destino) },
               ]}
             />
-            <Autobus
-              ancho={44}
-              usarMiUnidad
-              variante={varianteDeClave(grupo.destino)}
-            />
+            {fotoDeDestino(grupo.destino) ? (
+              <FotoDestino
+                destino={grupo.destino}
+                estilo={estilos.miniatura}
+                radio="loseta"
+              />
+            ) : (
+              <Autobus
+                ancho={44}
+                usarMiUnidad
+                variante={varianteDeClave(grupo.destino)}
+              />
+            )}
             <Text style={[tipografia.nombreLinea, { color: colores.tinta }]}>
               {grupo.destino}
             </Text>
@@ -109,5 +119,6 @@ const estilos = StyleSheet.create({
     gap: espacios.veinticuatro,
     justifyContent: 'center',
   },
+  miniatura: { height: 40, width: 56 },
   punto: { borderRadius: radios.pildora, height: 12, width: 12 },
 });
