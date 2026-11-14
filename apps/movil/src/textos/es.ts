@@ -179,8 +179,10 @@ export const textos = {
     rutaSeccion: 'Ruta',
     servicioSeccion: 'Servicio',
     diaSeccion: 'Día de salida',
-    hora: 'Hora en que se pone en andén (24 h)',
-    horaMarcador: 'Ej: 14:30 o 1430. Vale una hora de hoy que ya pasó',
+    hora: 'Hora en que se pone en andén',
+    am: 'a. m.',
+    pm: 'p. m.',
+    horaMarcador: 'Ej: 2:30 o 230. Vale una hora de hoy que ya pasó',
     placa: 'Placa del bus',
     placaMarcador: 'Por ejemplo: M 123-456',
     puntoEncuentro: 'Punto de encuentro (Plus Code)',
@@ -195,7 +197,7 @@ export const textos = {
     errorPlaca: 'Escribí la placa del bus.',
     errorPunto:
       'Escribí un Plus Code como el de Google Maps, por ejemplo 6CCJ77GQ+XM.',
-    errorHora: 'Escribí la hora como 14:30.',
+    errorHora: 'Escribí la hora como 2:30 y elegí a. m. o p. m.',
     errorPasado: 'Ese día ya pasó. Elegí hoy o un día que viene.',
     errorServidor: 'No se pudo publicar. Revisá la conexión y probá de nuevo.',
     sinServidor:
