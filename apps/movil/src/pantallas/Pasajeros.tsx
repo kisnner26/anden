@@ -20,6 +20,7 @@ import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { CampoTexto } from '@/componentes/CampoTexto';
 import { Chip } from '@/componentes/Chip';
 import { ProgresoReserva } from '@/componentes/ProgresoReserva';
+import { Interruptor } from '@/componentes/Interruptor';
 import { nombreCompleto, type PasajeroGuardado } from '@/datos/perfil';
 import { useBoletos } from '@/datos/useBoletos';
 import type { PasajeroReserva } from '@/datos/reserva';
@@ -59,6 +60,9 @@ export function Pasajeros({
       ? { [asientos[0]]: perfil.cedula }
       : {},
   );
+  const [paraOtros, establecerParaOtros] = useState<Record<number, boolean>>(
+    {},
+  );
   const [faltan, establecerFaltan] = useState(false);
   const [validar, establecerValidar] = useState(false);
 
@@ -93,6 +97,14 @@ export function Pasajeros({
     );
   }
 
+  /** al marcar que el boleto es para otra persona se vacían los datos propios; al desmarcar vuelven */
+  function alternarParaOtro(asiento: number, activo: boolean) {
+    establecerParaOtros({ ...paraOtros, [asiento]: activo });
+    if (asiento !== asientos[0] || propio === '') return;
+    establecerNombres({ ...nombres, [asiento]: activo ? '' : propio });
+    establecerCedulas({ ...cedulas, [asiento]: activo ? '' : perfil.cedula });
+  }
+
   function continuar() {
     establecerValidar(true);
     const completos = asientos.every(
@@ -109,6 +121,7 @@ export function Pasajeros({
       asiento,
       cedula: cedulas[asiento],
       nombre: nombres[asiento] ?? '',
+      ...(paraOtros[asiento] ? { paraOtro: true } : {}),
     }));
     establecerBorrador(viajeId, pasajeros);
     alContinuar();
@@ -159,6 +172,22 @@ export function Pasajeros({
               <Text style={[tipografia.nombreFila, { color: colores.tinta }]}>
                 {`${t('pasajeros.asiento')} ${asiento}`}
               </Text>
+              <View style={estilos.paraOtro}>
+                <Text
+                  style={[
+                    tipografia.cuerpo,
+                    estilos.paraOtroTexto,
+                    { color: colores.tinta },
+                  ]}
+                >
+                  {t('pasajeros.paraOtro')}
+                </Text>
+                <Interruptor
+                  activo={paraOtros[asiento] === true}
+                  alCambiar={(activo) => alternarParaOtro(asiento, activo)}
+                  etiqueta={`${t('pasajeros.paraOtro')} · ${t('pasajeros.asiento')} ${asiento}`}
+                />
+              </View>
               <CampoTexto
                 alCambiar={(valor) =>
                   establecerNombres({ ...nombres, [asiento]: valor })
@@ -218,5 +247,11 @@ const estilos = StyleSheet.create({
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: espacios.ocho },
   contenido: { gap: espacios.dieciseis, paddingHorizontal: espacios.lateral },
   guardados: { gap: espacios.ocho },
+  paraOtro: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.doce,
+  },
+  paraOtroTexto: { flex: 1 },
   pantalla: { flex: 1 },
 });
