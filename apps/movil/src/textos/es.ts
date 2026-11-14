@@ -876,6 +876,11 @@ export const textos = {
     bloqueo: 'Proteger mis boletos con Face ID',
     crear: 'Crear cuenta',
   },
+  conexion: {
+    devuelta: 'De vuelta en línea',
+    sinConexion: 'Sin conexión: usando lo guardado',
+    sinConexionConHora: 'Sin conexión · datos de {hace}',
+  },
   calificarViaje: {
     gracias: 'Gracias, tu opinión ayuda a otros pasajeros',
     titulo: '¿Cómo te fue con {chofer}?',
