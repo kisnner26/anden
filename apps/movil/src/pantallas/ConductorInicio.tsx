@@ -6,6 +6,7 @@ import { Aparece } from '@/componentes/Aparece';
 import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
+import { Autobus } from '@/componentes/Autobus';
 import { Icono } from '@/componentes/Icono';
 import { GuiaConductor } from '@/componentes/GuiaConductor';
 import { Loseta } from '@/componentes/Loseta';
@@ -30,6 +31,8 @@ import { t } from '@/textos/t';
 import { etiquetaPunto } from '@/datos/puntoEncuentro';
 
 export interface PropiedadesConductorInicio {
+  /** abre el perfil del conductor al tocar su foto */
+  alAbrirPerfil?: () => void;
   /** abre los pasajeros y encomiendas del día; la tarjeta solo se ofrece si hay viajes */
   alAbrirABordo?: () => void;
   alAbrirViaje: (viajeId: string) => void;
@@ -42,6 +45,7 @@ export interface PropiedadesConductorInicio {
 /** los viajes del día del chofer; desde acá empieza a compartir su ubicación */
 export function ConductorInicio({
   alAbrirABordo,
+  alAbrirPerfil,
   alAbrirViaje,
   alNuevoViaje,
   alSalir,
@@ -86,15 +90,23 @@ export function ConductorInicio({
       style={{ backgroundColor: colores.fondo }}
     >
       <View style={estilos.saludo}>
-        <Avatar
-          descripcion={t('conductorPerfil.fotoDescripcion')}
-          iniciales={iniciales({
-            apellido: perfil.apellido,
-            nombre: perfil.nombre || (sesion?.nombre ?? ''),
-          })}
-          tamano={44}
-          uri={perfil.fotoUri}
-        />
+        <Pressable
+          accessibilityLabel={t('conductorAjustes.perfilTitulo')}
+          accessibilityRole="button"
+          disabled={!alAbrirPerfil}
+          hitSlop={8}
+          onPress={alAbrirPerfil}
+        >
+          <Avatar
+            descripcion={t('conductorPerfil.fotoDescripcion')}
+            iniciales={iniciales({
+              apellido: perfil.apellido,
+              nombre: perfil.nombre || (sesion?.nombre ?? ''),
+            })}
+            tamano={44}
+            uri={perfil.fotoUri}
+          />
+        </Pressable>
         <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
           {rellenar(t('conductor.saludo'), { nombre })}
         </Text>
@@ -166,14 +178,23 @@ export function ConductorInicio({
               onPress={() => alAbrirViaje(viaje.viajeId)}
             >
               <Bloque estiloContenido={estilos.fila}>
-                <Loseta variante={transmitiendo ? 'ambar' : 'negra'}>
-                  <Icono
-                    color={
-                      transmitiendo ? colores.sobreAmbar : colores.sobreNegro
-                    }
-                    nombre="pestanaViajar"
-                    tamano="grande"
-                  />
+                <Loseta variante="negra">
+                  {viaje.servicio === 'expreso' ? (
+                    <Icono nombre="rayo" tamano="ilustracion" />
+                  ) : (
+                    <Autobus ancho={tamanosControl.toqueMinimo} usarMiUnidad />
+                  )}
+                  {transmitiendo && (
+                    <View
+                      style={[
+                        estilos.enVivo,
+                        {
+                          backgroundColor: colores.aTiempo,
+                          borderColor: colores.bloqueNegro,
+                        },
+                      ]}
+                    />
+                  )}
                 </Loseta>
                 <View style={estilos.texto}>
                   <Text
@@ -269,6 +290,15 @@ export function ConductorInicio({
 }
 
 const estilos = StyleSheet.create({
+  enVivo: {
+    borderRadius: 7,
+    borderWidth: 2,
+    height: 14,
+    position: 'absolute',
+    right: 4,
+    top: 4,
+    width: 14,
+  },
   contenido: { gap: espacios.doce, paddingHorizontal: espacios.lateral },
   fila: {
     alignItems: 'center',
