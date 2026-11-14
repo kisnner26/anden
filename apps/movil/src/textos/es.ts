@@ -876,6 +876,10 @@ export const textos = {
     bloqueo: 'Proteger mis boletos con Face ID',
     crear: 'Crear cuenta',
   },
+  calificarViaje: {
+    gracias: 'Gracias, tu opinión ayuda a otros pasajeros',
+    titulo: '¿Cómo te fue con {chofer}?',
+  },
   opiniones: {
     titulo: 'Opiniones',
     vacio: 'Todavía no hay comentarios.',
