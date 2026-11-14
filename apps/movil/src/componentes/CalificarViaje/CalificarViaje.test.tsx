@@ -46,6 +46,9 @@ describe('CalificarViaje', () => {
     await p.findByText('¿Cómo te fue con Marvin?');
     await fireEvent.press(p.getByRole('button', { name: '4 estrellas' }));
     await fireEvent.press(p.getByRole('button', { name: 'Puntual' }));
+    await fireEvent.press(
+      p.getByRole('button', { name: 'Agregar un comentario' }),
+    );
     await fireEvent.changeText(
       p.getByLabelText('Comentario (opcional)'),
       'todo bien',
