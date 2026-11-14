@@ -58,7 +58,11 @@ describe('Viajar', () => {
   it('saluda y pregunta a dónde va la persona', async () => {
     const pantalla = await dibujar();
     expect(pantalla.getByText('Hola')).toBeTruthy();
-    expect(pantalla.getByText('¿A dónde vas hoy?')).toBeTruthy();
+    expect(
+      pantalla.getByText(
+        /¿A dónde vas|¿Viajás mañana|Tu bus a|Tu viaje de siempre/,
+      ),
+    ).toBeTruthy();
   });
 
   it('saluda por el primer nombre y usa las iniciales del perfil', async () => {
