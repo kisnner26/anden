@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#0b0b09" />
+  <title>Seguí el viaje | Andén</title>
+  <style>
+    :root {
+      --fondo: #0b0b09;
+      --tarjeta: #191914;
+      --texto: #f6f1e4;
+      --suave: #b9b3a2;
+      --ambar: #ffb21e;
+      --verde: #6fcf97;
+      --rojo: #ff6b57;
+      --linea: rgba(246, 241, 228, 0.14);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: var(--fondo); color: var(--texto); }
+    body {
+      font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: max(24px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
+      display: flex; flex-direction: column; align-items: center;
+    }
+    main { width: 100%; max-width: 460px; display: grid; gap: 16px; }
+    .marca { font: 600 11px/1 ui-monospace, Menlo, monospace; letter-spacing: .18em; text-transform: uppercase; color: var(--ambar); }
+    h1 { margin: 0; font-size: clamp(30px, 9vw, 44px); line-height: 1.02; letter-spacing: -.02em; }
+    h1 em { font-style: normal; color: var(--ambar); }
+    .tarjeta { background: var(--tarjeta); border: 1px solid var(--linea); border-radius: 24px; padding: 20px; display: grid; gap: 14px; }
+    .estado { display: inline-flex; align-items: center; gap: 8px; width: fit-content; padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,.06); font-size: 14px; }
+    .punto { width: 9px; height: 9px; border-radius: 50%; background: var(--suave); }
+    .estado[data-tono="camino"] .punto { background: var(--verde); animation: latir 1.4s ease-in-out infinite; }
+    .estado[data-tono="espera"] .punto { background: var(--ambar); }
+    .estado[data-tono="alerta"] .punto { background: var(--rojo); }
+    @keyframes latir { 50% { transform: scale(1.7); opacity: .45; } }
+    .ruta { position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; padding: 10px 0 4px; }
+    .ruta b { font-size: 18px; }
+    .via { position: relative; height: 4px; border-radius: 2px; background: var(--linea); }
+    .via::after { content: ""; position: absolute; top: 50%; left: 0; width: 18px; height: 18px; margin-top: -9px; border-radius: 50%; background: var(--ambar); box-shadow: 0 0 0 6px rgba(255, 178, 30, .22); animation: avanza 4.8s ease-in-out infinite alternate; }
+    .via[data-quieto="true"]::after { animation: none; left: 0; }
+    @keyframes avanza { to { left: calc(100% - 18px); } }
+    dl { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    dt { font: 600 10px/1 ui-monospace, Menlo, monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--suave); margin-bottom: 4px; }
+    dd { margin: 0; font-size: 17px; font-weight: 600; }
+    .mapa { display: block; text-align: center; text-decoration: none; color: #1a1205; background: var(--ambar); border-radius: 999px; padding: 14px; font-weight: 700; }
+    .mapa[hidden] { display: none; }
+    .nota { color: var(--suave); font-size: 13px; text-align: center; }
+    .centrado { text-align: center; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="marca">Andén · viaje compartido</div>
+    <h1 id="titulo">Buscando el viaje<em>.</em></h1>
+    <section class="tarjeta" id="tarjeta" hidden>
+      <div class="estado" id="estado" data-tono="espera"><span class="punto"></span><span id="estadoTexto"></span></div>
+      <div class="ruta">
+        <b id="origen"></b><div class="via" id="via" data-quieto="true"></div><b id="destino"></b>
+      </div>
+      <dl>
+        <div><dt>Sale</dt><dd id="salida"></dd></div>
+        <div><dt>Bus</dt><dd id="placa"></dd></div>
+        <div><dt>Servicio</dt><dd id="servicio"></dd></div>
+        <div><dt>Última señal</dt><dd id="senal"></dd></div>
+      </dl>
+      <a class="mapa" id="mapa" href="#" hidden target="_blank" rel="noopener">Ver dónde está en el mapa</a>
+    </section>
+    <p class="nota" id="nota"></p>
+  </main>
+  <script src="config.js"></script>
+  <script>
+    const CADA_MS = 8000;
+    const SEGUNDOS_SIN_SENAL = 90;
+    const q = (id) => document.getElementById(id);
+    const token = new URLSearchParams(location.search).get("t") || "";
+
+    function hora(iso) {
+      return new Date(iso).toLocaleTimeString("es-NI", { hour: "numeric", minute: "2-digit" });
+    }
+    function hace(iso, ahora) {
+      const s = Math.max(0, Math.round((ahora - new Date(iso)) / 1000));
+      if (s < 60) return "hace " + s + " s";
+      const m = Math.round(s / 60);
+      return m < 60 ? "hace " + m + " min" : "hace " + Math.round(m / 60) + " h";
+    }
+    function vacio(titulo, nota) {
+      q("titulo").innerHTML = titulo + "<em>.</em>";
+      q("tarjeta").hidden = true;
+      q("nota").textContent = nota;
+    }
+
+    function pintar(d) {
+      const ahora = new Date();
+      const conPosicion = d.lat !== null && d.lng !== null && d.registrada_en;
+      const segundos = conPosicion ? (ahora - new Date(d.registrada_en)) / 1000 : Infinity;
+      const viva = conPosicion && segundos <= SEGUNDOS_SIN_SENAL && !d.salio_en === false ? true : conPosicion && segundos <= SEGUNDOS_SIN_SENAL;
+      const primerNombre = String(d.nombre || "Alguien").split(" ")[0];
+      q("titulo").innerHTML = primerNombre + " va a <em>" + d.destino + "</em>";
+      q("origen").textContent = d.origen;
+      q("destino").textContent = d.destino;
+      q("salida").textContent = hora(d.salida);
+      q("placa").textContent = d.placa;
+      q("servicio").textContent = d.servicio === "expreso" ? "Expreso" : "Ordinario";
+      q("senal").textContent = conPosicion ? hace(d.registrada_en, ahora) : "todavía no";
+
+      let texto, tono;
+      if (viva) { texto = "En camino"; tono = "camino"; }
+      else if (conPosicion) { texto = "Sin señal " + hace(d.registrada_en, ahora); tono = "alerta"; }
+      else if (new Date(d.salida) > ahora) { texto = "Sale a las " + hora(d.salida); tono = "espera"; }
+      else { texto = "Esperando que el bus comparta su ubicación"; tono = "espera"; }
+      q("estadoTexto").textContent = texto;
+      q("estado").dataset.tono = tono;
+      q("via").dataset.quieto = viva ? "false" : "true";
+
+      const mapa = q("mapa");
+      mapa.hidden = !conPosicion;
+      if (conPosicion) mapa.href = "https://maps.apple.com/?ll=" + d.lat + "," + d.lng + "&q=Bus";
+      q("tarjeta").hidden = false;
+      q("nota").textContent = "Se actualiza sola cada pocos segundos. El enlace vence " + hora(d.expira_en) + ".";
+    }
+
+    async function cargar() {
+      try {
+        const r = await fetch(ANDEN.URL + "/rest/v1/rpc/ver_viaje_compartido", {
+          method: "POST",
+          headers: { apikey: ANDEN.CLAVE, Authorization: "Bearer " + ANDEN.CLAVE, "Content-Type": "application/json" },
+          body: JSON.stringify({ p_token: token }),
+        });
+        if (!r.ok) throw new Error("http " + r.status);
+        const datos = await r.json();
+        if (!datos) return vacio("Este enlace venció o no existe", "Pedile a quien viaja que lo comparta otra vez desde Andén.");
+        pintar(datos);
+      } catch (e) {
+        if (q("tarjeta").hidden) vacio("No se pudo cargar el viaje", "Revisá tu conexión: se vuelve a intentar solo.");
+        else q("nota").textContent = "Sin conexión por ahora; se muestra lo último que llegó.";
+      }
+    }
+
+    if (!/^[0-9a-f]{32}$/.test(token)) {
+      vacio("Enlace no válido", "Abrí el enlace completo que te mandaron.");
+    } else {
+      cargar();
+      setInterval(cargar, CADA_MS);
+    }
+  </script>
+</body>
+</html>
