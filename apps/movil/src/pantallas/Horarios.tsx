@@ -3,6 +3,11 @@ import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Aparece } from '@/componentes/Aparece';
+import { AtajosDelDia } from '@/componentes/AtajosDelDia';
+import { FiltroDestinos } from '@/componentes/FiltroDestinos';
+import { LineaDelDia } from '@/componentes/LineaDelDia';
+import { ProximaSalidaFoto } from '@/componentes/ProximaSalidaFoto';
+import { ResumenIA } from '@/componentes/ResumenIA';
 import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { Hoja } from '@/componentes/Hoja';
@@ -15,8 +20,9 @@ import { Loseta } from '@/componentes/Loseta';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { TableroSalidas } from '@/componentes/TableroSalidas';
 import { CORREDORES_INICIALES, TERMINAL_POR_CIUDAD } from '@/datos/corredores';
-import { minutosParaSalir, nivelDisponibilidad } from '@/datos/disponibilidad';
-import { formatoHoraCompleta } from '@/datos/formato';
+
+import { atajosDelDia, contextoDelDia } from '@/datos/resumenDelDia';
+import { rellenar } from '@/textos/rellenar';
 import type { MinutosAntes } from '@/datos/recordatorios';
 import type { Salida } from '@/datos/salidas';
 import { useSonidos } from '@/datos/useSonidos';
@@ -103,6 +109,9 @@ export function Horarios({
   );
   const [filtro, establecerFiltro] = useState<Filtro>('todos');
   const [soloProximas, establecerSoloProximas] = useState(false);
+  const [destinoElegido, establecerDestinoElegido] = useState<string | null>(
+    null,
+  );
   const porServicio =
     filtro === 'todos'
       ? salidas
@@ -126,9 +135,16 @@ export function Horarios({
       favoritos.includes(corredor.id) &&
       TERMINAL_POR_CIUDAD[corredor.origen] === terminalId,
   ).map((corredor) => corredor.destino);
-  const visibles = soloFavoritas
+  const porFavoritas = soloFavoritas
     ? porProximas.filter((salida) => destinosFavoritos.includes(salida.destino))
     : porProximas;
+  const visibles =
+    destinoElegido === null
+      ? porFavoritas
+      : porFavoritas.filter((salida) => salida.destino === destinoElegido);
+  const destinosDeLaTerminal = [
+    ...new Set(salidas.map((salida) => salida.destino)),
+  ];
   const disponibles = visibles.filter(
     (salida) => salida.estado !== 'en-ruta' && salida.estado !== 'llego',
   );
@@ -143,9 +159,7 @@ export function Horarios({
             salida.asientosLibres > 0 &&
             salida.salida.getTime() >= ahora.getTime(),
         )?.viajeId ?? null);
-  const nivelProxima = proxima
-    ? nivelDisponibilidad(proxima.asientosLibres)
-    : null;
+  const atajos = atajosDelDia(visibles, ahora);
 
   return (
     <MarcoPestana>
@@ -182,28 +196,22 @@ export function Horarios({
 
       {proxima ? (
         <Aparece>
-          <Bloque estilo={estilos.terminal} estiloContenido={estilos.proxima}>
-            <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-              {esHoy ? t('horarios.proximaSalida') : t('dias.primeraSalida')}
-            </Text>
-            <View style={estilos.filaProxima}>
-              <Text style={[tipografia.titulo, { color: colores.tinta }]}>
-                {proxima.destino}
-              </Text>
-              <Text style={[tipografia.dato, { color: colores.tinta }]}>
-                {formatoHoraCompleta(proxima.salida)}
-              </Text>
-            </View>
-            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-              {`${esHoy ? `${t('horarios.saleEn')} ${minutosParaSalir(proxima, ahora)} ${t('horarios.minutos')} · ` : ''}${
-                nivelProxima === 'pocos'
-                  ? t('horarios.pocosAsientos')
-                  : `${proxima.asientosLibres} ${t('horarios.libres')}`
-              }`}
-            </Text>
-          </Bloque>
+          <View style={estilos.terminal}>
+            <ProximaSalidaFoto
+              ahora={ahora}
+              alAbrir={alAbrirViaje}
+              esHoy={esHoy}
+              salida={proxima}
+            />
+          </View>
         </Aparece>
       ) : null}
+
+      <FiltroDestinos
+        alElegir={establecerDestinoElegido}
+        destinos={destinosDeLaTerminal}
+        elegido={destinoElegido}
+      />
 
       <SelectorDia
         ahora={ahora}
@@ -309,6 +317,25 @@ export function Horarios({
           />
         </View>
       </Hoja>
+
+      <View style={estilos.graficos}>
+        <LineaDelDia
+          ahora={ahora}
+          alElegir={alAbrirViaje}
+          esHoy={esHoy}
+          salidas={visibles}
+        />
+        <AtajosDelDia alAbrir={alAbrirViaje} atajos={atajos} />
+        {visibles.length > 0 && (
+          <ResumenIA
+            contexto={contextoDelDia(visibles, terminal?.ciudad ?? '')}
+            pedido={rellenar(t('vistaDia.resumenPedido'), {
+              terminal: terminal?.ciudad ?? '',
+            })}
+            titulo={t('vistaDia.resumenTitulo')}
+          />
+        )}
+      </View>
 
       <View style={estilos.tablero}>
         <TableroSalidas
@@ -425,6 +452,7 @@ const estilos = StyleSheet.create({
     justifyContent: 'space-between',
   },
   proxima: { gap: espacios.cuatro, padding: espacios.dieciseis },
+  graficos: { gap: espacios.dieciseis, marginTop: espacios.dieciseis },
   tablero: { marginTop: espacios.cuatro },
   tituloLista: { marginTop: espacios.veinticuatro },
   terminal: { marginTop: espacios.dieciseis },
