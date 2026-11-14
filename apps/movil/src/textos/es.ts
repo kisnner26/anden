@@ -633,6 +633,30 @@ export const textos = {
       'Resumime mis próximos viajes y decime a qué hora conviene llegar a cada punto de encuentro, usando solo estos datos.',
     resumenTitulo: 'Resumir mis viajes con IA',
   },
+  mascota: {
+    activar: 'Activar a Pito',
+    alerta: 'Pito avisa',
+    calificar:
+      '¿Cómo te fue en tu último viaje? Contale a Andén con las estrellas.',
+    detalle:
+      'Una mascota que te avisa cuándo salir y te enseña los trucos de la app. Se puede apagar cuando quieras.',
+    inminente:
+      '¡Ya casi! Tu bus a {destino} sale en {minutos} min. Andá al punto {punto}.',
+    noche: 'Ya es tarde. Dejá tu viaje de mañana listo y descansá.',
+    pronto: 'Tu bus a {destino} sale en {tiempo}. Andá saliendo con tiempo.',
+    saludoManana: 'Buenos días, {nombre}. ¿A dónde vamos hoy?',
+    saludoNoche: 'Buenas noches, {nombre}. ¿Dejamos listo el viaje de mañana?',
+    saludoTarde: 'Buenas tardes, {nombre}. ¿Salimos hacia algún lado?',
+    sinBoletos:
+      'Todavía no tenés boletos. Tocá Buscar salidas y armamos tu viaje.',
+    sinSalidasHoy: 'Hoy ya no hay más salidas. Mirá las de mañana.',
+    titulo: 'Pito, tu guía',
+    trucoArrastrar:
+      'Truco: arrastrá tu boleto hacia arriba y se ve grande para el chofer.',
+    trucoDeslizar:
+      'Truco: deslizá una salida a la derecha para guardarla como favorita.',
+    trucoRutas: 'Elegí una ciudad y te muestro cuánto dura el viaje.',
+  },
   gestos: {
     avisar: 'Avisarme',
     favorita: 'Favorita',
