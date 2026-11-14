@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Linking,
   Pressable,
@@ -19,9 +19,9 @@ import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { CampoTexto } from '@/componentes/CampoTexto';
+import { Chip } from '@/componentes/Chip';
 import { ControlSegmentado } from '@/componentes/ControlSegmentado';
 import { FormaPaquete } from '@/componentes/FormaPaquete';
-import { Interruptor } from '@/componentes/Interruptor';
 import { LineaEstadoEncomienda } from '@/componentes/LineaEstadoEncomienda';
 import {
   erroresDeEncomienda,
@@ -37,15 +37,15 @@ import { nombreCompleto, nombrePropio } from '@/datos/perfil';
 import {
   CIUDADES_RED,
   corredorDe,
+  invertirSentido,
   type CiudadRed,
   type SentidoRed,
 } from '@/datos/redRutas';
 import { useEncomiendas } from '@/datos/useEncomiendas';
 import { usePerfil } from '@/datos/usePerfil';
 import { useSalidas } from '@/datos/useSalidas';
+import type { SugerenciaEncomienda } from '@/datos/sugerenciaEncomienda';
 import { formatoHoraCompleta } from '@/datos/formato';
-import { OpcionSeleccion } from '@/componentes/OpcionSeleccion';
-import { Rebote } from '@/componentes/Rebote';
 import { conAlfa } from '@/tema/alfa';
 import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -66,19 +66,6 @@ const MENSAJES: Record<ErrorEncomienda, () => string> = {
   telefono: () => t('encomiendas.errorTelefono'),
 };
 
-const NOMBRES_PASO = {
-  1: () => t('encomiendas.paso1'),
-  2: () => t('encomiendas.paso2'),
-  3: () => t('encomiendas.paso3'),
-} as const;
-
-/** campos que se revisan al salir de cada paso */
-const CAMPOS_DEL_PASO: Record<1 | 2 | 3, readonly ErrorEncomienda[]> = {
-  1: [],
-  2: ['remitente', 'destinatario', 'telefono'],
-  3: ['descripcion'],
-};
-
 /**
  * pedir que un paquete viaje en el bus, en tres pasos: trayecto y paquete, las dos personas y el
  * detalle con la confirmación. Al enviar queda un comprobante con código, QR y las etapas del envío
@@ -87,7 +74,6 @@ export function Encomiendas({ alPreguntar, alVolver }: PropiedadesEncomiendas) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const { perfil } = usePerfil();
-  const [paso, establecerPaso] = useState<1 | 2 | 3>(1);
   const [ciudad, establecerCiudad] = useState<CiudadRed>('Boaco');
   const [sentido, establecerSentido] = useState<SentidoRed>('ida');
   const [tamano, establecerTamano] = useState<TamanoEncomienda>('pequeno');
@@ -95,7 +81,11 @@ export function Encomiendas({ alPreguntar, alVolver }: PropiedadesEncomiendas) {
   const [remitente, establecerRemitente] = useState('');
   const [destinatario, establecerDestinatario] = useState('');
   const [telefono, establecerTelefono] = useState('');
-  const [descripcion, establecerDescripcion] = useState('');
+  const [textoLibre, establecerTextoLibre] = useState('');
+  const [entendido, establecerEntendido] = useState<{
+    sugerencia: SugerenciaEncomienda;
+    texto: string;
+  } | null>(null);
   const [errores, establecerErrores] = useState<ErrorEncomienda[]>([]);
   const { cambiarEstado, encomiendas: solicitudes, enviar } = useEncomiendas();
   const { ahora, datos: muestra, salidas } = useSalidas();
@@ -117,7 +107,38 @@ export function Encomiendas({ alPreguntar, alVolver }: PropiedadesEncomiendas) {
         salida.salida.getTime() >= ahora.getTime() - 5 * 60_000,
     )
     .sort((a, b) => a.salida.getTime() - b.salida.getTime());
-  const elegido = viajes.find((viaje) => viaje.viajeId === viajeId) ?? null;
+  // sin elegir otro, el paquete va en el primer bus que sale: la persona solo lo cambia si quiere
+  const elegido =
+    viajes.find((viaje) => viaje.viajeId === viajeId) ?? viajes[0] ?? null;
+  // la descripción: lo que entendió la IA mientras el texto no haya cambiado, y si no lo que escribió
+  const descripcion =
+    entendido && entendido.texto === textoLibre.trim()
+      ? entendido.sugerencia.descripcion
+      : textoLibre.trim().slice(0, 80);
+
+  // el nombre de quien envía sale del perfil, para que no haya que escribirlo cada vez
+  useEffect(() => {
+    if (remitente === '' && nombreCompleto(perfil) !== '') {
+      establecerRemitente(nombrePropio(nombreCompleto(perfil)));
+    }
+  }, [perfil, remitente]);
+
+  /** lo que se entendió del texto llena el formulario; solo se pisa lo que la persona todavía no escribió */
+  function aplicarSugerencia(sugerencia: SugerenciaEncomienda, texto: string) {
+    establecerEntendido({ sugerencia, texto });
+    establecerTamano(sugerencia.tamano);
+    establecerFragil(sugerencia.fragil);
+    if (sugerencia.ciudad) {
+      establecerCiudad(sugerencia.ciudad);
+      establecerSentido(sugerencia.sentido ?? 'ida');
+    }
+    if (sugerencia.destinatario && destinatario === '') {
+      establecerDestinatario(sugerencia.destinatario);
+    }
+    if (sugerencia.telefono && telefono === '') {
+      establecerTelefono(sugerencia.telefono);
+    }
+  }
 
   function datos() {
     return {
@@ -134,30 +155,15 @@ export function Encomiendas({ alPreguntar, alVolver }: PropiedadesEncomiendas) {
     };
   }
 
-  function seguir() {
-    const fallos = erroresDeEncomienda(datos()).filter((error) =>
-      CAMPOS_DEL_PASO[paso].includes(error),
-    );
+  async function solicitar() {
+    const fallos = erroresDeEncomienda(datos());
     establecerErrores(fallos);
-    if (fallos.length > 0) return;
-    if (paso === 1 && !elegido) {
+    if (!elegido) {
       establecerSinViaje(true);
       return;
     }
     establecerSinViaje(false);
-    if (paso < 3) establecerPaso((paso + 1) as 2 | 3);
-  }
-
-  async function solicitar() {
-    const fallos = erroresDeEncomienda(datos());
-    establecerErrores(fallos);
-    if (fallos.length > 0) {
-      // lleva al primer paso que tiene algo mal
-      establecerPaso(
-        fallos.some((f) => CAMPOS_DEL_PASO[2].includes(f)) ? 2 : 3,
-      );
-      return;
-    }
+    if (fallos.length > 0) return;
     establecerFalloEnvio(false);
     const nueva = await enviar(datos());
     if (!nueva) {
@@ -170,8 +176,8 @@ export function Encomiendas({ alPreguntar, alVolver }: PropiedadesEncomiendas) {
 
   function otro() {
     establecerRecienEnviada(null);
-    establecerPaso(1);
-    establecerDescripcion('');
+    establecerTextoLibre('');
+    establecerEntendido(null);
     establecerDestinatario('');
     establecerTelefono('');
     establecerFragil(false);
@@ -181,60 +187,6 @@ export function Encomiendas({ alPreguntar, alVolver }: PropiedadesEncomiendas) {
 
   const error = (campo: ErrorEncomienda) =>
     errores.includes(campo) ? MENSAJES[campo]() : undefined;
-
-  const tarjetaTamano = (opcion: TamanoEncomienda, indice: number) => {
-    const activa = tamano === opcion;
-    const texto = activa ? colores.sobreFichaActiva : colores.tinta;
-    const suave = activa ? colores.sobreFichaActiva : colores.tintaSuave;
-    return (
-      <View key={opcion} style={estilos.celdaTamano}>
-        <Aparece indice={indice}>
-          <Rebote activo={activa}>
-            <Pressable
-              accessibilityLabel={t(`encomiendas.${opcion}`)}
-              accessibilityRole="button"
-              accessibilityState={{ selected: activa }}
-              onPress={() => establecerTamano(opcion)}
-              style={[
-                estilos.tamano,
-                {
-                  backgroundColor: activa
-                    ? colores.fichaActiva
-                    : conAlfa(colores.tinta, 0.06),
-                  borderColor: activa ? colores.fichaActiva : colores.linea,
-                },
-              ]}
-            >
-              <View style={estilos.dibujoTamano}>
-                <FormaPaquete color={texto} tamano={opcion} />
-              </View>
-              <Text
-                numberOfLines={1}
-                style={[
-                  tipografia.nombreLinea,
-                  estilos.textoTamano,
-                  { color: texto },
-                ]}
-              >
-                {t(`encomiendas.${opcion}`)}
-              </Text>
-              <Text
-                numberOfLines={2}
-                style={[
-                  tipografia.etiqueta,
-                  estilos.textoTamano,
-                  estilos.detalleTamano,
-                  { color: suave },
-                ]}
-              >
-                {t(`encomiendas.${opcion}Detalle`)}
-              </Text>
-            </Pressable>
-          </Rebote>
-        </Aparece>
-      </View>
-    );
-  };
 
   return (
     <View style={estilos.pantalla}>
@@ -359,274 +311,185 @@ export function Encomiendas({ alPreguntar, alVolver }: PropiedadesEncomiendas) {
           </Aparece>
         ) : (
           <>
-            <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
               {t('encomiendas.detalle')}
             </Text>
 
-            <View
-              accessibilityLabel={rellenar(t('encomiendas.progreso'), { paso })}
-              accessibilityRole="progressbar"
-              accessibilityValue={{ max: 3, min: 1, now: paso }}
-              accessible
-              style={estilos.progreso}
-            >
-              <View style={estilos.filaProgreso}>
+            <AsistenteEncomienda
+              alAplicar={aplicarSugerencia}
+              alEscribir={establecerTextoLibre}
+            />
+            {errores.includes('descripcion') && (
+              <Text style={[tipografia.pequeno, { color: colores.cancelado }]}>
+                {t('encomiendas.errorDescripcion')}
+              </Text>
+            )}
+
+            <Bloque estiloContenido={estilos.formulario}>
+              <ControlSegmentado
+                alCambiar={establecerCiudad}
+                opciones={CIUDADES_RED.map((nombre) => ({
+                  clave: nombre,
+                  etiqueta: nombre,
+                }))}
+                valor={ciudad}
+              />
+              <Pressable
+                accessibilityHint={t('encomiendas.invertir')}
+                accessibilityLabel={`${corredor.origen} → ${corredor.destino}`}
+                accessibilityRole="button"
+                onPress={() =>
+                  establecerSentido(
+                    invertirSentido({ ciudad, sentido }).sentido,
+                  )
+                }
+                style={estilos.ruta}
+              >
+                <Text style={[tipografia.titulo, { color: colores.tinta }]}>
+                  {`${corredor.origen} → ${corredor.destino}`}
+                </Text>
                 <Text
                   style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
                 >
-                  {`${paso}/3`}
+                  {t('encomiendas.invertir')}
                 </Text>
-                <Text style={[tipografia.etiqueta, { color: colores.tinta }]}>
-                  {NOMBRES_PASO[paso]()}
-                </Text>
-              </View>
-              <View style={estilos.segmentos}>
-                {([1, 2, 3] as const).map((numero) => (
-                  <View
-                    key={numero}
-                    style={[
-                      estilos.segmento,
-                      {
-                        backgroundColor:
-                          numero <= paso ? colores.ambar : colores.linea,
-                      },
-                    ]}
-                  />
-                ))}
-              </View>
-            </View>
+              </Pressable>
 
-            {paso === 1 && (
-              <Aparece>
-                <View style={estilos.grupo}>
-                  <AsistenteEncomienda
-                    alAplicar={(sugerencia) => {
-                      establecerTamano(sugerencia.tamano);
-                      establecerFragil(sugerencia.fragil);
-                      establecerDescripcion(sugerencia.descripcion);
-                    }}
-                  />
-                  <Text
-                    style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
-                  >
-                    {t('encomiendas.trayecto')}
-                  </Text>
-                  <ControlSegmentado
-                    alCambiar={establecerCiudad}
-                    opciones={CIUDADES_RED.map((nombre) => ({
-                      clave: nombre,
-                      etiqueta: nombre,
-                    }))}
-                    valor={ciudad}
-                  />
-                  <ControlSegmentado
-                    alCambiar={establecerSentido}
-                    opciones={[
-                      { clave: 'ida', etiqueta: t('rutas.desdeManagua') },
-                      { clave: 'vuelta', etiqueta: t('rutas.haciaManagua') },
-                    ]}
-                    valor={sentido}
-                  />
-                  <Text
-                    style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
-                  >
-                    {t('encomiendas.tamano')}
-                  </Text>
-                  <View style={estilos.tamanos}>
-                    {TAMANOS.map((opcion, i) => tarjetaTamano(opcion, i))}
-                  </View>
-                  <Bloque estiloContenido={estilos.fragil}>
-                    <View style={estilos.textoFragil}>
+              <View style={estilos.tamanos}>
+                {TAMANOS.map((opcion) => {
+                  const activa = tamano === opcion;
+                  return (
+                    <Pressable
+                      accessibilityLabel={t(`encomiendas.${opcion}`)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: activa }}
+                      key={opcion}
+                      onPress={() => establecerTamano(opcion)}
+                      style={[
+                        estilos.tamano,
+                        {
+                          backgroundColor: activa
+                            ? colores.fichaActiva
+                            : conAlfa(colores.tinta, 0.06),
+                          borderColor: activa
+                            ? colores.fichaActiva
+                            : colores.linea,
+                        },
+                      ]}
+                    >
+                      <View style={estilos.dibujoTamano}>
+                        <FormaPaquete
+                          color={
+                            activa ? colores.sobreFichaActiva : colores.tinta
+                          }
+                          tamano={opcion}
+                        />
+                      </View>
                       <Text
-                        style={[tipografia.subtitulo, { color: colores.tinta }]}
-                      >
-                        {t('encomiendas.fragil')}
-                      </Text>
-                      <Text
+                        numberOfLines={1}
                         style={[
-                          tipografia.pequeno,
-                          { color: colores.tintaSuave },
+                          tipografia.etiqueta,
+                          estilos.textoTamano,
+                          {
+                            color: activa
+                              ? colores.sobreFichaActiva
+                              : colores.tinta,
+                          },
                         ]}
                       >
-                        {t('encomiendas.fragilDetalle')}
+                        {t(`encomiendas.${opcion}`)}
                       </Text>
-                    </View>
-                    <Interruptor
-                      activo={fragil}
-                      alCambiar={establecerFragil}
-                      etiqueta={t('encomiendas.fragil')}
-                    />
-                  </Bloque>
+                    </Pressable>
+                  );
+                })}
+              </View>
+
+              <View style={estilos.filaOpciones}>
+                <Chip
+                  alCambiar={establecerFragil}
+                  etiqueta={t('encomiendas.fragil')}
+                  seleccionado={fragil}
+                />
+              </View>
+
+              {viajes.length === 0 ? (
+                <Text
+                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                >
+                  {t('encomiendas.sinViajes')}
+                </Text>
+              ) : (
+                <View style={estilos.buses}>
                   <Text
                     style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
                   >
                     {t('encomiendas.enQueBus')}
                   </Text>
-                  {viajes.length === 0 ? (
-                    <Bloque estiloContenido={estilos.sinViajes}>
-                      <Text
-                        style={[
-                          tipografia.cuerpo,
-                          { color: colores.tintaSuave },
-                        ]}
-                      >
-                        {t('encomiendas.sinViajes')}
-                      </Text>
-                    </Bloque>
-                  ) : (
-                    viajes.slice(0, 6).map((viaje) => (
-                      <OpcionSeleccion
-                        alElegir={() => {
+                  <ScrollView
+                    contentContainerStyle={estilos.horas}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                  >
+                    {viajes.slice(0, 6).map((viaje) => (
+                      <Chip
+                        alCambiar={() => {
                           establecerViajeId(viaje.viajeId);
                           establecerSinViaje(false);
                         }}
-                        detalle={rellenar(t('encomiendas.viajeDetalle'), {
-                          chofer:
-                            muestra.choferes.find(
-                              (c) => c.id === viaje.choferId,
-                            )?.nombre ?? '',
-                          placa: viaje.placa,
-                        })}
-                        elegida={viaje.viajeId === viajeId}
+                        etiqueta={formatoHoraCompleta(viaje.salida)}
                         key={viaje.viajeId}
-                        nombre={rellenar(t('encomiendas.viajeNombre'), {
-                          hora: formatoHoraCompleta(viaje.salida),
-                        })}
+                        seleccionado={viaje.viajeId === elegido?.viajeId}
                       />
-                    ))
-                  )}
-                  {sinViaje && (
-                    <Text
-                      style={[tipografia.pequeno, { color: colores.cancelado }]}
-                    >
-                      {t('encomiendas.errorViaje')}
-                    </Text>
-                  )}
-                </View>
-              </Aparece>
-            )}
-
-            {paso === 2 && (
-              <Aparece>
-                <View style={estilos.grupo}>
-                  <Bloque estiloContenido={estilos.persona}>
-                    <Text style={[tipografia.titulo, { color: colores.tinta }]}>
-                      {t('encomiendas.quienEnvia')}
-                    </Text>
-                    <CampoTexto
-                      alCambiar={establecerRemitente}
-                      error={error('remitente')}
-                      etiqueta={t('encomiendas.remitente')}
-                      valor={remitente}
-                    />
-                    {nombreCompleto(perfil) !== '' && remitente === '' && (
-                      <Pressable
-                        accessibilityRole="button"
-                        onPress={() =>
-                          establecerRemitente(
-                            nombrePropio(nombreCompleto(perfil)),
-                          )
-                        }
-                      >
-                        <Text
-                          style={[
-                            tipografia.subtitulo,
-                            { color: colores.ambarTexto },
-                          ]}
-                        >
-                          {t('encomiendas.usarMisDatos')}
-                        </Text>
-                      </Pressable>
-                    )}
-                  </Bloque>
-                  <Bloque estiloContenido={estilos.persona}>
-                    <Text style={[tipografia.titulo, { color: colores.tinta }]}>
-                      {t('encomiendas.quienRecibe')}
-                    </Text>
-                    <CampoTexto
-                      alCambiar={establecerDestinatario}
-                      error={error('destinatario')}
-                      etiqueta={t('encomiendas.destinatario')}
-                      valor={destinatario}
-                    />
-                    <CampoTexto
-                      alCambiar={establecerTelefono}
-                      error={error('telefono')}
-                      etiqueta={t('encomiendas.telefono')}
-                      teclado="phone-pad"
-                      valor={telefono}
-                    />
-                  </Bloque>
-                </View>
-              </Aparece>
-            )}
-
-            {paso === 3 && (
-              <Aparece>
-                <View style={estilos.grupo}>
-                  <Bloque estiloContenido={estilos.persona}>
-                    <CampoTexto
-                      alCambiar={establecerDescripcion}
-                      error={error('descripcion')}
-                      etiqueta={t('encomiendas.descripcion')}
-                      marcador={t('encomiendas.marcadorDescripcion')}
-                      valor={descripcion}
-                    />
-                  </Bloque>
-                  <Bloque
-                    estiloContenido={estilos.resumen}
-                    hundido
-                    radio="loseta"
-                  >
+                    ))}
+                  </ScrollView>
+                  {elegido && (
                     <Text
                       style={[
-                        tipografia.etiqueta,
-                        { color: colores.ambarTexto },
+                        tipografia.pequeno,
+                        { color: colores.tintaSuave },
                       ]}
                     >
-                      {t('encomiendas.resumen')}
+                      {rellenar(t('encomiendas.viajeDetalle'), {
+                        chofer:
+                          muestra.choferes.find(
+                            (c) => c.id === elegido.choferId,
+                          )?.nombre ?? '',
+                        placa: elegido.placa,
+                      })}
                     </Text>
-                    <Text style={[tipografia.titulo, { color: colores.tinta }]}>
-                      {`${corredor.origen} → ${corredor.destino}`}
-                    </Text>
-                    <View style={estilos.resumenFila}>
-                      <FormaPaquete tamano={tamano} />
-                      <View style={estilos.resumenTexto}>
-                        <Text
-                          style={[
-                            tipografia.nombreFila,
-                            { color: colores.tinta },
-                          ]}
-                        >
-                          {`${t(`encomiendas.${tamano}`)}${fragil ? ` · ${t('encomiendas.fragil')}` : ''}`}
-                        </Text>
-                        <Text
-                          style={[
-                            tipografia.pequeno,
-                            { color: colores.tintaSuave },
-                          ]}
-                        >
-                          {`${t('encomiendas.de')} ${nombrePropio(remitente)}`}
-                        </Text>
-                        <Text
-                          style={[
-                            tipografia.pequeno,
-                            { color: colores.tintaSuave },
-                          ]}
-                        >
-                          {`${t('encomiendas.para')} ${nombrePropio(destinatario)}`}
-                        </Text>
-                      </View>
-                    </View>
-                  </Bloque>
-                  <Text
-                    style={[tipografia.pequeno, { color: colores.tintaSuave }]}
-                  >
-                    {t('encomiendas.nota')}
-                  </Text>
+                  )}
                 </View>
-              </Aparece>
-            )}
+              )}
+              {sinViaje && (
+                <Text
+                  style={[tipografia.pequeno, { color: colores.cancelado }]}
+                >
+                  {t('encomiendas.errorViaje')}
+                </Text>
+              )}
+            </Bloque>
+
+            <Bloque estiloContenido={estilos.formulario}>
+              <CampoTexto
+                alCambiar={establecerRemitente}
+                error={error('remitente')}
+                etiqueta={t('encomiendas.remitente')}
+                valor={remitente}
+              />
+              <CampoTexto
+                alCambiar={establecerDestinatario}
+                error={error('destinatario')}
+                etiqueta={t('encomiendas.destinatario')}
+                valor={destinatario}
+              />
+              <CampoTexto
+                alCambiar={establecerTelefono}
+                error={error('telefono')}
+                etiqueta={t('encomiendas.telefono')}
+                teclado="phone-pad"
+                valor={telefono}
+              />
+            </Bloque>
 
             {falloEnvio && (
               <Text
@@ -636,38 +499,11 @@ export function Encomiendas({ alPreguntar, alVolver }: PropiedadesEncomiendas) {
                 {t('encomiendas.falloEnvio')}
               </Text>
             )}
-            <View style={estilos.navegacion}>
-              {paso > 1 && (
-                <Pressable
-                  accessibilityRole="button"
-                  onPress={() => establecerPaso((paso - 1) as 1 | 2)}
-                  style={estilos.atras}
-                >
-                  <Text
-                    style={[
-                      tipografia.subtitulo,
-                      { color: colores.ambarTexto },
-                    ]}
-                  >
-                    {t('encomiendas.atras')}
-                  </Text>
-                </Pressable>
-              )}
-              <View style={estilos.principal}>
-                {paso < 3 ? (
-                  <BotonAccion
-                    alPresionar={seguir}
-                    etiqueta={t('encomiendas.seguir')}
-                  />
-                ) : (
-                  <BotonAccion
-                    alPresionar={() => void solicitar()}
-                    etiqueta={t('encomiendas.solicitar')}
-                    icono="boleto"
-                  />
-                )}
-              </View>
-            </View>
+            <BotonAccion
+              alPresionar={() => void solicitar()}
+              etiqueta={t('encomiendas.solicitar')}
+              icono="boleto"
+            />
           </>
         )}
 
@@ -781,10 +617,25 @@ export function Encomiendas({ alPreguntar, alVolver }: PropiedadesEncomiendas) {
 }
 
 const estilos = StyleSheet.create({
+  buses: { gap: espacios.ocho },
+  filaOpciones: { flexDirection: 'row' },
+  formulario: { gap: espacios.doce, padding: espacios.dieciseis },
+  horas: { gap: espacios.ocho },
+  ruta: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    minHeight: 44,
+  },
   cancelar: { justifyContent: 'center', minHeight: 44 },
   celdaTamano: { flex: 1 },
   detalleTamano: { minHeight: 32 },
-  dibujoTamano: { alignItems: 'center', height: 56, justifyContent: 'center' },
+  dibujoTamano: {
+    alignItems: 'center',
+    height: 44,
+    justifyContent: 'center',
+    transform: [{ scale: 0.8 }],
+  },
   rechazo: { gap: espacios.cuatro },
   sinViajes: { padding: espacios.dieciseis },
   textoTamano: { alignSelf: 'stretch', textAlign: 'center' },
@@ -846,12 +697,11 @@ const estilos = StyleSheet.create({
   solicitud: { gap: espacios.ocho, padding: espacios.dieciseis },
   tamano: {
     alignItems: 'center',
-    borderRadius: radios.bloque,
+    borderRadius: radios.casilla,
     borderWidth: 2,
+    flex: 1,
     gap: espacios.cuatro,
-    justifyContent: 'flex-start',
-    minHeight: 148,
-    padding: espacios.doce,
+    padding: espacios.ocho,
   },
   tamanos: { flexDirection: 'row', gap: espacios.ocho },
   textoFragil: { flex: 1, gap: espacios.cuatro },
