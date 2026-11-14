@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { esPlusCompleto } from './plusCode';
 import {
   COMODIDADES,
   CONFIGURACIONES_BUS,
@@ -118,7 +119,9 @@ export const esquemaViaje: z.ZodType<Viaje> = z.object({
   busId: id,
   choferId: id,
   salida: fechaHora,
-  anden: entero.min(1),
+  puntoEncuentro: z
+    .string()
+    .refine((valor) => valor === '' || esPlusCompleto(valor)),
   estado: z.enum(ESTADOS_VIAJE),
   minutosAtraso: entero.min(0),
 });

@@ -118,7 +118,8 @@ export interface Viaje {
   busId: string;
   choferId: string;
   salida: string;
-  anden: number;
+  /** dónde se sube a este bus, como Plus Code (6CCJ77GQ+XM); vacío mientras el conductor no lo confirma */
+  puntoEncuentro: string;
   estado: EstadoViaje;
   minutosAtraso: number;
 }
