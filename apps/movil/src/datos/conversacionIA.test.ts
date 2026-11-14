@@ -2,11 +2,9 @@ import { describe, expect, it } from '@jest/globals';
 
 import {
   actividadDeHerramienta,
-  armarDatosParaElModelo,
   instruccionesDeConversacion,
   leerRespuestaRica,
 } from './conversacionIA';
-import type { BoletoGuardado } from './reserva';
 import type { Salida } from './salidas';
 
 const AHORA = new Date('2026-11-13T10:00:00-06:00');
@@ -32,41 +30,35 @@ function salida(id: string, minutos: number, extra: Partial<Salida> = {}) {
   } as Salida;
 }
 
-describe('armarDatosParaElModelo', () => {
-  it('manda las salidas cercanas con su id y sin pasarse del tope', () => {
-    const muchas = Array.from({ length: 30 }, (_, i) =>
-      salida(`via_${i}`, i * 10),
+describe('leerRespuestaRica por número', () => {
+  const reales = [salida('via_a', 30), salida('via_b', 60)];
+  const referencias = ['via_a', 'via_b'];
+
+  it('resuelve los números [n] a salidas reales', () => {
+    const r = leerRespuestaRica(
+      JSON.stringify({ salidas: [2, 1, 9], texto: 'ok' }),
+      reales,
+      referencias,
     );
-    const datos = armarDatosParaElModelo(muchas, [], AHORA);
-    expect(datos.salidas).toHaveLength(14);
-    expect(datos.salidas[0]?.linea).toContain('id=via_0');
-    expect(datos.salidas[0]).toMatchObject({ destino: 'Boaco', libres: 8 });
+    expect(r.salidas.map((s) => s.viajeId)).toEqual(['via_b', 'via_a']);
   });
 
-  it('incluye las fichas de las ciudades y ningún boleto si no hay', () => {
-    const datos = armarDatosParaElModelo([], [], AHORA);
-    expect(Object.keys(datos.fichas)).toEqual(
-      expect.arrayContaining(['Managua', 'Boaco', 'Juigalpa']),
+  it('acepta números escritos como texto', () => {
+    const r = leerRespuestaRica(
+      JSON.stringify({ salidas: ['[1]', '2'] }),
+      reales,
+      referencias,
     );
-    expect(datos.boletos).toEqual([]);
+    expect(r.salidas.map((s) => s.viajeId)).toEqual(['via_a', 'via_b']);
   });
 
-  it('solo cuenta los boletos vigentes', () => {
-    const boleto = (estado: 'usado' | 'vigente') =>
-      ({
-        boleto: { asiento: 3, estado, precio: 70 },
-        resumen: {
-          destino: 'Boaco',
-          puntoEncuentro: '764M4PPX+HH',
-          salida: AHORA.toISOString(),
-        },
-      }) as unknown as BoletoGuardado;
-    const datos = armarDatosParaElModelo(
-      [],
-      [boleto('usado'), boleto('vigente')],
-      AHORA,
+  it('borra del texto los ids y números que el modelo repitió', () => {
+    const r = leerRespuestaRica(
+      JSON.stringify({ texto: 'El bus [1] a Boaco, ID via_a, cuesta C$ 70.' }),
+      reales,
+      referencias,
     );
-    expect(datos.boletos).toHaveLength(1);
+    expect(r.texto).toBe('El bus a Boaco, ID, cuesta C$ 70.');
   });
 });
 
@@ -123,7 +115,8 @@ describe('leerRespuestaRica', () => {
 describe('instruccionesDeConversacion', () => {
   it('obliga a usar las herramientas y no inventar datos', () => {
     const texto = instruccionesDeConversacion();
-    expect(texto).toContain('SIEMPRE las herramientas');
+    expect(texto).toContain('Datos reales de Andén');
+    expect(texto).toContain('nunca digas que no hay viajes');
     expect(texto).toContain('Nunca inventes');
   });
 

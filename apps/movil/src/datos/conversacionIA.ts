@@ -1,76 +1,34 @@
+import { limpiarTexto } from './consultaIA';
 import { FICHAS, fichaDeCiudad, textoDeFicha } from './fichasCiudad';
 import { formatoFechaCorta, formatoHoraCompleta } from './formato';
-import type { BoletoGuardado } from './reserva';
 import type { Salida } from './salidas';
-import { lineaDeBoleto, lineaDeSalida } from './contextoIA';
 
-/** el modelo del teléfono tiene poca memoria: se le da lo más cercano y nada más */
-export const SALIDAS_PARA_EL_MODELO = 14;
-export const BOLETOS_PARA_EL_MODELO = 4;
-
-/** lo que se manda al módulo nativo para que las herramientas del modelo consulten datos reales */
-export interface DatosParaElModelo {
-  boletos: string[];
-  fichas: Record<string, string>;
-  salidas: {
-    destino: string;
-    id: string;
-    libres: number;
-    linea: string;
-    origen: string;
-    tarifa: number | null;
-  }[];
-}
-
-export function armarDatosParaElModelo(
-  salidas: readonly Salida[],
-  boletos: readonly BoletoGuardado[],
-  ahora: Date,
-): DatosParaElModelo {
-  const proximas = salidas
-    .filter(
-      (salida) => salida.salida.getTime() >= ahora.getTime() - 60 * 60_000,
-    )
-    .sort((a, b) => a.salida.getTime() - b.salida.getTime())
-    .slice(0, SALIDAS_PARA_EL_MODELO);
-  const vigentes = boletos
-    .filter(({ boleto }) => boleto.estado === 'vigente')
-    .sort(
-      (a, b) =>
-        new Date(a.resumen.salida).getTime() -
-        new Date(b.resumen.salida).getTime(),
-    )
-    .slice(0, BOLETOS_PARA_EL_MODELO);
-  return {
-    boletos: vigentes.map(lineaDeBoleto),
-    fichas: Object.fromEntries(
-      FICHAS.map((ficha) => [ficha.ciudad, textoDeFicha(ficha)]),
-    ),
-    salidas: proximas.map((salida) => ({
-      destino: salida.destino,
-      id: salida.viajeId,
-      libres: salida.asientosLibres,
-      linea: `id=${salida.viajeId} ${lineaDeSalida(salida)}`,
-      origen: salida.origen,
-      tarifa: salida.tarifa,
-    })),
-  };
+/** las fichas de ciudad que se mandan al módulo nativo para que la herramienta fichaDeCiudad las consulte */
+export function fichasParaElModelo(): Record<string, string> {
+  return Object.fromEntries(
+    FICHAS.map((ficha) => [ficha.ciudad, textoDeFicha(ficha)]),
+  );
 }
 
 export interface OpcionesConversacion {
   turista?: boolean;
 }
 
-/** las reglas fijas de la conversación: los datos llegan por las herramientas, no en el texto */
+/**
+ * las reglas fijas de la conversación. Los datos reales llegan en cada mensaje, ya buscados por la app, y
+ * las herramientas quedan para lo que falte; el modelo no debe suponer nada que no esté ahí
+ */
 export function instruccionesDeConversacion({
   turista = false,
 }: OpcionesConversacion = {}): string {
   return [
-    'Sos el asistente de Andén, una app de buses interlocales entre Managua, Boaco y Juigalpa, en Nicaragua.',
-    'Respondé en español, tono cercano, de una a cuatro frases. Sin emojis.',
-    'Horarios, tarifas, asientos, puntos de encuentro y boletos: consultá SIEMPRE las herramientas antes de responder y usá solo lo que devuelven. Si no devuelven el dato, decí que no lo sabés y sugerí mirar Horarios en la app. Nunca inventes horarios, precios ni puntos de encuentro. Los precios están en córdobas (C$).',
-    'Para recomendar qué visitar usá la herramienta fichaDeCiudad y no agregues lugares que no estén en la ficha. Si preguntan algo de una ciudad que la ficha no cubre, decí que no tenés ese dato.',
-    'En el campo salidas poné solo ids que devolvieron las herramientas. En el campo ciudad poné la ciudad de la que habla la respuesta.',
+    'Sos el asistente de Andén, una app de buses interlocales entre Managua, Boaco y Juigalpa, en Nicaragua. Estás dentro de la app: conocés a la persona, sus boletos y las salidas reales.',
+    'Respondé en español, tono cercano, de una a cuatro frases. Sin emojis. Si sabés el nombre de la persona, usalo con naturalidad.',
+    'Cada mensaje trae "Datos reales de Andén": usalos tal cual y respondé con ellos. Si la lista tiene salidas, mencionalas con su día, hora y tarifa; nunca digas que no hay viajes cuando la lista trae alguno. Si los datos no alcanzan, consultá las herramientas antes de decir que no sabés.',
+    'Cuando pregunten cuánto vale un boleto, respondé con la tarifa en córdobas (C$) del trayecto. Nunca inventes horarios, precios ni puntos de encuentro.',
+    'Nunca escribas identificadores internos ni números entre corchetes en el texto: los números [n] de las salidas solo van en el campo salidas, para mostrarlas como tarjetas.',
+    'Para recomendar qué visitar usá la herramienta fichaDeCiudad y no agregues lugares que no estén en la ficha.',
+    'En el campo ciudad poné la ciudad de la que habla la respuesta, y en seguimientos preguntas cortas que tengan sentido para esta persona.',
     'No des consejos médicos, legales ni financieros.',
     turista
       ? 'La persona es turista: recomendale qué visitar y cómo llegar en bus desde Andén, con ideas cortas.'
@@ -104,13 +62,30 @@ function textos(valor: unknown): string[] {
     : [];
 }
 
+/** un id real a partir de lo que el modelo puso: el número [n] de la lista o, por costumbre, el id mismo */
+function resolverReferencia(
+  valor: unknown,
+  referencias: readonly string[],
+): string | null {
+  if (typeof valor === 'number' && Number.isInteger(valor)) {
+    return referencias[valor - 1] ?? null;
+  }
+  if (typeof valor !== 'string') return null;
+  const limpio = valor.trim();
+  const numero = /^\[?\s*(\d+)\s*\]?$/.exec(limpio);
+  if (numero?.[1]) return referencias[Number(numero[1]) - 1] ?? null;
+  return limpio;
+}
+
 /**
  * lee el JSON (a medias o completo) del modelo. Solo deja salidas que existen de verdad y ciudades con
- * ficha, así una alucinación nunca llega a la pantalla como una tarjeta.
+ * ficha, y borra del texto cualquier identificador que se le haya escapado; una alucinación nunca llega
+ * a la pantalla como una tarjeta. `referencias` son los ids de las salidas en el orden en que se numeraron.
  */
 export function leerRespuestaRica(
   json: string,
   salidas: readonly Salida[],
+  referencias: readonly string[] = [],
 ): RespuestaRica {
   let crudo: Record<string, unknown>;
   try {
@@ -121,8 +96,13 @@ export function leerRespuestaRica(
     return RESPUESTA_VACIA;
   }
   const porId = new Map(salidas.map((salida) => [salida.viajeId, salida]));
-  const reales = [...new Set(textos(crudo.salidas))]
-    .map((id) => porId.get(id.trim()))
+  const ids = Array.isArray(crudo.salidas)
+    ? crudo.salidas
+        .map((valor) => resolverReferencia(valor, referencias))
+        .filter((id): id is string => id !== null)
+    : [];
+  const reales = [...new Set(ids)]
+    .map((id) => porId.get(id))
     .filter((salida): salida is Salida => salida !== undefined)
     .slice(0, 3);
   const ciudad =
@@ -134,10 +114,10 @@ export function leerRespuestaRica(
     mostrarBoletos: crudo.mostrarBoletos === true,
     salidas: reales,
     seguimientos: textos(crudo.seguimientos)
-      .map((texto) => texto.trim())
+      .map((texto) => limpiarTexto(texto))
       .filter((texto) => texto.length > 1)
       .slice(0, 3),
-    texto: typeof crudo.texto === 'string' ? crudo.texto.trim() : '',
+    texto: typeof crudo.texto === 'string' ? limpiarTexto(crudo.texto) : '',
   };
 }
 
