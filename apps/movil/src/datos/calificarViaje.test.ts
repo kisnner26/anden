@@ -49,6 +49,11 @@ describe('boletoPorCalificar', () => {
     ).toBe('bol_BBBB2222');
   });
 
+  it('un viaje de hace más de dos días ya no se pide', () => {
+    const viejo = boletoDePrueba(new Date(2026, 10, 10, 8, 0), 6, 'DDDD4444');
+    expect(boletoPorCalificar([viejo], [], AHORA)).toBeNull();
+  });
+
   it('un viaje que todavía no sale no se califica', () => {
     expect(boletoPorCalificar([futuro], [], AHORA)).toBeNull();
   });
