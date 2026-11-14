@@ -27,13 +27,6 @@ function dibujar(alVolver: () => void = () => undefined) {
   );
 }
 
-async function seguir(pantalla: Pantalla) {
-  // en el paso 1 hay que elegir primero el bus en que va el paquete
-  const buses = pantalla.queryAllByText(/Se pone en andén a las/);
-  if (buses[0]) await fireEvent.press(buses[0]);
-  await fireEvent.press(pantalla.getByRole('button', { name: 'Seguir' }));
-}
-
 async function llenarPersonas(pantalla: Pantalla) {
   await fireEvent.changeText(pantalla.getByLabelText('Tu nombre'), 'Ana Ruiz');
   await fireEvent.changeText(
@@ -46,22 +39,31 @@ async function llenarPersonas(pantalla: Pantalla) {
   );
 }
 
+async function describir(pantalla: Pantalla, texto: string) {
+  await fireEvent.changeText(
+    pantalla.getByLabelText('Qué querés enviar'),
+    texto,
+  );
+}
+
 describe('Encomiendas', () => {
   it('explica que por ahora es una solicitud y no se cobra nada', async () => {
     const pantalla = await dibujar();
     expect(pantalla.getByText(/por ahora no se cobra nada/)).toBeTruthy();
   });
 
-  it('empieza en el paso 1 con el trayecto, el tamaño y lo frágil', async () => {
+  it('todo el formulario cabe en una sola pantalla, sin pasos', async () => {
     const pantalla = await dibujar();
-    expect(pantalla.getByText('1/3')).toBeTruthy();
-    expect(pantalla.getByText('Trayecto y paquete')).toBeTruthy();
+    expect(pantalla.queryByText('1/3')).toBeNull();
+    expect(pantalla.queryByRole('button', { name: 'Seguir' })).toBeNull();
+    expect(pantalla.getByLabelText('Qué querés enviar')).toBeTruthy();
     expect(pantalla.getByRole('tab', { name: 'Boaco' })).toBeTruthy();
     expect(pantalla.getByRole('button', { name: 'Sobre' })).toBeTruthy();
+    expect(pantalla.getByRole('button', { name: 'Frágil' })).toBeTruthy();
+    expect(pantalla.getByLabelText('Tu nombre')).toBeTruthy();
     expect(
-      pantalla.getByRole('button', { name: 'Paquete grande' }),
+      pantalla.getByRole('button', { name: 'Solicitar envío' }),
     ).toBeTruthy();
-    expect(pantalla.getByRole('switch', { name: 'Frágil' })).toBeTruthy();
   });
 
   it('el tamaño elegido queda marcado', async () => {
@@ -75,41 +77,38 @@ describe('Encomiendas', () => {
     ).toMatchObject({ selected: true });
   });
 
-  it('en el paso 2 no deja seguir con los datos de las personas vacíos', async () => {
+  it('el sentido se invierte tocando el trayecto', async () => {
     const pantalla = await dibujar();
-    await seguir(pantalla);
-    expect(pantalla.getByText('Quién envía')).toBeTruthy();
-    await seguir(pantalla);
-    expect(pantalla.getByText('Escribí quién envía.')).toBeTruthy();
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Managua → Boaco' }),
+    );
+    expect(
+      pantalla.getByRole('button', { name: 'Boaco → Managua' }),
+    ).toBeTruthy();
+  });
+
+  it('el bus sale elegido solo: el primero que sale', async () => {
+    const pantalla = await dibujar();
+    const horas = pantalla.queryAllByText(/^\d{1,2}:\d{2} (a|p)\. m\.$/);
+    if (horas.length === 0) return;
+    expect(
+      pantalla.getAllByRole('button', { selected: true }).length,
+    ).toBeGreaterThan(0);
+  });
+
+  it('no deja enviar con los datos vacíos y dice qué falta', async () => {
+    const pantalla = await dibujar();
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Solicitar envío' }),
+    );
     expect(pantalla.getByText('Escribí quién recibe.')).toBeTruthy();
     expect(
       pantalla.getByText('Escribí un teléfono de Nicaragua válido.'),
     ).toBeTruthy();
-    expect(await AsyncStorage.getItem('anden.encomiendas')).toBeNull();
-  });
-
-  it('se puede volver al paso anterior', async () => {
-    const pantalla = await dibujar();
-    await seguir(pantalla);
-    await fireEvent.press(pantalla.getByRole('button', { name: 'Atrás' }));
-    expect(pantalla.getByText('1/3')).toBeTruthy();
-  });
-
-  it('en el paso 3 pide qué se envía y muestra el resumen antes de enviar', async () => {
-    const pantalla = await dibujar();
-    await fireEvent.press(pantalla.getByRole('tab', { name: 'Juigalpa' }));
-    await seguir(pantalla);
-    await llenarPersonas(pantalla);
-    await seguir(pantalla);
-    expect(pantalla.getByText('Tu envío')).toBeTruthy();
-    expect(pantalla.getByText('Managua → Juigalpa')).toBeTruthy();
-    expect(pantalla.getByText('Para Luis Pérez')).toBeTruthy();
-    await fireEvent.press(
-      pantalla.getByRole('button', { name: 'Solicitar envío' }),
-    );
     expect(
       pantalla.getByText('Contá qué enviás, en pocas palabras.'),
     ).toBeTruthy();
+    expect(await AsyncStorage.getItem('anden.encomiendas')).toBeNull();
   });
 
   it('al enviar guarda la solicitud y muestra el comprobante con su código', async () => {
@@ -117,14 +116,9 @@ describe('Encomiendas', () => {
     await fireEvent.press(
       pantalla.getByRole('button', { name: 'Paquete grande' }),
     );
-    await fireEvent.press(pantalla.getByRole('switch', { name: 'Frágil' }));
-    await seguir(pantalla);
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Frágil' }));
     await llenarPersonas(pantalla);
-    await seguir(pantalla);
-    await fireEvent.changeText(
-      pantalla.getByLabelText('Qué enviás'),
-      'caja con repuestos',
-    );
+    await describir(pantalla, 'caja con repuestos');
     await fireEvent.press(
       pantalla.getByRole('button', { name: 'Solicitar envío' }),
     );
@@ -137,6 +131,7 @@ describe('Encomiendas', () => {
     const guardado = (await AsyncStorage.getItem('anden.encomiendas')) ?? '';
     expect(guardado).toContain('88881234');
     expect(guardado).toContain('"fragil":true');
+    expect(guardado).toContain('caja con repuestos');
   });
 
   it('el comprobante se comparte con el código', async () => {
@@ -145,13 +140,8 @@ describe('Encomiendas', () => {
       activityType: undefined,
     });
     const pantalla = await dibujar();
-    await seguir(pantalla);
     await llenarPersonas(pantalla);
-    await seguir(pantalla);
-    await fireEvent.changeText(
-      pantalla.getByLabelText('Qué enviás'),
-      'documentos',
-    );
+    await describir(pantalla, 'documentos');
     await fireEvent.press(
       pantalla.getByRole('button', { name: 'Solicitar envío' }),
     );
@@ -166,33 +156,23 @@ describe('Encomiendas', () => {
     compartir.mockRestore();
   });
 
-  it('después de enviar se puede hacer otro envío desde el paso 1', async () => {
+  it('después de enviar se puede hacer otro envío', async () => {
     const pantalla = await dibujar();
-    await seguir(pantalla);
     await llenarPersonas(pantalla);
-    await seguir(pantalla);
-    await fireEvent.changeText(
-      pantalla.getByLabelText('Qué enviás'),
-      'documentos',
-    );
+    await describir(pantalla, 'documentos');
     await fireEvent.press(
       pantalla.getByRole('button', { name: 'Solicitar envío' }),
     );
     await fireEvent.press(
       await pantalla.findByRole('button', { name: 'Hacer otro envío' }),
     );
-    expect(pantalla.getByText('1/3')).toBeTruthy();
+    expect(pantalla.getByLabelText('Qué querés enviar')).toBeTruthy();
   });
 
   it('muestra las solicitudes anteriores con sus etapas', async () => {
     const pantalla = await dibujar();
-    await seguir(pantalla);
     await llenarPersonas(pantalla);
-    await seguir(pantalla);
-    await fireEvent.changeText(
-      pantalla.getByLabelText('Qué enviás'),
-      'documentos',
-    );
+    await describir(pantalla, 'documentos');
     await fireEvent.press(
       pantalla.getByRole('button', { name: 'Solicitar envío' }),
     );
@@ -208,27 +188,6 @@ describe('Encomiendas', () => {
     const pantalla = await dibujar(alVolver);
     await fireEvent.press(pantalla.getByRole('button', { name: 'Volver' }));
     expect(alVolver).toHaveBeenCalledTimes(1);
-  });
-
-  it('no deja seguir sin elegir el bus en que va el paquete', async () => {
-    const pantalla = await dibujar();
-    await fireEvent.press(pantalla.getByRole('button', { name: 'Seguir' }));
-    expect(
-      pantalla.getByText('Elegí el bus en que va la encomienda.'),
-    ).toBeTruthy();
-    expect(pantalla.getByText('1/3')).toBeTruthy();
-  });
-
-  it('las tres tarjetas de tamaño tienen todo centrado y a la misma altura', async () => {
-    const pantalla = await dibujar();
-    for (const nombre of ['Sobre', 'Paquete chico', 'Paquete grande']) {
-      const texto = pantalla.getAllByText(nombre)[0]!;
-      expect(texto.props.style).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ textAlign: 'center' }),
-        ]),
-      );
-    }
   });
 
   describe('con IA (Apple Intelligence o Gemini)', () => {
@@ -251,53 +210,123 @@ describe('Encomiendas', () => {
       );
     }
 
-    it('completa el tamaño, lo frágil y la descripción a partir de lo que cuenta la persona', async () => {
+    const TEXTO =
+      'una caja de vasos de vidrio para Luis Pérez, 8888 1234, a Juigalpa';
+
+    it('entiende solo lo que se escribe y llena el formulario, sin tocar ningún botón', async () => {
       const preguntar = jest.fn<ValorIA['preguntar']>(async () =>
         JSON.stringify({
+          ciudad: 'Juigalpa',
           descripcion: 'Caja de vasos',
+          destinatario: 'Luis Pérez',
           fragil: true,
+          sentido: 'ida',
           tamano: 'grande',
         }),
       );
       const pantalla = await conIA(preguntar);
       await fireEvent.changeText(
         pantalla.getByLabelText('Qué querés enviar'),
-        'una caja de vasos de vidrio para mi mamá',
+        TEXTO,
       );
-      await fireEvent.press(
-        pantalla.getByRole('button', { name: 'Completar con Gemini' }),
-      );
-      expect(
-        await pantalla.findByText(
-          /Listo: Paquete grande · Frágil · Caja de vasos/,
-        ),
-      ).toBeTruthy();
+      await waitFor(() => expect(preguntar).toHaveBeenCalledTimes(1), {
+        timeout: 4000,
+      });
       expect(preguntar.mock.calls[0]?.[0]).toContain('SOLO con un JSON');
+      await waitFor(
+        () =>
+          expect(
+            pantalla.getByRole('button', { name: 'Paquete grande' }).props
+              .accessibilityState,
+          ).toMatchObject({ selected: true }),
+        { timeout: 4000 },
+      );
       expect(
-        pantalla.getByRole('switch', { name: 'Frágil' }).props
+        pantalla.getByRole('button', { name: 'Frágil' }).props
           .accessibilityState,
-      ).toMatchObject({ checked: true });
+      ).toMatchObject({ selected: true });
+      expect(
+        pantalla.getByRole('button', { name: 'Managua → Juigalpa' }),
+      ).toBeTruthy();
+      expect(
+        pantalla.getByLabelText('Nombre de quien recibe').props.value,
+      ).toBe('Luis Pérez');
+      expect(
+        pantalla.getByLabelText('Teléfono de quien recibe').props.value,
+      ).toBe('88881234');
+      expect(pantalla.getByText('+505 8888 1234')).toBeTruthy();
     });
 
-    it('si el modelo no responde bien, avisa y deja elegir a mano', async () => {
+    it('si el modelo falla igual entiende el texto por palabras', async () => {
       const pantalla = await conIA(async () => {
         throw new Error('fallo');
       });
       await fireEvent.changeText(
         pantalla.getByLabelText('Qué querés enviar'),
-        'unos documentos',
+        TEXTO,
       );
-      await fireEvent.press(
-        pantalla.getByRole('button', { name: 'Completar con Gemini' }),
+      await waitFor(
+        () =>
+          expect(
+            pantalla.getByLabelText('Teléfono de quien recibe').props.value,
+          ).toBe('88881234'),
+        { timeout: 4000 },
       );
       expect(
-        await pantalla.findByText('No pude leerlo. Elegí el tamaño a mano.'),
-      ).toBeTruthy();
+        pantalla.getByRole('button', { name: 'Frágil' }).props
+          .accessibilityState,
+      ).toMatchObject({ selected: true });
     });
 
-    it('sin la IA lista no aparece el asistente', async () => {
+    it('lo que la persona ya escribió en los campos no se pisa', async () => {
+      const pantalla = await conIA(async () => '{}');
+      await fireEvent.changeText(
+        pantalla.getByLabelText('Nombre de quien recibe'),
+        'Marta',
+      );
+      await fireEvent.changeText(
+        pantalla.getByLabelText('Qué querés enviar'),
+        TEXTO,
+      );
+      await waitFor(
+        () =>
+          expect(
+            pantalla.getByLabelText('Teléfono de quien recibe').props.value,
+          ).toBe('88881234'),
+        { timeout: 4000 },
+      );
+      expect(
+        pantalla.getByLabelText('Nombre de quien recibe').props.value,
+      ).toBe('Marta');
+    });
+
+    it('con la IA lista muestra su orbe para volver a entender', async () => {
+      const pantalla = await conIA(async () => '{}');
+      expect(
+        pantalla.getByRole('button', { name: 'Entender de nuevo con Gemini' }),
+      ).toBeTruthy();
+      expect(pantalla.getByText('Potenciado por Gemini')).toBeTruthy();
+    });
+
+    it('sin la IA lista sigue entendiendo ciudad, teléfono y tamaño, sin orbe', async () => {
       const pantalla = await conIA(async () => '', false);
-      expect(pantalla.queryByTestId('asistente-encomienda')).toBeNull();
+      expect(
+        pantalla.queryByRole('button', { name: /Entender de nuevo/ }),
+      ).toBeNull();
+      expect(
+        pantalla.getByText('Leo la ciudad, el teléfono y el tamaño'),
+      ).toBeTruthy();
+      await fireEvent.changeText(
+        pantalla.getByLabelText('Qué querés enviar'),
+        TEXTO,
+      );
+      await waitFor(
+        () =>
+          expect(
+            pantalla.getByLabelText('Teléfono de quien recibe').props.value,
+          ).toBe('88881234'),
+        { timeout: 4000 },
+      );
     });
   });
 });
