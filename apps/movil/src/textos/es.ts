@@ -238,6 +238,25 @@ export const textos = {
     sinConexion:
       'No se pudo traer a todos los pasajeros. Se vuelve a intentar solo.',
   },
+  conductorBoletos: {
+    pestana: 'Boletos',
+    titulo: 'Boletos',
+    detalle:
+      'Lo vendido en cada viaje, con quién compró, lo que ya ganaste y lo que falta cobrar.',
+    vendidos: 'Vendidos',
+    ganado: 'Ganado',
+    porCobrar: 'Por cobrar',
+    total: 'Total',
+    activos: 'Activos',
+    pasados: 'Pasados',
+    boletos: 'boletos',
+    ganadoDe: 'Ganaste C$ {ganado} de C$ {total}',
+    sinPasajeros: 'Todavía nadie compró este viaje.',
+    sinActivos: 'No tenés viajes activos con boletos.',
+    sinPasados: 'Todavía no hay viajes pasados.',
+    cancelados: '{cantidad} boleto(s) cancelado(s)',
+    viajeCerrado: 'Viaje cerrado',
+  },
   conductorHistorial: {
     pestana: 'Análisis',
     titulo: 'Análisis',
