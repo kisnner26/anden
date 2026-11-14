@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
 import { act, fireEvent } from '@testing-library/react-native';
 import { useReducedMotion } from 'react-native-reanimated';
@@ -69,6 +70,33 @@ describe('Portada', () => {
       pantalla.getByRole('button', { name: 'Deslizar para empezar' }),
     );
     expect(alEmpezar).toHaveBeenCalledTimes(1);
+  });
+
+  it('con el inicio automático encendido arranca sola sin deslizar', async () => {
+    await AsyncStorage.setItem('anden.inicioAutomatico', '1');
+    jest.useFakeTimers();
+    const alEmpezar = jest.fn();
+    await renderPantalla(<Portada alEmpezar={alEmpezar} />);
+    await act(async () => {
+      await jest.advanceTimersByTimeAsync(2600);
+    });
+    expect(mockReproducir).toHaveBeenCalledWith('bocina');
+    await act(async () => {
+      await jest.advanceTimersByTimeAsync(4000);
+    });
+    expect(alEmpezar).toHaveBeenCalledTimes(1);
+    await AsyncStorage.clear();
+  });
+
+  it('sin el inicio automático espera a que la persona deslice', async () => {
+    await AsyncStorage.clear();
+    jest.useFakeTimers();
+    const alEmpezar = jest.fn();
+    await renderPantalla(<Portada alEmpezar={alEmpezar} />);
+    await act(async () => {
+      await jest.advanceTimersByTimeAsync(10_000);
+    });
+    expect(alEmpezar).not.toHaveBeenCalled();
   });
 
   it('libera los sonidos al salir de la portada', async () => {
