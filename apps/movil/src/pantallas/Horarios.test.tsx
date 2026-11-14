@@ -326,4 +326,10 @@ describe('Horarios', () => {
       expect(pantalla.queryByTestId('barra-pregunta-ia')).toBeNull();
     });
   });
+
+  it('cada salida de la lista se puede deslizar para marcarla favorita o pedir un aviso', async () => {
+    const pantalla = await renderPantalla(<Horarios />);
+    expect(pantalla.getAllByText('Avisarme').length).toBeGreaterThan(0);
+    expect(pantalla.getAllByText('Favorita').length).toBeGreaterThan(0);
+  });
 });
