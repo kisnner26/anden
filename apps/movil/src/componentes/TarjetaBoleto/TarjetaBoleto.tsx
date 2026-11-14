@@ -1,9 +1,13 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Autobus, varianteDeClave } from '@/componentes/Autobus';
 import { BarridoDeLuz } from '@/componentes/BarridoDeLuz';
+import { FotoDestino } from '@/componentes/FotoDestino';
 import { minutosHastaSalida } from '@/datos/estadoBoleto';
+import { progresoHaciaSalida } from '@/datos/progresoBoleto';
+import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import {
   formatoDuracion,
   formatoFechaCorta,
@@ -40,6 +44,21 @@ export function TarjetaBoleto({
   const { boleto, resumen } = guardado;
   const salida = new Date(resumen.salida);
   const minutos = minutosHastaSalida(guardado, ahora);
+  const reducido = useMovimientoReducido();
+  const progreso = pasado ? 0 : progresoHaciaSalida(minutos);
+  const avance = useRef(new Animated.Value(reducido ? progreso : 0)).current;
+
+  useEffect(() => {
+    if (reducido) {
+      avance.setValue(progreso);
+      return;
+    }
+    Animated.timing(avance, {
+      duration: 900,
+      toValue: progreso,
+      useNativeDriver: true,
+    }).start();
+  }, [avance, progreso, reducido]);
 
   return (
     <Pressable
@@ -57,39 +76,62 @@ export function TarjetaBoleto({
           { borderColor: conAlfa(colores.luzRelieve, 0.12) },
         ]}
       >
-        <View style={estilos.superior}>
-          <View style={estilos.textos}>
-            <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
-              {pasado
-                ? t('boletos.viajeHecho')
-                : minutos <= 0
-                  ? t('boletos.ahora')
-                  : `${t('boletos.saleEn')} ${formatoDuracion(minutos)}`}
-            </Text>
-            <Text
-              numberOfLines={1}
-              style={[tipografia.titulo, { color: colores.sobreNegro }]}
-            >
-              {resumen.destino}
-            </Text>
-            <Text
-              style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
-            >
-              {`${formatoFechaCorta(salida)} · ${formatoHoraCompleta(salida)}`}
-            </Text>
+        <FotoDestino
+          destino={resumen.destino}
+          estilo={estilos.foto}
+          origen={resumen.origen}
+          radio="tarjeta"
+        >
+          <View style={estilos.sobreFoto}>
+            <View style={estilos.textos}>
+              <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+                {pasado
+                  ? t('boletos.viajeHecho')
+                  : minutos <= 0
+                    ? t('boletos.ahora')
+                    : `${t('boletos.saleEn')} ${formatoDuracion(minutos)}`}
+              </Text>
+              <Text
+                numberOfLines={1}
+                style={[tipografia.titulo, { color: colores.sobreNegro }]}
+              >
+                {resumen.destino}
+              </Text>
+              <Text
+                style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
+              >
+                {`${formatoFechaCorta(salida)} · ${formatoHoraCompleta(salida)}`}
+              </Text>
+            </View>
+            <Autobus
+              ancho={84}
+              letrero={resumen.destino.toUpperCase()}
+              variante={efectivo ?? varianteDeClave(resumen.destino)}
+            />
           </View>
-          <Autobus
-            ancho={104}
-            letrero={resumen.destino.toUpperCase()}
-            variante={efectivo ?? varianteDeClave(resumen.destino)}
+        </FotoDestino>
+        <View style={estilos.cinta}>
+          <View
+            style={[
+              estilos.muesca,
+              estilos.muescaIzquierda,
+              { backgroundColor: colores.fondo },
+            ]}
+          />
+          <View
+            style={[
+              estilos.perforacion,
+              { borderColor: conAlfa(colores.luzRelieve, 0.2) },
+            ]}
+          />
+          <View
+            style={[
+              estilos.muesca,
+              estilos.muescaDerecha,
+              { backgroundColor: colores.fondo },
+            ]}
           />
         </View>
-        <View
-          style={[
-            estilos.perforacion,
-            { borderColor: conAlfa(colores.luzRelieve, 0.2) },
-          ]}
-        />
         <View style={estilos.inferior}>
           <View style={estilos.dato}>
             <Text
@@ -122,6 +164,25 @@ export function TarjetaBoleto({
             </Text>
           </View>
         </View>
+        {!pasado && minutos <= 180 && (
+          <View
+            style={[
+              estilos.pista,
+              { backgroundColor: conAlfa(colores.sobreNegro, 0.12) },
+            ]}
+            testID="progreso-boleto"
+          >
+            <Animated.View
+              style={[
+                estilos.relleno,
+                {
+                  backgroundColor: colores.ambar,
+                  transform: [{ scaleX: avance }],
+                },
+              ]}
+            />
+          </View>
+        )}
         {!pasado && <BarridoDeLuz radio={radios.bloqueNegro} retraso={500} />}
       </LinearGradient>
     </Pressable>
@@ -129,16 +190,35 @@ export function TarjetaBoleto({
 }
 
 const estilos = StyleSheet.create({
+  cinta: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginHorizontal: -espacios.lateral,
+  },
+  foto: { height: 148, justifyContent: 'flex-end' },
+  muesca: { borderRadius: 10, height: 20, width: 20 },
+  muescaDerecha: { marginRight: -10 },
+  muescaIzquierda: { marginLeft: -10 },
+  pista: { borderRadius: 3, height: 5, overflow: 'hidden' },
+  relleno: { height: 5, transformOrigin: 'left', width: '100%' },
+  sobreFoto: {
+    alignItems: 'flex-end',
+    flexDirection: 'row',
+    gap: espacios.doce,
+    justifyContent: 'space-between',
+    padding: espacios.dieciseis,
+  },
   cara: {
     borderRadius: radios.bloqueNegro,
     borderWidth: 1,
     gap: espacios.dieciseis,
     overflow: 'hidden',
     padding: espacios.lateral,
+    paddingTop: espacios.doce,
   },
   dato: { alignItems: 'center', flex: 1, gap: espacios.cuatro },
   inferior: { flexDirection: 'row' },
-  perforacion: { borderStyle: 'dashed', borderTopWidth: 1 },
+  perforacion: { borderStyle: 'dashed', borderTopWidth: 1, flex: 1 },
   superior: {
     alignItems: 'center',
     flexDirection: 'row',
