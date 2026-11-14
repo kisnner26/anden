@@ -260,7 +260,7 @@ describe('Ajustes', () => {
     ).toMatchObject({ disabled: true });
   });
 
-  it('permite activar a Pito y lo recuerda', async () => {
+  it('permite activar a Rumbo y lo recuerda', async () => {
     const pantalla = await renderPantalla(
       <ProveedorMascota>
         <ProveedorSesion>
@@ -269,7 +269,7 @@ describe('Ajustes', () => {
       </ProveedorMascota>,
     );
     const interruptor = pantalla.getByRole('switch', {
-      name: 'Activar a Pito',
+      name: 'Activar a Rumbo',
     });
     expect(interruptor.props.accessibilityState).toMatchObject({
       checked: false,
@@ -277,7 +277,7 @@ describe('Ajustes', () => {
     await fireEvent.press(interruptor);
     await waitFor(() =>
       expect(
-        pantalla.getByRole('switch', { name: 'Activar a Pito' }).props
+        pantalla.getByRole('switch', { name: 'Activar a Rumbo' }).props
           .accessibilityState,
       ).toMatchObject({ checked: true }),
     );

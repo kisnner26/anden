@@ -3,9 +3,9 @@ import { describe, expect, it } from '@jest/globals';
 import type { Humor } from '@/datos/mascota';
 import { renderPantalla } from '@/pruebas/render';
 
-import { MascotaPito } from './MascotaPito';
+import { MascotaRumbo } from './MascotaRumbo';
 
-describe('MascotaPito', () => {
+describe('MascotaRumbo', () => {
   it.each([
     'alerta',
     'celebrando',
@@ -14,17 +14,17 @@ describe('MascotaPito', () => {
     'pensando',
     'saludando',
   ] as Humor[])('se dibuja con el ánimo %s', async (humor) => {
-    const p = await renderPantalla(<MascotaPito humor={humor} />);
+    const p = await renderPantalla(<MascotaRumbo humor={humor} />);
     expect(
-      p.getByTestId(`mascota-pito-${humor}`, { includeHiddenElements: true }),
+      p.getByTestId(`mascota-rumbo-${humor}`, { includeHiddenElements: true }),
     ).toBeTruthy();
   });
 
   it('es decorativa: se oculta a los lectores de pantalla', async () => {
-    const p = await renderPantalla(<MascotaPito />);
-    const pito = p.getByTestId('mascota-pito-feliz', {
+    const p = await renderPantalla(<MascotaRumbo />);
+    const rumbo = p.getByTestId('mascota-rumbo-feliz', {
       includeHiddenElements: true,
     });
-    expect(pito.props.accessibilityElementsHidden).toBe(true);
+    expect(rumbo.props.accessibilityElementsHidden).toBe(true);
   });
 });
