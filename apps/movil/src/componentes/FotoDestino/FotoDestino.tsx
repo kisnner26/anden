@@ -20,6 +20,8 @@ export interface PropiedadesFotoDestino {
   children?: ReactNode;
   destino: string;
   estilo?: StyleProp<ViewStyle>;
+  /** si el destino no tiene foto se usa la de la ciudad de salida */
+  origen?: string;
   radio?: keyof typeof radios;
   testID?: string;
 }
@@ -32,11 +34,13 @@ export function FotoDestino({
   children,
   destino,
   estilo,
+  origen,
   radio = 'bloque',
   testID,
 }: PropiedadesFotoDestino) {
   const { colores } = useTema();
-  const foto = fotoDeDestino(destino);
+  const foto =
+    fotoDeDestino(destino) ?? (origen ? fotoDeDestino(origen) : null);
   const borde = radios[radio];
 
   return (

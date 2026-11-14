@@ -57,6 +57,7 @@ export function TarjetaHabitual({
         <FotoDestino
           destino={habitual.destino}
           estilo={estilos.foto}
+          origen={habitual.origen}
           radio="tarjeta"
         >
           <View style={estilos.sobreFoto}>
