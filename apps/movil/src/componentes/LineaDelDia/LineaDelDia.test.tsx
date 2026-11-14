@@ -76,4 +76,36 @@ describe('LineaDelDia', () => {
     );
     expect(p.queryByTestId('linea-del-dia')).toBeNull();
   });
+
+  it('agrupa las salidas por momento del día', async () => {
+    const p = await renderPantalla(
+      <LineaDelDia
+        ahora={AHORA}
+        esHoy
+        salidas={[salida('a', 7), salida('b', 15), salida('c', 20)]}
+      />,
+    );
+    expect(p.getByText('Mañana')).toBeTruthy();
+    expect(p.getByText('Tarde')).toBeTruthy();
+    expect(p.getByText('Noche')).toBeTruthy();
+  });
+
+  it('dice a qué hora sale la que sigue', async () => {
+    const p = await renderPantalla(
+      <LineaDelDia
+        ahora={AHORA}
+        esHoy
+        salidas={[salida('a', 7), salida('b', 15)]}
+      />,
+    );
+    expect(p.getByText('La que sigue sale a las 3:00 p. m.')).toBeTruthy();
+  });
+
+  it('muestra los asientos libres de cada salida sobre su barra', async () => {
+    const p = await renderPantalla(
+      <LineaDelDia ahora={AHORA} esHoy salidas={[salida('a', 10, 8)]} />,
+    );
+    expect(p.getByText('8')).toBeTruthy();
+    expect(p.getByText('BOA')).toBeTruthy();
+  });
 });
