@@ -1,10 +1,11 @@
 /** las filas que el panel trae del servidor; todas salen de las tablas de Supabase que comparten la app y el panel */
 export interface Viaje {
-  anden: number;
   chofer_id: string;
   estado: string;
   id: string;
   placa: string;
+  /** Plus Code de dónde se sube al bus; nulo en los viajes publicados antes de que existiera */
+  punto_encuentro: string | null;
   ruta_id: string;
   salida: string;
   salio_en: string | null;

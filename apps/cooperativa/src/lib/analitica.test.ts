@@ -11,7 +11,7 @@ import {
 import type { Alerta, Boleto, Cierre, Encomienda, Viaje } from '../tipos';
 
 const viaje = (id: string, extra: Partial<Viaje> = {}): Viaje => ({
-  anden: 1,
+  punto_encuentro: '764M4PPX+HC',
   chofer_id: 'cho_1',
   estado: 'programado',
   id,

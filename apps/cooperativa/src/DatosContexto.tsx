@@ -38,7 +38,7 @@ const CONSULTAS = {
   transmisiones: ['transmisiones', 'viaje_id, lat, lng'],
   viajes: [
     'viajes',
-    'id, chofer_id, ruta_id, servicio, placa, anden, salida, estado, salio_en',
+    'id, chofer_id, ruta_id, servicio, placa, punto_encuentro, salida, estado, salio_en',
   ],
 } as const;
 

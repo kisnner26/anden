@@ -156,7 +156,7 @@ export function lineaDeTiempo(
       titulo: `Encomienda ${e.estado}`,
     })),
     ...d.viajes.map<Evento>((v) => ({
-      detalle: `${v.placa} · andén ${v.anden} · ${v.chofer_id}`,
+      detalle: `${v.placa} · punto ${v.punto_encuentro ?? 'por confirmar'} · ${v.chofer_id}`,
       hora: v.salio_en ?? v.salida,
       tipo: 'viaje',
       titulo:
@@ -164,7 +164,7 @@ export function lineaDeTiempo(
           ? 'Viaje cancelado'
           : v.salio_en
             ? 'Bus salió'
-            : 'Bus en andén',
+            : 'Esperando pasajeros',
     })),
   ];
   return eventos.sort((a, b) => b.hora.localeCompare(a.hora)).slice(0, limite);
