@@ -592,6 +592,8 @@ export const textos = {
     titulo: 'Mi viaje habitual',
     proxima: 'Próxima: {cuando}',
     reservar: 'Reservar la salida de {cuando}',
+    verHorarios: 'Ver los horarios de {origen} a {destino}',
+    verHorariosCorto: 'Tocá para ver los horarios',
     reservarHoy: 'Tocá para ver la salida de hoy',
     reservarAhora: 'Tocá para reservar con anticipación',
     sinSalida: 'No hay una salida parecida en los próximos días.',

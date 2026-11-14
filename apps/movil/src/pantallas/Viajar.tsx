@@ -25,7 +25,7 @@ import { usePreferenciaUbicacion } from '@/datos/ProveedorUbicacion';
 import { useUbicacionCercana } from '@/datos/useUbicacionCercana';
 import { useSalidas } from '@/datos/useSalidas';
 import { inicioDelDia } from '@/datos/dias';
-import { proximaDelHabitual } from '@/datos/habituales';
+import { agruparHabituales, proximaDelGrupo } from '@/datos/habituales';
 import { useHabituales } from '@/datos/useHabituales';
 import { proximaSalida } from '@/datos/salidas';
 import { espacios, tamanosControl } from '@/tema/espacios';
@@ -309,14 +309,18 @@ export function Viajar({
 
         {habituales.length > 0 && (
           <View style={estilos.grupo}>
-            {habituales.map((habitual) => (
+            {agruparHabituales(habituales).map((grupo) => (
               <TarjetaHabitual
                 ahora={ahora}
-                alQuitar={() => void quitarHabitual(habitual.id)}
-                alReservar={alAbrirViaje}
-                habitual={habitual}
-                key={habitual.id}
-                proxima={proximaDelHabitual(habitual, todasLasSalidas, ahora)}
+                alAbrir={(viajeId) =>
+                  viajeId ? alAbrirViaje(viajeId) : alIrA?.('horarios')
+                }
+                alQuitar={() =>
+                  void quitarHabitual(grupo.miembros.map((m) => m.id))
+                }
+                grupo={grupo}
+                key={grupo.id}
+                proxima={proximaDelGrupo(grupo, todasLasSalidas, ahora)}
               />
             ))}
           </View>

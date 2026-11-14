@@ -3,7 +3,8 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Bloque } from '@/componentes/Bloque';
 import { DeslizarParaEliminar } from '@/componentes/DeslizarParaEliminar';
 import { FotoDestino } from '@/componentes/FotoDestino';
-import { type Habitual } from '@/datos/habituales';
+import { Icono } from '@/componentes/Icono';
+import type { GrupoHabitual } from '@/datos/habituales';
 import {
   formatoDiasSemana,
   formatoFechaCorta,
@@ -20,8 +21,9 @@ import { t } from '@/textos/t';
 export interface PropiedadesTarjetaHabitual {
   ahora: Date;
   alQuitar: () => void;
-  alReservar: (viajeId: string) => void;
-  habitual: Habitual;
+  /** con la próxima salida abre ese viaje; sin ella lleva a los horarios */
+  alAbrir: (viajeId: string | null) => void;
+  grupo: GrupoHabitual;
   proxima: Salida | null;
 }
 
@@ -33,93 +35,122 @@ function cuando(salida: Date, ahora: Date): string {
   return `${formatoFechaCorta(salida)} ${hora}`;
 }
 
-/** el viaje que la persona hace seguido y la próxima salida que le sirve, lista para reservar */
+/** el trayecto que la persona hace seguido, con la foto del destino; al tocarlo abre su próxima salida */
 export function TarjetaHabitual({
   ahora,
+  alAbrir,
   alQuitar,
-  alReservar,
-  habitual,
+  grupo,
   proxima,
 }: PropiedadesTarjetaHabitual) {
   const { colores } = useTema();
-  const [hora = 0, minuto = 0] = habitual.hora.split(':').map(Number);
-  const horaHabitual = formatoHoraCompleta(new Date(2000, 0, 1, hora, minuto));
+  const horas = grupo.horas
+    .map((texto) => {
+      const [hora = 0, minuto = 0] = texto.split(':').map(Number);
+      return formatoHoraCompleta(new Date(2000, 0, 1, hora, minuto));
+    })
+    .join(' · ');
 
   return (
     <DeslizarParaEliminar
       accion={rellenar(t('habitual.quitar'), {
-        destino: habitual.destino,
-        origen: habitual.origen,
+        destino: grupo.destino,
+        origen: grupo.origen,
       })}
       alEliminar={alQuitar}
     >
-      <Bloque estiloContenido={estilos.contenido} testID="tarjeta-habitual">
-        <FotoDestino
-          destino={habitual.destino}
-          estilo={estilos.foto}
-          origen={habitual.origen}
-          radio="tarjeta"
-        >
-          <View style={estilos.sobreFoto}>
-            <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
-              {t('habitual.titulo')}
-            </Text>
-            <Text style={[tipografia.titulo, { color: colores.sobreNegro }]}>
-              {`${habitual.origen} → ${habitual.destino}`}
-            </Text>
-            <Text
-              style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
-            >
-              {`${formatoDiasSemana(habitual.dias)} · ${horaHabitual}`}
-            </Text>
-          </View>
-        </FotoDestino>
-
-        <View style={estilos.fila}>
-          {proxima ? (
-            <Pressable
-              accessibilityLabel={rellenar(t('habitual.reservar'), {
+      <Pressable
+        accessibilityLabel={
+          proxima
+            ? rellenar(t('habitual.reservar'), {
                 cuando: cuando(proxima.salida, ahora),
-              })}
-              accessibilityRole="button"
-              onPress={() => alReservar(proxima.viajeId)}
-              style={estilos.reservar}
-            >
+              })
+            : rellenar(t('habitual.verHorarios'), {
+                destino: grupo.destino,
+                origen: grupo.origen,
+              })
+        }
+        accessibilityRole="button"
+        onPress={() => alAbrir(proxima?.viajeId ?? null)}
+      >
+        <Bloque estiloContenido={estilos.contenido} testID="tarjeta-habitual">
+          <FotoDestino
+            destino={grupo.destino}
+            estilo={estilos.foto}
+            origen={grupo.origen}
+            radio="tarjeta"
+          >
+            <View style={estilos.sobreFoto}>
+              <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+                {t('habitual.titulo')}
+              </Text>
+              <Text style={[tipografia.titulo, { color: colores.sobreNegro }]}>
+                {`${grupo.origen} → ${grupo.destino}`}
+              </Text>
               <Text
-                style={[tipografia.subtitulo, { color: colores.ambarTexto }]}
+                style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
               >
-                {rellenar(t('habitual.proxima'), {
-                  cuando: cuando(proxima.salida, ahora),
-                })}
+                {`${formatoDiasSemana(grupo.dias)} · ${horas}`}
               </Text>
-              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-                {mismoDia(proxima.salida, ahora)
-                  ? t('habitual.reservarHoy')
-                  : t('habitual.reservarAhora')}
-              </Text>
-            </Pressable>
-          ) : (
-            <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
-              {t('habitual.sinSalida')}
-            </Text>
-          )}
-        </View>
-      </Bloque>
+            </View>
+          </FotoDestino>
+
+          <View style={estilos.fila}>
+            <View style={estilos.texto}>
+              {proxima ? (
+                <>
+                  <Text
+                    style={[
+                      tipografia.subtitulo,
+                      { color: colores.ambarTexto },
+                    ]}
+                  >
+                    {rellenar(t('habitual.proxima'), {
+                      cuando: cuando(proxima.salida, ahora),
+                    })}
+                  </Text>
+                  <Text
+                    style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                  >
+                    {mismoDia(proxima.salida, ahora)
+                      ? t('habitual.reservarHoy')
+                      : t('habitual.reservarAhora')}
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Text
+                    style={[tipografia.cuerpo, { color: colores.tintaSuave }]}
+                  >
+                    {t('habitual.sinSalida')}
+                  </Text>
+                  <Text
+                    style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                  >
+                    {t('habitual.verHorariosCorto')}
+                  </Text>
+                </>
+              )}
+            </View>
+            <Icono nombre="siguiente" tamano="mediano" />
+          </View>
+        </Bloque>
+      </Pressable>
     </DeslizarParaEliminar>
   );
 }
 
 const estilos = StyleSheet.create({
-  contenido: { gap: espacios.cuatro, padding: espacios.ocho },
-  foto: { height: 148, justifyContent: 'flex-end' },
-  sobreFoto: { gap: 2, padding: espacios.dieciseis },
+  contenido: { padding: espacios.ocho },
   fila: {
     alignItems: 'center',
     flexDirection: 'row',
     gap: espacios.doce,
-    justifyContent: 'space-between',
-    paddingHorizontal: espacios.ocho,
-    paddingVertical: espacios.ocho,
+    minHeight: tamanosControl.toqueMinimo,
+    padding: espacios.ocho,
+    paddingTop: espacios.doce,
   },
-  reservar: { flex: 1, gap: 2, minHeight: tamanosControl.toqueMinimo },
+  foto: { height: 176, justifyContent: 'flex-end' },
+  sobreFoto: { gap: 2, padding: espacios.dieciseis },
+  texto: { flex: 1, gap: 2 },
 });

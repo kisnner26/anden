@@ -1,20 +1,22 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, waitFor } from '@testing-library/react-native';
 
-import type { Habitual } from '@/datos/habituales';
+import { agruparHabituales, type Habitual } from '@/datos/habituales';
 import type { Salida } from '@/datos/salidas';
 import { renderPantalla } from '@/pruebas/render';
 
 import { TarjetaHabitual } from './TarjetaHabitual';
 
 const AHORA = new Date(2026, 10, 15, 20, 0);
-const HABITUAL: Habitual = {
+const BASE: Habitual = {
   destino: 'Managua',
   dias: [1, 3],
   hora: '06:00',
   id: 'hab_boaco_managua_06:00',
   origen: 'Boaco',
 };
+
+const GRUPO = agruparHabituales([BASE])[0]!;
 
 function salida(cuando: Date): Salida {
   return {
@@ -42,8 +44,8 @@ describe('TarjetaHabitual', () => {
       <TarjetaHabitual
         ahora={AHORA}
         alQuitar={() => undefined}
-        alReservar={() => undefined}
-        habitual={HABITUAL}
+        alAbrir={() => undefined}
+        grupo={GRUPO}
         proxima={null}
       />,
     );
@@ -58,8 +60,8 @@ describe('TarjetaHabitual', () => {
       <TarjetaHabitual
         ahora={AHORA}
         alQuitar={() => undefined}
-        alReservar={alReservar}
-        habitual={HABITUAL}
+        alAbrir={alReservar}
+        grupo={GRUPO}
         proxima={salida(new Date(2026, 10, 16, 6, 0))}
       />,
     );
@@ -77,8 +79,8 @@ describe('TarjetaHabitual', () => {
       <TarjetaHabitual
         ahora={AHORA}
         alQuitar={() => undefined}
-        alReservar={() => undefined}
-        habitual={HABITUAL}
+        alAbrir={() => undefined}
+        grupo={GRUPO}
         proxima={salida(new Date(2026, 10, 18, 6, 0))}
       />,
     );
@@ -90,8 +92,8 @@ describe('TarjetaHabitual', () => {
       <TarjetaHabitual
         ahora={AHORA}
         alQuitar={() => undefined}
-        alReservar={() => undefined}
-        habitual={HABITUAL}
+        alAbrir={() => undefined}
+        grupo={GRUPO}
         proxima={null}
       />,
     );
@@ -109,8 +111,8 @@ describe('TarjetaHabitual', () => {
       <TarjetaHabitual
         ahora={AHORA}
         alQuitar={alQuitar}
-        alReservar={() => undefined}
-        habitual={HABITUAL}
+        alAbrir={() => undefined}
+        grupo={GRUPO}
         proxima={null}
       />,
     );
@@ -122,5 +124,43 @@ describe('TarjetaHabitual', () => {
     );
     await waitFor(() => expect(alQuitar).toHaveBeenCalledTimes(1));
     expect(pantalla.queryByText('Quitar', { exact: true })).toBeNull();
+  });
+
+  it('sin salida parecida, tocarla lleva a los horarios', async () => {
+    const alAbrir = jest.fn();
+    const pantalla = await renderPantalla(
+      <TarjetaHabitual
+        ahora={AHORA}
+        alAbrir={alAbrir}
+        alQuitar={() => undefined}
+        grupo={GRUPO}
+        proxima={null}
+      />,
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', {
+        name: 'Ver los horarios de Boaco a Managua',
+      }),
+    );
+    expect(alAbrir).toHaveBeenCalledWith(null);
+  });
+
+  it('muestra todas las horas del trayecto en una sola tarjeta', async () => {
+    const grupo = agruparHabituales([
+      BASE,
+      { ...BASE, hora: '15:00', id: 'otra' },
+    ])[0]!;
+    const pantalla = await renderPantalla(
+      <TarjetaHabitual
+        ahora={AHORA}
+        alAbrir={() => undefined}
+        alQuitar={() => undefined}
+        grupo={grupo}
+        proxima={null}
+      />,
+    );
+    expect(
+      pantalla.getByText('lun, mié · 6:00 a. m. · 3:00 p. m.'),
+    ).toBeTruthy();
   });
 });
