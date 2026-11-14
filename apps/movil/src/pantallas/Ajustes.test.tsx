@@ -7,6 +7,7 @@ jest.mock('@/datos/ubicacion', () => ({
   solicitarAccesoUbicacion: jest.fn(),
 }));
 
+import { ProveedorMascota } from '@/datos/ProveedorMascota';
 import { ProveedorSesion } from '@/datos/ProveedorSesion';
 import { CLAVE_MODO_USO } from '@/tema/modoUso';
 import { ProveedorModoUso } from '@/tema/ProveedorModoUso';
@@ -257,5 +258,29 @@ describe('Ajustes', () => {
       pantalla.getByRole('switch', { name: 'Asistente con Apple Intelligence' })
         .props.accessibilityState,
     ).toMatchObject({ disabled: true });
+  });
+
+  it('permite activar a Pito y lo recuerda', async () => {
+    const pantalla = await renderPantalla(
+      <ProveedorMascota>
+        <ProveedorSesion>
+          <Ajustes alVolver={() => undefined} />
+        </ProveedorSesion>
+      </ProveedorMascota>,
+    );
+    const interruptor = pantalla.getByRole('switch', {
+      name: 'Activar a Pito',
+    });
+    expect(interruptor.props.accessibilityState).toMatchObject({
+      checked: false,
+    });
+    await fireEvent.press(interruptor);
+    await waitFor(() =>
+      expect(
+        pantalla.getByRole('switch', { name: 'Activar a Pito' }).props
+          .accessibilityState,
+      ).toMatchObject({ checked: true }),
+    );
+    expect(await AsyncStorage.getItem('anden.mascota')).toBe('1');
   });
 });
