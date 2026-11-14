@@ -1,4 +1,5 @@
 import { mismoDia, inicioDelDia, sumarDias } from './dias';
+import { antiguedadLegible } from './cacheViajes';
 import type { Encomienda } from './encomiendas';
 import { formatoFechaCorta, formatoHoraCompleta } from './formato';
 import { formatoDiasSemana } from './formato';
@@ -10,6 +11,8 @@ import type { Salida } from './salidas';
 /** todo lo que la app sabe de la persona y del momento; es lo que se le comparte al modelo */
 export interface EstadoApp {
   ahora: Date;
+  /** si no hay internet, las salidas y tarifas son las guardadas la última vez */
+  conexion?: { enLinea: boolean; ultimaSincronizacion: Date | null };
   boletos: readonly BoletoGuardado[];
   ciudades: readonly string[];
   /** nombres de los choferes por id, para decir quién maneja cada bus */
@@ -192,6 +195,14 @@ export function contextoPersonal(estado: EstadoApp): string[] {
   }
   for (const boleto of proximos.slice(0, 3)) {
     lineas.push(lineaDeBoletoRica(boleto, ahora));
+  }
+  if (estado.conexion && !estado.conexion.enLinea) {
+    const hace = estado.conexion.ultimaSincronizacion
+      ? antiguedadLegible(estado.conexion.ultimaSincronizacion, ahora)
+      : 'una vez que hubo internet';
+    lineas.push(
+      `No hay internet ahora: las salidas, tarifas y asientos son los guardados en el teléfono ${hace}, y pueden haber cambiado; avisalo si la respuesta depende de eso.`,
+    );
   }
   const historial = lineaDeHistorial(estado.boletos, ahora);
   if (historial) lineas.push(historial);
