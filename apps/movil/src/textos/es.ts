@@ -228,6 +228,13 @@ export const textos = {
     pendiente: 'Por cobrar',
     abordo: 'A bordo',
     asiento: 'Asiento {asiento}',
+    asientoRotulo: 'Asiento',
+    cerrarFicha: 'Cerrar la ficha del pasajero',
+    codigo: 'Código del boleto',
+    pasajeroComun: 'Pasajero',
+    prioridadPlus: 'Tiene Andén Plus: sube primero y su unidad está reservada.',
+    tarifa: 'Tarifa',
+    verFicha: 'Ver la ficha de {nombre}',
     sinConexion:
       'No se pudo traer a todos los pasajeros. Se vuelve a intentar solo.',
   },
