@@ -14,6 +14,7 @@ import { Bloque } from '@/componentes/Bloque';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { HojaContacto } from '@/componentes/HojaContacto';
 import { HojaObjetoOlvidado } from '@/componentes/HojaObjetoOlvidado';
+import { PuntoDeEncuentro } from '@/componentes/PuntoDeEncuentro';
 import { TalonBoleto } from '@/componentes/TalonBoleto';
 import { estadoVisibleBoleto } from '@/datos/estadoBoleto';
 import { useBoletos } from '@/datos/useBoletos';
@@ -170,7 +171,7 @@ export function VerBoleto({
     (candidata) => candidata.viajeId === guardado.boleto.viajeId,
   );
   const salidaDelBoleto = {
-    anden: guardado.resumen.anden,
+    puntoEncuentro: guardado.resumen.puntoEncuentro,
     destino: guardado.resumen.destino,
     // el atraso lo trae la salida en vivo; la hora, la del boleto, que es la que la persona reservó
     minutosAtraso: salidaVigente?.minutosAtraso ?? 0,
@@ -187,10 +188,10 @@ export function VerBoleto({
     }
     establecerActividadId(
       await iniciarActividad({
-        anden: guardado!.resumen.anden,
+        puntoEncuentro: guardado!.resumen.puntoEncuentro,
         destino: guardado!.resumen.destino,
         estado: rellenar(t('boleto.actividadEstado'), {
-          anden: guardado!.resumen.anden,
+          puntoEncuentro: guardado!.resumen.puntoEncuentro,
           hora: horaTexto(salidaGuardada),
         }),
         salida: salidaGuardada,
@@ -235,7 +236,7 @@ export function VerBoleto({
 
   const compartir = () =>
     Share.share({
-      message: `${t('boleto.titulo')} a ${guardado.resumen.destino}. ${t('boleto.sale')} ${new Date(guardado.resumen.salida).toLocaleString('es-NI')}. ${t('boleto.anden')} ${guardado.resumen.anden}. ${t('boleto.placa')} ${guardado.resumen.placa}.\n${enlaceDeViaje(guardado.boleto.viajeId)}`,
+      message: `${t('boleto.titulo')} a ${guardado.resumen.destino}. ${t('boleto.sale')} ${new Date(guardado.resumen.salida).toLocaleString('es-NI')}. ${t('boleto.puntoEncuentro')} ${guardado.resumen.puntoEncuentro}. ${t('boleto.placa')} ${guardado.resumen.placa}.\n${enlaceDeViaje(guardado.boleto.viajeId)}`,
     });
 
   return (
@@ -258,6 +259,7 @@ export function VerBoleto({
       )}
 
       <TalonBoleto guardado={guardado} />
+      <PuntoDeEncuentro codigo={guardado.resumen.puntoEncuentro} />
 
       {puedeOperar && (
         <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
@@ -307,7 +309,7 @@ export function VerBoleto({
           </Text>
           <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
             {rellenar(t('boleto.verificarAnden'), {
-              anden: guardado.resumen.anden,
+              puntoEncuentro: guardado.resumen.puntoEncuentro,
             })}
           </Text>
         </Bloque>

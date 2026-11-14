@@ -3,6 +3,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Autobus, varianteDeClave } from '@/componentes/Autobus';
 import { Avatar } from '@/componentes/Avatar';
+import { PuntoDeEncuentro } from '@/componentes/PuntoDeEncuentro';
 import { ResumenIA } from '@/componentes/ResumenIA';
 import { lineaDeSalida } from '@/datos/contextoIA';
 import { Bloque } from '@/componentes/Bloque';
@@ -303,6 +304,7 @@ export function DetalleViaje({
         <Bloque estiloContenido={estilos.recorrido}>
           <LineaRuta paradas={detalle.paradas} />
         </Bloque>
+        <PuntoDeEncuentro codigo={salida.puntoEncuentro} />
         {turista && (
           <ResumenIA
             contexto={lineaDeSalida(salida)}
