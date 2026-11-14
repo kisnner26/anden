@@ -136,6 +136,26 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
     [boletos, guardar],
   );
 
+  const agregar = useCallback(
+    async (guardado: BoletoGuardado) => {
+      if (boletos.some(({ boleto }) => boleto.id === guardado.boleto.id))
+        return;
+      ocuparEnMuestra([guardado]);
+      await guardar([...boletos, guardado]);
+    },
+    [boletos, guardar],
+  );
+
+  // el boleto que se pasó a otra persona ya no es de esta cuenta: se saca de la lista sin publicarlo de nuevo
+  const quitar = useCallback(
+    async (boletoId: string) => {
+      const restantes = boletos.filter(({ boleto }) => boleto.id !== boletoId);
+      establecerBoletos(restantes);
+      await AsyncStorage.setItem(clave, JSON.stringify(restantes));
+    },
+    [boletos, clave],
+  );
+
   const cancelar = useCallback(
     async (boletoId: string) => {
       const muestra = obtenerMuestra();
@@ -171,8 +191,8 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
   );
 
   const valor = useMemo(
-    () => ({ boletos, cancelar, cargando, reservar, validar }),
-    [boletos, cancelar, cargando, reservar, validar],
+    () => ({ agregar, boletos, cancelar, cargando, quitar, reservar, validar }),
+    [agregar, boletos, cancelar, cargando, quitar, reservar, validar],
   );
 
   return (
