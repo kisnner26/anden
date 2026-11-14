@@ -13,11 +13,13 @@ jest.mock('@/datos/notificaciones', () => ({
 
 jest.mock('../../modules/anden-actividad', () => ({
   actividadesDisponibles: jest.fn(async () => true),
+  actualizarActividad: jest.fn(async () => true),
   iniciarActividad: jest.fn(async () => 'act_1'),
   terminarActividad: jest.fn(async () => undefined),
 }));
 
 import {
+  actualizarActividad,
   iniciarActividad,
   terminarActividad,
 } from '../../modules/anden-actividad';
@@ -445,6 +447,22 @@ describe('VerBoleto', () => {
       }),
     );
     await waitFor(() => expect(iniciarActividad).toHaveBeenCalledTimes(1));
+    // arranca antes de salir y lleva el origen para dibujar la ruta
+    expect(iniciarActividad).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fase: expect.stringMatching(/^(espera|abordando|atrasado)$/),
+        origen: expect.any(String),
+      }),
+    );
+    // y una vez abierta, la sigue actualizando con la fase del viaje
+    await waitFor(() =>
+      expect(actualizarActividad).toHaveBeenCalledWith(
+        'act_1',
+        expect.any(String),
+        expect.any(String),
+        expect.stringMatching(/^(espera|abordando|atrasado)$/),
+      ),
+    );
     await fireEvent.press(
       await pantalla.findByRole('button', {
         name: 'Siguiendo en la pantalla de bloqueo, tocá para quitar',
