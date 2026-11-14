@@ -32,7 +32,7 @@ struct ViajeVista: View {
             barra(r.viaje, ahora: ahora)
             Spacer(minLength: 2)
             HStack {
-                dato("Andén", "\(r.viaje.anden)")
+                dato("Punto", r.viaje.puntoCorto)
                 Spacer()
                 dato("Asiento", "\(r.boleto.asiento)")
                 Spacer()

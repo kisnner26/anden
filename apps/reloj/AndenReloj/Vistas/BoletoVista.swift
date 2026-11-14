@@ -18,7 +18,7 @@ struct BoletoVista: View {
                 HStack {
                     dato("Asiento", "\(r.boleto.asiento)")
                     Spacer()
-                    dato("Andén", "\(r.viaje.anden)")
+                    dato("Punto", r.viaje.puntoCorto)
                 }
                 Text(Ruta(id: r.viaje.rutaId)?.nombre ?? "")
                     .font(.system(size: 12, weight: .medium))

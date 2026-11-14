@@ -32,7 +32,7 @@ struct SalidasVista: View {
                     .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(Tema.crema)
                     .minimumScaleFactor(0.7)
-                Micro("Andén \(v.anden) · \(v.servicio)\(tengo ? " · tuyo" : "")")
+                Micro("Punto \(v.puntoCorto) · \(v.servicio)\(tengo ? " · tuyo" : "")")
             }
         }
     }

@@ -23,7 +23,7 @@ struct AsistenteVista: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(Tema.ambar.opacity(0.16), in: RoundedRectangle(cornerRadius: 10))
                 } else {
-                    Text("Probá: andén, asiento, dónde va mi bus, salidas.")
+                    Text("Probá: punto de encuentro, asiento, dónde va mi bus, salidas.")
                         .font(.footnote)
                         .foregroundStyle(Tema.suave)
                 }
