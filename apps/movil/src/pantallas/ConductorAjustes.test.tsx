@@ -44,11 +44,7 @@ function dibujar(alSalir = jest.fn(), alAbrirPerfil = jest.fn()) {
     <ProveedorSesion servicio={crearSesionLocal(CUENTAS_MUESTRA)}>
       <ProveedorBloqueo>
         <ProveedorAjustesConductor>
-          <ConductorAjustes
-            alAbrirAjustesGenerales={() => undefined}
-            alAbrirPerfil={alAbrirPerfil}
-            alSalir={alSalir}
-          />
+          <ConductorAjustes alAbrirPerfil={alAbrirPerfil} alSalir={alSalir} />
         </ProveedorAjustesConductor>
       </ProveedorBloqueo>
     </ProveedorSesion>,
@@ -56,6 +52,23 @@ function dibujar(alSalir = jest.fn(), alAbrirPerfil = jest.fn()) {
 }
 
 describe('ConductorAjustes', () => {
+  it('tiene los mismos ajustes que el pasajero y lo propio de conducir', async () => {
+    const pantalla = await dibujar();
+    await pantalla.findByText('Marvin Lanzas');
+    for (const texto of [
+      'Rumbo, tu ayudante',
+      'Inicio automático',
+      'Apariencia',
+      'Sesión',
+      'Asistente con Apple Intelligence',
+    ]) {
+      expect(pantalla.getAllByText(texto).length).toBeGreaterThan(0);
+    }
+    expect(
+      pantalla.getByRole('switch', { name: 'Confirmar con Face ID' }),
+    ).toBeTruthy();
+  });
+
   it('el perfil es la primera opción y se abre desde acá', async () => {
     const alAbrirPerfil = jest.fn();
     const pantalla = await dibujar(jest.fn(), alAbrirPerfil);
