@@ -181,12 +181,14 @@ describe('VerBoleto', () => {
     ).toBeNull();
   });
 
-  it('recuerda verificar placa, chofer y andén antes de subir', async () => {
+  it('recuerda verificar placa, chofer y punto antes de subir', async () => {
     const pantalla = await dibujar();
     expect(await pantalla.findByText('Verificá antes de subir')).toBeTruthy();
     expect(pantalla.getByText('La placa es M 222-114.')).toBeTruthy();
     expect(pantalla.getByText('El chofer es Marvin Lanzas.')).toBeTruthy();
-    expect(pantalla.getByText(/^Sale del andén \d+\.$/)).toBeTruthy();
+    expect(
+      pantalla.getByText(/^Se sube en el punto [0-9A-Z+]+\.$/),
+    ).toBeTruthy();
   });
 
   it('en un boleto cancelado ofrece reservar otra salida al mismo destino', async () => {

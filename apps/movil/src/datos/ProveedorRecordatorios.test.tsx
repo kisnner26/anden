@@ -23,7 +23,7 @@ import { useRecordatorios } from '@/datos/useRecordatorios';
 
 function salidaEn(minutos: number, viajeId = 'via_1'): Salida {
   return {
-    anden: 3,
+    puntoEncuentro: '764M4PPX+HG',
     asientosLibres: 10,
     choferId: 'cho_1',
     codigoDestino: 'BOA',
@@ -138,7 +138,7 @@ describe('ProveedorRecordatorios', () => {
 
   it('recupera los guardados y descarta los de salidas que ya pasaron', async () => {
     const base = {
-      anden: 3,
+      puntoEncuentro: '764M4PPX+HG',
       destino: 'Boaco',
       identificador: 'x',
       minutosAntes: 30,

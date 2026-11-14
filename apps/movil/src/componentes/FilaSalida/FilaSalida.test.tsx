@@ -15,11 +15,11 @@ beforeAll(() => {
 });
 
 describe('FilaSalida', () => {
-  it('se anuncia con destino, hora, servicio y andén', async () => {
+  it('se anuncia con destino, hora, servicio y punto de encuentro', async () => {
     const pantalla = await render(<FilaSalida salida={boaco} />);
     expect(
       pantalla.getByRole('button', {
-        name: 'Boaco, 2:40 p. m., Ordinario, andén 3',
+        name: 'Boaco, 2:40 p. m., Ordinario, punto 4PPX+HC',
       }),
     ).toBeTruthy();
   });

@@ -17,7 +17,9 @@ describe('rellenar', () => {
   });
 
   it('deja el hueco si no hay valor', () => {
-    expect(rellenar('Andén {anden}', {})).toBe('Andén {anden}');
+    expect(rellenar('Andén {puntoEncuentro}', {})).toBe(
+      'Andén {puntoEncuentro}',
+    );
   });
 
   it('también entiende los huecos con doble llave y no deja llaves sueltas', () => {

@@ -34,7 +34,7 @@ const PUBLICADOS = {
   ],
   viajes: [
     {
-      anden: 3,
+      punto_encuentro: '764M4PPX+HG',
       chofer_id: 'cho_9',
       estado: 'programado',
       id: 'via_a',
@@ -66,7 +66,10 @@ describe('aplicarViajesPublicados', () => {
     });
     const salidas = armarTodasLasSalidas(datos, AHORA);
     expect(salidas.map((s) => s.viajeId)).toEqual(['via_a']);
-    expect(salidas[0]).toMatchObject({ anden: 3, placa: 'M 123-456' });
+    expect(salidas[0]).toMatchObject({
+      puntoEncuentro: '764M4PPX+HG',
+      placa: 'M 123-456',
+    });
   });
 
   it('marca como vendidos los asientos que ya tomaron otros teléfonos', () => {

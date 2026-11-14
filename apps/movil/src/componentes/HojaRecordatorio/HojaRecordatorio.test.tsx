@@ -9,7 +9,7 @@ import { HojaRecordatorio } from './HojaRecordatorio';
 
 const AHORA = new Date('2026-11-12T17:00:00Z');
 const SALIDA: Salida = {
-  anden: 3,
+  puntoEncuentro: '764M4PPX+HG',
   asientosLibres: 10,
   choferId: 'cho_1',
   codigoDestino: 'BOA',

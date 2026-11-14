@@ -4,7 +4,7 @@ import type { Aviso } from './avisos';
 import { textoAviso, textoRecordatorio } from './textoAviso';
 
 const base: Aviso = {
-  anden: 4,
+  puntoEncuentro: '764M4PPX+HH',
   boletoId: 'bol_1',
   destino: 'Boaco',
   id: 'bol_1:pronto',
@@ -15,7 +15,7 @@ const base: Aviso = {
 describe('textoAviso', () => {
   it('arma el titular y el detalle de una salida pronta', () => {
     expect(textoAviso(base)).toEqual({
-      detalle: 'Andén 4. Llegá con tiempo y llevá la tarifa exacta.',
+      detalle: 'Punto 764M4PPX+HH. Llegá con tiempo y llevá la tarifa exacta.',
       titulo: 'Tu bus a Boaco sale en 25 min',
     });
   });
@@ -34,16 +34,17 @@ describe('textoAviso', () => {
 });
 
 describe('textoRecordatorio', () => {
-  it('dice el destino y el andén', () => {
-    expect(textoRecordatorio('Juigalpa', 2)).toEqual({
-      cuerpo: 'Andén 2. Llevá la tarifa exacta para pagar al abordar.',
+  it('dice el destino y el punto de encuentro', () => {
+    expect(textoRecordatorio('Juigalpa', '764M4PPX+HF')).toEqual({
+      cuerpo:
+        'Punto 764M4PPX+HF. Llevá la tarifa exacta para pagar al abordar.',
       titulo: 'Tu bus a Juigalpa sale en 30 min',
     });
   });
 
   it('arma el texto de un asiento liberado con cuántos quedan', () => {
     const { detalle, titulo } = textoAviso({
-      anden: 3,
+      puntoEncuentro: '764M4PPX+HG',
       boletoId: 'via_1',
       destino: 'Boaco',
       id: 'via_1:liberado',

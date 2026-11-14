@@ -8,7 +8,12 @@ jest.mock('@/servicios/supabase/viajesSupabase', () => ({
   leerViajesPublicados: jest.fn(async () => null),
 }));
 
+jest.mock('@/datos/ubicacion', () => ({
+  obtenerUbicacionActual: jest.fn(async () => ({ estado: 'denegado' })),
+}));
+
 import { ProveedorSesion } from '@/datos/ProveedorSesion';
+import { obtenerUbicacionActual } from '@/datos/ubicacion';
 import { renderPantalla } from '@/pruebas/render';
 import { publicarViaje } from '@/servicios/supabase/viajesSupabase';
 
@@ -58,17 +63,47 @@ describe('ConductorNuevoViaje', () => {
       pantalla.getByLabelText('Placa del bus'),
       'M 123-456',
     );
-    await fireEvent.changeText(pantalla.getByLabelText('Andén'), '4');
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Punto de encuentro (Plus Code)'),
+      '764M4PPX+HH',
+    );
     await fireEvent.press(
       pantalla.getByRole('button', { name: 'Publicar viaje' }),
     );
     await waitFor(() => expect(publicarViaje).toHaveBeenCalledTimes(1));
     const fila = jest.mocked(publicarViaje).mock.calls[0]?.[0];
     expect(fila).toMatchObject({
-      anden: 4,
+      punto_encuentro: '764M4PPX+HH',
       chofer_id: 'cho_2',
       placa: 'M 123-456',
     });
     await waitFor(() => expect(alPublicar).toHaveBeenCalled());
+  });
+
+  it('llena el punto de encuentro con el Plus Code de donde está el conductor', async () => {
+    jest.mocked(obtenerUbicacionActual).mockResolvedValueOnce({
+      estado: 'otorgado',
+      punto: { lat: 12.1364, lng: -86.2514 },
+    });
+    const pantalla = await dibujar();
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Usar mi ubicación' }),
+    );
+    await waitFor(() =>
+      expect(
+        pantalla.getByLabelText('Punto de encuentro (Plus Code)').props.value,
+      ).toBe('764M4PPX+HC'),
+    );
+    expect(obtenerUbicacionActual).toHaveBeenCalledWith(true);
+  });
+
+  it('avisa si no se pudo leer la ubicación', async () => {
+    const pantalla = await dibujar();
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Usar mi ubicación' }),
+    );
+    expect(
+      await pantalla.findByText(/No pudimos leer tu ubicación/),
+    ).toBeTruthy();
   });
 });

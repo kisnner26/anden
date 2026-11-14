@@ -15,7 +15,7 @@ beforeAll(() => {
 });
 
 describe('TarjetaProximoViaje', () => {
-  it('muestra destino, andén, servicio y hora', async () => {
+  it('muestra destino, punto, servicio y hora', async () => {
     const pantalla = await render(
       <TarjetaProximoViaje
         ahora={AHORA}
@@ -24,7 +24,7 @@ describe('TarjetaProximoViaje', () => {
       />,
     );
     expect(pantalla.getByText('Boaco')).toBeTruthy();
-    expect(pantalla.getByText('Andén 3 · Ordinario')).toBeTruthy();
+    expect(pantalla.getByText('PUNTO 4PPX+HC · Ordinario')).toBeTruthy();
     expect(pantalla.getByText('2:40')).toBeTruthy();
     expect(pantalla.getByText('p. m.')).toBeTruthy();
   });

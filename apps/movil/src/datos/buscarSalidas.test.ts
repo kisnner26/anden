@@ -10,7 +10,7 @@ import type { Salida } from './salidas';
 
 function salida(cambios: Partial<Salida>): Salida {
   return {
-    anden: 1,
+    puntoEncuentro: '764M4PPX+HC',
     asientosLibres: 10,
     choferId: 'cho_1',
     codigoDestino: 'BOA',

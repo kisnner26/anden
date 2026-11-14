@@ -20,7 +20,7 @@ const LUNES_6AM = new Date(2026, 10, 16, 6, 0);
 
 function salida(parcial: Partial<Salida>): Salida {
   return {
-    anden: 1,
+    puntoEncuentro: '764M4PPX+HC',
     asientosLibres: 10,
     choferId: 'cho_1',
     codigoDestino: 'MAY',

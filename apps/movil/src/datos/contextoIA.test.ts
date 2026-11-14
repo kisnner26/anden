@@ -12,7 +12,7 @@ const AHORA = new Date(2026, 10, 13, 14, 0);
 
 function salida(minutosDesdeAhora: number, destino = 'Boaco'): Salida {
   return {
-    anden: 4,
+    puntoEncuentro: '764M4PPX+HH',
     asientosLibres: 12,
     choferId: 'cho_1',
     codigoDestino: 'BOA',
@@ -37,7 +37,7 @@ function boleto(
   return {
     boleto: { asiento: 7, estado, precio: 66 },
     resumen: {
-      anden: 4,
+      puntoEncuentro: '764M4PPX+HH',
       destino: 'Boaco',
       salida: new Date(AHORA.getTime() + minutos * 60_000).toISOString(),
     },
@@ -45,11 +45,11 @@ function boleto(
 }
 
 describe('armarContexto', () => {
-  it('lista las próximas salidas con tarifa, andén y asientos', () => {
+  it('lista las próximas salidas con tarifa, punto de encuentro y asientos', () => {
     const texto = armarContexto([salida(30)], [], AHORA);
     expect(texto).toContain('Managua a Boaco');
     expect(texto).toContain('C$ 66');
-    expect(texto).toContain('andén 4');
+    expect(texto).toContain('punto de encuentro 764M4PPX+HH');
     expect(texto).toContain('12 asientos libres');
   });
 

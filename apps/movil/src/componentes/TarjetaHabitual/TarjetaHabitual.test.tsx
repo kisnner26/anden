@@ -18,7 +18,7 @@ const HABITUAL: Habitual = {
 
 function salida(cuando: Date): Salida {
   return {
-    anden: 1,
+    puntoEncuentro: '764M4PPX+HC',
     asientosLibres: 10,
     choferId: 'cho_1',
     codigoDestino: 'MAY',

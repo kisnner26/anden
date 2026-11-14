@@ -19,7 +19,7 @@ const GUARDADO: BoletoGuardado = {
     viajeId: 'via_2',
   },
   resumen: {
-    anden: 4,
+    puntoEncuentro: '764M4PPX+HH',
     choferId: 'cho_2',
     choferNombre: 'Marvin Lanzas',
     cooperativa: 'Cooperativa de muestra',
@@ -45,11 +45,11 @@ describe('TalonBoleto', () => {
     expect(pantalla.getByText('C$ 46')).toBeTruthy();
   });
 
-  it('muestra fecha, hora, andén, asiento, pasajero, placa y chofer', async () => {
+  it('muestra fecha, hora, punto, asiento, pasajero, placa y chofer', async () => {
     const pantalla = await render(<TalonBoleto guardado={GUARDADO} />);
     expect(pantalla.getByText('lun 2 nov')).toBeTruthy();
     expect(pantalla.getByText('2:40 p. m.')).toBeTruthy();
-    expect(pantalla.getByText('4')).toBeTruthy();
+    expect(pantalla.getByText('4PPX+HH')).toBeTruthy();
     expect(pantalla.getByText('8')).toBeTruthy();
     expect(pantalla.getByText('Ana Ruiz')).toBeTruthy();
     expect(pantalla.getByText('M 222-114')).toBeTruthy();

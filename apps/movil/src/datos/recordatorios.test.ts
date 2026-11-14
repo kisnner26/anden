@@ -19,7 +19,7 @@ function recordatorio(
   parcial: Partial<RecordatorioSalida>,
 ): RecordatorioSalida {
   return {
-    anden: 3,
+    puntoEncuentro: '764M4PPX+HG',
     destino: 'Boaco',
     identificador: 'id_1',
     minutosAntes: 30,

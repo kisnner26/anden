@@ -18,7 +18,7 @@ function salida(
   libres = 10,
 ): Salida {
   return {
-    anden: 1,
+    puntoEncuentro: '764M4PPX+HC',
     asientosLibres: libres,
     choferId: 'cho_1',
     codigoDestino: destino.slice(0, 3),
@@ -86,7 +86,7 @@ describe('consejoDelMomento', () => {
     const consejo = consejoDelMomento(
       LISTA,
       {
-        anden: 3,
+        puntoEncuentro: '764M4PPX+HG',
         destino: 'Boaco',
         salida: new Date(AHORA.getTime() + 30 * 60_000),
         viajeId: 'a',
@@ -94,7 +94,9 @@ describe('consejoDelMomento', () => {
       null,
       AHORA,
     );
-    expect(consejo?.texto).toBe('Tu bus a Boaco sale en 30 min, andén 3.');
+    expect(consejo?.texto).toBe(
+      'Tu bus a Boaco sale en 30 min, punto de encuentro 764M4PPX+HG.',
+    );
     expect(consejo?.viajeId).toBe('a');
   });
 
@@ -102,7 +104,7 @@ describe('consejoDelMomento', () => {
     const consejo = consejoDelMomento(
       LISTA,
       {
-        anden: 3,
+        puntoEncuentro: '764M4PPX+HG',
         destino: 'Boaco',
         salida: new Date(AHORA.getTime() + 600 * 60_000),
         viajeId: 'a',

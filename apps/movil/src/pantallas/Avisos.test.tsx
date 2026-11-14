@@ -13,7 +13,7 @@ jest.mock('@/datos/notificaciones', () => ({
 }));
 
 const PRONTO: Aviso = {
-  anden: 4,
+  puntoEncuentro: '764M4PPX+HH',
   boletoId: 'bol_1',
   destino: 'Boaco',
   id: 'bol_1:pronto',

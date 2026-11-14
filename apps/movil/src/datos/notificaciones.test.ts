@@ -71,7 +71,7 @@ describe('programarRecordatorio', () => {
     programar.mockResolvedValue('id-1');
     const cuando = new Date('2026-11-03T14:30:00-06:00');
     const id = await programarRecordatorio({
-      anden: 4,
+      puntoEncuentro: '764M4PPX+HH',
       cuando,
       destino: 'Boaco',
       texto: { cuerpo: 'Andén 4', titulo: 'Tu bus a Boaco' },

@@ -9,7 +9,7 @@ import {
 } from './viajesSupabase';
 
 const FILA: FilaViaje = {
-  anden: 2,
+  punto_encuentro: '764M4PPX+HF',
   chofer_id: 'cho_1',
   estado: 'programado',
   id: 'via_x',

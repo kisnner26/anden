@@ -157,7 +157,7 @@ describe('Viajar', () => {
 
   it('lista otras salidas sin repetir la destacada', async () => {
     const pantalla = await dibujar();
-    expect(pantalla.getAllByRole('button', { name: /andén/ })).toHaveLength(3);
+    expect(pantalla.getAllByRole('button', { name: /punto/ })).toHaveLength(3);
   });
 
   it('muestra salidas hacia Boaco y Juigalpa', async () => {
@@ -192,7 +192,7 @@ describe('Viajar', () => {
     const alAbrirViaje = jest.fn();
     const pantalla = await dibujar({ alAbrirViaje });
     await fireEvent.press(
-      pantalla.getAllByRole('button', { name: /andén/ })[0] as never,
+      pantalla.getAllByRole('button', { name: /punto/ })[0] as never,
     );
     expect(alAbrirViaje).toHaveBeenCalledWith('via_3');
   });

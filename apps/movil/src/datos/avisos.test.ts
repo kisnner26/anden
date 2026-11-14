@@ -15,7 +15,7 @@ const EN_MINUTOS = (minutos: number) =>
 
 function salida(cambios: Partial<Salida> = {}): Salida {
   return {
-    anden: 4,
+    puntoEncuentro: '764M4PPX+HH',
     asientosLibres: 10,
     choferId: 'cho_1',
     codigoDestino: 'GRA',
@@ -36,7 +36,7 @@ function salida(cambios: Partial<Salida> = {}): Salida {
 
 function boleto(
   estado: BoletoGuardado['boleto']['estado'] = 'vigente',
-  anden = 4,
+  puntoEncuentro = '764M4PPX+HH',
 ): BoletoGuardado {
   return {
     boleto: {
@@ -51,7 +51,7 @@ function boleto(
       viajeId: 'via_1',
     },
     resumen: {
-      anden,
+      puntoEncuentro,
       choferId: 'cho_1',
       choferNombre: 'Luis',
       cooperativa: 'Cooperativa',
@@ -130,10 +130,18 @@ describe('avisosDeBoletos', () => {
     expect(tipos).toContain('atraso');
   });
 
-  it('avisa el cambio de andén', () => {
-    const avisos = avisosDeBoletos([boleto('vigente', 2)], [salida()], AHORA);
+  it('avisa el cambio de punto de encuentro', () => {
+    const avisos = avisosDeBoletos(
+      [boleto('vigente', '764M4PPX+HF')],
+      [salida()],
+      AHORA,
+    );
     expect(
-      avisos.some((aviso) => aviso.tipo === 'anden' && aviso.anden === 4),
+      avisos.some(
+        (aviso) =>
+          aviso.tipo === 'puntoEncuentro' &&
+          aviso.puntoEncuentro === '764M4PPX+HH',
+      ),
     ).toBe(true);
   });
 

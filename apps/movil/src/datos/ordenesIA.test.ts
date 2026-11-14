@@ -84,7 +84,7 @@ describe('proximaSalidaA', () => {
     abierta = true,
   ): Salida {
     return {
-      anden: 1,
+      puntoEncuentro: '764M4PPX+HC',
       asientosLibres: libres,
       choferId: 'c',
       codigoDestino: 'BOA',

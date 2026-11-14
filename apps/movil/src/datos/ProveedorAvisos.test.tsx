@@ -61,7 +61,7 @@ function boletoDeMuestra(
       viajeId: salida.viajeId,
     },
     resumen: {
-      anden: salida.anden,
+      puntoEncuentro: salida.puntoEncuentro,
       choferId: salida.choferId,
       choferNombre: 'Luis',
       cooperativa: 'Cooperativa',
