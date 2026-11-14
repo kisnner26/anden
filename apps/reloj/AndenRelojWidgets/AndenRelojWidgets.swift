@@ -15,9 +15,11 @@ struct Proveedor: TimelineProvider {
         completion(Entrada(date: .now, datos: context.isPreview ? placeholder(in: context).datos : Instantanea.cargar()))
     }
 
+    /// una entrada cada cinco minutos durante la próxima hora: así el anillo avanza hacia la salida sin que el reloj se despierte más
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entrada>) -> Void) {
         let datos = Instantanea.cargar()
-        completion(Timeline(entries: [Entrada(date: .now, datos: datos)], policy: .after(.now.addingTimeInterval(15 * 60))))
+        let entradas = (0..<12).map { Entrada(date: .now.addingTimeInterval(Double($0) * 300), datos: datos) }
+        completion(Timeline(entries: entradas, policy: .after(.now.addingTimeInterval(3600))))
     }
 }
 
@@ -27,18 +29,34 @@ struct VistaComplicacion: View {
 
     private var d: Instantanea { entrada.datos }
     private var ambar: Color { Color(red: 0.95, green: 0.71, blue: 0.20) }
+    private var verde: Color { Color(red: 0.44, green: 0.81, blue: 0.59) }
+
+    /// qué tan cerca está la salida, de 0 a 1: se empieza a llenar tres horas antes y queda llena al salir
+    private var fraccion: Double {
+        guard let s = d.salida else { return 0 }
+        if d.salio { return 1 }
+        let faltan = s.timeIntervalSince(entrada.date) / 60
+        if faltan > 180 { return 0 }
+        if faltan <= 0 { return 1 }
+        return 1 - faltan / 180
+    }
+
+    private var tono: Color { d.salio ? verde : ambar }
 
     var body: some View {
         switch familia {
         case .accessoryCircular:
-            ZStack {
-                AccessoryWidgetBackground()
-                if let s = d.salida {
-                    VStack(spacing: 0) {
-                        Text(s, format: .dateTime.hour().minute()).font(.system(size: 15, weight: .semibold, design: .rounded))
-                        Text(d.salio ? "EN RUTA" : "PUNTO \(d.punto)").font(.system(size: 8, weight: .medium)).foregroundStyle(ambar)
-                    }
-                } else {
+            if let s = d.salida {
+                Gauge(value: fraccion) {
+                    Image(systemName: "bus.fill")
+                } currentValueLabel: {
+                    Text(s, format: .dateTime.hour().minute()).font(.system(size: 13, weight: .semibold, design: .rounded)).minimumScaleFactor(0.6)
+                }
+                .gaugeStyle(.accessoryCircularCapacity)
+                .tint(tono)
+            } else {
+                ZStack {
+                    AccessoryWidgetBackground()
                     Text("—")
                 }
             }
@@ -56,8 +74,9 @@ struct VistaComplicacion: View {
             VStack(alignment: .leading, spacing: 1) {
                 if let s = d.salida {
                     Text(d.ruta).font(.system(size: 12, weight: .semibold)).minimumScaleFactor(0.7)
-                    Text(s, format: .dateTime.hour().minute()).font(.system(size: 22, weight: .semibold, design: .rounded)).foregroundStyle(ambar)
+                    Text(s, format: .dateTime.hour().minute()).font(.system(size: 22, weight: .semibold, design: .rounded)).foregroundStyle(tono)
                     Text(d.salio ? "En camino" : "Punto \(d.punto) · asiento \(d.asiento)").font(.system(size: 11))
+                    ProgressView(value: fraccion).tint(tono)
                 } else {
                     Text("Andén").font(.system(size: 13, weight: .semibold))
                     Text("Sin viajes vigentes").font(.system(size: 11))
