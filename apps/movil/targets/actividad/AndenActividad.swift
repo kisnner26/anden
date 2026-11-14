@@ -22,7 +22,7 @@ struct ActividadDelViaje: Widget {
         }
         Spacer()
         VStack(alignment: .trailing, spacing: 4) {
-          Text("Andén \(contexto.state.anden)")
+          Text("Punto \(corto(contexto.state.puntoEncuentro))")
             .font(.title2.bold())
           Text(contexto.attributes.salida, style: .timer)
             .font(.subheadline.monospacedDigit())
@@ -35,7 +35,7 @@ struct ActividadDelViaje: Widget {
     } dynamicIsland: { contexto in
       DynamicIsland {
         DynamicIslandExpandedRegion(.leading) {
-          Text("Andén \(contexto.state.anden)").font(.title3.bold())
+          Text("Punto \(corto(contexto.state.puntoEncuentro))").font(.title3.bold())
         }
         DynamicIslandExpandedRegion(.trailing) {
           Text(contexto.attributes.salida, style: .timer)
@@ -47,14 +47,19 @@ struct ActividadDelViaje: Widget {
             .font(.subheadline)
         }
       } compactLeading: {
-        Text("A\(contexto.state.anden)").bold()
+        Text(corto(contexto.state.puntoEncuentro)).bold()
       } compactTrailing: {
         Text(contexto.attributes.salida, style: .timer)
           .monospacedDigit()
           .frame(maxWidth: 48)
       } minimal: {
-        Text("\(contexto.state.anden)").bold()
+        Text(corto(contexto.state.puntoEncuentro)).bold()
       }
     }
   }
+}
+
+/// en la isla dinámica no cabe el código entero: se muestran los últimos siete signos, como "4PPX+HC"
+private func corto(_ punto: String) -> String {
+    punto.isEmpty ? "—" : String(punto.suffix(7))
 }

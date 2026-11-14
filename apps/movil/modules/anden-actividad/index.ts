@@ -1,12 +1,12 @@
 import { requireOptionalNativeModule } from 'expo';
 
 interface ModuloAndenActividad {
-  actualizar(id: string, anden: number, estado: string): Promise<boolean>;
+  actualizar(id: string, puntoEncuentro: string, estado: string): Promise<boolean>;
   disponible(): Promise<boolean>;
   iniciar(
     destino: string,
     salidaMs: number,
-    anden: number,
+    puntoEncuentro: string,
     estado: string,
   ): Promise<string>;
   terminar(id: string): Promise<void>;
@@ -27,7 +27,7 @@ export async function actividadesDisponibles(): Promise<boolean> {
 
 /** inicia la actividad del viaje; nulo si no se puede */
 export async function iniciarActividad(datos: {
-  anden: number;
+  puntoEncuentro: string;
   destino: string;
   estado: string;
   salida: Date;
@@ -37,7 +37,7 @@ export async function iniciarActividad(datos: {
     return await modulo.iniciar(
       datos.destino,
       datos.salida.getTime(),
-      datos.anden,
+      datos.puntoEncuentro,
       datos.estado,
     );
   } catch {
@@ -47,12 +47,12 @@ export async function iniciarActividad(datos: {
 
 export async function actualizarActividad(
   id: string,
-  anden: number,
+  puntoEncuentro: string,
   estado: string,
 ): Promise<boolean> {
   if (!modulo) return false;
   try {
-    return await modulo.actualizar(id, anden, estado);
+    return await modulo.actualizar(id, puntoEncuentro, estado);
   } catch {
     return false;
   }

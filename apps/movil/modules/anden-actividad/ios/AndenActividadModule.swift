@@ -19,7 +19,7 @@ public class AndenActividadModule: Module {
     }
 
     // inicia la actividad del viaje y devuelve su identificador
-    AsyncFunction("iniciar") { (destino: String, salidaMs: Double, anden: Int, estado: String, promise: Promise) in
+    AsyncFunction("iniciar") { (destino: String, salidaMs: Double, puntoEncuentro: String, estado: String, promise: Promise) in
       #if canImport(ActivityKit)
       if #available(iOS 16.2, *) {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
@@ -28,7 +28,7 @@ public class AndenActividadModule: Module {
         }
         let salida = Date(timeIntervalSince1970: salidaMs / 1000)
         let atributos = AtributosViaje(destino: destino, salida: salida)
-        let estadoInicial = AtributosViaje.ContentState(anden: anden, estado: estado)
+        let estadoInicial = AtributosViaje.ContentState(puntoEncuentro: puntoEncuentro, estado: estado)
         do {
           let actividad = try Activity.request(
             attributes: atributos,
@@ -45,7 +45,7 @@ public class AndenActividadModule: Module {
       promise.reject("ERR_ANDEN_ACTIVIDAD_NO_DISPONIBLE", "Este sistema no admite actividades en vivo.")
     }
 
-    AsyncFunction("actualizar") { (id: String, anden: Int, estado: String, promise: Promise) in
+    AsyncFunction("actualizar") { (id: String, puntoEncuentro: String, estado: String, promise: Promise) in
       #if canImport(ActivityKit)
       if #available(iOS 16.2, *) {
         Task {
@@ -53,7 +53,7 @@ public class AndenActividadModule: Module {
             promise.resolve(false)
             return
           }
-          await actividad.update(.init(state: .init(anden: anden, estado: estado), staleDate: nil))
+          await actividad.update(.init(state: .init(puntoEncuentro: puntoEncuentro, estado: estado), staleDate: nil))
           promise.resolve(true)
         }
         return

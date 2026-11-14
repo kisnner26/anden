@@ -4,7 +4,7 @@ import Foundation
 /// Mismo contenido que modules/anden-actividad/ios/AtributosViaje.swift: los dos destinos deben coincidir.
 struct AtributosViaje: ActivityAttributes {
   struct ContentState: Codable, Hashable {
-    var anden: Int
+    var puntoEncuentro: String
     var estado: String
   }
 
