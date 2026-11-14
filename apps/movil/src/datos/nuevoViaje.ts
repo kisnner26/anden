@@ -1,7 +1,9 @@
+import { leerPlus } from '@anden/dominio';
+
 import type { FilaViaje } from '@/servicios/supabase/viajesSupabase';
 
 export interface BorradorViaje {
-  anden: string;
+  puntoEncuentro: string;
   /** el día elegido; la hora se arma con `hora` */
   dia: Date;
   /** hora en 24 h, por ejemplo 14:30 */
@@ -11,7 +13,7 @@ export interface BorradorViaje {
   servicio: 'expreso' | 'ordinario';
 }
 
-export type ErrorViaje = 'anden' | 'hora' | 'pasado' | 'placa' | 'ruta';
+export type ErrorViaje = 'hora' | 'pasado' | 'placa' | 'punto' | 'ruta';
 
 const HORA = /^([01]?\d|2[0-3]):([0-5]\d)$/;
 const PLACA = /^[A-Za-z]{0,2}\s?\d{2,4}[-\s]?\d{0,4}$/;
@@ -44,9 +46,8 @@ export function validarViaje(
   if (!PLACA.test(borrador.placa.trim()) || borrador.placa.trim().length < 4) {
     errores.push('placa');
   }
-  const anden = Number(borrador.anden);
-  if (!Number.isInteger(anden) || anden < 1 || anden > 99)
-    errores.push('anden');
+  // el punto de encuentro es un Plus Code, completo o corto, como lo muestra Google Maps
+  if (leerPlus(borrador.puntoEncuentro) === null) errores.push('punto');
   const fecha = fechaDeSalida(borrador);
   if (fecha === null) errores.push('hora');
   else if (fecha.getTime() <= ahora.getTime()) errores.push('pasado');
@@ -71,9 +72,10 @@ export function armarFilaViaje(
   azar: () => number = Math.random,
 ): FilaViaje | null {
   const fecha = fechaDeSalida(borrador);
-  if (fecha === null || borrador.rutaId === null) return null;
+  const punto = leerPlus(borrador.puntoEncuentro);
+  if (fecha === null || borrador.rutaId === null || punto === null) return null;
   return {
-    anden: Number(borrador.anden),
+    punto_encuentro: punto,
     chofer_id: choferId,
     estado: 'programado',
     id: idDeViaje(ahora, azar),

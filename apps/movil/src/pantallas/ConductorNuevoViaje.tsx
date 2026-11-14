@@ -1,6 +1,8 @@
+import { codificarPlus } from '@anden/dominio';
 import { useMemo, useState } from 'react';
 import {
   KeyboardAvoidingView,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -22,6 +24,7 @@ import {
   type ErrorViaje,
 } from '@/datos/nuevoViaje';
 import { sincronizarViajes } from '@/datos/sincronizarViajes';
+import { obtenerUbicacionActual } from '@/datos/ubicacion';
 import { useSalidas } from '@/datos/useSalidas';
 import { useSesion } from '@/datos/useSesion';
 import { publicarViaje } from '@/servicios/supabase/viajesSupabase';
@@ -38,7 +41,7 @@ export interface PropiedadesConductorNuevoViaje {
 }
 
 const MENSAJES = {
-  anden: 'nuevoViaje.errorAnden',
+  punto: 'nuevoViaje.errorPunto',
   hora: 'nuevoViaje.errorHora',
   pasado: 'nuevoViaje.errorPasado',
   placa: 'nuevoViaje.errorPlaca',
@@ -59,13 +62,15 @@ export function ConductorNuevoViaje({
     [ahora],
   );
   const [borrador, establecerBorrador] = useState<BorradorViaje>({
-    anden: '',
+    puntoEncuentro: '',
     dia: dias[0] ?? ahora,
     hora: '',
     placa: '',
     rutaId: null,
     servicio: 'ordinario',
   });
+  const [ubicando, establecerUbicando] = useState(false);
+  const [sinUbicacion, establecerSinUbicacion] = useState(false);
   const [intento, establecerIntento] = useState(false);
   const [publicando, establecerPublicando] = useState(false);
   const [errorServidor, establecerErrorServidor] = useState<string | null>(
@@ -75,6 +80,22 @@ export function ConductorNuevoViaje({
   const errores = validarViaje(borrador, ahora);
   const nombreTerminal = (id: string) =>
     datos.terminales.find((terminal) => terminal.id === id)?.ciudad ?? id;
+
+  /** el punto exacto donde está el conductor ahora, como Plus Code */
+  async function usarMiUbicacion() {
+    if (ubicando) return;
+    establecerUbicando(true);
+    establecerSinUbicacion(false);
+    const resultado = await obtenerUbicacionActual(true);
+    if (resultado.estado === 'otorgado') {
+      cambiar({
+        puntoEncuentro: codificarPlus(resultado.punto.lat, resultado.punto.lng),
+      });
+    } else {
+      establecerSinUbicacion(true);
+    }
+    establecerUbicando(false);
+  }
 
   function cambiar(cambios: Partial<BorradorViaje>) {
     establecerBorrador((previo) => ({ ...previo, ...cambios }));
@@ -188,13 +209,31 @@ export function ConductorNuevoViaje({
             valor={borrador.placa}
           />
           <CampoTexto
-            alCambiar={(anden) => cambiar({ anden })}
-            error={mensaje('anden')}
-            etiqueta={t('nuevoViaje.anden')}
-            marcador={t('nuevoViaje.andenMarcador')}
-            teclado="number-pad"
-            valor={borrador.anden}
+            alCambiar={(puntoEncuentro) => cambiar({ puntoEncuentro })}
+            error={mensaje('punto')}
+            etiqueta={t('nuevoViaje.puntoEncuentro')}
+            marcador={t('nuevoViaje.puntoMarcador')}
+            valor={borrador.puntoEncuentro}
           />
+          <Pressable
+            accessibilityRole="button"
+            disabled={ubicando}
+            onPress={() => void usarMiUbicacion()}
+          >
+            <Text style={[tipografia.subtitulo, { color: colores.ambarTexto }]}>
+              {ubicando
+                ? t('nuevoViaje.ubicando')
+                : t('nuevoViaje.usarUbicacion')}
+            </Text>
+          </Pressable>
+          {sinUbicacion && (
+            <Text
+              accessibilityLiveRegion="polite"
+              style={[tipografia.pequeno, { color: colores.cancelado }]}
+            >
+              {t('nuevoViaje.sinUbicacion')}
+            </Text>
+          )}
         </View>
 
         {errorServidor !== null && (
