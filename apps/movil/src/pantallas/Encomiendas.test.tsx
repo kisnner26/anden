@@ -252,13 +252,12 @@ describe('Encomiendas', () => {
     }
 
     it('completa el tamaño, lo frágil y la descripción a partir de lo que cuenta la persona', async () => {
-      const preguntar = jest.fn(
-        async (_instrucciones: string, _pregunta: string) =>
-          JSON.stringify({
-            descripcion: 'Caja de vasos',
-            fragil: true,
-            tamano: 'grande',
-          }),
+      const preguntar = jest.fn<ValorIA['preguntar']>(async () =>
+        JSON.stringify({
+          descripcion: 'Caja de vasos',
+          fragil: true,
+          tamano: 'grande',
+        }),
       );
       const pantalla = await conIA(preguntar);
       await fireEvent.changeText(
