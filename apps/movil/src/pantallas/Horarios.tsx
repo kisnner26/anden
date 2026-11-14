@@ -94,6 +94,7 @@ export function Horarios({
   const recordatorios = useRecordatorios();
   const sonar = useSonidos();
   const [filtrando, establecerFiltrando] = useState(false);
+  const [eligiendoTerminal, establecerEligiendoTerminal] = useState(false);
   const [eligiendo, establecerEligiendo] = useState<Salida | null>(null);
   const [errorRecordatorio, establecerErrorRecordatorio] = useState<Exclude<
     ResultadoRecordatorio,
@@ -193,21 +194,113 @@ export function Horarios({
         </Pressable>
       </View>
 
-      <Bloque estilo={estilos.terminal} estiloContenido={estilos.filaTerminal}>
-        <Loseta tamano={50} variante="ambar">
-          <Text style={[tipografia.dato, { color: colores.sobreAmbar }]}>
-            {terminal?.codigo}
+      <Pressable
+        accessibilityHint={t('horarios.cambiarSalida')}
+        accessibilityLabel={`${t('horarios.saleDesde')} ${terminal?.nombre ?? ''}`}
+        accessibilityRole="button"
+        onPress={() => establecerEligiendoTerminal(true)}
+        style={estilos.terminal}
+        testID="terminal-de-salida"
+      >
+        <Bloque estiloContenido={estilos.filaTerminal}>
+          <Loseta tamano={50} variante="ambar">
+            <Text style={[tipografia.dato, { color: colores.sobreAmbar }]}>
+              {terminal?.codigo}
+            </Text>
+          </Loseta>
+          <View style={estilos.datosTerminal}>
+            <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+              {t('horarios.saleDesde')}
+            </Text>
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+              {terminal?.nombre}
+            </Text>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {terminal?.ciudad}
+            </Text>
+          </View>
+          <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+            {t('horarios.cambiar')}
           </Text>
-        </Loseta>
-        <View style={estilos.datosTerminal}>
-          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-            {terminal?.nombre}
+          <Icono nombre="siguiente" tamano="mediano" />
+        </Bloque>
+      </Pressable>
+
+      <Hoja
+        abierta={eligiendoTerminal}
+        alCerrar={() => establecerEligiendoTerminal(false)}
+        etiquetaCerrar={t('recordatorios.cerrar')}
+      >
+        <View style={estilos.hojaFiltros} testID="hoja-terminales">
+          <Text
+            accessibilityRole="header"
+            style={[tipografia.titulo, { color: colores.tinta }]}
+          >
+            {t('horarios.saleDesdeTitulo')}
           </Text>
-          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {terminal?.ciudad}
+          <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
+            {t('horarios.saleDesdeDetalle')}
           </Text>
+          {datos.terminales.map((candidata) => {
+            const elegida = candidata.id === terminalId;
+            const cuantas = delDiaEnTodas.filter(
+              (salida) => salida.origen === candidata.ciudad,
+            ).length;
+            return (
+              <Pressable
+                accessibilityLabel={`${candidata.nombre}, ${candidata.ciudad}`}
+                accessibilityRole="button"
+                accessibilityState={{ selected: elegida }}
+                key={candidata.id}
+                onPress={() => {
+                  establecerTerminalId(candidata.id);
+                  establecerDestinoElegido(null);
+                  establecerEligiendoTerminal(false);
+                }}
+              >
+                <Bloque estiloContenido={estilos.filaTerminal}>
+                  <Loseta tamano={44} variante={elegida ? 'ambar' : 'negra'}>
+                    <Text
+                      style={[
+                        tipografia.dato,
+                        {
+                          color: elegida
+                            ? colores.sobreAmbar
+                            : colores.sobreNegro,
+                        },
+                      ]}
+                    >
+                      {candidata.codigo}
+                    </Text>
+                  </Loseta>
+                  <View style={estilos.datosTerminal}>
+                    <Text
+                      style={[tipografia.subtitulo, { color: colores.tinta }]}
+                    >
+                      {candidata.nombre}
+                    </Text>
+                    <Text
+                      style={[
+                        tipografia.pequeno,
+                        { color: colores.tintaSuave },
+                      ]}
+                    >
+                      {cuantas > 0
+                        ? rellenar(t('horarios.salidasEseDia'), {
+                            cantidad: cuantas,
+                          })
+                        : candidata.ciudad}
+                    </Text>
+                  </View>
+                  {elegida ? (
+                    <Icono nombre="confirmar" tamano="mediano" />
+                  ) : null}
+                </Bloque>
+              </Pressable>
+            );
+          })}
         </View>
-      </Bloque>
+      </Hoja>
 
       {alPreguntar && (
         <View style={estilos.terminal}>
