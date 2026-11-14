@@ -13,6 +13,7 @@ import { BoletoFlotante } from '@/componentes/BoletoFlotante';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { ExplosionConfirmacion } from '@/componentes/ExplosionConfirmacion';
+import { emitirMascota } from '@/datos/mascotaEventos';
 import type { BoletoGuardado } from '@/datos/reserva';
 import {
   codigoCompleto,
@@ -66,6 +67,7 @@ export function Recibir({
     } else {
       await agregar(respuesta.boleto);
       sentir('exito');
+      emitirMascota({ tipo: 'recibido' });
       establecerRecibido(respuesta.boleto);
     }
     establecerTrabajando(false);
