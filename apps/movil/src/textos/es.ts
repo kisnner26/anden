@@ -638,6 +638,7 @@ export const textos = {
     alerta: 'Pito avisa',
     calificar:
       '¿Cómo te fue en tu último viaje? Contale a Andén con las estrellas.',
+    descartar: 'Tocá para despedir a Pito',
     detalle:
       'Una mascota que te avisa cuándo salir y te enseña los trucos de la app. Se puede apagar cuando quieras.',
     inminente:
