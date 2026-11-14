@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from '@jest/globals';
 
 import {
   CLAVE_HABITUALES,
+  agruparHabituales,
   conHabitual,
   esSalidaHabitual,
   guardarHabituales,
@@ -150,5 +151,44 @@ describe('guardado', () => {
       JSON.stringify([{ id: 'x' }, HABITUAL]),
     );
     expect(await leerHabituales()).toEqual([HABITUAL]);
+  });
+});
+
+describe('agruparHabituales', () => {
+  const base = {
+    destino: 'Boaco',
+    dias: [5],
+    origen: 'Managua',
+  };
+
+  it('junta en una sola tarjeta el mismo trayecto a distintas horas', () => {
+    const grupos = agruparHabituales([
+      { ...base, hora: '16:30', id: 'a' },
+      { ...base, hora: '03:10', id: 'b' },
+      { ...base, destino: 'Juigalpa', hora: '06:00', id: 'c' },
+    ]);
+    expect(grupos).toHaveLength(2);
+    expect(grupos[0]).toMatchObject({
+      destino: 'Boaco',
+      horas: ['03:10', '16:30'],
+    });
+    expect(grupos[0]?.miembros.map((m) => m.id)).toEqual(['a', 'b']);
+  });
+
+  it('suma los días de los viajes del trayecto sin repetirlos', () => {
+    const [grupo] = agruparHabituales([
+      { ...base, dias: [5, 1], hora: '03:10', id: 'a' },
+      { ...base, dias: [5, 3], hora: '16:30', id: 'b' },
+    ]);
+    expect(grupo?.dias).toEqual([1, 3, 5]);
+  });
+
+  it('quitar varios ids a la vez deja los demás', () => {
+    const lista = [
+      { ...base, hora: '03:10', id: 'a' },
+      { ...base, hora: '16:30', id: 'b' },
+      { ...base, hora: '18:00', id: 'c' },
+    ];
+    expect(sinHabitual(lista, ['a', 'b']).map((h) => h.id)).toEqual(['c']);
   });
 });

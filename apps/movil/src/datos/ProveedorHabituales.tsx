@@ -39,7 +39,7 @@ export function ProveedorHabituales({ children }: { children: ReactNode }) {
   );
 
   const quitar = useCallback(
-    async (id: string) => {
+    async (id: string | readonly string[]) => {
       const lista = sinHabitual(habituales, id);
       establecerHabituales(lista);
       await guardarHabituales(lista);

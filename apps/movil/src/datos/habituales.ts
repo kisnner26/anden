@@ -68,9 +68,44 @@ export function conHabitual(
 
 export function sinHabitual(
   lista: readonly Habitual[],
-  id: string,
+  id: string | readonly string[],
 ): Habitual[] {
-  return lista.filter((habitual) => habitual.id !== id);
+  const ids = typeof id === 'string' ? [id] : id;
+  return lista.filter((habitual) => !ids.includes(habitual.id));
+}
+
+/** todos los viajes habituales de un mismo trayecto, aunque salgan a horas distintas */
+export interface GrupoHabitual {
+  destino: string;
+  dias: number[];
+  /** horas de salida HH:MM, de la más temprana a la más tarde */
+  horas: string[];
+  id: string;
+  miembros: Habitual[];
+  origen: string;
+}
+
+/** junta los viajes del mismo trayecto en uno solo para mostrarlos sin repetir */
+export function agruparHabituales(lista: readonly Habitual[]): GrupoHabitual[] {
+  const grupos = new Map<string, GrupoHabitual>();
+  for (const habitual of lista) {
+    const id = `${habitual.origen}>${habitual.destino}`.toLowerCase();
+    const grupo = grupos.get(id) ?? {
+      destino: habitual.destino,
+      dias: [],
+      horas: [],
+      id,
+      miembros: [],
+      origen: habitual.origen,
+    };
+    grupo.miembros.push(habitual);
+    grupo.dias = [...new Set([...grupo.dias, ...habitual.dias])].sort(
+      (a, b) => a - b,
+    );
+    grupo.horas = [...new Set([...grupo.horas, habitual.hora])].sort();
+    grupos.set(id, grupo);
+  }
+  return [...grupos.values()];
 }
 
 /** ¿esta salida es la que el viaje habitual espera? mismo trayecto, día de la semana y hora cercana */
@@ -104,6 +139,19 @@ export function proximaDelHabitual(
         salida.ventaAbierta &&
         salida.salida.getTime() >= ahora.getTime(),
     )
+    .sort((a, b) => a.salida.getTime() - b.salida.getTime());
+  return candidatas[0] ?? null;
+}
+
+/** la salida más cercana que le sirve a cualquiera de los viajes del trayecto */
+export function proximaDelGrupo(
+  grupo: GrupoHabitual,
+  salidas: readonly Salida[],
+  ahora: Date,
+): Salida | null {
+  const candidatas = grupo.miembros
+    .map((habitual) => proximaDelHabitual(habitual, salidas, ahora))
+    .filter((salida): salida is Salida => salida !== null)
     .sort((a, b) => a.salida.getTime() - b.salida.getTime());
   return candidatas[0] ?? null;
 }

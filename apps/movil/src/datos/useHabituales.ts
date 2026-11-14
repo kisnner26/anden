@@ -5,7 +5,7 @@ import type { Habitual } from './habituales';
 export interface ValorHabituales {
   agregar: (habitual: Habitual) => Promise<void>;
   habituales: readonly Habitual[];
-  quitar: (id: string) => Promise<void>;
+  quitar: (id: string | readonly string[]) => Promise<void>;
 }
 
 export const ContextoHabituales = createContext<ValorHabituales>({
