@@ -585,6 +585,28 @@ export const textos = {
     previos: 'Tus reportes de este viaje',
     cerrar: 'Cerrar',
   },
+  preguntaIA: {
+    campo: 'Tu pregunta al asistente',
+    enviar: 'Preguntar al asistente',
+    horarios: {
+      barata: '¿Cuál es la salida más barata?',
+      conviene: '¿Cuál me conviene?',
+      tarde: '¿Hay salidas después de las 3 p. m.?',
+    },
+    marcador: 'Escribí lo que buscás',
+    titulo: 'Preguntale a Andén con {nombre}',
+  },
+  boletosVisual: {
+    destinosTitulo: 'A dónde querés ir',
+    preguntas: {
+      cuando: '¿Cuánto falta para mi próximo viaje?',
+      hora: '¿A qué hora debo llegar al punto de encuentro?',
+      donde: '¿Dónde es mi punto de encuentro?',
+    },
+    resumenPedido:
+      'Resumime mis próximos viajes y decime a qué hora conviene llegar a cada punto de encuentro, usando solo estos datos.',
+    resumenTitulo: 'Resumir mis viajes con IA',
+  },
   vistaDia: {
     ahora: 'Ahora',
     atajos: 'Lo que te conviene',
