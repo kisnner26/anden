@@ -1,3 +1,7 @@
+import {
+  ESPERA_INICIO_AUTOMATICO_MS,
+  useInicioAutomatico,
+} from '@/datos/inicioAutomatico';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
@@ -98,6 +102,8 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
     [],
   );
 
+  const inicio = useInicioAutomatico();
+
   const empezar = () => {
     if (saliendo) return;
     establecerSaliendo(true);
@@ -115,6 +121,16 @@ export function Portada({ alEmpezar }: PropiedadesPortada) {
       temporizador.current = setTimeout(alEmpezar, movimiento.salidaBus * 0.8);
     }, 420);
   };
+
+  // con el inicio automático encendido, la portada arranca sola cuando el bus ya llegó, sin esperar el deslizado
+  useEffect(() => {
+    if (inicio.activo !== true) return;
+    const espera = setTimeout(
+      empezar,
+      reducirMovimiento ? 600 : ESPERA_INICIO_AUTOMATICO_MS,
+    );
+    return () => clearTimeout(espera);
+  }, [inicio.activo]);
 
   const estiloBus = useAnimatedStyle(() => ({
     transform: [
