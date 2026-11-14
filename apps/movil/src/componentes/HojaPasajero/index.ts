@@ -1,0 +1,1 @@
+export { HojaPasajero } from './HojaPasajero';

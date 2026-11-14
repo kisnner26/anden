@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Autobus, type IdVarianteBus } from '@/componentes/Autobus';
 import type { IdVehiculoPlus } from '@/componentes/VehiculoPlus';
 import { Bloque } from '@/componentes/Bloque';
+import { HojaPasajero } from '@/componentes/HojaPasajero';
 import { nombrePropio } from '@/datos/perfil';
 import { conAlfa } from '@/tema/alfa';
 import { espacios, radios, tamanosControl } from '@/tema/espacios';
@@ -44,6 +46,8 @@ export function ListaPasajeros({
   pasajeros,
 }: PropiedadesListaPasajeros) {
   const { colores } = useTema();
+  const [abierto, establecerAbierto] = useState<string | null>(null);
+  const fichaAbierta = pasajeros.find((p) => p.boletoId === abierto) ?? null;
   const abordaron = pasajeros.filter((p) => abordo(p.boletoId)).length;
   const avance = pasajeros.length === 0 ? 0 : abordaron / pasajeros.length;
 
@@ -78,82 +82,96 @@ export function ListaPasajeros({
         const nombre = nombrePropio(pasajero.nombre);
         return (
           <Bloque estiloContenido={estilos.tarjeta} key={pasajero.boletoId}>
-            <View
-              style={[
-                estilos.asiento,
-                subio
-                  ? { backgroundColor: colores.ambar }
-                  : {
-                      backgroundColor: conAlfa(colores.tinta, 0.06),
-                      borderColor: colores.linea,
-                      borderWidth: 1,
-                    },
-              ]}
+            <Pressable
+              accessibilityHint={t('conductorPasajeros.verFicha').replace(
+                '{nombre}',
+                nombre,
+              )}
+              accessibilityRole="button"
+              onPress={() => establecerAbierto(pasajero.boletoId)}
+              style={estilos.principal}
+              testID={`pasajero-${pasajero.boletoId}`}
             >
-              <Text
+              <View
                 style={[
-                  tipografia.dato,
-                  { color: subio ? colores.sobreAmbar : colores.tinta },
+                  estilos.asiento,
+                  subio
+                    ? { backgroundColor: colores.ambar }
+                    : {
+                        backgroundColor: conAlfa(colores.tinta, 0.06),
+                        borderColor: colores.linea,
+                        borderWidth: 1,
+                      },
                 ]}
               >
-                {pasajero.asiento}
-              </Text>
-            </View>
-
-            <View style={estilos.datos}>
-              <View style={estilos.nombreFila}>
                 <Text
-                  numberOfLines={1}
                   style={[
-                    tipografia.nombreFila,
-                    estilos.nombreTexto,
-                    { color: colores.tinta },
+                    tipografia.dato,
+                    { color: subio ? colores.sobreAmbar : colores.tinta },
                   ]}
                 >
-                  {nombre}
+                  {pasajero.asiento}
                 </Text>
-                {pasajero.plus && (
-                  <View
-                    accessibilityLabel={t('plus.sello')}
+              </View>
+
+              <View style={estilos.datos}>
+                <View style={estilos.nombreFila}>
+                  <Text
+                    numberOfLines={1}
                     style={[
-                      estilos.sello,
-                      { backgroundColor: colores.bloqueNegro },
+                      tipografia.nombreFila,
+                      estilos.nombreTexto,
+                      { color: colores.tinta },
                     ]}
                   >
-                    {pasajero.unidadPlus && (
-                      <Autobus
-                        ancho={34}
-                        variante={
-                          pasajero.unidadPlus as IdVarianteBus | IdVehiculoPlus
-                        }
-                      />
-                    )}
-                    <Text
-                      style={[tipografia.etiqueta, { color: colores.ambar }]}
+                    {nombre}
+                  </Text>
+                  {pasajero.plus && (
+                    <View
+                      accessibilityLabel={t('plus.sello')}
+                      style={[
+                        estilos.sello,
+                        { backgroundColor: colores.bloqueNegro },
+                      ]}
                     >
-                      {t('plus.sello')}
-                    </Text>
-                  </View>
+                      {pasajero.unidadPlus && (
+                        <Autobus
+                          ancho={34}
+                          variante={
+                            pasajero.unidadPlus as
+                              IdVarianteBus | IdVehiculoPlus
+                          }
+                        />
+                      )}
+                      <Text
+                        style={[tipografia.etiqueta, { color: colores.ambar }]}
+                      >
+                        {t('plus.sello')}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+                <Text
+                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                >
+                  {pasajero.cedula
+                    ? `${t('conductor.cedula')} ${pasajero.cedula}`
+                    : t('conductor.sinCedula')}
+                </Text>
+                <Text
+                  style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
+                >
+                  {`${t('conductor.codigo')} ${pasajero.codigo}`}
+                </Text>
+                {pasajero.esMenorEnBrazos && (
+                  <Text
+                    style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
+                  >
+                    {t('conductor.menorEnBrazos')}
+                  </Text>
                 )}
               </View>
-              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-                {pasajero.cedula
-                  ? `${t('conductor.cedula')} ${pasajero.cedula}`
-                  : t('conductor.sinCedula')}
-              </Text>
-              <Text
-                style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
-              >
-                {`${t('conductor.codigo')} ${pasajero.codigo}`}
-              </Text>
-              {pasajero.esMenorEnBrazos && (
-                <Text
-                  style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
-                >
-                  {t('conductor.menorEnBrazos')}
-                </Text>
-              )}
-            </View>
+            </Pressable>
 
             <View style={estilos.acciones}>
               <Pressable
@@ -204,6 +222,16 @@ export function ListaPasajeros({
           </Bloque>
         );
       })}
+      <HojaPasajero
+        abierta={fichaAbierta !== null}
+        abordo={fichaAbierta ? abordo(fichaAbierta.boletoId) : false}
+        alAlternarAbordaje={alAlternarAbordaje}
+        alAlternarPago={alAlternarPago}
+        alCerrar={() => establecerAbierto(null)}
+        bloqueada={bloqueada}
+        pagado={fichaAbierta ? pagado(fichaAbierta.boletoId) : false}
+        pasajero={fichaAbierta}
+      />
     </View>
   );
 }
@@ -247,6 +275,12 @@ const estilos = StyleSheet.create({
     paddingHorizontal: espacios.doce,
   },
   pista: { borderRadius: radios.pildora, height: 8, overflow: 'hidden' },
+  principal: {
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+    gap: espacios.doce,
+  },
   relleno: { borderRadius: radios.pildora, height: 8 },
   tarjeta: {
     alignItems: 'center',
