@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 
 jest.mock('@/servicios/supabase/viajesSupabase', () => ({
@@ -9,8 +10,12 @@ import { leerViajesPublicados } from '@/servicios/supabase/viajesSupabase';
 import { DUENO_REMOTO } from './asientosRemotos';
 import { viajeCancelado } from './historialSalidas';
 import { crearBase } from './muestra';
+import { CLAVE_CACHE_VIAJES, guardarCacheViajes } from './cacheViajes';
 import {
   aplicarViajesPublicados,
+  cargarViajesGuardados,
+  obtenerUltimaSincronizacion,
+  reiniciarUltimaSincronizacion,
   sincronizarViajes,
 } from './sincronizarViajes';
 import { armarTodasLasSalidas } from './salidas';
@@ -46,9 +51,11 @@ const PUBLICADOS = {
   ],
 };
 
-beforeEach(() => {
+beforeEach(async () => {
   jest.clearAllMocks();
   reiniciarMuestra();
+  reiniciarUltimaSincronizacion();
+  await AsyncStorage.clear();
 });
 
 describe('aplicarViajesPublicados', () => {
@@ -140,5 +147,38 @@ describe('sincronizarViajes', () => {
     jest.mocked(leerViajesPublicados).mockResolvedValue(PUBLICADOS);
     expect(await sincronizarViajes()).toBe(true);
     expect(obtenerMuestra().viajes.map((v) => v.id)).toEqual(['via_a']);
+  });
+});
+
+describe('sin internet', () => {
+  it('al sincronizar con éxito guarda lo recibido y anota la hora', async () => {
+    jest.mocked(leerViajesPublicados).mockResolvedValue(PUBLICADOS);
+    await sincronizarViajes();
+    expect(obtenerUltimaSincronizacion()).not.toBeNull();
+    await new Promise((resolver) => setTimeout(resolver, 20));
+    expect(await AsyncStorage.getItem(CLAVE_CACHE_VIAJES)).toContain('via_a');
+  });
+
+  it('al abrir sin señal muestra las salidas que se guardaron la última vez', async () => {
+    await guardarCacheViajes(PUBLICADOS, new Date());
+    jest.mocked(leerViajesPublicados).mockResolvedValue(null);
+    expect(await cargarViajesGuardados()).toBe(true);
+    expect(obtenerMuestra().viajes.map((v) => v.id)).toEqual(['via_a']);
+    expect(await sincronizarViajes()).toBe(false);
+    expect(obtenerMuestra().viajes.map((v) => v.id)).toEqual(['via_a']);
+  });
+
+  it('sin nada guardado no inventa salidas', async () => {
+    expect(await cargarViajesGuardados()).toBe(false);
+  });
+
+  it('no pisa una sincronización más nueva con lo guardado', async () => {
+    await guardarCacheViajes(PUBLICADOS, new Date(Date.now() - 3_600_000));
+    jest.mocked(leerViajesPublicados).mockResolvedValue({
+      ...PUBLICADOS,
+      viajes: [],
+    });
+    await sincronizarViajes();
+    expect(await cargarViajesGuardados()).toBe(false);
   });
 });
