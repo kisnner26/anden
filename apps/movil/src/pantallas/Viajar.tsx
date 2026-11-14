@@ -7,6 +7,7 @@ import { OrbeIA } from '@/componentes/OrbeIA';
 import { TarjetaIA } from '@/componentes/TarjetaIA';
 import { consejoDelMomento } from '@/datos/ayudasIA';
 import { destinoHabitual } from '@/datos/memoriaIA';
+import { lineaDelMomento } from '@/datos/lineaDelMomento';
 import { useBoletos } from '@/datos/useBoletos';
 import { useMemoriaIA } from '@/datos/useMemoriaIA';
 import { CalificarViaje } from '@/componentes/CalificarViaje';
@@ -17,6 +18,7 @@ import { EnlaceTerminal } from '@/componentes/EnlaceTerminal';
 import { Campaneo } from '@/componentes/Campaneo';
 import { Aparece } from '@/componentes/Aparece';
 import { FilaSalida } from '@/componentes/FilaSalida';
+import { FotoDestino } from '@/componentes/FotoDestino';
 import { Icono } from '@/componentes/Icono';
 import { GuiaMascota } from '@/componentes/GuiaMascota';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
@@ -88,6 +90,39 @@ export function Viajar({
       ? t('viajar.saludo')
       : `${t('viajar.saludo')}, ${primerNombre}`;
   const proxima = proximaSalida(salidas);
+  const habitual = destinoHabitual(memoriaIA.memoria);
+  const boletoCercano =
+    boletos
+      .filter(
+        ({ boleto, resumen }) =>
+          boleto.estado === 'vigente' &&
+          new Date(resumen.salida).getTime() > ahora.getTime(),
+      )
+      .sort(
+        (a, b) =>
+          new Date(a.resumen.salida).getTime() -
+          new Date(b.resumen.salida).getTime(),
+      )[0] ?? null;
+  /** la foto de cada atajo: la del destino que le importa a esa pestaña */
+  const fotoAtajo = (atajo: 'boletos' | 'horarios' | 'rutas'): string =>
+    atajo === 'boletos'
+      ? (boletoCercano?.resumen.destino ?? 'Boaco')
+      : atajo === 'horarios'
+        ? (proxima?.destino ?? habitual ?? 'Juigalpa')
+        : 'Managua';
+  const linea = lineaDelMomento({
+    ahora,
+    boletoProximo: boletoCercano
+      ? {
+          destino: boletoCercano.resumen.destino,
+          salida: new Date(boletoCercano.resumen.salida),
+        }
+      : null,
+    habitual,
+    proxima: proxima
+      ? { destino: proxima.destino, salida: proxima.salida }
+      : null,
+  });
   const pendientes = salidas
     .filter(
       (salida) =>
@@ -134,7 +169,7 @@ export function Viajar({
             {saludo}
           </Text>
           <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {t('viajar.pregunta')}
+            {linea}
           </Text>
         </View>
         <Pressable
@@ -283,6 +318,7 @@ export function Viajar({
               ] as const
             ).map(([destino, texto, icono]) => (
               <Pressable
+                accessibilityLabel={t(texto)}
                 accessibilityRole="button"
                 key={destino}
                 onPress={() => alIrA(destino)}
@@ -291,15 +327,28 @@ export function Viajar({
                   pressed && estilos.presionado,
                 ]}
               >
-                <Bloque estiloContenido={estilos.atajoContenido}>
-                  <Icono nombre={icono} tamano="ilustracion" />
-                  <Text
-                    numberOfLines={1}
-                    style={[tipografia.pequeno, { color: colores.tinta }]}
-                  >
-                    {t(texto)}
-                  </Text>
-                </Bloque>
+                <FotoDestino
+                  destino={fotoAtajo(destino)}
+                  estilo={estilos.atajoFoto}
+                  radio="bloque"
+                >
+                  <View style={estilos.atajoTexto}>
+                    <Icono
+                      color={colores.sobreNegro}
+                      nombre={icono}
+                      tamano="mediano"
+                    />
+                    <Text
+                      numberOfLines={1}
+                      style={[
+                        tipografia.pequeno,
+                        { color: colores.sobreNegro },
+                      ]}
+                    >
+                      {t(texto)}
+                    </Text>
+                  </View>
+                </FotoDestino>
               </Pressable>
             ))}
           </View>
@@ -344,7 +393,16 @@ export function Viajar({
           )}
           {pendientes.map((salida, indice) => (
             <Aparece indice={indice} key={salida.viajeId}>
-              <FilaSalida alPresionar={alAbrirViaje} salida={salida} />
+              <FilaSalida
+                alPresionar={alAbrirViaje}
+                salida={salida}
+                sugerida={
+                  habitual &&
+                  salida.destino.toLowerCase() === habitual.toLowerCase()
+                    ? t('viajar.paraVos')
+                    : undefined
+                }
+              />
             </Aparece>
           ))}
         </View>
@@ -381,6 +439,8 @@ const estilos = StyleSheet.create({
   },
   textoDondeViene: { flex: 1, gap: espacios.cuatro },
   atajo: { flex: 1 },
+  atajoFoto: { height: 104, justifyContent: 'flex-end' },
+  atajoTexto: { gap: espacios.cuatro, padding: espacios.doce },
   atajoContenido: {
     alignItems: 'center',
     gap: espacios.ocho,
