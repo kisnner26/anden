@@ -31,7 +31,16 @@ function leerGuardados(texto: string | null): BoletoGuardado[] {
   if (!texto) return [];
   try {
     const valor: unknown = JSON.parse(texto);
-    return Array.isArray(valor) ? (valor as BoletoGuardado[]) : [];
+    if (!Array.isArray(valor)) return [];
+    // los boletos guardados antes de los Plus Codes traían un número de andén: quedan con el punto por confirmar
+    return (valor as BoletoGuardado[]).map((guardado) =>
+      typeof guardado.resumen?.puntoEncuentro === 'string'
+        ? guardado
+        : {
+            ...guardado,
+            resumen: { ...guardado.resumen, puntoEncuentro: '' },
+          },
+    );
   } catch {
     return [];
   }
