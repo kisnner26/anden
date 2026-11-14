@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
 
 import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
@@ -85,11 +86,15 @@ function Estrella({
           ],
         }}
       >
-        <Icono
-          color={activa ? undefined : colores.linea}
-          nombre="estrella"
-          tamano="ilustracion"
-        />
+        <Svg height={40} viewBox="0 0 48 48" width={40}>
+          <Path
+            d="M24 5L29.800 17.200L43 19L33.400 28.200L35.800 41.400L24 35.200L12.200 41.400L14.600 28.200L5 19L18.200 17.200Z"
+            fill={activa ? colores.ambar : 'none'}
+            stroke={activa ? colores.ambar : colores.tintaSuave}
+            strokeLinejoin="round"
+            strokeWidth={2.5}
+          />
+        </Svg>
       </Animated.View>
     </Presionable>
   );
@@ -110,6 +115,8 @@ export function CalificarViaje({
   const [etiquetas, establecerEtiquetas] = useState<string[]>([]);
   const [comentario, establecerComentario] = useState('');
   const [enviada, establecerEnviada] = useState(false);
+  // la tarjeta se va sola un momento después de agradecer, o al elegir "Ahora no"
+  const [oculta, establecerOculta] = useState(false);
   const [yaCalificado, establecerYaCalificado] = useState<boolean | null>(null);
   const { boleto, resumen } = guardado;
 
@@ -119,7 +126,15 @@ export function CalificarViaje({
     );
   }, [boleto.id]);
 
-  if (yaCalificado === null || (yaCalificado && !enviada)) return null;
+  useEffect(() => {
+    if (!enviada) return;
+    const espera = setTimeout(() => establecerOculta(true), 2200);
+    return () => clearTimeout(espera);
+  }, [enviada]);
+
+  if (oculta || yaCalificado === null || (yaCalificado && !enviada)) {
+    return null;
+  }
 
   function elegirEtiqueta(etiqueta: string) {
     establecerEtiquetas((actuales) =>
@@ -213,11 +228,21 @@ export function CalificarViaje({
           />
         </>
       )}
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => establecerOculta(true)}
+        style={estilos.ahoraNo}
+      >
+        <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+          {t('calificarViaje.ahoraNo')}
+        </Text>
+      </Pressable>
     </Bloque>
   );
 }
 
 const estilos = StyleSheet.create({
+  ahoraNo: { alignItems: 'center', justifyContent: 'center', minHeight: 44 },
   centrado: { textAlign: 'center' },
   chispas: { alignItems: 'center', height: 56, justifyContent: 'center' },
   estrellas: { flexDirection: 'row', gap: espacios.ocho },
