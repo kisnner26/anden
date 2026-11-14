@@ -956,6 +956,7 @@ export const textos = {
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
   boleto: {
+    ampliarAccion: 'Mostrar el código grande',
     titulo: 'Tu boleto',
     reservado: 'Reservado',
     hacia: 'Hacia',
