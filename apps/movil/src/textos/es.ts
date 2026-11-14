@@ -833,6 +833,9 @@ export const textos = {
     sinSalidasDia: 'No hay salidas ese día.',
   },
   horarios: {
+    tambienSalen: 'Ese día también salen {cantidad} bus(es) desde {terminal}.',
+    verlas: 'Ver',
+    cambiarTerminal: 'Ver las salidas desde {terminal}',
     titulo: 'Salidas',
     terminal: 'Mercado Mayoreo',
     ciudad: 'Managua',
