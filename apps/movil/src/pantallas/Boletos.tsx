@@ -1,14 +1,20 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Bloque } from '@/componentes/Bloque';
+import { Aparece } from '@/componentes/Aparece';
+import { BarraPreguntaIA } from '@/componentes/BarraPreguntaIA';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CarruselBoletos } from '@/componentes/CarruselBoletos';
 import { ControlSegmentado } from '@/componentes/ControlSegmentado';
+import { FotoDestino } from '@/componentes/FotoDestino';
 import { HistorialViajes } from '@/componentes/HistorialViajes';
+import { ResumenIA } from '@/componentes/ResumenIA';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
+import { lineaDeBoleto } from '@/datos/contextoIA';
+import { FICHAS } from '@/datos/fichasCiudad';
 import type { BoletoGuardado } from '@/datos/reserva';
 import { useBoletos } from '@/datos/useBoletos';
 import { useAhora } from '@/datos/useSalidas';
@@ -20,6 +26,8 @@ import { t } from '@/textos/t';
 export interface PropiedadesBoletos {
   alAbrirBoleto: (boletoId: string) => void;
   alBuscar: () => void;
+  /** abre el asistente con una pregunta sobre los boletos; solo se ofrece con la IA lista */
+  alPreguntar?: (pregunta: string) => void;
   /** abre la pantalla de Andén Plus */
   alAbrirPlus?: () => void;
 }
@@ -35,6 +43,7 @@ export function Boletos({
   alAbrirBoleto,
   alAbrirPlus,
   alBuscar,
+  alPreguntar,
 }: PropiedadesBoletos) {
   const { colores } = useTema();
   const ahora = useAhora();
@@ -87,6 +96,45 @@ export function Boletos({
           </View>
           <BotonAccion alPresionar={alBuscar} etiqueta={t('boletos.buscar')} />
         </Bloque>
+      ) : null}
+      {boletos.length === 0 ? (
+        <View style={estilos.destinos}>
+          <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+            {t('boletosVisual.destinosTitulo')}
+          </Text>
+          <ScrollView
+            contentContainerStyle={estilos.carrusel}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          >
+            {FICHAS.map((ficha) => (
+              <Pressable
+                accessibilityLabel={ficha.ciudad}
+                accessibilityRole="link"
+                key={ficha.ciudad}
+                onPress={alBuscar}
+                style={({ pressed }) => pressed && estilos.presionada}
+              >
+                <FotoDestino
+                  destino={ficha.ciudad}
+                  estilo={estilos.ciudad}
+                  radio="tarjeta"
+                >
+                  <View style={estilos.ciudadTexto}>
+                    <Text
+                      style={[
+                        tipografia.subtitulo,
+                        { color: colores.sobreNegro },
+                      ]}
+                    >
+                      {ficha.ciudad}
+                    </Text>
+                  </View>
+                </FotoDestino>
+              </Pressable>
+            ))}
+          </ScrollView>
+        </View>
       ) : (
         <>
           {proximos.length > 0 && pasados.length > 0 && (
@@ -113,6 +161,30 @@ export function Boletos({
               boletos={pasados}
             />
           )}
+          {!mostrandoHistorial && proximos.length > 0 && (
+            <Aparece indice={1}>
+              <View style={estilos.ia}>
+                <ResumenIA
+                  contexto={`Boletos vigentes de esta persona:\n${proximos
+                    .slice(0, 4)
+                    .map(lineaDeBoleto)
+                    .join('\n')}`}
+                  pedido={t('boletosVisual.resumenPedido')}
+                  titulo={t('boletosVisual.resumenTitulo')}
+                />
+                {alPreguntar && (
+                  <BarraPreguntaIA
+                    alPreguntar={alPreguntar}
+                    sugerencias={[
+                      t('boletosVisual.preguntas.cuando'),
+                      t('boletosVisual.preguntas.hora'),
+                      t('boletosVisual.preguntas.donde'),
+                    ]}
+                  />
+                )}
+              </View>
+            </Aparece>
+          )}
         </>
       )}
     </MarcoPestana>
@@ -120,6 +192,12 @@ export function Boletos({
 }
 
 const estilos = StyleSheet.create({
+  carrusel: { gap: espacios.doce, paddingRight: espacios.lateral },
+  ciudad: { height: 132, justifyContent: 'flex-end', width: 200 },
+  ciudadTexto: { padding: espacios.doce },
+  destinos: { gap: espacios.ocho },
+  ia: { gap: espacios.dieciseis },
+  presionada: { opacity: 0.92, transform: [{ scale: 0.98 }] },
   bloque: { marginTop: espacios.veinticuatro },
   centrada: { alignItems: 'center' },
   contenido: { gap: espacios.treintaYDos },
