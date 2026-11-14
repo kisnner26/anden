@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
   Easing,
+  type SharedValue,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
@@ -94,6 +95,44 @@ function Nube({
   );
 }
 
+/** una raya de velocidad: entra por la izquierda con el bus y se desvanece antes de llegar al otro lado */
+function LineaDeVelocidad({
+  ancho,
+  avance,
+  largo,
+  retraso,
+  y,
+}: {
+  ancho: number;
+  avance: SharedValue<number>;
+  largo: number;
+  retraso: number;
+  y: number;
+}) {
+  const { colores } = useTema();
+  const estilo = useAnimatedStyle(() => {
+    const p = Math.min(1, Math.max(0, avance.value - retraso) / (1 - retraso));
+    return {
+      opacity: Math.sin(p * Math.PI) * 0.55,
+      transform: [{ translateX: -largo + p * (ancho * 0.75 + largo) }],
+    };
+  });
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[
+        estilos.lineaVelocidad,
+        {
+          backgroundColor: conAlfa(colores.tintaSuave, 0.7),
+          top: y,
+          width: largo,
+        },
+        estilo,
+      ]}
+    />
+  );
+}
+
 /**
  * el paisaje de la portada: un sol que sale detrás del nombre, dos capas de colinas, nubes que pasan y un camino con
  * rayas que corren, como si el bus ya estuviera andando. Todo con los colores del tema
@@ -108,6 +147,9 @@ export function PaisajePortada({
   const { colores } = useTema();
   const sol = useSharedValue(reducido ? 1 : 0);
   const camino = useSharedValue(0);
+  const rayos = useSharedValue(0);
+  const estela = useSharedValue(0);
+  const faros = useSharedValue(reducido ? 1 : 0);
   const yCamino = yMarca + 100 + (ancho / 520) * 268;
 
   useEffect(() => {
@@ -119,12 +161,30 @@ export function PaisajePortada({
         easing: Easing.out(Easing.cubic),
       }),
     );
+    rayos.value = withRepeat(
+      withTiming(1, { duration: 70_000, easing: Easing.linear }),
+      -1,
+      false,
+    );
+    // las líneas de velocidad pasan una sola vez, mientras el bus llega
+    estela.value = withTiming(1, {
+      duration: rapido ? 650 : 1500,
+      easing: Easing.out(Easing.quad),
+    });
+    faros.value = withDelay(
+      rapido ? 450 : 1100,
+      withRepeat(
+        withTiming(1, { duration: 1400, easing: Easing.inOut(Easing.sin) }),
+        -1,
+        true,
+      ),
+    );
     camino.value = withRepeat(
       withTiming(1, { duration: rapido ? 500 : 900, easing: Easing.linear }),
       -1,
       false,
     );
-  }, [camino, rapido, reducido, sol]);
+  }, [camino, estela, faros, rapido, rayos, reducido, sol]);
 
   const estiloSol = useAnimatedStyle(() => ({
     opacity: sol.value,
@@ -132,6 +192,13 @@ export function PaisajePortada({
       { translateY: (1 - sol.value) * 70 },
       { scale: 0.85 + sol.value * 0.15 },
     ],
+  }));
+  const estiloRayos = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rayos.value * 360}deg` }],
+  }));
+  const estiloFaros = useAnimatedStyle(() => ({
+    opacity: 0.25 + faros.value * 0.35,
+    transform: [{ scale: 0.9 + faros.value * 0.2 }],
   }));
   const estiloRayas = useAnimatedStyle(() => ({
     transform: [{ translateX: -camino.value * 56 }],
@@ -177,6 +244,36 @@ export function PaisajePortada({
         </Svg>
       </Animated.View>
 
+      <Animated.View
+        style={[
+          estilos.sol,
+          {
+            height: radioSol * 2,
+            left: ancho * 0.74 - radioSol,
+            top: yMarca - radioSol * 0.35,
+            width: radioSol * 2,
+          },
+          estiloRayos,
+        ]}
+      >
+        <Svg height={radioSol * 2} width={radioSol * 2}>
+          {Array.from({ length: 14 }, (_, i) => {
+            const a = (i * 2 * Math.PI) / 14;
+            const a2 = a + 0.1;
+            const r1 = radioSol * 0.28;
+            const r2 = radioSol * 0.98;
+            const c = radioSol;
+            return (
+              <Path
+                d={`M${c + Math.cos(a) * r1} ${c + Math.sin(a) * r1} L${c + Math.cos(a) * r2} ${c + Math.sin(a) * r2} L${c + Math.cos(a2) * r2} ${c + Math.sin(a2) * r2} L${c + Math.cos(a2) * r1} ${c + Math.sin(a2) * r1} Z`}
+                fill={conAlfa(colores.ambar, 0.1)}
+                key={i}
+              />
+            );
+          })}
+        </Svg>
+      </Animated.View>
+
       <Nube
         ancho={ancho}
         demora={0}
@@ -212,6 +309,36 @@ export function PaisajePortada({
         />
       </Svg>
 
+      {reducido
+        ? null
+        : [0, 1, 2, 3, 4].map((i) => (
+            <LineaDeVelocidad
+              ancho={ancho}
+              avance={estela}
+              key={i}
+              largo={70 + (i % 3) * 36}
+              retraso={i * 0.06}
+              y={yMarca + 120 + i * ((yCamino - yMarca - 130) / 4)}
+            />
+          ))}
+      <Animated.View
+        style={[
+          estilos.faros,
+          { left: ancho * 0.9 - 30, top: yCamino - 46 },
+          estiloFaros,
+        ]}
+      >
+        <Svg height={60} width={60}>
+          <Defs>
+            <RadialGradient cx="50%" cy="50%" id="faro" r="50%">
+              <Stop offset="0" stopColor={colores.ambar} stopOpacity={0.7} />
+              <Stop offset="1" stopColor={colores.ambar} stopOpacity={0} />
+            </RadialGradient>
+          </Defs>
+          <Circle cx={30} cy={30} fill="url(#faro)" r={30} />
+        </Svg>
+      </Animated.View>
+
       <View style={[estilos.camino, { top: yCamino + 21 }]}>
         <Animated.View style={[estilos.rayas, estiloRayas]}>
           {Array.from({ length: Math.ceil(ancho / 56) + 3 }, (_, i) => (
@@ -236,6 +363,13 @@ const estilos = StyleSheet.create({
     overflow: 'hidden',
     position: 'absolute',
     right: 0,
+  },
+  faros: { position: 'absolute' },
+  lineaVelocidad: {
+    borderRadius: 2,
+    height: 3,
+    left: 0,
+    position: 'absolute',
   },
   nube: { left: 0, position: 'absolute' },
   raya: { borderRadius: 2, height: 4, marginRight: 32, width: 24 },
