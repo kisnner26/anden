@@ -20,9 +20,11 @@ import { CalificarViaje } from '@/componentes/CalificarViaje';
 import { OverlayBoleto, TalonAmpliable } from '@/componentes/TalonAmpliable';
 import { TalonBoleto } from '@/componentes/TalonBoleto';
 import { estadoVisibleBoleto } from '@/datos/estadoBoleto';
+import { faseDeActividad } from '@/datos/faseDelViaje';
 import { useBoletos } from '@/datos/useBoletos';
 import {
   actividadesDisponibles,
+  actualizarActividad,
   iniciarActividad,
   terminarActividad,
 } from '../../modules/anden-actividad';
@@ -137,6 +139,23 @@ export function VerBoleto({
   }, [sonar]);
   const guardado = boletos.find(({ boleto }) => boleto.id === boletoId);
 
+  // mientras la actividad en vivo está abierta, sigue el estado del viaje: cambia de color y de texto sola
+  useEffect(() => {
+    if (!actividadId || !guardado) return;
+    const vigente = salidas.find(
+      (candidata) => candidata.viajeId === guardado.boleto.viajeId,
+    );
+    void actualizarActividad(
+      actividadId,
+      guardado.resumen.puntoEncuentro,
+      rellenar(t('boleto.actividadEstado'), {
+        puntoEncuentro: guardado.resumen.puntoEncuentro,
+        hora: horaTexto(new Date(guardado.resumen.salida)),
+      }),
+      faseDeActividad(vigente?.estado),
+    );
+  }, [actividadId, guardado, salidas]);
+
   if (!guardado) {
     return (
       <View
@@ -200,6 +219,8 @@ export function VerBoleto({
     }
     establecerActividadId(
       await iniciarActividad({
+        fase: faseDeActividad(salidaVigente?.estado),
+        origen: guardado!.resumen.origen ?? '',
         puntoEncuentro: guardado!.resumen.puntoEncuentro,
         destino: guardado!.resumen.destino,
         estado: rellenar(t('boleto.actividadEstado'), {
