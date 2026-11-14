@@ -25,7 +25,7 @@ export interface PasajeroReserva {
 
 /** lo que se necesita para mostrar un boleto aunque el viaje cambie después */
 export interface ResumenBoleto {
-  anden: number;
+  puntoEncuentro: string;
   choferId: string;
   choferNombre: string;
   cooperativa: string;
@@ -123,7 +123,7 @@ export function crearReserva(
   if (!precio.ok) return error('sin-tarifa');
 
   const resumen: ResumenBoleto = {
-    anden: viaje.anden,
+    puntoEncuentro: viaje.puntoEncuentro,
     choferId: chofer.id,
     choferNombre: chofer.nombre,
     cooperativa: bus.cooperativa,

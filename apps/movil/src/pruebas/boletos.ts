@@ -19,7 +19,7 @@ export function boletoDePrueba(
       viajeId: 'via_2',
     },
     resumen: {
-      anden: 4,
+      puntoEncuentro: '764M4PPX+HH',
       choferId: 'cho_2',
       choferNombre: 'Marvin Lanzas',
       cooperativa: 'Cooperativa de muestra',

@@ -15,7 +15,7 @@ import { t } from '@/textos/t';
 export type PermisoNotificaciones = 'concedido' | 'negado' | 'sin-preguntar';
 
 export interface RecordatorioPorProgramar {
-  anden: number;
+  puntoEncuentro: string;
   cuando: Date;
   destino: string;
   texto: { cuerpo: string; titulo: string };

@@ -11,11 +11,11 @@ export const MINUTOS_AVISO_PRONTO = 60;
 const MS_MINUTO = 60_000;
 
 export type TipoAviso =
-  'anden' | 'atraso' | 'cancelado' | 'liberado' | 'pronto';
+  'puntoEncuentro' | 'atraso' | 'cancelado' | 'liberado' | 'pronto';
 
 /** un aviso sobre un boleto; el texto lo arma la pantalla con estos datos */
 export interface Aviso {
-  anden: number;
+  puntoEncuentro: string;
   boletoId: string;
   destino: string;
   /** atraso en minutos o minutos que faltan para salir, según el tipo */
@@ -55,7 +55,7 @@ export function avisosDeBoletos(
     viajesAvisados.add(boleto.viajeId);
 
     const base = {
-      anden: salida.anden,
+      puntoEncuentro: salida.puntoEncuentro,
       boletoId: boleto.id,
       destino: resumen.destino,
     };
@@ -84,12 +84,12 @@ export function avisosDeBoletos(
         tipo: 'atraso',
       });
     }
-    if (salida.anden !== resumen.anden) {
+    if (salida.puntoEncuentro !== resumen.puntoEncuentro) {
       avisos.push({
         ...base,
         id: `${boleto.viajeId}:anden`,
         minutos: minutosParaSalir,
-        tipo: 'anden',
+        tipo: 'puntoEncuentro',
       });
     }
     if (minutosParaSalir <= MINUTOS_AVISO_PRONTO) {
@@ -110,7 +110,7 @@ export function avisosDeEspera(
   salidas: readonly Salida[],
 ): Aviso[] {
   return salidasLiberadas(esperas, salidas).map((salida) => ({
-    anden: salida.anden,
+    puntoEncuentro: salida.puntoEncuentro,
     boletoId: salida.viajeId,
     destino: salida.destino,
     id: `${salida.viajeId}:liberado`,

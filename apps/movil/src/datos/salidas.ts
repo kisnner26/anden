@@ -11,7 +11,7 @@ import { mismoDia } from './dias';
 import type { DatosMuestra } from './muestra';
 
 export interface Salida {
-  anden: number;
+  puntoEncuentro: string;
   choferId: string;
   asientosLibres: number;
   codigoDestino: string;
@@ -74,7 +74,7 @@ export function armarSalidas(
     ).filter((asiento) => asiento.estado === 'libre').length;
 
     salidas.push({
-      anden: viaje.anden,
+      puntoEncuentro: viaje.puntoEncuentro,
       asientosLibres,
       choferId: viaje.choferId,
       codigoDestino: destino.codigo,

@@ -140,12 +140,12 @@ export function ProveedorAvisos({ children }: { children: ReactNode }) {
           );
           if (cuando.getTime() <= Date.now()) continue;
           programados[boleto.id] = await programarRecordatorio({
-            anden: salida?.anden ?? resumen.anden,
+            puntoEncuentro: salida?.puntoEncuentro ?? resumen.puntoEncuentro,
             cuando,
             destino: resumen.destino,
             texto: textoRecordatorio(
               resumen.destino,
-              salida?.anden ?? resumen.anden,
+              salida?.puntoEncuentro ?? resumen.puntoEncuentro,
             ),
           });
         }

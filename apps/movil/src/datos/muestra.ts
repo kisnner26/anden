@@ -142,23 +142,71 @@ const NOMBRES_CHOFER = [
 
 /** salidas de muestra, en minutos respecto de la hora actual */
 const SALIDAS: Array<{
-  anden: number;
+  puntoEncuentro: string;
   atraso: number;
   desde: number;
   destino: string;
   origen?: string;
   servicio: TipoServicio;
 }> = [
-  { anden: 3, atraso: 0, desde: -10, destino: 'boa', servicio: 'ordinario' },
-  { anden: 3, atraso: 0, desde: 20, destino: 'boa', servicio: 'ordinario' },
-  { anden: 4, atraso: 0, desde: 28, destino: 'jui', servicio: 'ordinario' },
-  { anden: 1, atraso: 10, desde: 32, destino: 'jui', servicio: 'expreso' },
-  { anden: 6, atraso: 0, desde: 40, destino: 'boa', servicio: 'ordinario' },
-  { anden: 4, atraso: 0, desde: 55, destino: 'jui', servicio: 'ordinario' },
-  { anden: 2, atraso: 0, desde: 65, destino: 'boa', servicio: 'expreso' },
-  { anden: 1, atraso: 0, desde: 80, destino: 'jui', servicio: 'expreso' },
   {
-    anden: 1,
+    puntoEncuentro: '764M4PPX+HC',
+    atraso: 0,
+    desde: -10,
+    destino: 'boa',
+    servicio: 'ordinario',
+  },
+  {
+    puntoEncuentro: '764M4PPX+HC',
+    atraso: 0,
+    desde: 20,
+    destino: 'boa',
+    servicio: 'ordinario',
+  },
+  {
+    puntoEncuentro: '764M4PPX+HC',
+    atraso: 0,
+    desde: 28,
+    destino: 'jui',
+    servicio: 'ordinario',
+  },
+  {
+    puntoEncuentro: '764M4PPX+HC',
+    atraso: 10,
+    desde: 32,
+    destino: 'jui',
+    servicio: 'expreso',
+  },
+  {
+    puntoEncuentro: '764M4PPX+HC',
+    atraso: 0,
+    desde: 40,
+    destino: 'boa',
+    servicio: 'ordinario',
+  },
+  {
+    puntoEncuentro: '764M4PPX+HC',
+    atraso: 0,
+    desde: 55,
+    destino: 'jui',
+    servicio: 'ordinario',
+  },
+  {
+    puntoEncuentro: '764M4PPX+HC',
+    atraso: 0,
+    desde: 65,
+    destino: 'boa',
+    servicio: 'expreso',
+  },
+  {
+    puntoEncuentro: '764M4PPX+HC',
+    atraso: 0,
+    desde: 80,
+    destino: 'jui',
+    servicio: 'expreso',
+  },
+  {
+    puntoEncuentro: '764PF89R+P4',
     atraso: 0,
     desde: 18,
     destino: 'may',
@@ -166,7 +214,7 @@ const SALIDAS: Array<{
     servicio: 'ordinario',
   },
   {
-    anden: 2,
+    puntoEncuentro: '764P4J4P+FH',
     atraso: 0,
     desde: 26,
     destino: 'may',
@@ -174,7 +222,7 @@ const SALIDAS: Array<{
     servicio: 'ordinario',
   },
   {
-    anden: 1,
+    puntoEncuentro: '764PF89R+P4',
     atraso: 0,
     desde: 34,
     destino: 'may',
@@ -182,7 +230,7 @@ const SALIDAS: Array<{
     servicio: 'ordinario',
   },
   {
-    anden: 2,
+    puntoEncuentro: '764P4J4P+FH',
     atraso: 0,
     desde: 42,
     destino: 'may',
@@ -190,7 +238,7 @@ const SALIDAS: Array<{
     servicio: 'expreso',
   },
   {
-    anden: 1,
+    puntoEncuentro: '764PF89R+P4',
     atraso: 0,
     desde: 50,
     destino: 'may',
@@ -198,7 +246,7 @@ const SALIDAS: Array<{
     servicio: 'ordinario',
   },
   {
-    anden: 2,
+    puntoEncuentro: '764P4J4P+FH',
     atraso: 0,
     desde: 58,
     destino: 'may',
@@ -222,10 +270,10 @@ const HORARIO_DIARIO: ReadonlyArray<{
 ];
 
 const SENTIDOS_DIARIOS = [
-  { anden: 3, rutaId: 'rut_may_boa' },
-  { anden: 4, rutaId: 'rut_may_jui' },
-  { anden: 1, rutaId: 'rut_boa_may' },
-  { anden: 2, rutaId: 'rut_jui_may' },
+  { puntoEncuentro: '764M4PPX+HC', rutaId: 'rut_may_boa' },
+  { puntoEncuentro: '764M4PPX+HC', rutaId: 'rut_may_jui' },
+  { puntoEncuentro: '764PF89R+P4', rutaId: 'rut_boa_may' },
+  { puntoEncuentro: '764P4J4P+FH', rutaId: 'rut_jui_may' },
 ] as const;
 
 /** notas de muestra de cada chofer, de la más vieja a la más nueva */
@@ -299,7 +347,7 @@ export function crearMuestra(ahora: Date): DatosMuestra {
       servicio: salida.servicio,
     });
     viajes.push({
-      anden: salida.anden,
+      puntoEncuentro: salida.puntoEncuentro,
       busId: `bus_${numero}`,
       choferId: `cho_${(indice % choferes.length) + 1}`,
       estado: salida.atraso > 0 ? 'atrasado' : 'programado',
@@ -332,7 +380,7 @@ export function crearMuestra(ahora: Date): DatosMuestra {
           servicio: horario.servicio,
         });
         viajes.push({
-          anden: sentido.anden,
+          puntoEncuentro: sentido.puntoEncuentro,
           busId: `bus_${id}`,
           choferId: `cho_${(secuencia % choferes.length) + 1}`,
           estado: 'programado',

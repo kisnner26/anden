@@ -10,7 +10,7 @@ const MS_MINUTO = 60_000;
 
 /** un aviso que la persona pidió para una salida, sin tener boleto */
 export interface RecordatorioSalida {
-  anden: number;
+  puntoEncuentro: string;
   destino: string;
   /** identificador de la notificación programada en el teléfono */
   identificador: string;
@@ -80,7 +80,6 @@ function esRecordatorio(valor: unknown): valor is RecordatorioSalida {
     typeof r.destino === 'string' &&
     typeof r.identificador === 'string' &&
     typeof r.salida === 'string' &&
-    typeof r.anden === 'number' &&
     typeof r.minutosAntes === 'number'
   );
 }
@@ -90,7 +89,16 @@ export async function leerRecordatorios(): Promise<RecordatorioSalida[]> {
     const valor: unknown = JSON.parse(
       (await AsyncStorage.getItem(CLAVE_RECORDATORIOS)) ?? '[]',
     );
-    return Array.isArray(valor) ? valor.filter(esRecordatorio) : [];
+    // los recordatorios de antes de los Plus Codes traían el andén como número: quedan con el punto por confirmar
+    return Array.isArray(valor)
+      ? valor.filter(esRecordatorio).map((recordatorio) => ({
+          ...recordatorio,
+          puntoEncuentro:
+            typeof recordatorio.puntoEncuentro === 'string'
+              ? recordatorio.puntoEncuentro
+              : '',
+        }))
+      : [];
   } catch {
     return [];
   }

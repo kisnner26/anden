@@ -93,12 +93,12 @@ export function ProveedorRecordatorios({ children }: { children: ReactNode }) {
           }
         }
         const identificador = await programarRecordatorio({
-          anden: salida.anden,
+          puntoEncuentro: salida.puntoEncuentro,
           cuando,
           destino: salida.destino,
           texto: {
             cuerpo: rellenar(t('recordatorios.cuerpo'), {
-              anden: salida.anden,
+              puntoEncuentro: salida.puntoEncuentro,
             }),
             titulo: rellenar(t('recordatorios.titulo'), {
               destino: salida.destino,
@@ -108,7 +108,7 @@ export function ProveedorRecordatorios({ children }: { children: ReactNode }) {
         });
         await persistir(
           conRecordatorio(lista, {
-            anden: salida.anden,
+            puntoEncuentro: salida.puntoEncuentro,
             destino: salida.destino,
             identificador,
             minutosAntes,
