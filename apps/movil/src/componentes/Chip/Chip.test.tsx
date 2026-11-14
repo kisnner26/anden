@@ -1,14 +1,13 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, render } from '@testing-library/react-native';
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
+import { selectionAsync } from 'expo-haptics';
 
 import { t } from '@/textos/t';
 
 import { Chip } from './Chip';
 
 jest.mock('expo-haptics', () => ({
-  impactAsync: jest.fn(() => Promise.resolve()),
-  ImpactFeedbackStyle: { Light: 'light' },
+  selectionAsync: jest.fn(() => Promise.resolve()),
 }));
 
 describe('Chip', () => {
@@ -27,7 +26,7 @@ describe('Chip', () => {
         selected: false,
       }),
     );
-    expect(impactAsync).toHaveBeenCalledWith(ImpactFeedbackStyle.Light);
+    expect(selectionAsync).toHaveBeenCalledTimes(1);
     expect(alCambiar).toHaveBeenCalledWith(true);
     expect(pantalla.getByTestId('chip-fondo-barro')).toBeOnTheScreen();
     expect(pantalla.queryByTestId('chip-seleccionado-indicador')).toBeNull();
