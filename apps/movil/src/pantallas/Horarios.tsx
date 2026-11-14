@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Aparece } from '@/componentes/Aparece';
 import { AtajosDelDia } from '@/componentes/AtajosDelDia';
+import { BarraPreguntaIA } from '@/componentes/BarraPreguntaIA';
 import { FiltroDestinos } from '@/componentes/FiltroDestinos';
 import { LineaDelDia } from '@/componentes/LineaDelDia';
 import { ProximaSalidaFoto } from '@/componentes/ProximaSalidaFoto';
@@ -52,6 +53,8 @@ const FILTROS: readonly { clave: Filtro; etiqueta: () => string }[] = [
 ];
 
 export interface PropiedadesHorarios {
+  /** abre el asistente con una pregunta; solo se ofrece con la IA lista */
+  alPreguntar?: (pregunta: string) => void;
   alAbrirBuscador?: () => void;
   alAbrirViaje?: (viajeId: string) => void;
 }
@@ -60,6 +63,7 @@ export interface PropiedadesHorarios {
 export function Horarios({
   alAbrirBuscador,
   alAbrirViaje,
+  alPreguntar,
 }: PropiedadesHorarios) {
   const { colores } = useTema();
   const [terminalId, establecerTerminalId] = useState('ter_may');
@@ -193,6 +197,19 @@ export function Horarios({
           </Text>
         </View>
       </Bloque>
+
+      {alPreguntar && (
+        <View style={estilos.terminal}>
+          <BarraPreguntaIA
+            alPreguntar={alPreguntar}
+            sugerencias={[
+              t('preguntaIA.horarios.conviene'),
+              t('preguntaIA.horarios.barata'),
+              t('preguntaIA.horarios.tarde'),
+            ]}
+          />
+        </View>
+      )}
 
       {proxima ? (
         <Aparece>
