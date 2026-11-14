@@ -2,7 +2,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Autobus, varianteDeClave } from '@/componentes/Autobus';
 import { BarridoDeLuz } from '@/componentes/BarridoDeLuz';
 import { FotoDestino } from '@/componentes/FotoDestino';
 import { minutosHastaSalida } from '@/datos/estadoBoleto';
@@ -14,7 +13,6 @@ import {
   formatoHoraCompleta,
 } from '@/datos/formato';
 import type { BoletoGuardado } from '@/datos/reserva';
-import { useBusPropio } from '@/datos/useBusPropio';
 import { conAlfa } from '@/tema/alfa';
 import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -40,7 +38,6 @@ export function TarjetaBoleto({
   pasado = false,
 }: PropiedadesTarjetaBoleto) {
   const { colores } = useTema();
-  const { efectivo } = useBusPropio();
   const { boleto, resumen } = guardado;
   const salida = new Date(resumen.salida);
   const minutos = minutosHastaSalida(guardado, ahora);
@@ -103,11 +100,6 @@ export function TarjetaBoleto({
                 {`${formatoFechaCorta(salida)} · ${formatoHoraCompleta(salida)}`}
               </Text>
             </View>
-            <Autobus
-              ancho={84}
-              letrero={resumen.destino.toUpperCase()}
-              variante={efectivo ?? varianteDeClave(resumen.destino)}
-            />
           </View>
         </FotoDestino>
         <View style={estilos.cinta}>
