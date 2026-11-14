@@ -6,7 +6,7 @@ import { Aparece } from '@/componentes/Aparece';
 import { AtajosDelDia } from '@/componentes/AtajosDelDia';
 import { BarraPreguntaIA } from '@/componentes/BarraPreguntaIA';
 import { FiltroDestinos } from '@/componentes/FiltroDestinos';
-import { LineaDelDia } from '@/componentes/LineaDelDia';
+import { CarruselSalidas } from '@/componentes/CarruselSalidas';
 import { ProximaSalidaFoto } from '@/componentes/ProximaSalidaFoto';
 import { ResumenIA } from '@/componentes/ResumenIA';
 import { Bloque } from '@/componentes/Bloque';
@@ -336,7 +336,7 @@ export function Horarios({
       </Hoja>
 
       <View style={estilos.graficos}>
-        <LineaDelDia
+        <CarruselSalidas
           ahora={ahora}
           alElegir={alAbrirViaje}
           esHoy={esHoy}
