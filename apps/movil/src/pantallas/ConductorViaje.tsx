@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Path } from 'react-native-svg';
+import Svg, { Circle, Path } from 'react-native-svg';
 
 import { Bloque } from '@/componentes/Bloque';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
@@ -25,7 +25,14 @@ import { Icono } from '@/componentes/Icono';
 import { MapaConductor } from '@/componentes/MapaConductor';
 import { PanelDeslizable } from '@/componentes/PanelDeslizable';
 import { PieReserva } from '@/componentes/PieReserva';
-import { formatoHoraCompleta } from '@/datos/formato';
+import { formatoDuracion, formatoHoraCompleta } from '@/datos/formato';
+import {
+  intercambiarPuntos,
+  marcarPunto,
+  resumenDelTramo,
+  SIN_PUNTOS,
+  type PuntosManuales,
+} from '@/datos/rutaManual';
 import { verificarConductor } from '@/datos/biometria';
 import { progresoSobreTrazo } from '@/datos/progresoViaje';
 import {
@@ -93,7 +100,11 @@ export function ConductorViaje({
   const [problema, establecerProblema] = useState<string | null>(null);
   const [cerrando, establecerCerrando] = useState(false);
   const [centrar, establecerCentrar] = useState(0);
+  // marcar a mano un tramo de A a B sobre el mapa
+  const [marcando, establecerMarcando] = useState(false);
+  const [puntos, establecerPuntos] = useState<PuntosManuales>(SIN_PUNTOS);
   const { height } = useWindowDimensions();
+  const tramo = resumenDelTramo(puntos);
   // las tres alturas del panel: recogido con el estado y el botón principal a la vista, a medias y abierto
   const alturasPanel = [
     Math.min(380, height * 0.46),
@@ -221,7 +232,13 @@ export function ConductorViaje({
             coordenadas: recorrido.destino.coordenadas,
             nombre: recorrido.destino.nombre,
           }}
+          alMarcar={(punto) => establecerPuntos((p) => marcarPunto(p, punto))}
+          alMoverPunto={(cual, punto) =>
+            establecerPuntos((p) => ({ ...p, [cual]: punto }))
+          }
           espacioInferior={alturasPanel[0]}
+          marcando={marcando}
+          puntos={puntos}
           origen={{
             coordenadas: recorrido.origen.coordenadas,
             nombre: recorrido.origen.nombre,
@@ -265,6 +282,87 @@ export function ConductorViaje({
           </Text>
         </View>
       </View>
+
+      <Pressable
+        accessibilityLabel={t('conductor.marcarPuntos')}
+        accessibilityRole="button"
+        accessibilityState={{ selected: marcando }}
+        onPress={() => {
+          establecerMarcando((m) => !m);
+        }}
+        style={[
+          estilos.botonCircular,
+          estilos.marcar,
+          {
+            backgroundColor: marcando
+              ? colores.ambar
+              : conAlfa(colores.bloqueNegro, 0.92),
+            bottom: alturasPanel[0] + espacios.doce + 52 + espacios.ocho,
+          },
+        ]}
+      >
+        <Svg height={22} viewBox="0 0 24 24" width={22}>
+          <Path
+            d="M12 21 C 12 21 5 14.5 5 9.5 a7 7 0 0 1 14 0 C 19 14.5 12 21 12 21 Z"
+            fill="none"
+            stroke={marcando ? colores.sobreAmbar : colores.sobreNegro}
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+          <Circle
+            cx={12}
+            cy={9.5}
+            fill={marcando ? colores.sobreAmbar : colores.sobreNegro}
+            r={2.4}
+          />
+        </Svg>
+      </Pressable>
+
+      {marcando || puntos.a ? (
+        <View
+          style={[
+            estilos.tramo,
+            {
+              backgroundColor: conAlfa(colores.bloqueNegro, 0.94),
+              top: margenes.top + espacios.ocho + 52 + espacios.ocho,
+            },
+          ]}
+          testID="tramo-manual"
+        >
+          <Text style={[tipografia.subtitulo, { color: colores.sobreNegro }]}>
+            {tramo
+              ? rellenar(t('conductor.tramoManual'), {
+                  km: tramo.km,
+                  tiempo: formatoDuracion(tramo.minutos),
+                })
+              : puntos.a
+                ? t('conductor.marcaPuntoB')
+                : t('conductor.marcaPuntoA')}
+          </Text>
+          {puntos.a ? (
+            <View style={estilos.accionesTramo}>
+              {tramo ? (
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => establecerPuntos(intercambiarPuntos)}
+                >
+                  <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+                    {t('conductor.intercambiarPuntos')}
+                  </Text>
+                </Pressable>
+              ) : null}
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => establecerPuntos(SIN_PUNTOS)}
+              >
+                <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
+                  {t('conductor.limpiarPuntos')}
+                </Text>
+              </Pressable>
+            </View>
+          ) : null}
+        </View>
+      ) : null}
 
       <Pressable
         accessibilityLabel={t('conductor.centrarMapa')}
@@ -548,6 +646,16 @@ export function ConductorViaje({
 }
 
 const estilos = StyleSheet.create({
+  accionesTramo: { flexDirection: 'row', gap: espacios.dieciseis },
+  marcar: { position: 'absolute', right: espacios.dieciseis },
+  tramo: {
+    borderRadius: radios.loseta,
+    gap: espacios.cuatro,
+    left: espacios.dieciseis,
+    padding: espacios.doce,
+    position: 'absolute',
+    right: espacios.dieciseis,
+  },
   botonCircular: {
     alignItems: 'center',
     borderRadius: 26,
