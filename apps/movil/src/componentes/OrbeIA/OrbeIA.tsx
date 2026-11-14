@@ -4,6 +4,8 @@ import { useEffect, useRef } from 'react';
 import { Animated, Easing, Pressable, StyleSheet, View } from 'react-native';
 
 import { Chispas } from '@/componentes/Chispas';
+
+import { Satelites } from './Satelites';
 import { coloresAura } from '@/tema/colores';
 import { movimiento } from '@/tema/movimiento';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
@@ -49,6 +51,7 @@ export function OrbeIA({
   const aro = useRef(new Animated.Value(0)).current;
   const latido = useRef(new Animated.Value(0)).current;
   const hundido = useRef(new Animated.Value(1)).current;
+  const respirar = useRef(new Animated.Value(0)).current;
   const sinNivel = useRef(new Animated.Value(0)).current;
   const volumen = nivel ?? sinNivel;
   const ritmo = RITMO[modo];
@@ -80,6 +83,29 @@ export function OrbeIA({
       aro.setValue(0);
     };
   }, [aro, giro, reducir, ritmo]);
+
+  // el orbe respira despacio todo el tiempo, también en reposo
+  useEffect(() => {
+    if (reducir) return;
+    const respiracion = Animated.loop(
+      Animated.sequence([
+        Animated.timing(respirar, {
+          duration: 2200,
+          easing: Easing.inOut(Easing.sin),
+          toValue: 1,
+          useNativeDriver: true,
+        }),
+        Animated.timing(respirar, {
+          duration: 2200,
+          easing: Easing.inOut(Easing.sin),
+          toValue: 0,
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    respiracion.start();
+    return () => respiracion.stop();
+  }, [reducir, respirar]);
 
   // al hablar el orbe late con un ritmo irregular, como una voz, no como un metrónomo
   useEffect(() => {
@@ -145,7 +171,13 @@ export function OrbeIA({
       latido.interpolate({ inputRange: [0, 1], outputRange: [0, 0.16] }),
     ),
   );
-  const escala = Animated.multiply(crecer, hundido);
+  const escala = Animated.multiply(
+    Animated.multiply(
+      crecer,
+      respirar.interpolate({ inputRange: [0, 1], outputRange: [1, 1.05] }),
+    ),
+    hundido,
+  );
   const escalaAro = aro.interpolate({
     inputRange: [0, 1],
     outputRange: [1, modo === 'reposo' ? 1.25 : 1.7],
@@ -252,6 +284,9 @@ export function OrbeIA({
           ]}
         />
       </Animated.View>
+      {tamano >= 56 && (
+        <Satelites actual={modo !== 'reposo'} ritmo={ritmo} tamano={tamano} />
+      )}
       {tamano >= 56 && modo !== 'reposo' && <Chispas tamano={lado} />}
     </View>
   );
