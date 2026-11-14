@@ -181,6 +181,40 @@ describe('Boletos', () => {
       );
     });
 
+    it('en el historial ofrece entender los viajes y preguntar por ellos', async () => {
+      const alPreguntar = jest.fn();
+      await AsyncStorage.setItem(
+        CLAVE_BOLETOS,
+        JSON.stringify([
+          boletoDePrueba(HACE_UNA_HORA(), 9, 'P3NS6TW4'),
+          boletoDePrueba(EN_UNA_HORA(), 8, 'K7RM4QX9'),
+        ]),
+      );
+      const pantalla = await renderPantalla(
+        <ContextoIA.Provider value={ia}>
+          <ProveedorBoletos>
+            <Boletos
+              alAbrirBoleto={() => undefined}
+              alBuscar={() => undefined}
+              alPreguntar={alPreguntar}
+            />
+          </ProveedorBoletos>
+        </ContextoIA.Provider>,
+      );
+      await fireEvent.press(
+        await pantalla.findByRole('tab', { name: 'Historial' }),
+      );
+      expect(
+        await pantalla.findByRole('button', {
+          name: 'Entender mis viajes con IA',
+        }),
+      ).toBeTruthy();
+      await fireEvent.press(
+        pantalla.getByRole('button', { name: '¿Cuánto gasté en total?' }),
+      );
+      expect(alPreguntar).toHaveBeenCalledWith('¿Cuánto gasté en total?');
+    });
+
     it('sin la IA lista no aparece nada de eso', async () => {
       await AsyncStorage.setItem(
         CLAVE_BOLETOS,

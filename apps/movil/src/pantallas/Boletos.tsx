@@ -158,6 +158,7 @@ export function Boletos({
               ahora={ahora}
               alAbrirBoleto={alAbrirBoleto}
               alAbrirPlus={alAbrirPlus}
+              alPreguntar={alPreguntar}
               boletos={pasados}
             />
           )}

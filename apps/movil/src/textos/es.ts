@@ -610,6 +610,16 @@ export const textos = {
     marcador: 'Escribí lo que buscás',
     titulo: 'Preguntale a Andén con {nombre}',
   },
+  historialIA: {
+    preguntas: {
+      destino: '¿A dónde viajo más seguido?',
+      gasto: '¿Cuánto gasté en total?',
+      ultimo: '¿Cuál fue mi último viaje?',
+    },
+    resumenPedido:
+      'Resumime cómo viajo: a qué destinos voy más, cuánto gasté en total y cuál fue mi último viaje, usando solo estos datos.',
+    resumenTitulo: 'Entender mis viajes con IA',
+  },
   boletosVisual: {
     destinosTitulo: 'A dónde querés ir',
     preguntas: {

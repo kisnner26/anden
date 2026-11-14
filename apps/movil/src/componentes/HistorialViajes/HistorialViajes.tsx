@@ -5,7 +5,10 @@ import {
   colorDeDestino,
   varianteDeClave,
 } from '@/componentes/Autobus';
+import { BarraPreguntaIA } from '@/componentes/BarraPreguntaIA';
 import { Bloque } from '@/componentes/Bloque';
+import { ResumenIA } from '@/componentes/ResumenIA';
+import { lineaDeHistorial } from '@/datos/consultaIA';
 import { FotoDestino } from '@/componentes/FotoDestino';
 import { fotoDeDestino } from '@/datos/fotosDestino';
 import { ResumenPlus } from '@/componentes/ResumenPlus';
@@ -23,6 +26,8 @@ export interface PropiedadesHistorialViajes {
   alAbrirBoleto: (boletoId: string) => void;
   boletos: readonly BoletoGuardado[];
   alAbrirPlus?: () => void;
+  /** abre el asistente con una pregunta sobre los viajes; solo se ofrece con la IA lista */
+  alPreguntar?: (pregunta: string) => void;
 }
 
 /** los viajes ya hechos: tres cifras grandes, el calendario con un círculo de color por destino y la leyenda de colores */
@@ -30,6 +35,7 @@ export function HistorialViajes({
   ahora,
   alAbrirBoleto,
   alAbrirPlus,
+  alPreguntar,
   boletos,
 }: PropiedadesHistorialViajes) {
   const { colores } = useTema();
@@ -58,6 +64,24 @@ export function HistorialViajes({
             </Text>
           </Bloque>
         ))}
+      </View>
+
+      <View style={estilos.ia}>
+        <ResumenIA
+          contexto={lineaDeHistorial(boletos, ahora) ?? ''}
+          pedido={t('historialIA.resumenPedido')}
+          titulo={t('historialIA.resumenTitulo')}
+        />
+        {alPreguntar && (
+          <BarraPreguntaIA
+            alPreguntar={alPreguntar}
+            sugerencias={[
+              t('historialIA.preguntas.destino'),
+              t('historialIA.preguntas.gasto'),
+              t('historialIA.preguntas.ultimo'),
+            ]}
+          />
+        )}
       </View>
 
       <CalendarioViajes
@@ -119,6 +143,7 @@ const estilos = StyleSheet.create({
     gap: espacios.veinticuatro,
     justifyContent: 'center',
   },
+  ia: { gap: espacios.dieciseis },
   miniatura: { height: 40, width: 56 },
   punto: { borderRadius: radios.pildora, height: 12, width: 12 },
 });
