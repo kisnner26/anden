@@ -2,6 +2,7 @@
   "name": "@anden/dominio",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "test": "pnpm --workspace-root exec vitest run packages/dominio --no-fsModuleCache",
     "tipos": "pnpm --workspace-root exec tsc --project packages/dominio/tsconfig.json --noEmit"
