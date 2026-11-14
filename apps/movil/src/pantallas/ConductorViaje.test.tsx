@@ -120,6 +120,18 @@ describe('ConductorViaje', () => {
     expect(pantalla.queryByText('No encontramos este viaje.')).toBeNull();
   });
 
+  it('el botón de marcar puntos pide el punto A y se puede limpiar', async () => {
+    const pantalla = await dibujar();
+    expect(pantalla.queryByTestId('tramo-manual')).toBeNull();
+    await fireEvent.press(
+      await pantalla.findByRole('button', { name: 'Marcar puntos en el mapa' }),
+    );
+    expect(
+      await pantalla.findByText('Tocá el mapa para marcar el punto A'),
+    ).toBeTruthy();
+    expect(pantalla.getByTestId('tramo-manual')).toBeTruthy();
+  });
+
   it('antes de empezar explica qué se comparte y ofrece iniciar el viaje', async () => {
     const pantalla = await dibujar();
     expect(
