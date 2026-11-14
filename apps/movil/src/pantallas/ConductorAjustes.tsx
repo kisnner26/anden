@@ -1,11 +1,13 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
 import { Interruptor } from '@/componentes/Interruptor';
 import { autenticar } from '@/datos/biometria';
-import { nombrePropio } from '@/datos/perfil';
+import { iniciales, nombrePropio } from '@/datos/perfil';
+import { usePerfil } from '@/datos/usePerfil';
 import { useAjustesConductor } from '@/datos/useAjustesConductor';
 import { useBloqueo } from '@/datos/useBloqueo';
 import { useSesion } from '@/datos/useSesion';
@@ -17,6 +19,8 @@ import { t } from '@/textos/t';
 export interface PropiedadesConductorAjustes {
   /** abre los ajustes generales: apariencia, letra, ubicación */
   alAbrirAjustesGenerales: () => void;
+  /** abre el perfil del conductor: es la primera opción de los ajustes */
+  alAbrirPerfil: () => void;
   /** cierra la sesión y vuelve al ingreso */
   alSalir: () => void;
 }
@@ -24,6 +28,7 @@ export interface PropiedadesConductorAjustes {
 /** la pestaña de ajustes del conductor: seguridad, el viaje y la sesión */
 export function ConductorAjustes({
   alAbrirAjustesGenerales,
+  alAbrirPerfil,
   alSalir,
 }: PropiedadesConductorAjustes) {
   const { colores } = useTema();
@@ -31,6 +36,7 @@ export function ConductorAjustes({
   const { cerrar, sesion } = useSesion();
   const { ajustes, cambiar } = useAjustesConductor();
   const { biometria } = useBloqueo();
+  const { perfil } = usePerfil();
 
   async function cambiarBiometria(activar: boolean) {
     // para encender la verificación hay que pasarla una vez: así se sabe que funciona y que es quien dice
@@ -61,6 +67,33 @@ export function ConductorAjustes({
       <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
         {t('conductorAjustes.detalle')}
       </Text>
+
+      <Pressable
+        accessibilityLabel={t('conductorAjustes.perfilTitulo')}
+        accessibilityRole="button"
+        onPress={alAbrirPerfil}
+      >
+        <Bloque estiloContenido={estilos.fila}>
+          <Avatar
+            descripcion={t('conductorPerfil.fotoDescripcion')}
+            iniciales={iniciales({
+              apellido: perfil.apellido,
+              nombre: perfil.nombre || (sesion?.nombre ?? ''),
+            })}
+            tamano={48}
+            uri={perfil.fotoUri}
+          />
+          <View style={estilos.texto}>
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+              {t('conductorAjustes.perfilTitulo')}
+            </Text>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {t('conductorAjustes.perfilDetalle')}
+            </Text>
+          </View>
+          <Icono nombre="siguiente" tamano="mediano" />
+        </Bloque>
+      </Pressable>
 
       <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {t('conductorAjustes.seguridadSeccion')}

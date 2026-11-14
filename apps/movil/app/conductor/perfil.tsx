@@ -12,6 +12,7 @@ export default function RutaConductorPerfil() {
 
   return (
     <ConductorPerfil
+      alVolver={() => router.back()}
       alEditar={() => router.push('/perfil')}
       alVerPerfilPublico={(id) =>
         router.push({ params: { id }, pathname: '/chofer/[id]' })

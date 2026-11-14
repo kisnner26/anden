@@ -4,7 +4,7 @@ import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
-/** pestañas del conductor: viajes, historial, perfil y ajustes */
+/** pestañas del conductor: viajes, historial y ajustes */
 export default function DisenoPestanasConductor() {
   const { colores } = useTema();
 
@@ -29,12 +29,6 @@ export default function DisenoPestanasConductor() {
           {t('conductorHistorial.pestana')}
         </NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="list.bullet.rectangle.fill" />
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="perfil">
-        <NativeTabs.Trigger.Label>
-          {t('conductorPerfil.pestana')}
-        </NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf="person.crop.circle.fill" />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="ajustes">
         <NativeTabs.Trigger.Label>

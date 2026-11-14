@@ -17,11 +17,14 @@ import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { rellenar } from '@/textos/rellenar';
+import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { t } from '@/textos/t';
 
 export interface PropiedadesConductorPerfil {
   /** abre el formulario para editar nombre y datos personales */
   alEditar: () => void;
+  /** vuelve a la pantalla de donde se abrió: el perfil ya no es una pestaña */
+  alVolver?: () => void;
   /** abre el perfil público del chofer, como lo ven los pasajeros */
   alVerPerfilPublico: (choferId: string) => void;
 }
@@ -48,6 +51,7 @@ function Dato({ etiqueta, valor }: { etiqueta: string; valor: string }) {
 /** la pestaña de perfil del conductor: su foto, sus datos personales y los de su servicio */
 export function ConductorPerfil({
   alEditar,
+  alVolver,
   alVerPerfilPublico,
 }: PropiedadesConductorPerfil) {
   const { colores } = useTema();
@@ -89,6 +93,12 @@ export function ConductorPerfil({
       ]}
       style={{ backgroundColor: colores.fondo }}
     >
+      {alVolver && (
+        <CabeceraPantalla
+          alVolver={alVolver}
+          titulo={t('conductorPerfil.pestana')}
+        />
+      )}
       <Text style={[tipografia.titulo, { color: colores.tinta }]}>
         {t('conductorPerfil.titulo')}.
       </Text>

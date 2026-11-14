@@ -12,6 +12,7 @@ export default function RutaConductorAjustes() {
 
   return (
     <ConductorAjustes
+      alAbrirPerfil={() => router.push('/conductor/perfil')}
       alAbrirAjustesGenerales={() => router.push('/ajustes')}
       alSalir={() => router.replace('/ingresar')}
     />
