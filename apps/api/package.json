@@ -1,0 +1,26 @@
+{
+  "name": "@anden/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/servidor.ts",
+    "start": "tsx src/servidor.ts",
+    "test": "pnpm --workspace-root exec vitest run apps/api --no-fsModuleCache",
+    "tipos": "pnpm --workspace-root exec tsc --project apps/api/tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15"
+  },
+  "dependencies": {
+    "@anden/dominio": "workspace:*",
+    "@fastify/helmet": "^13.2.0",
+    "@fastify/rate-limit": "^11.2.2",
+    "@fastify/sensible": "^6.0.7",
+    "@fastify/swagger": "^9.9.3",
+    "fastify": "^5.12.8",
+    "fastify-type-provider-zod": "^7.0.0",
+    "zod": "^4.6.7"
+  }
+}
