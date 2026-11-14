@@ -939,6 +939,7 @@ export const textos = {
   },
   calificarViaje: {
     ahoraNo: 'Ahora no',
+    agregarComentario: 'Agregar un comentario',
     gracias: 'Gracias, tu opinión ayuda a otros pasajeros',
     titulo: '¿Cómo te fue con {chofer}?',
   },
