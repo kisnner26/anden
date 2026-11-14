@@ -437,4 +437,22 @@ describe('Asistente', () => {
       expect(pantalla.queryByText('Hola.')).toBeNull();
     });
   });
+
+  it('si llega con una pregunta inicial la envía sola', async () => {
+    const contexto = valor();
+    await renderPantalla(
+      <ContextoIA.Provider value={contexto}>
+        <ContextoVoz.Provider value={vozFalsa().voz}>
+          <Asistente
+            alVolver={() => undefined}
+            preguntaInicial="¿Qué debo saber de este viaje?"
+          />
+        </ContextoVoz.Provider>
+      </ContextoIA.Provider>,
+    );
+    await waitFor(() => expect(contexto.preguntar).toHaveBeenCalledTimes(1));
+    expect(jest.mocked(contexto.preguntar).mock.calls[0]?.[1]).toBe(
+      '¿Qué debo saber de este viaje?',
+    );
+  });
 });

@@ -1,9 +1,10 @@
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { Asistente } from '@/pantallas/Asistente';
 
 export default function RutaAsistente() {
   const router = useRouter();
+  const { pregunta } = useLocalSearchParams<{ pregunta?: string }>();
   return (
     <Asistente
       alAbrirPantalla={(pantalla) => {
@@ -25,6 +26,7 @@ export default function RutaAsistente() {
         router.push({ params: { id }, pathname: '/viaje/[id]' })
       }
       alVolver={() => router.back()}
+      preguntaInicial={pregunta}
     />
   );
 }

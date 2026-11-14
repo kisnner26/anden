@@ -87,6 +87,8 @@ export interface PropiedadesAsistente {
   /** lleva a una pantalla de la app cuando la persona lo pide por voz o por escrito */
   alAbrirPantalla?: (pantalla: PantallaAbrible) => void;
   alVolver: () => void;
+  /** una pregunta que se envía sola al abrir, por ejemplo desde el detalle de un viaje */
+  preguntaInicial?: string;
 }
 
 interface Intercambio {
@@ -107,6 +109,7 @@ export function Asistente({
   alAbrirPantalla,
   alAbrirViaje,
   alVolver,
+  preguntaInicial,
 }: PropiedadesAsistente) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
@@ -526,6 +529,13 @@ export function Asistente({
     usarVozEnLinea.current = activa;
     await guardarVozEnLinea(activa);
   }
+
+  const preguntaEnviada = useRef(false);
+  useEffect(() => {
+    if (!usable || !preguntaInicial || preguntaEnviada.current) return;
+    preguntaEnviada.current = true;
+    void enviarActual.current(preguntaInicial);
+  }, [preguntaInicial, usable]);
 
   const motivo = usable ? null : motivoNoDisponible(disponibilidad, nombre);
   const conversando = historial.length > 0;
