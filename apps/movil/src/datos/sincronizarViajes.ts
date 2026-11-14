@@ -6,6 +6,7 @@ import {
 } from '@/servicios/supabase/viajesSupabase';
 
 import { DUENO_REMOTO } from './asientosRemotos';
+import { guardarCacheViajes, leerCacheViajes } from './cacheViajes';
 import { fijarCancelados, fijarHistorial } from './historialSalidas';
 import { CONFIGURACION_POR_SERVICIO, type DatosMuestra } from './muestra';
 import { notificarCambioDeViajes, obtenerMuestra } from './useSalidas';
@@ -111,13 +112,47 @@ export function aplicarViajesPublicados(
   datos.ocupaciones = [...propias, ...remotas];
 }
 
-/** trae los viajes publicados y avisa a las pantallas; devuelve si hubo respuesta del servidor */
+let ultimaSincronizacion: Date | null = null;
+
+/** cuándo se pusieron al día los viajes por última vez, con el servidor o con lo guardado; nulo si nunca */
+export function obtenerUltimaSincronizacion(): Date | null {
+  return ultimaSincronizacion;
+}
+
+/** solo para las pruebas */
+export function reiniciarUltimaSincronizacion(): void {
+  ultimaSincronizacion = null;
+}
+
+/**
+ * trae los viajes publicados, los guarda en el teléfono para cuando no haya señal y avisa a las pantallas;
+ * devuelve si hubo respuesta del servidor
+ */
 export async function sincronizarViajes(
   desde: Date = new Date(Date.now() - 6 * 3_600_000),
 ): Promise<boolean> {
   const publicados = await leerViajesPublicados(desde);
   if (publicados === null) return false;
   aplicarViajesPublicados(obtenerMuestra(), publicados);
+  ultimaSincronizacion = new Date();
+  void guardarCacheViajes(publicados, ultimaSincronizacion);
+  notificarCambioDeViajes();
+  return true;
+}
+
+/**
+ * muestra lo último que se guardó del servidor: sirve al abrir la app sin internet. Devuelve si había algo,
+ * y no pisa nada si ya hubo una sincronización más nueva
+ */
+export async function cargarViajesGuardados(): Promise<boolean> {
+  const cache = await leerCacheViajes();
+  if (cache === null) return false;
+  const guardadoEn = new Date(cache.guardadoEn);
+  if (ultimaSincronizacion !== null && ultimaSincronizacion >= guardadoEn) {
+    return false;
+  }
+  aplicarViajesPublicados(obtenerMuestra(), cache.publicados);
+  ultimaSincronizacion = guardadoEn;
   notificarCambioDeViajes();
   return true;
 }

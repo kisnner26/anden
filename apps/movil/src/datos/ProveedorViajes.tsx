@@ -1,6 +1,6 @@
 import { useEffect, type ReactNode } from 'react';
 
-import { sincronizarViajes } from './sincronizarViajes';
+import { cargarViajesGuardados, sincronizarViajes } from './sincronizarViajes';
 import { useSesion } from './useSesion';
 
 const CADA_MS = 8000;
@@ -12,7 +12,8 @@ export function ProveedorViajes({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!hayCuenta) return;
-    void sincronizarViajes();
+    // primero lo guardado, para que haya salidas aunque no haya señal; después lo que diga el servidor
+    void cargarViajesGuardados().then(() => sincronizarViajes());
     const temporizador = setInterval(() => void sincronizarViajes(), CADA_MS);
     return () => clearInterval(temporizador);
   }, [hayCuenta]);
