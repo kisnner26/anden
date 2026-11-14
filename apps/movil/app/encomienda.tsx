@@ -4,5 +4,12 @@ import { Encomiendas } from '@/pantallas/Encomiendas';
 
 export default function RutaEncomienda() {
   const router = useRouter();
-  return <Encomiendas alVolver={() => router.back()} />;
+  return (
+    <Encomiendas
+      alPreguntar={(pregunta) =>
+        router.push({ params: { pregunta }, pathname: '/asistente' })
+      }
+      alVolver={() => router.back()}
+    />
+  );
 }

@@ -13,6 +13,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AnimacionEnvio } from '@/componentes/AnimacionEnvio';
 import { Aparece } from '@/componentes/Aparece';
+import { AsistenteEncomienda } from '@/componentes/AsistenteEncomienda';
+import { BarraPreguntaIA } from '@/componentes/BarraPreguntaIA';
 import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
@@ -53,6 +55,8 @@ import { t } from '@/textos/t';
 
 export interface PropiedadesEncomiendas {
   alVolver: () => void;
+  /** abre el asistente con una pregunta sobre las encomiendas; solo se ofrece con la IA lista */
+  alPreguntar?: (pregunta: string) => void;
 }
 
 const MENSAJES: Record<ErrorEncomienda, () => string> = {
@@ -79,7 +83,7 @@ const CAMPOS_DEL_PASO: Record<1 | 2 | 3, readonly ErrorEncomienda[]> = {
  * pedir que un paquete viaje en el bus, en tres pasos: trayecto y paquete, las dos personas y el
  * detalle con la confirmación. Al enviar queda un comprobante con código, QR y las etapas del envío
  */
-export function Encomiendas({ alVolver }: PropiedadesEncomiendas) {
+export function Encomiendas({ alPreguntar, alVolver }: PropiedadesEncomiendas) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const { perfil } = usePerfil();
@@ -395,6 +399,13 @@ export function Encomiendas({ alVolver }: PropiedadesEncomiendas) {
             {paso === 1 && (
               <Aparece>
                 <View style={estilos.grupo}>
+                  <AsistenteEncomienda
+                    alAplicar={(sugerencia) => {
+                      establecerTamano(sugerencia.tamano);
+                      establecerFragil(sugerencia.fragil);
+                      establecerDescripcion(sugerencia.descripcion);
+                    }}
+                  />
                   <Text
                     style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
                   >
@@ -658,6 +669,16 @@ export function Encomiendas({ alVolver }: PropiedadesEncomiendas) {
               </View>
             </View>
           </>
+        )}
+
+        {solicitudes.length > 0 && alPreguntar && (
+          <BarraPreguntaIA
+            alPreguntar={alPreguntar}
+            sugerencias={[
+              t('encomiendasIA.preguntas.estado'),
+              t('encomiendasIA.preguntas.salio'),
+            ]}
+          />
         )}
 
         {solicitudes.length > 0 && (
