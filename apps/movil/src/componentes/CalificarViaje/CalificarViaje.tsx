@@ -21,6 +21,7 @@ import {
   etiquetasRapidas,
   palabraDeNota,
 } from '@/datos/calificarViaje';
+import { emitirMascota } from '@/datos/mascotaEventos';
 import { guardarOpinion, leerOpiniones } from '@/datos/opiniones';
 import type { BoletoGuardado } from '@/datos/reserva';
 import { useSensaciones } from '@/datos/useSensaciones';
@@ -322,6 +323,7 @@ export function CalificarViaje({
     });
     sentir('exito');
     establecerEnviada(true);
+    emitirMascota({ tipo: 'calificacion' });
     alCalificar?.();
   }
 
