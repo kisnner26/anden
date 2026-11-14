@@ -7,8 +7,10 @@ export interface BorradorViaje {
   puntoEncuentro: string;
   /** el día elegido; la hora se arma con `hora` */
   dia: Date;
-  /** hora en 24 h, por ejemplo 14:30 */
+  /** la hora escrita, por ejemplo 2:30; con `meridiano` es de 12 horas y sin él se lee como 24 horas */
   hora: string;
+  /** a. m. o p. m.; la hora de 12 horas depende de esto */
+  meridiano?: 'am' | 'pm';
   placa: string;
   rutaId: string | null;
   servicio: 'expreso' | 'ordinario';
@@ -19,9 +21,13 @@ export type ErrorViaje = 'hora' | 'pasado' | 'placa' | 'punto' | 'ruta';
 const HORA = /^([01]?\d|2[0-3]):([0-5]\d)$/;
 const PLACA = /^[A-Za-z]{0,2}\s?\d{2,4}[-\s]?\d{0,4}$/;
 
-/** la hora escrita como 14:30; nulo si no tiene ese formato */
+/**
+ * la hora escrita como 14:30, 10, 930 o 1430; con a. m. o p. m. se lee de 12 horas (12 a. m. es medianoche y 12 p. m.
+ * mediodía). Nulo si no tiene formato
+ */
 export function leerHora(
   texto: string,
+  meridiano?: 'am' | 'pm',
 ): { horas: number; minutos: number } | null {
   const limpio = texto.trim();
   // también se entiende escrita corta: 10, 930 o 1430
@@ -29,14 +35,19 @@ export function leerHora(
   const coincide =
     HORA.exec(limpio) ?? (corta ? [limpio, corta[1], corta[2] ?? '00'] : null);
   if (!coincide) return null;
-  const horas = Number(coincide[1]);
+  let horas = Number(coincide[1]);
   const minutos = Number(coincide[2]);
-  return horas <= 23 && minutos <= 59 ? { horas, minutos } : null;
+  if (minutos > 59) return null;
+  if (meridiano) {
+    if (horas < 1 || horas > 12) return null;
+    horas = (horas % 12) + (meridiano === 'pm' ? 12 : 0);
+  }
+  return horas <= 23 ? { horas, minutos } : null;
 }
 
 /** la fecha y hora de la salida con el día elegido y la hora escrita; nulo si la hora no es válida */
 export function fechaDeSalida(borrador: BorradorViaje): Date | null {
-  const hora = leerHora(borrador.hora);
+  const hora = leerHora(borrador.hora, borrador.meridiano);
   if (!hora) return null;
   const fecha = new Date(borrador.dia);
   fecha.setHours(hora.horas, hora.minutos, 0, 0);
