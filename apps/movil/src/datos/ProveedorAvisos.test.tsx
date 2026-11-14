@@ -76,9 +76,11 @@ function boletoDeMuestra(
 
 function conBoletos(boletos: BoletoGuardado[]) {
   const valor: ValorBoletos = {
+    agregar: async () => undefined,
     boletos,
     cancelar: async () => undefined,
     cargando: false,
+    quitar: async () => undefined,
     reservar: async () => ({ error: 'viaje-inexistente', ok: false }),
     validar: async () => undefined,
   };

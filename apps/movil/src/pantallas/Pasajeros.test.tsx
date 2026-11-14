@@ -239,9 +239,11 @@ describe('Pasajeros repetidos en el mismo viaje', () => {
     const pantalla = await renderPantalla(
       <ContextoBoletos.Provider
         value={{
+          agregar: async () => undefined,
           boletos: [existente],
           cancelar: async () => undefined,
           cargando: false,
+          quitar: async () => undefined,
           reservar: async () => ({ error: 'viaje-inexistente', ok: false }),
           validar: async () => undefined,
         }}

@@ -4,6 +4,8 @@ import { act, renderHook, waitFor } from '@testing-library/react-native';
 import type { ReactNode } from 'react';
 
 import { CLAVE_BOLETOS, ProveedorBoletos } from './ProveedorBoletos';
+import { boletoDePrueba } from '@/pruebas/boletos';
+
 import { VIAJE_BOACO } from './muestra';
 import { obtenerMuestra, reiniciarMuestra } from './useSalidas';
 import { useBoletos } from './useBoletos';
@@ -135,5 +137,52 @@ describe('ProveedorBoletos', () => {
     });
     await waitFor(() => expect(result.current.cargando).toBe(false));
     expect(result.current.boletos).toEqual([]);
+  });
+});
+
+describe('boletos que llegan o se pasan a otra persona', () => {
+  it('agregar suma un boleto recibido, lo guarda y no lo repite', async () => {
+    const { result } = await renderHook(() => useBoletos(), {
+      wrapper: Envoltorio,
+    });
+    await waitFor(() => expect(result.current.cargando).toBe(false));
+    const recibido = boletoDePrueba(
+      new Date(Date.now() + 3_600_000),
+      5,
+      'RECI1234',
+    );
+    await act(async () => {
+      await result.current.agregar(recibido);
+    });
+    expect(result.current.boletos.map((b) => b.boleto.id)).toEqual([
+      'bol_RECI1234',
+    ]);
+    expect(await AsyncStorage.getItem(CLAVE_BOLETOS)).toContain('RECI1234');
+    await act(async () => {
+      await result.current.agregar(recibido);
+    });
+    expect(result.current.boletos).toHaveLength(1);
+  });
+
+  it('quitar saca el boleto que se pasó a otra persona', async () => {
+    const { result } = await renderHook(() => useBoletos(), {
+      wrapper: Envoltorio,
+    });
+    await waitFor(() => expect(result.current.cargando).toBe(false));
+    const a = boletoDePrueba(new Date(Date.now() + 3_600_000), 5, 'AAAA1111');
+    const b = boletoDePrueba(new Date(Date.now() + 7_200_000), 6, 'BBBB2222');
+    await act(async () => {
+      await result.current.agregar(a);
+    });
+    await act(async () => {
+      await result.current.agregar(b);
+    });
+    await act(async () => {
+      await result.current.quitar('bol_AAAA1111');
+    });
+    expect(result.current.boletos.map((x) => x.boleto.id)).toEqual([
+      'bol_BBBB2222',
+    ]);
+    expect(await AsyncStorage.getItem(CLAVE_BOLETOS)).not.toContain('AAAA1111');
   });
 });
