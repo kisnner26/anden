@@ -283,4 +283,24 @@ describe('Ajustes', () => {
     );
     expect(await AsyncStorage.getItem('anden.mascota')).toBe('1');
   });
+
+  it('permite encender el inicio automático y lo recuerda', async () => {
+    const pantalla = await renderPantalla(
+      <ProveedorSesion>
+        <Ajustes alVolver={() => undefined} />
+      </ProveedorSesion>,
+    );
+    const interruptor = await pantalla.findByRole('switch', {
+      name: 'Inicio automático',
+    });
+    await waitFor(() =>
+      expect(interruptor.props.accessibilityState).toMatchObject({
+        disabled: false,
+      }),
+    );
+    await fireEvent.press(interruptor);
+    await waitFor(async () =>
+      expect(await AsyncStorage.getItem('anden.inicioAutomatico')).toBe('1'),
+    );
+  });
 });
