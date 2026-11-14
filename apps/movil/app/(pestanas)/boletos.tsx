@@ -11,6 +11,7 @@ export default function RutaBoletos() {
       }
       alAbrirPlus={() => router.push('/plus')}
       alBuscar={() => router.navigate('/viajar')}
+      alRecibir={() => router.push('/recibir')}
       alPreguntar={(pregunta) =>
         router.push({ params: { pregunta }, pathname: '/asistente' })
       }

@@ -30,6 +30,8 @@ export interface PropiedadesBoletos {
   alPreguntar?: (pregunta: string) => void;
   /** abre la pantalla de Andén Plus */
   alAbrirPlus?: () => void;
+  /** abre la pantalla para canjear un código de boleto */
+  alRecibir?: () => void;
 }
 
 function porSalida(a: BoletoGuardado, b: BoletoGuardado): number {
@@ -44,6 +46,7 @@ export function Boletos({
   alAbrirPlus,
   alBuscar,
   alPreguntar,
+  alRecibir,
 }: PropiedadesBoletos) {
   const { colores } = useTema();
   const ahora = useAhora();
@@ -97,6 +100,13 @@ export function Boletos({
           </View>
           <BotonAccion alPresionar={alBuscar} etiqueta={t('boletos.buscar')} />
         </Bloque>
+      ) : null}
+      {alRecibir ? (
+        <Pressable accessibilityRole="button" onPress={alRecibir}>
+          <Text style={[tipografia.subtitulo, { color: colores.ambarTexto }]}>
+            {t('recibir.accion')}
+          </Text>
+        </Pressable>
       ) : null}
       {boletos.length === 0 ? (
         <View style={estilos.destinos}>

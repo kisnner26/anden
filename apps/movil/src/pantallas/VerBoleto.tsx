@@ -77,6 +77,8 @@ export interface PropiedadesVerBoleto {
   alCancelado: () => void;
   /** abre la búsqueda con el destino de este boleto, para volver a viajar */
   alReservarOtra?: (destino: string) => void;
+  /** abre la pantalla para pasar este boleto a otra persona */
+  alTransferir?: (boletoId: string) => void;
   alVerChofer: (choferId: string) => void;
   alVolver: () => void;
   boletoId: string;
@@ -86,6 +88,7 @@ export interface PropiedadesVerBoleto {
 export function VerBoleto({
   alCancelado,
   alReservarOtra,
+  alTransferir,
   alVerChofer,
   alVolver,
   boletoId,
@@ -479,6 +482,22 @@ export function VerBoleto({
                   : t('contacto.avisar')}
               </Text>
             </Bloque>
+          </Pressable>
+        )}
+        {puedeOperar && alTransferir && (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => alTransferir(boletoId)}
+          >
+            <Text
+              style={[
+                tipografia.pequeno,
+                estilos.cambiarContacto,
+                { color: colores.tintaSuave },
+              ]}
+            >
+              {t('transferir.accion')}
+            </Text>
           </Pressable>
         )}
         {puedeOperar && contacto && (
