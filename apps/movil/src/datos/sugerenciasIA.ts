@@ -46,7 +46,7 @@ export function sugerenciasDelMomento(f: FactoresSugerencia): string[] {
   if (f.boletoProximo) {
     const { destino, minutosParaSalir } = f.boletoProximo;
     if (minutosParaSalir <= 180) {
-      sumar('anden', `¿En qué andén sube mi bus a ${destino}?`, 11);
+      sumar('anden', `¿Dónde me subo al bus a ${destino}?`, 11);
       sumar('falta', '¿Cuánto falta para que salga mi bus?', 10);
     } else {
       sumar('boleto', '¿Cuándo sale mi boleto?', 7);

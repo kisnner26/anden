@@ -261,7 +261,7 @@ export function Asistente({
     const hora = formatoHoraCompleta(salida.salida);
     const tarifa = salida.tarifa === null ? '' : `, C$ ${salida.tarifa}`;
     if (orden.tipo === 'viaje') {
-      return `El próximo bus a ${salida.destino} sale de ${salida.origen} a las ${hora}, andén ${salida.anden}${tarifa}. Quedan ${salida.asientosLibres} asientos.`;
+      return `El próximo bus a ${salida.destino} sale de ${salida.origen} a las ${hora}, punto de encuentro ${salida.puntoEncuentro || 'por confirmar'}${tarifa}. Quedan ${salida.asientosLibres} asientos.`;
     }
     const viaje = datos.viajes.find(
       (candidato) => candidato.id === salida.viajeId,
@@ -510,7 +510,7 @@ export function Asistente({
                     style={[tipografia.subtitulo, { color: colores.tinta }]}
                   >
                     {rellenar(t('ia.proximoBoletoFila'), {
-                      anden: proximoBoleto.resumen.anden,
+                      puntoEncuentro: proximoBoleto.resumen.puntoEncuentro,
                       asiento: proximoBoleto.boleto.asiento,
                       destino: proximoBoleto.resumen.destino,
                     })}

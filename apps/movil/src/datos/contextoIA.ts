@@ -19,12 +19,12 @@ export function lineaDeSalida(salida: Salida): string {
   const tarifa =
     salida.tarifa === null ? 'tarifa no disponible' : `C$ ${salida.tarifa}`;
   const venta = salida.ventaAbierta ? '' : ', venta cerrada';
-  return `- ${dia} ${hora}, ${salida.origen} a ${salida.destino}, ${SERVICIO[salida.servicio] ?? salida.servicio}, andén ${salida.anden}, ${tarifa}, ${salida.asientosLibres} asientos libres, ${salida.estado}${atraso}${venta}`;
+  return `- ${dia} ${hora}, ${salida.origen} a ${salida.destino}, ${SERVICIO[salida.servicio] ?? salida.servicio}, punto de encuentro ${salida.puntoEncuentro || 'por confirmar'}, ${tarifa}, ${salida.asientosLibres} asientos libres, ${salida.estado}${atraso}${venta}`;
 }
 
 export function lineaDeBoleto({ boleto, resumen }: BoletoGuardado): string {
   const salida = new Date(resumen.salida);
-  return `- ${formatoFechaCorta(salida)} ${formatoHoraCompleta(salida)}, a ${resumen.destino}, andén ${resumen.anden}, asiento ${boleto.asiento}, C$ ${boleto.precio}, ${boleto.estado}`;
+  return `- ${formatoFechaCorta(salida)} ${formatoHoraCompleta(salida)}, a ${resumen.destino}, punto de encuentro ${resumen.puntoEncuentro || 'por confirmar'}, asiento ${boleto.asiento}, C$ ${boleto.precio}, ${boleto.estado}`;
 }
 
 /**

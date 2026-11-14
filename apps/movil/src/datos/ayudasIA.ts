@@ -72,7 +72,7 @@ export interface ConsejoIA {
 export function consejoDelMomento(
   salidas: readonly Salida[],
   boletoProximo: {
-    anden: number;
+    puntoEncuentro: string;
     destino: string;
     salida: Date;
     viajeId: string;
@@ -88,8 +88,8 @@ export function consejoDelMomento(
       return {
         texto:
           minutos <= 1
-            ? `Tu bus a ${boletoProximo.destino} sale ya, andén ${boletoProximo.anden}.`
-            : `Tu bus a ${boletoProximo.destino} sale en ${minutos} min, andén ${boletoProximo.anden}.`,
+            ? `Tu bus a ${boletoProximo.destino} sale ya, punto de encuentro ${boletoProximo.puntoEncuentro || 'por confirmar'}.`
+            : `Tu bus a ${boletoProximo.destino} sale en ${minutos} min, punto de encuentro ${boletoProximo.puntoEncuentro || 'por confirmar'}.`,
         viajeId: boletoProximo.viajeId,
       };
     }
