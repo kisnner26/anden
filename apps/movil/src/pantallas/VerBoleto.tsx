@@ -484,6 +484,13 @@ export function VerBoleto({
             </Bloque>
           </Pressable>
         )}
+        {puedeOperar && guardado?.resumen.paraOtro && (
+          <Text style={[tipografia.cuerpo, { color: colores.ambarTexto }]}>
+            {rellenar(t('boletos.paraOtroSinEnviar'), {
+              nombre: nombrePropio(guardado.boleto.pasajero.nombre),
+            })}
+          </Text>
+        )}
         {puedeOperar && alTransferir && (
           <Pressable
             accessibilityRole="button"

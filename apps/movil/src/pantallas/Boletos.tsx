@@ -54,10 +54,16 @@ export function Boletos({
   const [vista, establecerVista] = useState<'historial' | 'proximos'>(
     'proximos',
   );
-  const proximos = boletos
+  const [soloParaOtros, establecerSoloParaOtros] = useState(false);
+  const hayParaOtros = boletos.some(({ resumen }) => resumen.paraOtro);
+  const visibles =
+    soloParaOtros && hayParaOtros
+      ? boletos.filter(({ resumen }) => resumen.paraOtro)
+      : boletos;
+  const proximos = visibles
     .filter(({ resumen }) => new Date(resumen.salida) >= ahora)
     .sort(porSalida);
-  const pasados = boletos
+  const pasados = visibles
     .filter(({ resumen }) => new Date(resumen.salida) < ahora)
     .sort((a, b) => porSalida(b, a));
 
@@ -148,6 +154,16 @@ export function Boletos({
         </View>
       ) : (
         <>
+          {hayParaOtros && (
+            <ControlSegmentado
+              alCambiar={(clave) => establecerSoloParaOtros(clave === 'otros')}
+              opciones={[
+                { clave: 'todos', etiqueta: t('boletos.todos') },
+                { clave: 'otros', etiqueta: t('boletos.paraOtros') },
+              ]}
+              valor={soloParaOtros ? 'otros' : 'todos'}
+            />
+          )}
           {proximos.length > 0 && pasados.length > 0 && (
             <ControlSegmentado
               alCambiar={establecerVista}
