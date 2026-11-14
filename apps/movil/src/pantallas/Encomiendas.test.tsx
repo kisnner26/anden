@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, waitFor } from '@testing-library/react-native';
 import { Share } from 'react-native';
 
+import { ContextoIA, type ValorIA } from '@/datos/useIA';
 import { ProveedorEncomiendas } from '@/datos/ProveedorEncomiendas';
 import { reiniciarMuestra } from '@/datos/useSalidas';
 import { renderPantalla } from '@/pruebas/render';
@@ -228,5 +229,76 @@ describe('Encomiendas', () => {
         ]),
       );
     }
+  });
+
+  describe('con IA (Apple Intelligence o Gemini)', () => {
+    function conIA(preguntar: ValorIA['preguntar'], usable = true) {
+      const ia: ValorIA = {
+        activada: true,
+        cambiar: async () => undefined,
+        cargando: false,
+        disponibilidad: 'disponible',
+        nombre: 'Gemini',
+        preguntar,
+        usable,
+      };
+      return renderPantalla(
+        <ContextoIA.Provider value={ia}>
+          <ProveedorEncomiendas>
+            <Encomiendas alVolver={() => undefined} />
+          </ProveedorEncomiendas>
+        </ContextoIA.Provider>,
+      );
+    }
+
+    it('completa el tamaño, lo frágil y la descripción a partir de lo que cuenta la persona', async () => {
+      const preguntar = jest.fn(
+        async (_instrucciones: string, _pregunta: string) =>
+          JSON.stringify({
+            descripcion: 'Caja de vasos',
+            fragil: true,
+            tamano: 'grande',
+          }),
+      );
+      const pantalla = await conIA(preguntar);
+      await fireEvent.changeText(
+        pantalla.getByLabelText('Qué querés enviar'),
+        'una caja de vasos de vidrio para mi mamá',
+      );
+      await fireEvent.press(
+        pantalla.getByRole('button', { name: 'Completar con Gemini' }),
+      );
+      expect(
+        await pantalla.findByText(
+          /Listo: Paquete grande · Frágil · Caja de vasos/,
+        ),
+      ).toBeTruthy();
+      expect(preguntar.mock.calls[0]?.[0]).toContain('SOLO con un JSON');
+      expect(
+        pantalla.getByRole('switch', { name: 'Frágil' }).props
+          .accessibilityState,
+      ).toMatchObject({ checked: true });
+    });
+
+    it('si el modelo no responde bien, avisa y deja elegir a mano', async () => {
+      const pantalla = await conIA(async () => {
+        throw new Error('fallo');
+      });
+      await fireEvent.changeText(
+        pantalla.getByLabelText('Qué querés enviar'),
+        'unos documentos',
+      );
+      await fireEvent.press(
+        pantalla.getByRole('button', { name: 'Completar con Gemini' }),
+      );
+      expect(
+        await pantalla.findByText('No pude leerlo. Elegí el tamaño a mano.'),
+      ).toBeTruthy();
+    });
+
+    it('sin la IA lista no aparece el asistente', async () => {
+      const pantalla = await conIA(async () => '', false);
+      expect(pantalla.queryByTestId('asistente-encomienda')).toBeNull();
+    });
   });
 });
