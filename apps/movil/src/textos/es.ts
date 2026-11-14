@@ -633,6 +633,11 @@ export const textos = {
       'Resumime mis próximos viajes y decime a qué hora conviene llegar a cada punto de encuentro, usando solo estos datos.',
     resumenTitulo: 'Resumir mis viajes con IA',
   },
+  gestos: {
+    avisar: 'Avisarme',
+    favorita: 'Favorita',
+    quitarFavorita: 'Quitar',
+  },
   vistaDia: {
     cuenta: '{cantidad} salidas',
     cuentaUna: '1 salida',
