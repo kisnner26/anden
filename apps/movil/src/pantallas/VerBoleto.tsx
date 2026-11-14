@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
   Linking,
   Pressable,
   ScrollView,
@@ -15,6 +16,7 @@ import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { HojaContacto } from '@/componentes/HojaContacto';
 import { HojaObjetoOlvidado } from '@/componentes/HojaObjetoOlvidado';
 import { PuntoDeEncuentro } from '@/componentes/PuntoDeEncuentro';
+import { OverlayBoleto, TalonAmpliable } from '@/componentes/TalonAmpliable';
 import { TalonBoleto } from '@/componentes/TalonBoleto';
 import { estadoVisibleBoleto } from '@/datos/estadoBoleto';
 import { useBoletos } from '@/datos/useBoletos';
@@ -112,6 +114,7 @@ export function VerBoleto({
   const [pidiendoContacto, establecerPidiendoContacto] = useState(false);
 
   const sonar = useSonidos();
+  const progresoAmpliado = useRef(new Animated.Value(0)).current;
   const { plus } = useSuscripcion();
 
   useEffect(() => {
@@ -240,364 +243,376 @@ export function VerBoleto({
     });
 
   return (
-    <ScrollView
-      contentContainerStyle={[
-        estilos.contenido,
-        {
-          paddingBottom: espacios.cuarentaYOcho,
-          paddingTop: margenes.top + espacios.ocho,
-        },
-      ]}
-      style={{ backgroundColor: colores.fondo }}
-    >
-      <CabeceraPantalla alVolver={alVolver} titulo={t('boleto.titulo')} />
-
-      {minutos > 0 && (
-        <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-          {`${t('viajar.saleEn')} ${minutos} ${t('viajar.minutos')}`}
-        </Text>
-      )}
-
-      <TalonBoleto guardado={guardado} />
-      <PuntoDeEncuentro codigo={guardado.resumen.puntoEncuentro} />
-
-      {puedeOperar && (
-        <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-          {t('boleto.muestra')}
-        </Text>
-      )}
-      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-        {`${t('boletos.estado')}: ${etiquetaEstado}`}
-      </Text>
-      {estadoDe(guardado.boleto.id) === 'pagado_efectivo' && (
-        <Text
-          accessibilityLiveRegion="polite"
-          style={[tipografia.etiqueta, { color: colores.aTiempo }]}
-        >
-          {t('boleto.pagadoEfectivo')}
-        </Text>
-      )}
-
-      {puedeOperar && (
-        <Bloque estiloContenido={estilos.pago} hundido radio="loseta">
-          <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
-            {t('boleto.totalAbordar')}
-          </Text>
-          <Text
-            style={[tipografia.datoGrande, { color: colores.tinta }]}
-          >{`C$ ${guardado.boleto.precio}`}</Text>
-          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {t('boleto.exacto')}
-          </Text>
-        </Bloque>
-      )}
-
-      {puedeOperar && (
-        <Bloque estiloContenido={estilos.verificar} hundido radio="loseta">
-          <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-            {t('boleto.verificarTitulo')}
-          </Text>
-          <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
-            {rellenar(t('boleto.verificarPlaca'), {
-              placa: guardado.resumen.placa,
-            })}
-          </Text>
-          <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
-            {rellenar(t('boleto.verificarChofer'), {
-              chofer: guardado.resumen.choferNombre,
-            })}
-          </Text>
-          <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
-            {rellenar(t('boleto.verificarAnden'), {
-              puntoEncuentro: guardado.resumen.puntoEncuentro,
-            })}
-          </Text>
-        </Bloque>
-      )}
-
-      <Pressable
-        accessibilityLabel={`${t('boleto.verChofer')} ${guardado.resumen.choferNombre}`}
-        accessibilityRole="button"
-        onPress={() => alVerChofer(guardado.resumen.choferId)}
+    <View style={estilos.raiz}>
+      <ScrollView
+        contentContainerStyle={[
+          estilos.contenido,
+          {
+            paddingBottom: espacios.cuarentaYOcho,
+            paddingTop: margenes.top + espacios.ocho,
+          },
+        ]}
+        style={{ backgroundColor: colores.fondo }}
       >
-        <Bloque estiloContenido={estilos.boton} radio="pildora">
-          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-            {`${t('boleto.verChofer')} · ${guardado.resumen.choferNombre}`}
-          </Text>
-        </Bloque>
-      </Pressable>
+        <CabeceraPantalla alVolver={alVolver} titulo={t('boleto.titulo')} />
 
-      {ciudadOrigen && guardado.boleto.estado !== 'cancelado' && (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityState={{ disabled: yaEsHabitual || !cabeHabitual }}
-          disabled={yaEsHabitual || !cabeHabitual}
-          onPress={() =>
-            void agregarHabitual(
-              habitualDeSalida(
-                ciudadOrigen,
-                guardado.resumen.destino,
-                new Date(guardado.resumen.salida),
-              ),
-            )
-          }
-        >
-          <Bloque estiloContenido={estilos.boton} radio="pildora">
-            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-              {yaEsHabitual
-                ? t('habitual.guardado')
-                : cabeHabitual
-                  ? t('habitual.guardar')
-                  : t('plus.habitualesLleno')}
+        {minutos > 0 && (
+          <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+            {`${t('viajar.saleEn')} ${minutos} ${t('viajar.minutos')}`}
+          </Text>
+        )}
+
+        <TalonAmpliable habilitado={puedeOperar} progreso={progresoAmpliado}>
+          <TalonBoleto guardado={guardado} />
+        </TalonAmpliable>
+        <PuntoDeEncuentro codigo={guardado.resumen.puntoEncuentro} />
+
+        {puedeOperar && (
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {t('boleto.muestra')}
+          </Text>
+        )}
+        <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+          {`${t('boletos.estado')}: ${etiquetaEstado}`}
+        </Text>
+        {estadoDe(guardado.boleto.id) === 'pagado_efectivo' && (
+          <Text
+            accessibilityLiveRegion="polite"
+            style={[tipografia.etiqueta, { color: colores.aTiempo }]}
+          >
+            {t('boleto.pagadoEfectivo')}
+          </Text>
+        )}
+
+        {puedeOperar && (
+          <Bloque estiloContenido={estilos.pago} hundido radio="loseta">
+            <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+              {t('boleto.totalAbordar')}
+            </Text>
+            <Text
+              style={[tipografia.datoGrande, { color: colores.tinta }]}
+            >{`C$ ${guardado.boleto.precio}`}</Text>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {t('boleto.exacto')}
             </Text>
           </Bloque>
-        </Pressable>
-      )}
+        )}
 
-      {(estado === 'usado' || estado === 'vencido') && (
-        <>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => establecerReportando(true)}
-          >
-            <Bloque estiloContenido={estilos.boton} radio="pildora">
-              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                {t('objetos.reportar')}
-              </Text>
-            </Bloque>
-          </Pressable>
-          {objetosDeBoleto(objetos, guardado.boleto.id).length > 0 && (
-            <View style={estilos.verificar}>
-              <Text
-                style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
-              >
-                {t('objetos.previos')}
-              </Text>
-              {objetosDeBoleto(objetos, guardado.boleto.id).map((objeto) => (
-                <Text
-                  key={objeto.id}
-                  style={[tipografia.cuerpo, { color: colores.tinta }]}
-                >
-                  {objeto.descripcion}
-                </Text>
-              ))}
-              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-                {t('objetos.enviado')}
-              </Text>
-            </View>
-          )}
-        </>
-      )}
-
-      {!puedeOperar && alReservarOtra && (
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => alReservarOtra(guardado.resumen.destino)}
-        >
-          <Bloque estiloContenido={estilos.boton} radio="pildora">
-            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-              {rellenar(t('boleto.reservarOtra'), {
-                destino: guardado.resumen.destino,
+        {puedeOperar && (
+          <Bloque estiloContenido={estilos.verificar} hundido radio="loseta">
+            <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+              {t('boleto.verificarTitulo')}
+            </Text>
+            <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
+              {rellenar(t('boleto.verificarPlaca'), {
+                placa: guardado.resumen.placa,
+              })}
+            </Text>
+            <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
+              {rellenar(t('boleto.verificarChofer'), {
+                chofer: guardado.resumen.choferNombre,
+              })}
+            </Text>
+            <Text style={[tipografia.cuerpo, { color: colores.tinta }]}>
+              {rellenar(t('boleto.verificarAnden'), {
+                puntoEncuentro: guardado.resumen.puntoEncuentro,
               })}
             </Text>
           </Bloque>
-        </Pressable>
-      )}
+        )}
 
-      {puedeOperar && (
         <Pressable
+          accessibilityLabel={`${t('boleto.verChofer')} ${guardado.resumen.choferNombre}`}
           accessibilityRole="button"
-          onPress={() => {
-            if (contacto) void avisarContacto(contacto);
-            else establecerPidiendoContacto(true);
-          }}
+          onPress={() => alVerChofer(guardado.resumen.choferId)}
         >
           <Bloque estiloContenido={estilos.boton} radio="pildora">
             <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-              {contacto
-                ? rellenar(t('contacto.avisarA'), { nombre: contacto.nombre })
-                : t('contacto.avisar')}
+              {`${t('boleto.verChofer')} · ${guardado.resumen.choferNombre}`}
             </Text>
           </Bloque>
         </Pressable>
-      )}
-      {puedeOperar && contacto && (
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => establecerPidiendoContacto(true)}
-        >
-          <Text
-            style={[
-              tipografia.pequeno,
-              estilos.cambiarContacto,
-              { color: colores.tintaSuave },
-            ]}
-          >
-            {t('contacto.cambiar')}
-          </Text>
-        </Pressable>
-      )}
 
-      {puedeOperar && (
-        <View style={estilos.acciones}>
+        {ciudadOrigen && guardado.boleto.estado !== 'cancelado' && (
           <Pressable
-            accessibilityLabel={t('boleto.compartir')}
             accessibilityRole="button"
-            onPress={() => void compartir()}
-            style={estilos.accionEnFila}
-          >
-            <Bloque estiloContenido={estilos.accion} radio="pildora">
-              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                {t('boleto.compartir')}
-              </Text>
-            </Bloque>
-          </Pressable>
-          <Pressable
-            accessibilityLabel={
-              recordatorioActivo
-                ? t('boleto.recordatorioActivo')
-                : t('boleto.recordatorio')
+            accessibilityState={{ disabled: yaEsHabitual || !cabeHabitual }}
+            disabled={yaEsHabitual || !cabeHabitual}
+            onPress={() =>
+              void agregarHabitual(
+                habitualDeSalida(
+                  ciudadOrigen,
+                  guardado.resumen.destino,
+                  new Date(guardado.resumen.salida),
+                ),
+              )
             }
-            accessibilityRole="button"
-            accessibilityState={{ selected: recordatorioActivo !== undefined }}
-            onPress={() => establecerEligiendoRecordatorio(true)}
-            style={estilos.accionEnFila}
           >
-            <Bloque estiloContenido={estilos.accion} radio="pildora">
+            <Bloque estiloContenido={estilos.boton} radio="pildora">
               <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                {recordatorioActivo
-                  ? rellenar(t('boleto.recordatorioPuesto'), {
-                      minutos: recordatorioActivo.minutosAntes,
-                    })
-                  : t('boleto.recordatorio')}
+                {yaEsHabitual
+                  ? t('habitual.guardado')
+                  : cabeHabitual
+                    ? t('habitual.guardar')
+                    : t('plus.habitualesLleno')}
               </Text>
             </Bloque>
           </Pressable>
-          {actividadDisponible ? (
+        )}
+
+        {(estado === 'usado' || estado === 'vencido') && (
+          <>
             <Pressable
-              accessibilityLabel={
-                actividadId
-                  ? t('boleto.actividadActiva')
-                  : t('boleto.actividad')
-              }
               accessibilityRole="button"
-              accessibilityState={{ selected: actividadId !== null }}
-              onPress={() => void alternarActividad()}
+              onPress={() => establecerReportando(true)}
+            >
+              <Bloque estiloContenido={estilos.boton} radio="pildora">
+                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                  {t('objetos.reportar')}
+                </Text>
+              </Bloque>
+            </Pressable>
+            {objetosDeBoleto(objetos, guardado.boleto.id).length > 0 && (
+              <View style={estilos.verificar}>
+                <Text
+                  style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
+                >
+                  {t('objetos.previos')}
+                </Text>
+                {objetosDeBoleto(objetos, guardado.boleto.id).map((objeto) => (
+                  <Text
+                    key={objeto.id}
+                    style={[tipografia.cuerpo, { color: colores.tinta }]}
+                  >
+                    {objeto.descripcion}
+                  </Text>
+                ))}
+                <Text
+                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                >
+                  {t('objetos.enviado')}
+                </Text>
+              </View>
+            )}
+          </>
+        )}
+
+        {!puedeOperar && alReservarOtra && (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => alReservarOtra(guardado.resumen.destino)}
+          >
+            <Bloque estiloContenido={estilos.boton} radio="pildora">
+              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                {rellenar(t('boleto.reservarOtra'), {
+                  destino: guardado.resumen.destino,
+                })}
+              </Text>
+            </Bloque>
+          </Pressable>
+        )}
+
+        {puedeOperar && (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => {
+              if (contacto) void avisarContacto(contacto);
+              else establecerPidiendoContacto(true);
+            }}
+          >
+            <Bloque estiloContenido={estilos.boton} radio="pildora">
+              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                {contacto
+                  ? rellenar(t('contacto.avisarA'), { nombre: contacto.nombre })
+                  : t('contacto.avisar')}
+              </Text>
+            </Bloque>
+          </Pressable>
+        )}
+        {puedeOperar && contacto && (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => establecerPidiendoContacto(true)}
+          >
+            <Text
+              style={[
+                tipografia.pequeno,
+                estilos.cambiarContacto,
+                { color: colores.tintaSuave },
+              ]}
+            >
+              {t('contacto.cambiar')}
+            </Text>
+          </Pressable>
+        )}
+
+        {puedeOperar && (
+          <View style={estilos.acciones}>
+            <Pressable
+              accessibilityLabel={t('boleto.compartir')}
+              accessibilityRole="button"
+              onPress={() => void compartir()}
               style={estilos.accionEnFila}
             >
               <Bloque estiloContenido={estilos.accion} radio="pildora">
                 <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                  {t('boleto.actividad')}
+                  {t('boleto.compartir')}
                 </Text>
               </Bloque>
             </Pressable>
-          ) : null}
-        </View>
-      )}
-
-      {viajeCancelado(guardado.boleto.viajeId) && (
-        <Bloque estiloContenido={estilos.cancelado}>
-          <Text style={[tipografia.subtitulo, { color: colores.cancelado }]}>
-            {t('boleto.viajeCancelado')}
-          </Text>
-          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {t('boleto.viajeCanceladoDetalle')}
-          </Text>
-        </Bloque>
-      )}
-
-      <ResumenIA
-        contexto={lineaDeBoleto(guardado)}
-        pedido={t('ia.pedidoResumenBoleto')}
-        titulo={t('ia.resumirBoleto')}
-      />
-
-      {puedeOperar && confirmando ? (
-        <Bloque estiloContenido={estilos.confirmar} hundido radio="loseta">
-          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-            {t('boleto.confirmarCancelar')}
-          </Text>
-          <View style={estilos.botones}>
             <Pressable
+              accessibilityLabel={
+                recordatorioActivo
+                  ? t('boleto.recordatorioActivo')
+                  : t('boleto.recordatorio')
+              }
               accessibilityRole="button"
-              onPress={() => establecerConfirmando(false)}
-              style={estilos.opcion}
-            >
-              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                {t('boleto.noCancelar')}
-              </Text>
-            </Pressable>
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => {
-                void cancelar(boletoId).then(alCancelado);
+              accessibilityState={{
+                selected: recordatorioActivo !== undefined,
               }}
-              style={estilos.opcion}
+              onPress={() => establecerEligiendoRecordatorio(true)}
+              style={estilos.accionEnFila}
             >
-              <Text
-                style={[tipografia.subtitulo, { color: colores.cancelado }]}
-              >
-                {t('boleto.siCancelar')}
-              </Text>
+              <Bloque estiloContenido={estilos.accion} radio="pildora">
+                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                  {recordatorioActivo
+                    ? rellenar(t('boleto.recordatorioPuesto'), {
+                        minutos: recordatorioActivo.minutosAntes,
+                      })
+                    : t('boleto.recordatorio')}
+                </Text>
+              </Bloque>
             </Pressable>
+            {actividadDisponible ? (
+              <Pressable
+                accessibilityLabel={
+                  actividadId
+                    ? t('boleto.actividadActiva')
+                    : t('boleto.actividad')
+                }
+                accessibilityRole="button"
+                accessibilityState={{ selected: actividadId !== null }}
+                onPress={() => void alternarActividad()}
+                style={estilos.accionEnFila}
+              >
+                <Bloque estiloContenido={estilos.accion} radio="pildora">
+                  <Text
+                    style={[tipografia.subtitulo, { color: colores.tinta }]}
+                  >
+                    {t('boleto.actividad')}
+                  </Text>
+                </Bloque>
+              </Pressable>
+            ) : null}
           </View>
-        </Bloque>
-      ) : puedeOperar ? (
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => establecerConfirmando(true)}
-          style={estilos.cancelar}
-        >
-          <Text style={[tipografia.subtitulo, { color: colores.cancelado }]}>
-            {t('boleto.cancelar')}
-          </Text>
-        </Pressable>
-      ) : null}
-      <HojaContacto
-        abierta={pidiendoContacto}
-        alCerrar={() => establecerPidiendoContacto(false)}
-        alGuardar={(nuevo) => {
-          void guardarContacto(nuevo);
-          establecerContacto(nuevo);
-          establecerPidiendoContacto(false);
-          void avisarContacto(nuevo);
-        }}
-      />
-      <HojaObjetoOlvidado
-        abierta={reportando}
-        alCerrar={() => establecerReportando(false)}
-        alEnviar={(descripcion) => {
-          void guardarObjeto(
-            nuevoObjeto(
-              {
-                boletoId: guardado.boleto.id,
-                destino: guardado.resumen.destino,
-                viajeId: guardado.boleto.viajeId,
-              },
-              descripcion,
-            ),
-          ).then(establecerObjetos);
-          establecerReportando(false);
-        }}
-      />
-      <HojaRecordatorio
-        actual={recordatorioActivo}
-        ahora={ahora}
-        alCerrar={() => {
-          establecerEligiendoRecordatorio(false);
-          establecerErrorRecordatorio(null);
-        }}
-        alElegir={(minutos) => void elegirRecordatorio(minutos)}
-        alQuitar={() => void quitarRecordatorio()}
-        error={errorRecordatorio}
-        plus={plus}
-        salida={eligiendoRecordatorio ? salidaDelBoleto : null}
-      />
-    </ScrollView>
+        )}
+
+        {viajeCancelado(guardado.boleto.viajeId) && (
+          <Bloque estiloContenido={estilos.cancelado}>
+            <Text style={[tipografia.subtitulo, { color: colores.cancelado }]}>
+              {t('boleto.viajeCancelado')}
+            </Text>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {t('boleto.viajeCanceladoDetalle')}
+            </Text>
+          </Bloque>
+        )}
+
+        <ResumenIA
+          contexto={lineaDeBoleto(guardado)}
+          pedido={t('ia.pedidoResumenBoleto')}
+          titulo={t('ia.resumirBoleto')}
+        />
+
+        {puedeOperar && confirmando ? (
+          <Bloque estiloContenido={estilos.confirmar} hundido radio="loseta">
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+              {t('boleto.confirmarCancelar')}
+            </Text>
+            <View style={estilos.botones}>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => establecerConfirmando(false)}
+                style={estilos.opcion}
+              >
+                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                  {t('boleto.noCancelar')}
+                </Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => {
+                  void cancelar(boletoId).then(alCancelado);
+                }}
+                style={estilos.opcion}
+              >
+                <Text
+                  style={[tipografia.subtitulo, { color: colores.cancelado }]}
+                >
+                  {t('boleto.siCancelar')}
+                </Text>
+              </Pressable>
+            </View>
+          </Bloque>
+        ) : puedeOperar ? (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => establecerConfirmando(true)}
+            style={estilos.cancelar}
+          >
+            <Text style={[tipografia.subtitulo, { color: colores.cancelado }]}>
+              {t('boleto.cancelar')}
+            </Text>
+          </Pressable>
+        ) : null}
+        <HojaContacto
+          abierta={pidiendoContacto}
+          alCerrar={() => establecerPidiendoContacto(false)}
+          alGuardar={(nuevo) => {
+            void guardarContacto(nuevo);
+            establecerContacto(nuevo);
+            establecerPidiendoContacto(false);
+            void avisarContacto(nuevo);
+          }}
+        />
+        <HojaObjetoOlvidado
+          abierta={reportando}
+          alCerrar={() => establecerReportando(false)}
+          alEnviar={(descripcion) => {
+            void guardarObjeto(
+              nuevoObjeto(
+                {
+                  boletoId: guardado.boleto.id,
+                  destino: guardado.resumen.destino,
+                  viajeId: guardado.boleto.viajeId,
+                },
+                descripcion,
+              ),
+            ).then(establecerObjetos);
+            establecerReportando(false);
+          }}
+        />
+        <HojaRecordatorio
+          actual={recordatorioActivo}
+          ahora={ahora}
+          alCerrar={() => {
+            establecerEligiendoRecordatorio(false);
+            establecerErrorRecordatorio(null);
+          }}
+          alElegir={(minutos) => void elegirRecordatorio(minutos)}
+          alQuitar={() => void quitarRecordatorio()}
+          error={errorRecordatorio}
+          plus={plus}
+          salida={eligiendoRecordatorio ? salidaDelBoleto : null}
+        />
+      </ScrollView>
+      <OverlayBoleto guardado={guardado} progreso={progresoAmpliado} />
+    </View>
   );
 }
 
 const estilos = StyleSheet.create({
+  raiz: { flex: 1 },
   cancelado: { gap: 4, padding: espacios.dieciseis },
   cambiarContacto: { textAlign: 'center', textDecorationLine: 'underline' },
   verificar: { gap: espacios.cuatro, padding: espacios.dieciseis },
