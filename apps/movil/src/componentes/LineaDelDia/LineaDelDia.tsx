@@ -181,7 +181,9 @@ export function LineaDelDia({
                   start={{ x: 0, y: 0 }}
                   style={estilos.franja}
                 >
-                  <Text style={[tipografia.etiqueta, estilos.nombreFranja]}>
+                  <Text
+                    style={[tipografia.etiqueta, { color: colores.sobreNegro }]}
+                  >
                     {NOMBRE_FRANJA[grupo.franja]()}
                   </Text>
                 </LinearGradient>
@@ -242,7 +244,6 @@ const estilos = StyleSheet.create({
     paddingVertical: espacios.cuatro,
   },
   grupo: { gap: espacios.ocho },
-  nombreFranja: { color: '#FFFFFF' },
   presionada: { transform: [{ scale: 0.95 }] },
   tarjeta: { gap: espacios.doce, padding: espacios.dieciseis },
 });
