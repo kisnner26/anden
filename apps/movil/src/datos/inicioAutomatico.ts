@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from 'react';
 
 export const CLAVE_INICIO_AUTOMATICO = 'anden.inicioAutomatico';
 
-/** cuánto se queda la portada antes de arrancar sola, para que se vea llegar el bus */
-export const ESPERA_INICIO_AUTOMATICO_MS = 2600;
+/** cuánto pasa desde que se abre la portada hasta que arranca sola: lo justo para ver llegar el bus, que en este modo corre rápido */
+export const ESPERA_INICIO_AUTOMATICO_MS = 1150;
 
 export async function leerInicioAutomatico(): Promise<boolean> {
   try {
