@@ -375,9 +375,10 @@ describe('Asistente', () => {
       await preguntar(contexto);
       await waitFor(() => expect(contexto.conversar).toHaveBeenCalledTimes(1));
       const pedido = jest.mocked(contexto.conversar!).mock.calls[0]![0];
-      expect(pedido.pregunta).toBe('hola');
       expect(JSON.parse(pedido.datosJson)).toHaveProperty('salidas');
-      expect(pedido.instrucciones).toContain('SIEMPRE las herramientas');
+      expect(pedido.instrucciones).toContain('Datos reales de Andén');
+      expect(pedido.pregunta).toContain('Datos reales de Andén');
+      expect(pedido.pregunta).toContain('Pregunta de la persona: hola');
       expect(contexto.preguntar).not.toHaveBeenCalled();
     });
 
@@ -419,9 +420,9 @@ describe('Asistente', () => {
         pantalla.getAllByRole('button', { name: /Boaco/ })[0]!,
       );
       await waitFor(() => expect(contexto.conversar).toHaveBeenCalled());
-      expect(jest.mocked(contexto.conversar!).mock.calls[0]![0].pregunta).toBe(
-        'Qué visitar en Boaco',
-      );
+      expect(
+        jest.mocked(contexto.conversar!).mock.calls[0]![0].pregunta,
+      ).toContain('Pregunta de la persona: Qué visitar en Boaco');
     });
 
     it('nueva conversación borra lo hablado y olvida la sesión del modelo', async () => {
@@ -454,5 +455,27 @@ describe('Asistente', () => {
     expect(jest.mocked(contexto.preguntar).mock.calls[0]?.[1]).toBe(
       '¿Qué debo saber de este viaje?',
     );
+  });
+
+  it('el modelo recibe en el mensaje las salidas reales, incluida la de mañana, sin ids internos', async () => {
+    const conversar = jest.fn<NonNullable<ValorIA['conversar']>>(async () =>
+      JSON.stringify({ texto: 'Sí hay.' }),
+    );
+    const contexto = valor({ conversar });
+    const pantalla = await abrir(contexto);
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Tu pregunta'),
+      'busca viajes próximos',
+    );
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Preguntar' }));
+    await waitFor(() => expect(conversar).toHaveBeenCalledTimes(1));
+    const pedido = conversar.mock.calls[0]![0];
+    expect(pedido.pregunta).toContain('[1]');
+    expect(pedido.pregunta).toContain('Salidas que coinciden');
+    expect(pedido.pregunta).not.toMatch(/via_/);
+    const snapshot = JSON.parse(pedido.datosJson);
+    expect(snapshot.salidas.length).toBeGreaterThan(0);
+    expect(snapshot.tarifas.length).toBeGreaterThan(0);
+    expect(snapshot.personal[0]).toContain('usa la app como');
   });
 });

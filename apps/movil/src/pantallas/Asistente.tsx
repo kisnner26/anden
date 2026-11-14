@@ -48,8 +48,14 @@ import { usePerfil } from '@/datos/usePerfil';
 import { useSesion } from '@/datos/useSesion';
 import { armarContexto, instruccionesDelAsistente } from '@/datos/contextoIA';
 import {
-  actividadDeHerramienta,
   armarDatosParaElModelo,
+  armarPrompt,
+  hechosParaPregunta,
+  type EstadoApp,
+} from '@/datos/consultaIA';
+import {
+  actividadDeHerramienta,
+  fichasParaElModelo,
   instruccionesDeConversacion,
   leerRespuestaRica,
   RESPUESTA_VACIA,
@@ -58,6 +64,9 @@ import {
 import { FICHAS } from '@/datos/fichasCiudad';
 import { formatoHoraCompleta } from '@/datos/formato';
 import { useBoletos } from '@/datos/useBoletos';
+import { useEncomiendas } from '@/datos/useEncomiendas';
+import { useHabituales } from '@/datos/useHabituales';
+import { useSuscripcion } from '@/datos/useSuscripcion';
 import { registrarReserva, resumenParaModelo } from '@/datos/memoriaIA';
 import { sugerenciasDelMomento } from '@/datos/sugerenciasIA';
 import { useIA } from '@/datos/useIA';
@@ -125,7 +134,10 @@ export function Asistente({
   const { boletos, reservar } = useBoletos();
   const { ahora, datos, salidas } = useSalidas();
   const { perfil } = usePerfil();
-  const { sesion } = useSesion();
+  const { rol, sesion } = useSesion();
+  const { encomiendas } = useEncomiendas();
+  const { habituales } = useHabituales();
+  const { plus } = useSuscripcion();
   // lo que Andén espera antes de seguir una orden: un teléfono o un sí para reservar
   const [pendiente, establecerPendiente] = useState<
     | { nombre: string; tipo: 'telefono' }
@@ -345,6 +357,30 @@ export function Asistente({
     }
   }
 
+  /** todo lo que la app sabe ahora de la persona y de los viajes: es lo que se le comparte al modelo en cada pregunta */
+  function construirEstado(): EstadoApp {
+    const ahoraReal = new Date();
+    return {
+      ahora: ahoraReal,
+      boletos,
+      choferes: new Map(datos.choferes.map((c) => [c.id, c.nombre])),
+      ciudades: [
+        ...new Set(datos.terminales.map((terminal) => terminal.ciudad)),
+      ],
+      encomiendas,
+      habituales,
+      nombre:
+        nombrePropio(perfil.nombre || sesion?.nombre || '').split(' ')[0] ?? '',
+      plus,
+      rol,
+      salidas,
+      salidasPropias:
+        rol === 'conductor' && sesion
+          ? salidas.filter((salida) => salida.choferId === sesion.choferId)
+          : [],
+    };
+  }
+
   function actualizarIntercambio(id: number, cambios: Partial<Intercambio>) {
     establecerHistorial((previo) =>
       previo.map((intercambio) =>
@@ -376,6 +412,9 @@ export function Asistente({
     ]);
     establecerTexto('');
     try {
+      const estado = construirEstado();
+      const snapshot = armarDatosParaElModelo(estado, fichasParaElModelo());
+      const referencias = snapshot.salidas.map((salida) => salida.id);
       const final = await conversar({
         alHerramienta: (herramienta) =>
           actualizarIntercambio(id, {
@@ -384,16 +423,19 @@ export function Asistente({
         alParcial: (json) =>
           actualizarIntercambio(id, {
             actividad: null,
-            rica: leerRespuestaRica(json, salidas),
+            rica: leerRespuestaRica(json, salidas, referencias),
           }),
         conversacion: conversacionId.current,
-        datosJson: JSON.stringify(
-          armarDatosParaElModelo(salidas, boletos, new Date()),
-        ),
+        datosJson: JSON.stringify(snapshot),
         instrucciones: instruccionesDeConversacion({ turista }),
-        pregunta,
+        pregunta: armarPrompt(
+          pregunta,
+          snapshot,
+          estado.ciudades,
+          estado.ahora,
+        ),
       });
-      const rica = leerRespuestaRica(final, salidas);
+      const rica = leerRespuestaRica(final, salidas, referencias);
       if (rica.texto === '') throw new Error('respuesta-vacia');
       actualizarIntercambio(id, {
         actividad: null,
@@ -443,7 +485,19 @@ export function Asistente({
       const todosLosDestinos = [...new Set(salidas.map((s) => s.destino))];
       memoriaIA.recordarPregunta(limpia, todosLosDestinos);
       if (conversar && (await conversarConHerramientas(limpia, porVoz))) return;
+      const estadoLegado = construirEstado();
+      const snapshotLegado = armarDatosParaElModelo(
+        estadoLegado,
+        fichasParaElModelo(),
+      );
       const contexto = [
+        ...snapshotLegado.personal,
+        ...hechosParaPregunta(
+          limpia,
+          snapshotLegado,
+          estadoLegado.ciudades,
+          estadoLegado.ahora,
+        ),
         armarContexto(salidas, boletos, new Date()),
         resumenParaModelo(memoriaEfectiva),
       ]
