@@ -13,7 +13,7 @@ import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
 import { Interruptor } from '@/componentes/Interruptor';
-import { MascotaPito } from '@/componentes/MascotaPito';
+import { MascotaRumbo } from '@/componentes/MascotaRumbo';
 import { useMascota } from '@/datos/useMascota';
 import { OpcionSeleccion } from '@/componentes/OpcionSeleccion';
 import { iniciales, nombreCompleto, nombrePropio } from '@/datos/perfil';
@@ -256,7 +256,7 @@ export function Ajustes({
         {t('mascota.titulo')}
       </Text>
       <Bloque estiloContenido={estilos.filaOpcion}>
-        <MascotaPito
+        <MascotaRumbo
           humor={mascota.activa ? 'saludando' : 'dormido'}
           tamano={64}
         />
