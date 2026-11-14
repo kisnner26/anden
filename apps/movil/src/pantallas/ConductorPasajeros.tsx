@@ -10,6 +10,7 @@ import { Aparece } from '@/componentes/Aparece';
 import { Autobus, type IdVarianteBus } from '@/componentes/Autobus';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { Bloque } from '@/componentes/Bloque';
+import { HojaPasajero } from '@/componentes/HojaPasajero';
 import type { IdVehiculoPlus } from '@/componentes/VehiculoPlus';
 import { formatoHora } from '@/datos/formato';
 import { nombrePropio } from '@/datos/perfil';
@@ -131,8 +132,10 @@ function SeccionViaje({
   const { colores } = useTema();
   const { boletos: locales } = useBoletos();
   const { boletos: remotos, fallo } = useBoletosDelViaje(viaje.viajeId);
-  const { estadoDe, registro } = usePagos();
-  const { abordo } = useAbordaje();
+  const { estadoDe, marcarPagado, registro, revertir } = usePagos();
+  const { abordo, alternar: alternarAbordaje } = useAbordaje();
+  const { sesion } = useSesion();
+  const [abierto, establecerAbierto] = useState<string | null>(null);
   const pasajeros = unirBoletos(locales, remotos)
     .filter(
       ({ boleto }) =>
@@ -147,6 +150,7 @@ function SeccionViaje({
     pasajeros.map(({ boleto }) => ({ id: boleto.id, precio: boleto.precio })),
     registro,
   );
+  const ficha = pasajeros.find(({ boleto }) => boleto.id === abierto);
   const abordaron = pasajeros.filter(({ boleto }) => abordo(boleto.id)).length;
   const avance = pasajeros.length === 0 ? 0 : abordaron / pasajeros.length;
 
@@ -206,8 +210,14 @@ function SeccionViaje({
         const pagado = estadoDe(boleto.id) === 'pagado_efectivo';
         const subio = abordo(boleto.id);
         return (
-          <View
+          <Pressable
+            accessibilityHint={t('conductorPasajeros.verFicha').replace(
+              '{nombre}',
+              nombrePropio(boleto.pasajero.nombre),
+            )}
+            accessibilityRole="button"
             key={boleto.id}
+            onPress={() => establecerAbierto(boleto.id)}
             style={[
               estilos.fila,
               resumen.plus && {
@@ -265,7 +275,7 @@ function SeccionViaje({
                 variante={resumen.unidadPlus as IdVarianteBus | IdVehiculoPlus}
               />
             )}
-          </View>
+          </Pressable>
         );
       })}
       {fallo && (
@@ -273,6 +283,32 @@ function SeccionViaje({
           {t('conductorPasajeros.sinConexion')}
         </Text>
       )}
+      <HojaPasajero
+        abierta={ficha !== undefined}
+        abordo={ficha ? abordo(ficha.boleto.id) : false}
+        alAlternarAbordaje={(id) => void alternarAbordaje(id)}
+        alAlternarPago={(id, pagado) => {
+          if (!sesion?.choferId) return;
+          void (pagado ? revertir(id) : marcarPagado(id, sesion.choferId));
+        }}
+        alCerrar={() => establecerAbierto(null)}
+        pagado={ficha ? estadoDe(ficha.boleto.id) === 'pagado_efectivo' : false}
+        pasajero={
+          ficha
+            ? {
+                asiento: ficha.boleto.asiento,
+                boletoId: ficha.boleto.id,
+                cedula: ficha.boleto.pasajero.cedula,
+                codigo: ficha.boleto.codigo,
+                esMenorEnBrazos: ficha.boleto.pasajero.esMenorEnBrazos,
+                nombre: ficha.boleto.pasajero.nombre,
+                plus: ficha.resumen.plus,
+                precio: ficha.boleto.precio,
+                unidadPlus: ficha.resumen.unidadPlus,
+              }
+            : null
+        }
+      />
     </Bloque>
   );
 }
