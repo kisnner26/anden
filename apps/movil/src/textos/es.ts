@@ -1251,6 +1251,7 @@ export const textos = {
     abrirViaje: 'Abrir el viaje a {destino}',
     iniciar: 'Iniciar viaje',
     terminar: 'Terminar viaje',
+    centrarMapa: 'Centrar el mapa en el bus',
     cierreAutomatico: 'Se cierra solo al llegar a {destino}',
     transmitiendo: 'En vivo: los pasajeros ven tu bus en el mapa',
     detenido: 'Todavía no compartís tu ubicación',
