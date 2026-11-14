@@ -1,20 +1,31 @@
 import { Platform } from 'react-native';
 
 import {
+  conversarConElModelo,
   disponibilidadDelModelo,
+  olvidarConversacion,
+  precalentarModelo,
   responderConElModelo,
+  sabeConversar,
   type DisponibilidadIA,
+  type PedidoConversacion,
 } from '../../modules/anden-ia';
 
-export type { DisponibilidadIA };
+export type { DisponibilidadIA, PedidoConversacion };
 
 /** el motor de IA del teléfono: Apple Intelligence en iPhone, Gemini en Android */
 export type ProveedorIA = 'apple' | 'gemini';
 
 export interface ServicioIA {
+  /** conversación con herramientas y respuesta estructurada; solo donde el sistema la ofrece */
+  conversar?: (pedido: PedidoConversacion) => Promise<string>;
   disponibilidad(): Promise<DisponibilidadIA>;
   /** nombre que ve la persona en los ajustes */
   nombre: string;
+  /** olvida lo hablado en una conversación */
+  olvidar?: (conversacion: string) => Promise<void>;
+  /** carga el modelo por adelantado para que la primera respuesta no tarde */
+  precalentar?: (conversacion: string, instrucciones: string) => Promise<void>;
   preguntar(instrucciones: string, pregunta: string): Promise<string>;
   proveedor: ProveedorIA;
 }
@@ -22,6 +33,13 @@ export interface ServicioIA {
 /** Apple Intelligence: el modelo corre en el teléfono y las preguntas no salen de él */
 export function crearIAApple(): ServicioIA {
   return {
+    ...(sabeConversar
+      ? {
+          conversar: conversarConElModelo,
+          olvidar: olvidarConversacion,
+          precalentar: precalentarModelo,
+        }
+      : {}),
     disponibilidad: disponibilidadDelModelo,
     nombre: 'Apple Intelligence',
     preguntar: responderConElModelo,
