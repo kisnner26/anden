@@ -250,7 +250,7 @@ export function TalonBoleto({ guardado }: PropiedadesTalonBoleto) {
             </Text>
           </View>
           <Casilla
-            etiqueta={t('boleto.puntoEncuentro')}
+            etiqueta={t('boletos.encuentroCorto')}
             valor={puntoCorto(resumen.puntoEncuentro) || '—'}
           />
           <Casilla

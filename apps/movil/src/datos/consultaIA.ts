@@ -3,6 +3,7 @@ import type { Encomienda } from './encomiendas';
 import { formatoFechaCorta, formatoHoraCompleta } from './formato';
 import { formatoDiasSemana } from './formato';
 import type { Habitual } from './habituales';
+import { agruparPorDestino } from './historialViajes';
 import type { BoletoGuardado } from './reserva';
 import type { Salida } from './salidas';
 
@@ -112,6 +113,34 @@ const ESTADO_ENCOMIENDA: Record<string, string> = {
   solicitada: 'solicitada, esperando confirmación',
 };
 
+/** los viajes ya hechos en una línea: cuántos, a dónde, cuánto gastó y cuál fue el último */
+export function lineaDeHistorial(
+  boletos: readonly BoletoGuardado[],
+  ahora: Date,
+): string | null {
+  const hechos = boletos.filter(
+    ({ boleto, resumen }) =>
+      boleto.estado !== 'cancelado' && new Date(resumen.salida) < ahora,
+  );
+  if (hechos.length === 0) return null;
+  const gastado = hechos.reduce((suma, { boleto }) => suma + boleto.precio, 0);
+  const grupos = agruparPorDestino(hechos);
+  const ultimo = grupos
+    .map((g) => g.boletos[0]!)
+    .sort(
+      (a, b) =>
+        new Date(b.resumen.salida).getTime() -
+        new Date(a.resumen.salida).getTime(),
+    )[0]!;
+  const fechaUltimo = new Date(ultimo.resumen.salida);
+  return `Historial: hizo ${hechos.length} viaje(s) y gastó C$ ${gastado} en total. Por destino: ${grupos
+    .slice(0, 4)
+    .map((g) => `${g.destino} ${g.boletos.length}`)
+    .join(
+      ', ',
+    )}. El último fue a ${ultimo.resumen.destino} el ${formatoFechaCorta(fechaUltimo)}.`;
+}
+
 export function lineaDeEncomienda(encomienda: Encomienda): string {
   return `Encomienda ${encomienda.codigo}: ${encomienda.origen} a ${encomienda.destino}, ${ESTADO_ENCOMIENDA[encomienda.estado] ?? encomienda.estado}, para ${encomienda.destinatario}, ${encomienda.descripcion}${encomienda.fragil ? ', frágil' : ''}`;
 }
@@ -164,6 +193,8 @@ export function contextoPersonal(estado: EstadoApp): string[] {
   for (const boleto of proximos.slice(0, 3)) {
     lineas.push(lineaDeBoletoRica(boleto, ahora));
   }
+  const historial = lineaDeHistorial(estado.boletos, ahora);
+  if (historial) lineas.push(historial);
   if (estado.habituales.length > 0) {
     const h = estado.habituales[0]!;
     lineas.push(

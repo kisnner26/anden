@@ -8,6 +8,7 @@ import {
   etiquetaDia,
   hechosParaPregunta,
   limpiarTexto,
+  lineaDeHistorial,
   lineaDeSalidaNumerada,
   tarifasDeLasSalidas,
   type EstadoApp,
@@ -266,5 +267,35 @@ describe('limpiarTexto', () => {
     expect(limpiarTexto('El bus a Boaco cuesta C$ 70.')).toBe(
       'El bus a Boaco cuesta C$ 70.',
     );
+  });
+});
+
+describe('lineaDeHistorial', () => {
+  it('sin viajes hechos no dice nada', () => {
+    expect(lineaDeHistorial([], AHORA)).toBeNull();
+    expect(
+      lineaDeHistorial([boletoDePrueba(new Date(2026, 10, 14, 6, 0))], AHORA),
+    ).toBeNull();
+  });
+
+  it('cuenta los viajes, lo gastado, los destinos y el último', () => {
+    const linea = lineaDeHistorial(
+      [
+        boletoDePrueba(new Date(2026, 10, 2, 6, 0), 5, 'AAAA2222'),
+        boletoDePrueba(new Date(2026, 10, 9, 6, 0), 6, 'BBBB3333'),
+      ],
+      AHORA,
+    )!;
+    expect(linea).toContain('hizo 2 viaje(s)');
+    expect(linea).toContain('C$ 92');
+    expect(linea).toContain('Boaco 2');
+    expect(linea).toContain('El último fue a Boaco el lun 9 nov');
+  });
+
+  it('el contexto personal la incluye', () => {
+    const texto = contextoPersonal(
+      estado({ boletos: [boletoDePrueba(new Date(2026, 10, 2, 6, 0))] }),
+    ).join('\n');
+    expect(texto).toContain('Historial: hizo 1 viaje(s)');
   });
 });
