@@ -65,6 +65,27 @@ describe('CalificarViaje', () => {
     });
   });
 
+  it('"Ahora no" saca la tarjeta de la pantalla', async () => {
+    const p = await renderPantalla(<CalificarViaje guardado={GUARDADO} />);
+    await p.findByText('¿Cómo te fue con Marvin?');
+    await fireEvent.press(p.getByRole('button', { name: 'Ahora no' }));
+    expect(p.queryByTestId('calificar-viaje')).toBeNull();
+  });
+
+  it('después de agradecer la tarjeta se va sola', async () => {
+    const p = await renderPantalla(<CalificarViaje guardado={GUARDADO} />);
+    await p.findByText('¿Cómo te fue con Marvin?');
+    await fireEvent.press(p.getByRole('button', { name: '5 estrellas' }));
+    await fireEvent.press(p.getByRole('button', { name: 'Enviar opinión' }));
+    await waitFor(() =>
+      expect(p.getByTestId('calificacion-enviada')).toBeTruthy(),
+    );
+    await waitFor(
+      () => expect(p.queryByTestId('calificacion-enviada')).toBeNull(),
+      { timeout: 4000 },
+    );
+  });
+
   it('un viaje que ya se calificó no vuelve a pedirlo', async () => {
     await AsyncStorage.setItem(
       CLAVE_OPINIONES,
