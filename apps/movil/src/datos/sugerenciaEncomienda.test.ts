@@ -1,6 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 
 import {
+  datosDelTexto,
   instruccionesDeEncomienda,
   leerSugerenciaEncomienda,
   sugerenciaPorPalabras,
@@ -95,5 +96,75 @@ describe('instruccionesDeEncomienda', () => {
     expect(texto).toContain('"tamano"');
     expect(texto).toContain('"fragil"');
     expect(texto).toContain('"descripcion"');
+  });
+});
+
+describe('datosDelTexto', () => {
+  it('lee un teléfono de Nicaragua con espacios o con el prefijo del país', () => {
+    expect(datosDelTexto('para Luis, 8888 1234').telefono).toBe('88881234');
+    expect(datosDelTexto('llámenlo al +505 8888-1234').telefono).toBe(
+      '88881234',
+    );
+  });
+
+  it('ignora números que no son un teléfono válido', () => {
+    expect(datosDelTexto('caja 1234 5678').telefono).toBeUndefined();
+  });
+
+  it('una ciudad sola significa que va hacia ella', () => {
+    expect(datosDelTexto('un saco para Boaco')).toMatchObject({
+      ciudad: 'Boaco',
+      sentido: 'ida',
+    });
+  });
+
+  it('"desde Juigalpa" significa que viene hacia Managua', () => {
+    expect(datosDelTexto('un paquete desde Juigalpa')).toMatchObject({
+      ciudad: 'Juigalpa',
+      sentido: 'vuelta',
+    });
+  });
+
+  it('toma el nombre que viene después de "para" con mayúscula', () => {
+    expect(datosDelTexto('una caja para Luis Pérez').destinatario).toBe(
+      'Luis Pérez',
+    );
+    expect(datosDelTexto('una caja para mi mamá').destinatario).toBeUndefined();
+    expect(datosDelTexto('un saco para Boaco').destinatario).toBeUndefined();
+  });
+});
+
+describe('leerSugerenciaEncomienda con datos del envío', () => {
+  it('suma ciudad, sentido y destinatario del modelo', () => {
+    const r = leerSugerenciaEncomienda(
+      '{"tamano":"pequeno","fragil":false,"descripcion":"Ropa","destinatario":"Ana","ciudad":"Juigalpa","sentido":"vuelta"}',
+      'ropa para Ana desde Juigalpa',
+    );
+    expect(r).toMatchObject({
+      ciudad: 'Juigalpa',
+      destinatario: 'Ana',
+      sentido: 'vuelta',
+    });
+  });
+
+  it('una ciudad inventada se descarta', () => {
+    const r = leerSugerenciaEncomienda(
+      '{"tamano":"pequeno","fragil":false,"descripcion":"Ropa","ciudad":"Atlantis"}',
+      'ropa',
+    );
+    expect(r.ciudad).toBeUndefined();
+  });
+
+  it('el teléfono solo sale del texto, nunca del modelo', () => {
+    const r = leerSugerenciaEncomienda(
+      '{"tamano":"pequeno","fragil":false,"descripcion":"Ropa","telefono":"88887777"}',
+      'ropa',
+    );
+    expect(r.telefono).toBeUndefined();
+    const conTexto = leerSugerenciaEncomienda(
+      '{"tamano":"sobre"}',
+      'cartas al 8888 1234',
+    );
+    expect(conTexto.telefono).toBe('88881234');
   });
 });
