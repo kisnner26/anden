@@ -17,11 +17,15 @@ import { publicarAlerta } from '@/servicios/supabase/alertasSupabase';
 
 import { leerContacto, urlSms } from './contactoConfianza';
 import {
-  esPosibleChoque,
+  aceleracionDinamica,
+  evaluarChoque,
   mensajeDeAlerta,
   NUMERO_EMERGENCIA,
   SEGUNDOS_PARA_CONFIRMAR,
+  UMBRAL_CHOQUE_G,
+  VENTANA_HISTORIAL_MS,
   type MuestraAcelerometro,
+  type MuestraVelocidad,
 } from './deteccionChoque';
 import { nombreCompleto } from './perfil';
 import { useBoletos } from './useBoletos';
@@ -31,8 +35,14 @@ import { useSesion } from './useSesion';
 import { useViajesEnVivo } from './useTransmision';
 
 export const CLAVE_SEGURIDAD = 'anden.deteccionChoque';
-const VENTANA_MS = 4000;
-const INTERVALO_MS = 50;
+/** 100 lecturas por segundo: un choque dura decenas de milisegundos y a menos ritmo se escapa */
+const INTERVALO_MS = 10;
+/** cada cuánto se revisa un golpe sospechoso mientras se espera ver qué hizo el bus */
+const REVISION_MS = 500;
+/** si no se resuelve en este tiempo el golpe se descarta */
+const CADUCA_CANDIDATO_MS = 20_000;
+/** tras decir "estoy bien" no se vuelve a preguntar durante este tiempo */
+const SILENCIO_TRAS_FALSA_ALARMA_MS = 120_000;
 
 /**
  * vigila el acelerómetro mientras hay un viaje en marcha. Si detecta un golpe fuerte seguido de
@@ -47,6 +57,10 @@ export function ProveedorSeguridad({ children }: { children: ReactNode }) {
   const [activa, establecerActiva] = useState(true);
   const [fase, establecerFase] = useState<FaseAlerta>({ tipo: 'ninguna' });
   const muestras = useRef<MuestraAcelerometro[]>([]);
+  const velocidades = useRef<MuestraVelocidad[]>([]);
+  // desde cuándo hay un golpe sospechoso esperando decisión
+  const candidato = useRef<number | null>(null);
+  const silenciadaHasta = useRef(0);
   const viajeDeLaAlerta = useRef<string | null>(null);
 
   useEffect(() => {
@@ -75,21 +89,83 @@ export function ProveedorSeguridad({ children }: { children: ReactNode }) {
     establecerFase({ restantes: SEGUNDOS_PARA_CONFIRMAR, tipo: 'pregunta' });
   }, [viajeVigente]);
 
+  // la velocidad del GPS dice si el bus iba en marcha y si se detuvo de golpe; sin permiso se sigue sin ella
+  useEffect(() => {
+    if (!vigilando) return;
+    let vigente = true;
+    let suscripcion: Location.LocationSubscription | null = null;
+    void (async () => {
+      try {
+        const permiso = await Location.getForegroundPermissionsAsync();
+        if (permiso.status !== 'granted' || !vigente) return;
+        suscripcion = await Location.watchPositionAsync(
+          {
+            accuracy: Location.Accuracy.BestForNavigation,
+            distanceInterval: 0,
+            timeInterval: 1000,
+          },
+          ({ coords }) => {
+            if (coords.speed === null || coords.speed < 0) return;
+            const t = Date.now();
+            velocidades.current.push({ mps: coords.speed, t });
+            velocidades.current = velocidades.current.filter(
+              (v) => t - v.t <= VENTANA_HISTORIAL_MS,
+            );
+          },
+        );
+        if (!vigente) suscripcion.remove();
+      } catch {
+        // sin GPS se usa solo el acelerómetro, con un umbral más exigente
+      }
+    })();
+    return () => {
+      vigente = false;
+      suscripcion?.remove();
+      velocidades.current = [];
+    };
+  }, [vigilando]);
+
   useEffect(() => {
     if (!vigilando) return;
     Accelerometer.setUpdateInterval(INTERVALO_MS);
     const suscripcion = Accelerometer.addListener(({ x, y, z }) => {
       const t = Date.now();
-      muestras.current.push({ t, x, y, z });
-      muestras.current = muestras.current.filter((m) => t - m.t <= VENTANA_MS);
-      if (esPosibleChoque(muestras.current)) {
+      const lista = muestras.current;
+      lista.push({ t, x, y, z });
+      while (lista[0] && t - lista[0].t > VENTANA_HISTORIAL_MS) lista.shift();
+      if (
+        candidato.current === null &&
+        t >= silenciadaHasta.current &&
+        aceleracionDinamica({ x, y, z }) >= UMBRAL_CHOQUE_G
+      ) {
+        candidato.current = t;
+      }
+    });
+    // un golpe fuerte no basta: se espera a ver si el bus se detuvo de golpe antes de preguntar
+    const revision = setInterval(() => {
+      if (candidato.current === null) return;
+      const ahora = Date.now();
+      if (ahora - candidato.current > CADUCA_CANDIDATO_MS) {
+        candidato.current = null;
+        return;
+      }
+      const resultado = evaluarChoque(
+        muestras.current,
+        velocidades.current,
+        ahora,
+      );
+      if (resultado.estado === 'pendiente') return;
+      candidato.current = null;
+      if (resultado.estado === 'choque') {
         muestras.current = [];
         alDetectar();
       }
-    });
+    }, REVISION_MS);
     return () => {
       suscripcion.remove();
+      clearInterval(revision);
       muestras.current = [];
+      candidato.current = null;
     };
   }, [alDetectar, vigilando]);
 
@@ -152,7 +228,10 @@ export function ProveedorSeguridad({ children }: { children: ReactNode }) {
     <ContextoSeguridad.Provider value={valor}>
       {children}
       <AlertaChoque
-        alEstoyBien={() => establecerFase({ tipo: 'ninguna' })}
+        alEstoyBien={() => {
+          silenciadaHasta.current = Date.now() + SILENCIO_TRAS_FALSA_ALARMA_MS;
+          establecerFase({ tipo: 'ninguna' });
+        }}
         alLlamar={() =>
           void Linking.openURL(`tel:${NUMERO_EMERGENCIA}`).catch(
             () => undefined,
