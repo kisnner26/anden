@@ -7,8 +7,8 @@ import { renderPantalla } from '@/pruebas/render';
 import { DeslizarParaAcciones } from './DeslizarParaAcciones';
 
 const ACCION = {
-  color: '#000000',
-  colorTexto: '#FFFFFF',
+  color: 'rgb(0, 0, 0)',
+  colorTexto: 'rgb(255, 255, 255)',
   icono: 'campana',
 } as const;
 
