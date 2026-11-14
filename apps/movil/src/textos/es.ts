@@ -423,19 +423,17 @@ export const textos = {
     fallo: 'No se pudo guardar el cambio. Revisá la conexión y probá de nuevo.',
   },
   encomiendasIA: {
-    boton: 'Completar con {nombre}',
     campo: 'Qué querés enviar',
-    detalle:
-      'Escribilo como se lo contarías a alguien y {nombre} completa el tamaño, si es frágil y la descripción.',
-    error: 'No pude leerlo. Elegí el tamaño a mano.',
-    esFragil: ' · Frágil',
-    listo: 'Listo: {tamano}{fragil} · {descripcion}. Revisalo y seguí.',
-    marcador: 'Por ejemplo: una caja de vasos de vidrio para mi mamá',
+    entender: 'Entender de nuevo con {nombre}',
+    entendiendo: 'Entendiendo…',
+    marcador:
+      'Contalo con tus palabras: una caja de vasos para Luis, 8888 1234, a Boaco',
     preguntas: {
       estado: '¿En qué estado está mi encomienda?',
       salio: '¿Ya salió mi encomienda?',
     },
-    titulo: 'Contá qué enviás con {nombre}',
+    sinIA: 'Leo la ciudad, el teléfono y el tamaño',
+    titulo: 'Contá qué enviás',
   },
   encomiendas: {
     motivos: {
@@ -463,6 +461,7 @@ export const textos = {
     entrada: 'Enviar una encomienda',
     entradaDetalle: 'Sobres y paquetes entre Managua, Boaco y Juigalpa',
     trayecto: 'Trayecto',
+    invertir: 'Tocá para invertir el sentido',
     paso1: 'Trayecto y paquete',
     paso2: 'Quién envía y quién recibe',
     paso3: 'Qué enviás y confirmación',
