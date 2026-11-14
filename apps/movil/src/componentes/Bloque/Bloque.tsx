@@ -2,6 +2,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import type { ReactNode } from 'react';
 import { View, type StyleProp, type ViewStyle } from 'react-native';
 
+import { usePercha } from '@/datos/perchas';
 import { conAlfa } from '@/tema/alfa';
 import { radios } from '@/tema/espacios';
 import { estilosRelieve, relieve } from '@/tema/relieve';
@@ -30,6 +31,8 @@ export function Bloque({
 }: PropiedadesBloque) {
   const { colores, modo } = useTema();
   const borde = radios[radio];
+  // cada tarjeta es un lugar donde la mascota se puede subir
+  const percha = usePercha();
 
   if (hundido) {
     const sombraInterior = conAlfa(
@@ -38,7 +41,7 @@ export function Bloque({
     );
     const luzInterior = conAlfa(colores.luzRelieve, relieve[modo].luz.opacidad);
     return (
-      <View style={estilo} testID={testID}>
+      <View collapsable={false} ref={percha} style={estilo} testID={testID}>
         <LinearGradient
           colors={[colores.barroOscuro, colores.barroClaro]}
           end={{ x: 1, y: 1 }}
@@ -63,7 +66,7 @@ export function Bloque({
 
   const { luz, sombra } = estilosRelieve(modo, colores);
   return (
-    <View style={estilo} testID={testID}>
+    <View collapsable={false} ref={percha} style={estilo} testID={testID}>
       <View
         style={[
           { backgroundColor: colores.barroClaro, borderRadius: borde },
