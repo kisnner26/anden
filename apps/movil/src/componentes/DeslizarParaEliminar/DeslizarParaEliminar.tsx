@@ -11,7 +11,6 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  View,
 } from 'react-native';
 
 import { espacios, radios } from '@/tema/espacios';
@@ -128,7 +127,21 @@ export function DeslizarParaEliminar({
       }}
       style={{ opacity: opacidad }}
     >
-      <View style={[estilos.accion, { backgroundColor: colores.cancelado }]}>
+      <Animated.View
+        pointerEvents={abierto ? 'auto' : 'none'}
+        style={[
+          estilos.accion,
+          {
+            backgroundColor: colores.cancelado,
+            // el fondo rojo solo aparece cuando la tarjeta ya se corrió; en reposo no se ve ni en los bordes
+            opacity: desplazamiento.interpolate({
+              extrapolate: 'clamp',
+              inputRange: [-ANCHO_ACCION / 2, -12, 0],
+              outputRange: [1, 0, 0],
+            }),
+          },
+        ]}
+      >
         <Pressable
           accessibilityElementsHidden={!abierto}
           accessibilityLabel={accion}
@@ -142,7 +155,7 @@ export function DeslizarParaEliminar({
             {accion}
           </Text>
         </Pressable>
-      </View>
+      </Animated.View>
       <Animated.View
         {...gesto.panHandlers}
         style={{ transform: [{ translateX: desplazamiento }] }}
@@ -158,6 +171,7 @@ const estilos = StyleSheet.create({
     alignItems: 'flex-end',
     borderRadius: radios.bloque,
     bottom: 0,
+    overflow: 'hidden',
     justifyContent: 'center',
     position: 'absolute',
     right: 0,
