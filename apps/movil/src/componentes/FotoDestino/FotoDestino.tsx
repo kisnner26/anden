@@ -1,14 +1,9 @@
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import {
-  Image,
-  StyleSheet,
-  View,
-  type StyleProp,
-  type ViewStyle,
-} from 'react-native';
+import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import type { ReactNode } from 'react';
 
-import { fotoDeDestino } from '@/datos/fotosDestino';
+import { enfoqueDeDestino, fotoDeDestino } from '@/datos/fotosDestino';
 import { conAlfa } from '@/tema/alfa';
 import { radios } from '@/tema/espacios';
 import { useTema } from '@/tema/useTema';
@@ -39,8 +34,8 @@ export function FotoDestino({
   testID,
 }: PropiedadesFotoDestino) {
   const { colores } = useTema();
-  const foto =
-    fotoDeDestino(destino) ?? (origen ? fotoDeDestino(origen) : null);
+  const ciudadDeLaFoto = fotoDeDestino(destino) || !origen ? destino : origen;
+  const foto = fotoDeDestino(ciudadDeLaFoto);
   const borde = radios[radio];
 
   return (
@@ -57,7 +52,15 @@ export function FotoDestino({
       testID={testID}
     >
       {foto ? (
-        <Image resizeMode="cover" source={foto} style={estilos.relleno} />
+        <Image
+          contentFit="cover"
+          contentPosition={{
+            left: '50%',
+            top: `${enfoqueDeDestino(ciudadDeLaFoto)}%`,
+          }}
+          source={foto}
+          style={estilos.foto}
+        />
       ) : (
         <LinearGradient
           colors={[colores.bloqueNegroClaro, colores.bloqueNegro]}
@@ -76,8 +79,9 @@ export function FotoDestino({
       <LinearGradient
         colors={[
           conAlfa(colores.bloqueNegro, 0),
-          conAlfa(colores.bloqueNegro, 0.82),
+          conAlfa(colores.bloqueNegro, 0.78),
         ]}
+        locations={[0.35, 1]}
         pointerEvents="none"
         style={estilos.relleno}
       />
@@ -88,5 +92,6 @@ export function FotoDestino({
 
 const estilos = StyleSheet.create({
   marco: { overflow: 'hidden' },
+  foto: { ...StyleSheet.absoluteFill, height: '100%', width: '100%' },
   relleno: { ...StyleSheet.absoluteFill },
 });

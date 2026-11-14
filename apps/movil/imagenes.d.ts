@@ -1,5 +1,5 @@
 declare module '*.jpg' {
-  import type { ImageSourcePropType } from 'react-native';
-  const fuente: ImageSourcePropType;
+  import type { ImageSource } from 'expo-image';
+  const fuente: ImageSource;
   export default fuente;
 }
