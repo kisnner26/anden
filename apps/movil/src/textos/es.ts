@@ -422,6 +422,21 @@ export const textos = {
     cancelaron: 'Quien la envió la canceló',
     fallo: 'No se pudo guardar el cambio. Revisá la conexión y probá de nuevo.',
   },
+  encomiendasIA: {
+    boton: 'Completar con {nombre}',
+    campo: 'Qué querés enviar',
+    detalle:
+      'Escribilo como se lo contarías a alguien y {nombre} completa el tamaño, si es frágil y la descripción.',
+    error: 'No pude leerlo. Elegí el tamaño a mano.',
+    esFragil: ' · Frágil',
+    listo: 'Listo: {tamano}{fragil} · {descripcion}. Revisalo y seguí.',
+    marcador: 'Por ejemplo: una caja de vasos de vidrio para mi mamá',
+    preguntas: {
+      estado: '¿En qué estado está mi encomienda?',
+      salio: '¿Ya salió mi encomienda?',
+    },
+    titulo: 'Contá qué enviás con {nombre}',
+  },
   encomiendas: {
     motivos: {
       sinEspacio: 'No hay espacio en el bus',
