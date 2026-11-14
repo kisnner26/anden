@@ -1,3 +1,4 @@
+import { enlaceDeMapa } from '@anden/dominio';
 import { useState } from 'react';
 
 import { Cajon } from '../componentes/Cajon';
@@ -47,10 +48,23 @@ export function Viajes() {
       valor: (v) => (v.salio_en ? minutosEntre(v.salida, v.salio_en) : null),
     },
     {
-      celda: (v) => v.anden,
-      clave: 'anden',
-      titulo: 'Andén',
-      valor: (v) => v.anden,
+      celda: (v) =>
+        v.punto_encuentro ? (
+          <a
+            className="enlace"
+            href={enlaceDeMapa(v.punto_encuentro) ?? undefined}
+            onClick={(e) => e.stopPropagation()}
+            rel="noreferrer"
+            target="_blank"
+          >
+            {v.punto_encuentro}
+          </a>
+        ) : (
+          <span className="micro">Por confirmar</span>
+        ),
+      clave: 'punto',
+      titulo: 'Punto de encuentro',
+      valor: (v) => v.punto_encuentro ?? '',
     },
     {
       celda: (v) => v.placa,
@@ -194,8 +208,21 @@ export function Viajes() {
                 <dd>{abierto.placa}</dd>
               </div>
               <div>
-                <dt>Andén</dt>
-                <dd>{abierto.anden}</dd>
+                <dt>Punto de encuentro</dt>
+                <dd>
+                  {abierto.punto_encuentro ? (
+                    <a
+                      className="enlace"
+                      href={enlaceDeMapa(abierto.punto_encuentro) ?? undefined}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      {abierto.punto_encuentro} · abrir en el mapa
+                    </a>
+                  ) : (
+                    'Por confirmar'
+                  )}
+                </dd>
               </div>
               <div>
                 <dt>Chofer</dt>
