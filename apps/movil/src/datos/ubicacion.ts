@@ -57,8 +57,13 @@ export async function solicitarAccesoUbicacion(): Promise<EstadoAccesoUbicacion>
   }
 }
 
-/** solicita ubicación solo después de una acción explícita de la persona. */
-export async function obtenerUbicacionActual(): Promise<ResultadoUbicacion> {
+/**
+ * solicita ubicación solo después de una acción explícita de la persona; `precisa` pide la mejor lectura del GPS,
+ * que hace falta para marcar un punto de abordaje, y por defecto es aproximada, que alcanza para ver lo que hay cerca
+ */
+export async function obtenerUbicacionActual(
+  precisa = false,
+): Promise<ResultadoUbicacion> {
   try {
     const serviciosActivos = await Location.hasServicesEnabledAsync();
     if (serviciosActivos === false) return { estado: 'desactivado' };
@@ -67,7 +72,7 @@ export async function obtenerUbicacionActual(): Promise<ResultadoUbicacion> {
     if (permiso.status !== 'granted') return { estado: 'denegado' };
 
     const ubicacion = await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.Low,
+      accuracy: precisa ? Location.Accuracy.High : Location.Accuracy.Low,
     });
     return {
       estado: 'otorgado',
