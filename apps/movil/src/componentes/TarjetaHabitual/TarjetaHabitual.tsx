@@ -1,4 +1,6 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Presionable } from '@/componentes/Presionable';
 
 import { Bloque } from '@/componentes/Bloque';
 import { DeslizarParaEliminar } from '@/componentes/DeslizarParaEliminar';
@@ -59,7 +61,7 @@ export function TarjetaHabitual({
       })}
       alEliminar={alQuitar}
     >
-      <Pressable
+      <Presionable
         accessibilityLabel={
           proxima
             ? rellenar(t('habitual.reservar'), {
@@ -135,7 +137,7 @@ export function TarjetaHabitual({
             <Icono nombre="siguiente" tamano="mediano" />
           </View>
         </Bloque>
-      </Pressable>
+      </Presionable>
     </DeslizarParaEliminar>
   );
 }

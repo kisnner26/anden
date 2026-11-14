@@ -1,4 +1,6 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Presionable } from '@/componentes/Presionable';
 
 import { Bloque } from '@/componentes/Bloque';
 import { FotoDestino } from '@/componentes/FotoDestino';
@@ -42,7 +44,7 @@ export function TarjetaSalidaIA({
 }: PropiedadesTarjetaSalidaIA) {
   const { colores } = useTema();
   return (
-    <Pressable
+    <Presionable
       accessibilityLabel={rellenar(t('asistenteRico.salidaDe'), {
         cuando: cuandoSale(salida.salida),
         destino: salida.destino,
@@ -50,7 +52,6 @@ export function TarjetaSalidaIA({
       })}
       accessibilityRole="button"
       onPress={() => alAbrir(salida.viajeId)}
-      style={({ pressed }) => pressed && estilos.presionada}
     >
       <Bloque estiloContenido={estilos.contenido} testID="tarjeta-salida-ia">
         <FotoDestino
@@ -109,7 +110,7 @@ export function TarjetaSalidaIA({
           />
         </View>
       </Bloque>
-    </Pressable>
+    </Presionable>
   );
 }
 

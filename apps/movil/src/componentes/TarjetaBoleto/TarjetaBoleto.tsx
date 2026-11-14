@@ -1,6 +1,8 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef } from 'react';
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, StyleSheet, Text, View } from 'react-native';
+
+import { Presionable } from '@/componentes/Presionable';
 
 import { BarridoDeLuz } from '@/componentes/BarridoDeLuz';
 import { FotoDestino } from '@/componentes/FotoDestino';
@@ -58,7 +60,7 @@ export function TarjetaBoleto({
   }, [avance, progreso, reducido]);
 
   return (
-    <Pressable
+    <Presionable
       accessibilityLabel={`${resumen.destino}, ${formatoFechaCorta(salida)}, ${formatoHoraCompleta(salida)}, ${t('boletos.asientoCorto')} ${boleto.asiento}`}
       accessibilityRole="button"
       onPress={() => alPresionar(boleto.id)}
@@ -200,7 +202,7 @@ export function TarjetaBoleto({
         )}
         {!pasado && <BarridoDeLuz radio={radios.bloqueNegro} retraso={500} />}
       </LinearGradient>
-    </Pressable>
+    </Presionable>
   );
 }
 

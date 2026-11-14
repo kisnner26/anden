@@ -1,4 +1,6 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Presionable } from '@/componentes/Presionable';
 
 import { Bloque } from '@/componentes/Bloque';
 import { formatoHoraCompleta } from '@/datos/formato';
@@ -56,7 +58,7 @@ export function AtajosDelDia({ alAbrir, atajos }: PropiedadesAtajosDelDia) {
       </Text>
       <View style={estilos.fila}>
         {disponibles.map(({ clave, etiqueta, salida, valor }) => (
-          <Pressable
+          <Presionable
             accessibilityLabel={`${etiqueta}: ${salida?.destino}, ${valor}`}
             accessibilityRole="button"
             key={clave}
@@ -87,7 +89,7 @@ export function AtajosDelDia({ alAbrir, atajos }: PropiedadesAtajosDelDia) {
                 {salida?.destino}
               </Text>
             </Bloque>
-          </Pressable>
+          </Presionable>
         ))}
       </View>
     </View>

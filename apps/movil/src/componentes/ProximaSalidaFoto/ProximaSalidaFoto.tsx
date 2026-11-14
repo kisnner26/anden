@@ -1,4 +1,6 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Presionable } from '@/componentes/Presionable';
 
 import { Bloque } from '@/componentes/Bloque';
 import { FotoDestino } from '@/componentes/FotoDestino';
@@ -38,11 +40,10 @@ export function ProximaSalidaFoto({
   }`;
 
   return (
-    <Pressable
+    <Presionable
       accessibilityLabel={`${salida.destino}, ${formatoHoraCompleta(salida.salida)}`}
       accessibilityRole="button"
       onPress={() => alAbrir?.(salida.viajeId)}
-      style={({ pressed }) => pressed && estilos.presionada}
     >
       <Bloque estiloContenido={estilos.contenido} testID="proxima-salida-foto">
         <FotoDestino
@@ -78,7 +79,7 @@ export function ProximaSalidaFoto({
           </View>
         </FotoDestino>
       </Bloque>
-    </Pressable>
+    </Presionable>
   );
 }
 

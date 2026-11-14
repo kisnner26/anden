@@ -1,4 +1,6 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Presionable } from '@/componentes/Presionable';
 
 import { Autobus } from '@/componentes/Autobus';
 import { Bloque } from '@/componentes/Bloque';
@@ -57,7 +59,7 @@ export function FilaSalida({
 
   return (
     <Bloque estilo={estilos.fila} estiloContenido={estilos.contenido}>
-      <Pressable
+      <Presionable
         accessibilityLabel={`${salida.destino}, ${formatoHoraCompleta(salida.salida)}, ${servicio}, ${puntoEncuentro}`}
         accessibilityRole="button"
         onPress={() => alPresionar?.(salida.viajeId)}
@@ -117,7 +119,7 @@ export function FilaSalida({
             />
           </Loseta>
         ) : null}
-      </Pressable>
+      </Presionable>
       {recordatorio ? (
         <BotonRecordatorio
           activo={recordatorio.activo}
