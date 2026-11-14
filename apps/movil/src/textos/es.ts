@@ -426,8 +426,7 @@ export const textos = {
     campo: 'Qué querés enviar',
     entender: 'Entender de nuevo con {nombre}',
     entendiendo: 'Entendiendo…',
-    marcador:
-      'Contalo con tus palabras: una caja de vasos para Luis, 8888 1234, a Boaco',
+    marcador: 'Ej: una caja de vasos para Luis, 8888 1234, a Boaco',
     preguntas: {
       estado: '¿En qué estado está mi encomienda?',
       salio: '¿Ya salió mi encomienda?',
@@ -461,7 +460,7 @@ export const textos = {
     entrada: 'Enviar una encomienda',
     entradaDetalle: 'Sobres y paquetes entre Managua, Boaco y Juigalpa',
     trayecto: 'Trayecto',
-    invertir: 'Tocá para invertir el sentido',
+    invertir: 'Invertir el sentido',
     paso1: 'Trayecto y paquete',
     paso2: 'Quién envía y quién recibe',
     paso3: 'Qué enviás y confirmación',
@@ -470,6 +469,9 @@ export const textos = {
     sobre: 'Sobre',
     pequeno: 'Paquete chico',
     grande: 'Paquete grande',
+    sobreCorto: 'Sobre',
+    pequenoCorto: 'Chico',
+    grandeCorto: 'Grande',
     sobreDetalle: 'Documentos y cartas',
     pequenoDetalle: 'Cabe en una mochila',
     grandeDetalle: 'Una caja grande',
