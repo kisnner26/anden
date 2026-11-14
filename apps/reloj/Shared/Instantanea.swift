@@ -8,7 +8,7 @@ struct Instantanea: Codable, Equatable {
     var destino = ""
     var salida: Date?
     var salio = false
-    var anden = 0
+    var punto = ""
     var asiento = 0
     var actualizada = Date.distantPast
 

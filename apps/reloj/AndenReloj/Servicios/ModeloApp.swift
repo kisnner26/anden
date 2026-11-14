@@ -94,7 +94,7 @@ final class ModeloApp: ObservableObject {
             let ruta = Ruta(id: r.viaje.rutaId)
             i = Instantanea(
                 ruta: ruta?.nombre ?? "", destino: ruta?.destino.nombre ?? "", salida: r.viaje.salida,
-                salio: r.viaje.salioEn != nil, anden: r.viaje.anden, asiento: r.boleto.asiento, actualizada: Date())
+                salio: r.viaje.salioEn != nil, punto: r.viaje.puntoCorto, asiento: r.boleto.asiento, actualizada: Date())
         }
         if i != Instantanea.cargar() {
             i.guardar()

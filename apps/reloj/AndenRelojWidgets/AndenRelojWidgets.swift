@@ -8,7 +8,7 @@ struct Entrada: TimelineEntry {
 
 struct Proveedor: TimelineProvider {
     func placeholder(in context: Context) -> Entrada {
-        Entrada(date: .now, datos: Instantanea(ruta: "Managua → Boaco", destino: "Boaco", salida: .now.addingTimeInterval(1800), anden: 2, asiento: 12))
+        Entrada(date: .now, datos: Instantanea(ruta: "Managua → Boaco", destino: "Boaco", salida: .now.addingTimeInterval(1800), punto: "4PPX+HC", asiento: 12))
     }
 
     func getSnapshot(in context: Context, completion: @escaping (Entrada) -> Void) {
@@ -36,7 +36,7 @@ struct VistaComplicacion: View {
                 if let s = d.salida {
                     VStack(spacing: 0) {
                         Text(s, format: .dateTime.hour().minute()).font(.system(size: 15, weight: .semibold, design: .rounded))
-                        Text(d.salio ? "EN RUTA" : "ANDÉN \(d.anden)").font(.system(size: 8, weight: .medium)).foregroundStyle(ambar)
+                        Text(d.salio ? "EN RUTA" : "PUNTO \(d.punto)").font(.system(size: 8, weight: .medium)).foregroundStyle(ambar)
                     }
                 } else {
                     Text("—")
@@ -44,7 +44,7 @@ struct VistaComplicacion: View {
             }
         case .accessoryInline:
             if let s = d.salida {
-                Text("\(d.destino) \(s.formatted(.dateTime.hour().minute())) · andén \(d.anden)")
+                Text("\(d.destino) \(s.formatted(.dateTime.hour().minute())) · punto \(d.punto)")
             } else {
                 Text("Andén: sin viaje")
             }
@@ -57,7 +57,7 @@ struct VistaComplicacion: View {
                 if let s = d.salida {
                     Text(d.ruta).font(.system(size: 12, weight: .semibold)).minimumScaleFactor(0.7)
                     Text(s, format: .dateTime.hour().minute()).font(.system(size: 22, weight: .semibold, design: .rounded)).foregroundStyle(ambar)
-                    Text(d.salio ? "En camino" : "Andén \(d.anden) · asiento \(d.asiento)").font(.system(size: 11))
+                    Text(d.salio ? "En camino" : "Punto \(d.punto) · asiento \(d.asiento)").font(.system(size: 11))
                 } else {
                     Text("Andén").font(.system(size: 13, weight: .semibold))
                     Text("Sin viajes vigentes").font(.system(size: 11))
@@ -75,7 +75,7 @@ struct ComplicacionViaje: Widget {
                 .containerBackground(.black, for: .widget)
         }
         .configurationDisplayName("Próximo viaje")
-        .description("La hora y el andén de tu próximo viaje.")
+        .description("La hora y el punto de encuentro de tu próximo viaje.")
         .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline, .accessoryCorner])
     }
 }
