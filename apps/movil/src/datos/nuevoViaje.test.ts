@@ -76,6 +76,24 @@ describe('validarViaje', () => {
     expect(validarViaje({ ...BUENO, dia: ayer }, AHORA)).toContain('pasado');
   });
 
+  it('con a. m. o p. m. lee la hora de 12 horas', () => {
+    expect(leerHora('2:30', 'pm')).toEqual({ horas: 14, minutos: 30 });
+    expect(leerHora('2:30', 'am')).toEqual({ horas: 2, minutos: 30 });
+    expect(leerHora('12:00', 'am')).toEqual({ horas: 0, minutos: 0 });
+    expect(leerHora('12:15', 'pm')).toEqual({ horas: 12, minutos: 15 });
+    expect(leerHora('13:00', 'pm')).toBeNull();
+    expect(leerHora('0:30', 'am')).toBeNull();
+  });
+
+  it('el borrador con p. m. arma la fecha en la tarde', () => {
+    const fila = armarFilaViaje(
+      { ...BUENO, hora: '2:30', meridiano: 'pm' },
+      'cho_1',
+      AHORA,
+    );
+    expect(new Date(fila!.salida).getHours()).toBe(14);
+  });
+
   it('entiende la hora escrita corta', () => {
     expect(leerHora('10')).toEqual({ horas: 10, minutos: 0 });
     expect(leerHora('930')).toEqual({ horas: 9, minutos: 30 });

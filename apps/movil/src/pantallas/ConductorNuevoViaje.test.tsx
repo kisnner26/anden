@@ -56,9 +56,10 @@ describe('ConductorNuevoViaje', () => {
     const pantalla = await dibujar(alPublicar);
     await fireEvent.press((await pantalla.findAllByText(/→/))[0]!);
     await fireEvent.changeText(
-      pantalla.getByLabelText('Hora en que se pone en andén (24 h)'),
-      '23:59',
+      pantalla.getByLabelText('Hora en que se pone en andén'),
+      '11:59',
     );
+    await fireEvent.press(pantalla.getByRole('tab', { name: 'p. m.' }));
     await fireEvent.changeText(
       pantalla.getByLabelText('Placa del bus'),
       'M 123-456',
