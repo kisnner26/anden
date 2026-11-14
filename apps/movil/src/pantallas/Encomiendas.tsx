@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
   Linking,
   Pressable,
   ScrollView,
@@ -22,6 +23,7 @@ import { CampoTexto } from '@/componentes/CampoTexto';
 import { Chip } from '@/componentes/Chip';
 import { ControlSegmentado } from '@/componentes/ControlSegmentado';
 import { FormaPaquete } from '@/componentes/FormaPaquete';
+import { Icono } from '@/componentes/Icono';
 import { LineaEstadoEncomienda } from '@/componentes/LineaEstadoEncomienda';
 import {
   erroresDeEncomienda,
@@ -66,6 +68,63 @@ const MENSAJES: Record<ErrorEncomienda, () => string> = {
   telefono: () => t('encomiendas.errorTelefono'),
 };
 
+/** el círculo del centro del trayecto: al tocarlo gira media vuelta y las dos ciudades cambian de lado */
+function BotonInvertir({
+  alPresionar,
+  etiqueta,
+}: {
+  alPresionar: () => void;
+  etiqueta: string;
+}) {
+  const { colores } = useTema();
+  const giro = useRef(new Animated.Value(0)).current;
+  const vueltas = useRef(0);
+
+  function tocar() {
+    vueltas.current += 1;
+    Animated.spring(giro, {
+      friction: 6,
+      toValue: vueltas.current,
+      tension: 120,
+      useNativeDriver: true,
+    }).start();
+    alPresionar();
+  }
+
+  return (
+    <Pressable
+      accessibilityHint={t('encomiendas.invertir')}
+      accessibilityLabel={etiqueta}
+      accessibilityRole="button"
+      onPress={tocar}
+      style={({ pressed }) => [
+        estilos.invertir,
+        { backgroundColor: colores.fichaActiva },
+        pressed && estilos.presionado,
+      ]}
+    >
+      <Animated.View
+        style={{
+          transform: [
+            {
+              rotate: giro.interpolate({
+                inputRange: [0, 1],
+                outputRange: ['0deg', '180deg'],
+              }),
+            },
+          ],
+        }}
+      >
+        <Icono
+          color={colores.sobreFichaActiva}
+          nombre="siguiente"
+          tamano="mediano"
+        />
+      </Animated.View>
+    </Pressable>
+  );
+}
+
 /**
  * pedir que un paquete viaje en el bus, en tres pasos: trayecto y paquete, las dos personas y el
  * detalle con la confirmación. Al enviar queda un comprobante con código, QR y las etapas del envío
@@ -88,7 +147,7 @@ export function Encomiendas({ alPreguntar, alVolver }: PropiedadesEncomiendas) {
   } | null>(null);
   const [errores, establecerErrores] = useState<ErrorEncomienda[]>([]);
   const { cambiarEstado, encomiendas: solicitudes, enviar } = useEncomiendas();
-  const { ahora, datos: muestra, salidas } = useSalidas();
+  const { ahora, salidas } = useSalidas();
   const [viajeId, establecerViajeId] = useState<string | null>(null);
   const [falloEnvio, establecerFalloEnvio] = useState(false);
   const [sinViaje, establecerSinViaje] = useState(false);
@@ -311,10 +370,6 @@ export function Encomiendas({ alPreguntar, alVolver }: PropiedadesEncomiendas) {
           </Aparece>
         ) : (
           <>
-            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-              {t('encomiendas.detalle')}
-            </Text>
-
             <AsistenteEncomienda
               alAplicar={aplicarSugerencia}
               alEscribir={establecerTextoLibre}
@@ -334,26 +389,38 @@ export function Encomiendas({ alPreguntar, alVolver }: PropiedadesEncomiendas) {
                 }))}
                 valor={ciudad}
               />
-              <Pressable
-                accessibilityHint={t('encomiendas.invertir')}
-                accessibilityLabel={`${corredor.origen} → ${corredor.destino}`}
-                accessibilityRole="button"
-                onPress={() =>
-                  establecerSentido(
-                    invertirSentido({ ciudad, sentido }).sentido,
-                  )
-                }
-                style={estilos.ruta}
-              >
-                <Text style={[tipografia.titulo, { color: colores.tinta }]}>
-                  {`${corredor.origen} → ${corredor.destino}`}
-                </Text>
+              <View style={estilos.ruta}>
                 <Text
-                  style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
+                  adjustsFontSizeToFit
+                  numberOfLines={1}
+                  style={[
+                    tipografia.titulo,
+                    estilos.extremoIzquierdo,
+                    { color: colores.tinta },
+                  ]}
                 >
-                  {t('encomiendas.invertir')}
+                  {corredor.origen}
                 </Text>
-              </Pressable>
+                <BotonInvertir
+                  alPresionar={() =>
+                    establecerSentido(
+                      invertirSentido({ ciudad, sentido }).sentido,
+                    )
+                  }
+                  etiqueta={`${corredor.origen} → ${corredor.destino}`}
+                />
+                <Text
+                  adjustsFontSizeToFit
+                  numberOfLines={1}
+                  style={[
+                    tipografia.titulo,
+                    estilos.extremoDerecho,
+                    { color: colores.tinta },
+                  ]}
+                >
+                  {corredor.destino}
+                </Text>
+              </View>
 
               <View style={estilos.tamanos}>
                 {TAMANOS.map((opcion) => {
@@ -397,7 +464,7 @@ export function Encomiendas({ alPreguntar, alVolver }: PropiedadesEncomiendas) {
                           },
                         ]}
                       >
-                        {t(`encomiendas.${opcion}`)}
+                        {t(`encomiendas.${opcion}Corto`)}
                       </Text>
                     </Pressable>
                   );
@@ -410,55 +477,42 @@ export function Encomiendas({ alPreguntar, alVolver }: PropiedadesEncomiendas) {
                   etiqueta={t('encomiendas.fragil')}
                   seleccionado={fragil}
                 />
+                {viajes.length > 0 && (
+                  <>
+                    <View
+                      style={[
+                        estilos.separador,
+                        { backgroundColor: colores.linea },
+                      ]}
+                    />
+                    <ScrollView
+                      accessibilityLabel={t('encomiendas.enQueBus')}
+                      contentContainerStyle={estilos.horas}
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      style={estilos.scrollHoras}
+                    >
+                      {viajes.slice(0, 6).map((viaje) => (
+                        <Chip
+                          alCambiar={() => {
+                            establecerViajeId(viaje.viajeId);
+                            establecerSinViaje(false);
+                          }}
+                          etiqueta={formatoHoraCompleta(viaje.salida)}
+                          key={viaje.viajeId}
+                          seleccionado={viaje.viajeId === elegido?.viajeId}
+                        />
+                      ))}
+                    </ScrollView>
+                  </>
+                )}
               </View>
-
-              {viajes.length === 0 ? (
+              {viajes.length === 0 && (
                 <Text
                   style={[tipografia.pequeno, { color: colores.tintaSuave }]}
                 >
                   {t('encomiendas.sinViajes')}
                 </Text>
-              ) : (
-                <View style={estilos.buses}>
-                  <Text
-                    style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
-                  >
-                    {t('encomiendas.enQueBus')}
-                  </Text>
-                  <ScrollView
-                    contentContainerStyle={estilos.horas}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                  >
-                    {viajes.slice(0, 6).map((viaje) => (
-                      <Chip
-                        alCambiar={() => {
-                          establecerViajeId(viaje.viajeId);
-                          establecerSinViaje(false);
-                        }}
-                        etiqueta={formatoHoraCompleta(viaje.salida)}
-                        key={viaje.viajeId}
-                        seleccionado={viaje.viajeId === elegido?.viajeId}
-                      />
-                    ))}
-                  </ScrollView>
-                  {elegido && (
-                    <Text
-                      style={[
-                        tipografia.pequeno,
-                        { color: colores.tintaSuave },
-                      ]}
-                    >
-                      {rellenar(t('encomiendas.viajeDetalle'), {
-                        chofer:
-                          muestra.choferes.find(
-                            (c) => c.id === elegido.choferId,
-                          )?.nombre ?? '',
-                        placa: elegido.placa,
-                      })}
-                    </Text>
-                  )}
-                </View>
               )}
               {sinViaje && (
                 <Text
@@ -504,6 +558,15 @@ export function Encomiendas({ alPreguntar, alVolver }: PropiedadesEncomiendas) {
               etiqueta={t('encomiendas.solicitar')}
               icono="boleto"
             />
+            <Text
+              style={[
+                tipografia.pequeno,
+                estilos.centrado,
+                { color: colores.tintaSuave },
+              ]}
+            >
+              {t('encomiendas.detalle')}
+            </Text>
           </>
         )}
 
@@ -618,15 +681,31 @@ export function Encomiendas({ alPreguntar, alVolver }: PropiedadesEncomiendas) {
 
 const estilos = StyleSheet.create({
   buses: { gap: espacios.ocho },
-  filaOpciones: { flexDirection: 'row' },
+  filaOpciones: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.ocho,
+  },
   formulario: { gap: espacios.doce, padding: espacios.dieciseis },
   horas: { gap: espacios.ocho },
   ruta: {
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    minHeight: 44,
+    gap: espacios.doce,
+    minHeight: 48,
   },
+  extremoIzquierdo: { flex: 1, textAlign: 'right' },
+  extremoDerecho: { flex: 1, textAlign: 'left' },
+  invertir: {
+    alignItems: 'center',
+    borderRadius: 999,
+    height: 44,
+    justifyContent: 'center',
+    width: 44,
+  },
+  presionado: { transform: [{ scale: 0.94 }] },
+  scrollHoras: { flex: 1 },
+  separador: { alignSelf: 'stretch', width: 1 },
   cancelar: { justifyContent: 'center', minHeight: 44 },
   celdaTamano: { flex: 1 },
   detalleTamano: { minHeight: 32 },
