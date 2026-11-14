@@ -78,3 +78,46 @@ export function contextoDelDia(
     lineas.length > 0 ? lineas.join('\n') : '- ninguna',
   ].join('\n');
 }
+
+export type FranjaDelDia = 'madrugada' | 'manana' | 'noche' | 'tarde';
+
+/** en qué momento del día cae una hora: madrugada hasta las 6, mañana hasta el mediodía, tarde hasta las 6 y noche */
+export function franjaDelDia(fecha: Date): FranjaDelDia {
+  const hora = fecha.getHours();
+  if (hora < 6) return 'madrugada';
+  if (hora < 12) return 'manana';
+  if (hora < 18) return 'tarde';
+  return 'noche';
+}
+
+export interface GrupoDeFranja {
+  franja: FranjaDelDia;
+  salidas: Salida[];
+}
+
+/** las salidas ordenadas por hora y juntas por momento del día, para dibujarlas por tramos */
+export function agruparPorFranja(salidas: readonly Salida[]): GrupoDeFranja[] {
+  const grupos: GrupoDeFranja[] = [];
+  const ordenadas = [...salidas].sort(
+    (a, b) => a.salida.getTime() - b.salida.getTime(),
+  );
+  for (const salida of ordenadas) {
+    const franja = franjaDelDia(salida.salida);
+    const ultimo = grupos[grupos.length - 1];
+    if (ultimo && ultimo.franja === franja) ultimo.salidas.push(salida);
+    else grupos.push({ franja, salidas: [salida] });
+  }
+  return grupos;
+}
+
+/** el alto de la barra de asientos libres, entre un mínimo visible y el máximo; las agotadas quedan en el mínimo */
+export function altoDeBarra(
+  libres: number,
+  maximoLibres: number,
+  minimo = 8,
+  maximo = 72,
+): number {
+  if (libres <= 0 || maximoLibres <= 0) return minimo;
+  const proporcion = Math.min(1, libres / maximoLibres);
+  return Math.round(minimo + (maximo - minimo) * proporcion);
+}
