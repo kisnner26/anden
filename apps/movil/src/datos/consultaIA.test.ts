@@ -148,6 +148,27 @@ describe('hechosParaPregunta', () => {
     expect(hechos.length).toBeGreaterThan(2);
   });
 
+  it('"qué visitar" no trae salidas ni precios', () => {
+    const hechos = hechosParaPregunta(
+      'Qué visitar en Boaco',
+      datos,
+      CIUDADES,
+      AHORA,
+    ).join('\n');
+    expect(hechos).not.toContain('Salidas');
+    expect(hechos).not.toContain('C$');
+  });
+
+  it('visitar y a la vez pedir el bus sí trae salidas', () => {
+    const hechos = hechosParaPregunta(
+      'qué visitar en Juigalpa y a qué hora sale el bus',
+      datos,
+      CIUDADES,
+      AHORA,
+    ).join('\n');
+    expect(hechos).toContain('Juigalpa');
+  });
+
   it('filtra por destino y día', () => {
     const hechos = hechosParaPregunta(
       '¿hay algo mañana a Juigalpa?',
@@ -248,9 +269,8 @@ describe('armarPrompt', () => {
     expect(prompt).toContain('Datos reales de Andén');
     expect(prompt).toContain('Kisnner');
     expect(prompt).toContain('[1] mañana');
-    expect(prompt.endsWith('Pregunta de la persona: ¿hay viajes mañana?')).toBe(
-      true,
-    );
+    expect(prompt).toContain('Pregunta de la persona: ¿hay viajes mañana?');
+    expect(prompt.endsWith('que no pidió.')).toBe(true);
     expect(prompt).not.toContain('via_m');
   });
 });
