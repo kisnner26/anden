@@ -12,6 +12,8 @@ import type { DatosMuestra } from './muestra';
 
 export interface Salida {
   puntoEncuentro: string;
+  /** cuántos asientos tiene el bus; falta en los datos de prueba hechos a mano */
+  asientosTotales?: number;
   choferId: string;
   asientosLibres: number;
   codigoDestino: string;
@@ -67,15 +69,15 @@ export function armarSalidas(
     const ocupaciones = datos.ocupaciones.filter(
       (ocupacion) => ocupacion.viajeId === viaje.id,
     );
-    const asientosLibres = estadoAsientos(
-      bus.configuracion,
-      ocupaciones,
-      ahora,
-    ).filter((asiento) => asiento.estado === 'libre').length;
+    const estados = estadoAsientos(bus.configuracion, ocupaciones, ahora);
+    const asientosLibres = estados.filter(
+      (asiento) => asiento.estado === 'libre',
+    ).length;
 
     salidas.push({
       puntoEncuentro: viaje.puntoEncuentro,
       asientosLibres,
+      asientosTotales: estados.length,
       choferId: viaje.choferId,
       codigoDestino: destino.codigo,
       destino: destino.ciudad,
