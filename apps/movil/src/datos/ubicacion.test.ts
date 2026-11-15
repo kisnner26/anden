@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 
 jest.mock('expo-location', () => ({
-  Accuracy: { Low: 1 },
+  Accuracy: { Balanced: 3, High: 4, Low: 1 },
   PermissionStatus: {
     DENIED: 'denied',
     GRANTED: 'granted',
@@ -9,6 +9,7 @@ jest.mock('expo-location', () => ({
   },
   getForegroundPermissionsAsync: jest.fn(),
   getCurrentPositionAsync: jest.fn(),
+  getLastKnownPositionAsync: jest.fn(),
   hasServicesEnabledAsync: jest.fn(),
   requestForegroundPermissionsAsync: jest.fn(),
 }));
@@ -151,5 +152,28 @@ describe('obtenerUbicacionActual', () => {
     expect(Location.getCurrentPositionAsync).toHaveBeenCalledWith({
       accuracy: Location.Accuracy.Low,
     });
+  });
+
+  it('si el GPS preciso no responde, no se cuelga: usa la última posición conocida', async () => {
+    jest.useFakeTimers();
+    try {
+      jest
+        .mocked(Location.requestForegroundPermissionsAsync)
+        .mockResolvedValue({ status: 'granted' } as never);
+      jest
+        .mocked(Location.getCurrentPositionAsync)
+        .mockReturnValue(new Promise(() => undefined));
+      jest.mocked(Location.getLastKnownPositionAsync).mockResolvedValue({
+        coords: { latitude: 12.1, longitude: -86.2 },
+      } as never);
+      const resultado = obtenerUbicacionActual(true);
+      await jest.advanceTimersByTimeAsync(25_000);
+      await expect(resultado).resolves.toEqual({
+        estado: 'otorgado',
+        punto: { lat: 12.1, lng: -86.2 },
+      });
+    } finally {
+      jest.useRealTimers();
+    }
   });
 });
