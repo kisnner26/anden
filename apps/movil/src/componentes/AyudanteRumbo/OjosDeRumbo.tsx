@@ -7,8 +7,9 @@ import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
-export const ANCHO_OJOS = 76;
-export const ALTO_OJOS = 40;
+/** lo que se ve de la cabeza fuera del borde de la pantalla */
+export const ANCHO_OJOS = 60;
+export const ALTO_OJOS = 80;
 
 export type EstadoDeOjos = 'espera' | 'habla' | 'pensando';
 
@@ -20,21 +21,23 @@ export interface PropiedadesOjosDeRumbo {
 }
 
 const PUNTOS_DE_MIRADA = [
-  { x: -3.2, y: 0 },
-  { x: -2.4, y: -2.6 },
-  { x: -3, y: 2.4 },
-  { x: 0.5, y: 0 },
-  { x: -1, y: -3 },
+  { x: -2.6, y: 0 },
+  { x: -2, y: -2.4 },
+  { x: -2.4, y: 2.4 },
+  { x: 0.5, y: 0.5 },
+  { x: -1, y: -2.6 },
 ];
 
 /**
- * lo único que se ve de Rumbo: sus ojos. Entran deslizándose desde el borde derecho, miran de un lado a otro, parpadean y
- * esperan; cuando piensan las pupilas giran y cuando hablan se abren un poco más y arquean las cejas
+ * lo único que se ve de Rumbo: su cabeza asomándose por el borde derecho como si la pantalla fuera una pared, con dos
+ * deditos agarrados al canto. Entra deslizándose, mira de un lado a otro, parpadea y respira; cuando piensa las pupilas
+ * giran y cuando habla abre más los ojos y arquea las cejas
  */
 export function OjosDeRumbo({ alToque, estado, y }: PropiedadesOjosDeRumbo) {
   const { colores } = useTema();
   const reducido = useMovimientoReducido();
   const entrada = useRef(new Animated.Value(reducido ? 1 : 0)).current;
+  const respiro = useRef(new Animated.Value(0)).current;
   const [mirada, establecerMirada] = useState(PUNTOS_DE_MIRADA[0]!);
   const [cerrados, establecerCerrados] = useState(false);
   const [vuelta, establecerVuelta] = useState(0);
@@ -48,6 +51,27 @@ export function OjosDeRumbo({ alToque, estado, y }: PropiedadesOjosDeRumbo) {
       useNativeDriver: true,
     }).start();
   }, [entrada, reducido]);
+
+  // respira: la cabeza se asoma y se recoge un poco, sin parar
+  useEffect(() => {
+    if (reducido) return;
+    const vaiven = Animated.loop(
+      Animated.sequence([
+        Animated.timing(respiro, {
+          duration: 1800,
+          toValue: 1,
+          useNativeDriver: true,
+        }),
+        Animated.timing(respiro, {
+          duration: 1800,
+          toValue: 0,
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    vaiven.start();
+    return () => vaiven.stop();
+  }, [reducido, respiro]);
 
   // mira de un lado a otro y parpadea sin ritmo fijo; pensando, las pupilas dan vueltas
   useEffect(() => {
@@ -91,9 +115,9 @@ export function OjosDeRumbo({ alToque, estado, y }: PropiedadesOjosDeRumbo) {
       : estado === 'habla'
         ? { x: -1.6, y: 0.4 }
         : mirada;
-  const alto = cerrados ? 1.6 : estado === 'habla' ? 15 : 13;
+  const alto = cerrados ? 1.4 : estado === 'habla' ? 12 : 10.5;
   const tinta = colores.tinta;
-  const ojos = [20, 56] as const;
+  const ojos = [21, 43] as const;
 
   return (
     <Animated.View
@@ -103,10 +127,16 @@ export function OjosDeRumbo({ alToque, estado, y }: PropiedadesOjosDeRumbo) {
           top: y,
           transform: [
             {
-              translateX: entrada.interpolate({
-                inputRange: [0, 1],
-                outputRange: [ANCHO_OJOS + 20, 0],
-              }),
+              translateX: Animated.add(
+                entrada.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [ANCHO_OJOS + 6, 0],
+                }),
+                respiro.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, 4],
+                }),
+              ),
             },
           ],
         },
@@ -119,27 +149,24 @@ export function OjosDeRumbo({ alToque, estado, y }: PropiedadesOjosDeRumbo) {
         hitSlop={14}
         onPress={alToque}
       >
-        <Svg height={ALTO_OJOS} viewBox="0 0 76 40" width={ANCHO_OJOS}>
+        <Svg height={ALTO_OJOS} viewBox="0 0 60 80" width={ANCHO_OJOS}>
+          <Ellipse
+            cx={60}
+            cy={42}
+            fill={colores.bloqueNegro}
+            rx={52}
+            ry={34}
+            stroke={conAlfa(tinta, 0.55)}
+            strokeWidth={1.6}
+          />
           {ojos.map((cx) => (
             <Ellipse
               cx={cx}
-              cy={24}
-              fill={conAlfa(tinta, 0.18)}
-              key={`s${cx}`}
-              rx={15}
-              ry={3}
-            />
-          ))}
-          {ojos.map((cx) => (
-            <Ellipse
-              cx={cx}
-              cy={20}
+              cy={38}
               fill={colores.sobreNegro}
               key={`o${cx}`}
-              rx={15}
+              rx={9}
               ry={alto}
-              stroke={conAlfa(tinta, 0.55)}
-              strokeWidth={1.6}
             />
           ))}
           {cerrados
@@ -147,21 +174,21 @@ export function OjosDeRumbo({ alToque, estado, y }: PropiedadesOjosDeRumbo) {
             : ojos.map((cx) => (
                 <Circle
                   cx={cx + pupila.x}
-                  cy={20 + pupila.y}
+                  cy={38 + pupila.y}
                   fill={colores.bloqueNegro}
                   key={`p${cx}`}
-                  r={estado === 'habla' ? 7 : 6.2}
+                  r={estado === 'habla' ? 4.6 : 4}
                 />
               ))}
           {cerrados
             ? null
             : ojos.map((cx) => (
                 <Circle
-                  cx={cx + pupila.x + 2}
-                  cy={20 + pupila.y - 2.2}
+                  cx={cx + pupila.x + 1.4}
+                  cy={38 + pupila.y - 1.6}
                   fill={colores.sobreNegro}
                   key={`b${cx}`}
-                  r={1.7}
+                  r={1.2}
                 />
               ))}
           {estado === 'habla'
@@ -169,17 +196,29 @@ export function OjosDeRumbo({ alToque, estado, y }: PropiedadesOjosDeRumbo) {
                 <Path
                   d={
                     i === 0
-                      ? `M${cx - 12} 3 Q${cx} -1 ${cx + 12} 5`
-                      : `M${cx - 12} 5 Q${cx} -1 ${cx + 12} 3`
+                      ? `M${cx - 9} 21 Q${cx} 16 ${cx + 9} 23`
+                      : `M${cx - 9} 23 Q${cx} 16 ${cx + 9} 21`
                   }
                   fill="none"
                   key={`c${cx}`}
-                  stroke={tinta}
+                  stroke={colores.sobreNegro}
                   strokeLinecap="round"
-                  strokeWidth={2.2}
+                  strokeWidth={2}
                 />
               ))
             : null}
+          {[8, 72].map((cy) => (
+            <Ellipse
+              cx={54}
+              cy={cy}
+              fill={colores.bloqueNegro}
+              key={`m${cy}`}
+              rx={9}
+              ry={4.5}
+              stroke={conAlfa(tinta, 0.55)}
+              strokeWidth={1.4}
+            />
+          ))}
         </Svg>
       </Pressable>
     </Animated.View>
@@ -187,5 +226,5 @@ export function OjosDeRumbo({ alToque, estado, y }: PropiedadesOjosDeRumbo) {
 }
 
 const estilos = StyleSheet.create({
-  contenedor: { position: 'absolute', right: 6 },
+  contenedor: { position: 'absolute', right: 0 },
 });
