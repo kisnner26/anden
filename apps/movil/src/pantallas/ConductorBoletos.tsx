@@ -1,9 +1,13 @@
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Circle, Path, Rect } from 'react-native-svg';
 
 import { Aparece } from '@/componentes/Aparece';
 import { Bloque } from '@/componentes/Bloque';
+import { BloqueNegro } from '@/componentes/BloqueNegro';
+import { IlustracionAtajo } from '@/componentes/IlustracionAtajo';
+import { ResumenIA } from '@/componentes/ResumenIA';
 import { ControlSegmentado } from '@/componentes/ControlSegmentado';
 import { Icono } from '@/componentes/Icono';
 import { inicioDelDia } from '@/datos/dias';
@@ -33,30 +37,174 @@ import { t } from '@/textos/t';
 interface ViajeVendido {
   etiqueta: string;
   fecha: Date;
+  /** asientos que quedan libres en el viaje; falta en los cerrados que ya no están en la muestra */
+  libres?: number;
   placa: string;
   ventas: VentasDeViaje;
   viajeId: string;
 }
 
+type TipoCifra = 'ganado' | 'porCobrar' | 'total' | 'vendidos';
+
+/** el dibujo de cada indicador, en un círculo del mismo tamaño para que las cuatro tarjetas queden iguales */
+function IconoCifra({ tipo }: { tipo: TipoCifra }) {
+  const { colores } = useTema();
+  const trazo = tipo === 'ganado' ? colores.aTiempo : colores.ambarTexto;
+  return (
+    <View
+      style={[estilos.insigniaCifra, { backgroundColor: conAlfa(trazo, 0.16) }]}
+    >
+      <Svg height={22} viewBox="0 0 24 24" width={22}>
+        {tipo === 'vendidos' ? (
+          <Path
+            d="M3.5 8 h17 a1 1 0 0 1 1 1 v2 a2.2 2.2 0 0 0 0 4.4 V17 a1 1 0 0 1 -1 1 h-17 a1 1 0 0 1 -1 -1 v-1.6 a2.2 2.2 0 0 0 0 -4.4 V9 a1 1 0 0 1 1 -1 z"
+            fill="none"
+            stroke={trazo}
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+        ) : null}
+        {tipo === 'ganado' ? (
+          <>
+            <Circle
+              cx={12}
+              cy={12}
+              fill="none"
+              r={8.5}
+              stroke={trazo}
+              strokeWidth={2}
+            />
+            <Path
+              d="M12 7.5 v9 M14.6 9.6 c-.6 -.9 -1.5 -1.3 -2.6 -1.3 c-1.5 0 -2.6 .8 -2.6 2 c0 3 5.4 1.3 5.4 4.1 c0 1.2 -1.2 2 -2.8 2 c-1.2 0 -2.2 -.5 -2.8 -1.4"
+              fill="none"
+              stroke={trazo}
+              strokeLinecap="round"
+              strokeWidth={1.8}
+            />
+          </>
+        ) : null}
+        {tipo === 'porCobrar' ? (
+          <>
+            <Circle
+              cx={12}
+              cy={12}
+              fill="none"
+              r={8.5}
+              stroke={trazo}
+              strokeWidth={2}
+            />
+            <Path
+              d="M12 7 v5.2 l3.4 2"
+              fill="none"
+              stroke={trazo}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
+          </>
+        ) : null}
+        {tipo === 'total' ? (
+          <>
+            <Rect
+              fill="none"
+              height={12}
+              rx={2}
+              stroke={trazo}
+              strokeWidth={2}
+              width={17}
+              x={3.5}
+              y={6}
+            />
+            <Path
+              d="M7 10.5 h10 M7 14 h6"
+              fill="none"
+              stroke={trazo}
+              strokeLinecap="round"
+              strokeWidth={2}
+            />
+          </>
+        ) : null}
+      </Svg>
+    </View>
+  );
+}
+
 function Cifra({
   color,
   etiqueta,
+  tipo,
   valor,
 }: {
   color?: string;
   etiqueta: string;
+  tipo: TipoCifra;
   valor: string;
 }) {
   const { colores } = useTema();
   return (
     <Bloque estilo={estilos.cifra} estiloContenido={estilos.cifraContenido}>
-      <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-        {etiqueta}
-      </Text>
-      <Text style={[tipografia.dato, { color: color ?? colores.tinta }]}>
-        {valor}
-      </Text>
+      <IconoCifra tipo={tipo} />
+      <View style={estilos.cifraTexto}>
+        <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+          {etiqueta}
+        </Text>
+        <Text
+          adjustsFontSizeToFit
+          numberOfLines={1}
+          style={[tipografia.dato, { color: color ?? colores.tinta }]}
+        >
+          {valor}
+        </Text>
+      </View>
     </Bloque>
+  );
+}
+
+/** el anillo de cada viaje: lo vendido sobre lo que cabe, o lo cobrado si el viaje ya cerró; el número va al centro */
+function AnilloDeVentas({
+  fraccion,
+  numero,
+}: {
+  fraccion: number;
+  numero: number;
+}) {
+  const { colores } = useTema();
+  const radio = 21;
+  const largo = 2 * Math.PI * radio;
+  return (
+    <View style={estilos.anillo}>
+      <Svg height={56} viewBox="0 0 56 56" width={56}>
+        <Circle
+          cx={28}
+          cy={28}
+          fill="none"
+          r={radio}
+          stroke={conAlfa(colores.tinta, 0.1)}
+          strokeWidth={6}
+        />
+        <Circle
+          cx={28}
+          cy={28}
+          fill="none"
+          origin="28, 28"
+          r={radio}
+          rotation={-90}
+          stroke={colores.ambar}
+          strokeDasharray={`${largo * Math.min(1, Math.max(0, fraccion))} ${largo}`}
+          strokeLinecap="round"
+          strokeWidth={6}
+        />
+      </Svg>
+      <Text
+        style={[
+          tipografia.dato,
+          estilos.numeroAnillo,
+          { color: colores.tinta },
+        ]}
+      >
+        {numero}
+      </Text>
+    </View>
   );
 }
 
@@ -90,14 +238,16 @@ function TarjetaDeViaje({ viaje }: { viaje: ViajeVendido }) {
             })}
           </Text>
         </View>
-        <View style={estilos.cuenta}>
-          <Text style={[tipografia.dato, { color: colores.tinta }]}>
-            {ventas.vendidos}
-          </Text>
-          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {t('conductorBoletos.boletos')}
-          </Text>
-        </View>
+        <AnilloDeVentas
+          fraccion={
+            viaje.libres !== undefined
+              ? ventas.vendidos / Math.max(1, ventas.vendidos + viaje.libres)
+              : ventas.total > 0
+                ? ventas.cobrado / ventas.total
+                : 0
+          }
+          numero={ventas.vendidos}
+        />
         <View style={{ transform: [{ rotate: abierto ? '90deg' : '0deg' }] }}>
           <Icono nombre="siguiente" tamano="mediano" />
         </View>
@@ -199,6 +349,7 @@ export function ConductorBoletos() {
     ...salidas.map((s) => ({
       etiqueta: `${s.origen} → ${s.destino}`,
       fecha: s.salida,
+      libres: s.asientosLibres,
       pasado:
         cierreDe(s.viajeId) !== undefined || s.salida.getTime() < inicioHoy,
       placa: s.placa,
@@ -259,25 +410,73 @@ export function ConductorBoletos() {
         {t('conductorBoletos.detalle')}
       </Text>
 
+      <BloqueNegro estiloContenido={estilos.hero} testID="hero-ganancias">
+        <View style={estilos.heroTexto}>
+          <Text
+            style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
+          >
+            {t('conductorBoletos.ganado')}
+          </Text>
+          <Text
+            adjustsFontSizeToFit
+            numberOfLines={1}
+            style={[tipografia.display, { color: colores.ambar }]}
+          >
+            {`C$ ${totales.cobrado}`}
+          </Text>
+          <Text
+            style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
+          >
+            {rellenar(t('conductorBoletos.heroDetalle'), {
+              boletos: totales.vendidos,
+              viajes: totales.viajes,
+            })}
+          </Text>
+        </View>
+        <IlustracionAtajo alto={78} tipo="boletos" />
+      </BloqueNegro>
+
       <View style={estilos.cifras}>
         <Cifra
           etiqueta={t('conductorBoletos.vendidos')}
+          tipo="vendidos"
           valor={String(totales.vendidos)}
         />
         <Cifra
           color={colores.aTiempo}
           etiqueta={t('conductorBoletos.ganado')}
+          tipo="ganado"
           valor={`C$ ${totales.cobrado}`}
         />
         <Cifra
           etiqueta={t('conductorBoletos.porCobrar')}
+          tipo="porCobrar"
           valor={`C$ ${totales.pendiente}`}
         />
         <Cifra
           etiqueta={t('conductorBoletos.total')}
+          tipo="total"
           valor={`C$ ${totales.total}`}
         />
       </View>
+
+      {totales.vendidos > 0 ? (
+        <ResumenIA
+          contexto={[
+            `Boletos vendidos: ${totales.vendidos}, en ${totales.viajes} viajes.`,
+            `Ganado C$ ${totales.cobrado}, por cobrar C$ ${totales.pendiente}, total C$ ${totales.total}.`,
+            ...viajes
+              .filter((v) => v.ventas.vendidos > 0)
+              .slice(0, 6)
+              .map(
+                (v) =>
+                  `- ${v.etiqueta}, ${formatoFechaCorta(v.fecha)}: ${v.ventas.vendidos} boletos, cobrado C$ ${v.ventas.cobrado} de C$ ${v.ventas.total}`,
+              ),
+          ].join('\n')}
+          pedido={t('conductorBoletos.pedidoIA')}
+          titulo={t('conductorBoletos.tituloIA')}
+        />
+      ) : null}
 
       <ControlSegmentado
         alCambiar={establecerVista}
@@ -320,10 +519,38 @@ const estilos = StyleSheet.create({
     width: 30,
   },
   contenido: { gap: espacios.doce, paddingHorizontal: espacios.lateral },
+  anillo: {
+    alignItems: 'center',
+    height: 56,
+    justifyContent: 'center',
+    width: 56,
+  },
   cifra: { flexBasis: '47%', flexGrow: 1 },
-  cifraContenido: { gap: 2, padding: espacios.doce },
+  cifraContenido: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.doce,
+    minHeight: 76,
+    padding: espacios.doce,
+  },
+  cifraTexto: { flex: 1, gap: 2 },
+  hero: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.doce,
+    justifyContent: 'space-between',
+    padding: espacios.dieciseis,
+  },
+  heroTexto: { flex: 1, gap: 2 },
+  insigniaCifra: {
+    alignItems: 'center',
+    borderRadius: radios.pildora,
+    height: 40,
+    justifyContent: 'center',
+    width: 40,
+  },
+  numeroAnillo: { position: 'absolute' },
   cifras: { flexDirection: 'row', flexWrap: 'wrap', gap: espacios.ocho },
-  cuenta: { alignItems: 'center' },
   encabezado: {
     alignItems: 'center',
     flexDirection: 'row',
