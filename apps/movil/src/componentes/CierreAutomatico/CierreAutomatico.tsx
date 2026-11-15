@@ -17,6 +17,8 @@ import { useSesion } from '@/datos/useSesion';
 import { useSonidos } from '@/datos/useSonidos';
 import { useTransmision, useViajesEnVivo } from '@/datos/useTransmision';
 import { armarCierre } from '@/servicios/cierres';
+import { sincronizarViajes } from '@/datos/sincronizarViajes';
+import { marcarLlegada } from '@/servicios/supabase/viajesSupabase';
 
 /**
  * vigila un viaje que se está compartiendo: cuando la posición llega al destino marcado en el mapa y se mantiene
@@ -74,6 +76,7 @@ function VigiaDelViaje({ viajeId }: { viajeId: string }) {
     );
     detenerTransmision(viajeId);
     void cerrar(resumen).then(() => sonar('fin'));
+    void marcarLlegada(viajeId).then(() => sincronizarViajes());
   }, [
     cerrar,
     cierreDe,
