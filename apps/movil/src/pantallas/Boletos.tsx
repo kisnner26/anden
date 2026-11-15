@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import Svg, { Path } from 'react-native-svg';
+
 import { Bloque } from '@/componentes/Bloque';
 import { Aparece } from '@/componentes/Aparece';
 import { BarraPreguntaIA } from '@/componentes/BarraPreguntaIA';
@@ -71,9 +73,45 @@ export function Boletos({
 
   return (
     <MarcoPestana estiloContenido={estilos.contenido}>
-      <Text style={[tipografia.titularPantalla, { color: colores.tinta }]}>
-        {t('boletos.titulo')}.
-      </Text>
+      <View style={estilos.cabecera}>
+        <Text
+          style={[
+            tipografia.titularPantalla,
+            estilos.tituloCabecera,
+            { color: colores.tinta },
+          ]}
+        >
+          {t('boletos.titulo')}.
+        </Text>
+        {alRecibir ? (
+          <Pressable
+            accessibilityLabel={t('recibir.accion')}
+            accessibilityRole="button"
+            onPress={alRecibir}
+            testID="boton-recibir"
+          >
+            <Bloque estiloContenido={estilos.botonRecibir} radio="pildora">
+              <Svg height={26} viewBox="0 0 26 26" width={26}>
+                <Path
+                  d="M3.5 9 h19 a1 1 0 0 1 1 1 v2.2 a2.3 2.3 0 0 0 0 4.6 V19 a1 1 0 0 1 -1 1 h-19 a1 1 0 0 1 -1 -1 v-2.2 a2.3 2.3 0 0 0 0 -4.6 V10 a1 1 0 0 1 1 -1 z"
+                  fill="none"
+                  stroke={colores.tinta}
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                />
+                <Path
+                  d="M13 2.5 V12 M9.5 8.8 L13 12.3 L16.5 8.8"
+                  fill="none"
+                  stroke={colores.ambarTexto}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.4}
+                />
+              </Svg>
+            </Bloque>
+          </Pressable>
+        ) : null}
+      </View>
 
       {boletos.length === 0 ? (
         <Bloque estilo={estilos.bloque} estiloContenido={estilos.vacio}>
@@ -102,13 +140,6 @@ export function Boletos({
           </View>
           <BotonAccion alPresionar={alBuscar} etiqueta={t('boletos.buscar')} />
         </Bloque>
-      ) : null}
-      {alRecibir ? (
-        <Pressable accessibilityRole="button" onPress={alRecibir}>
-          <Text style={[tipografia.subtitulo, { color: colores.ambarTexto }]}>
-            {t('recibir.accion')}
-          </Text>
-        </Pressable>
       ) : null}
       {boletos.length === 0 ? (
         <View style={estilos.destinos}>
@@ -216,6 +247,18 @@ export function Boletos({
 }
 
 const estilos = StyleSheet.create({
+  botonRecibir: {
+    alignItems: 'center',
+    height: 52,
+    justifyContent: 'center',
+    width: 52,
+  },
+  cabecera: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  tituloCabecera: { flex: 1 },
   carrusel: { gap: espacios.doce, paddingRight: espacios.lateral },
   ciudad: { height: 132, justifyContent: 'flex-end', width: 200 },
   ciudadTexto: { padding: espacios.doce },
