@@ -1155,7 +1155,11 @@ export const textos = {
     sinSesion: 'Entrá a tu cuenta para unirte al grupo.',
     titulo: 'Viaje en grupo',
     compartir: 'Compartir el enlace',
+    asiento: 'Asiento {n}',
     avance: '{n} de {cupo} ya eligieron',
+    noSePudoCrear:
+      'No se pudo crear el grupo. Revisá tu conexión y que hayas entrado a tu cuenta.',
+    botonDetalle: 'Reservar en grupo',
     juntos: 'Los asientos marcados quedan junto a los de tu grupo.',
   },
   objetosEncontrados: {
