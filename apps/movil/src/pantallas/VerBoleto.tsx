@@ -38,6 +38,9 @@ import { ResumenIA } from '@/componentes/ResumenIA';
 import { lineaDeBoleto } from '@/datos/contextoIA';
 import { motivoDeCancelacion, viajeCancelado } from '@/datos/historialSalidas';
 import { esMotivoCancelacion } from '@/datos/motivoCancelacion';
+import { enVentanaDeLlamada } from '@/datos/comunicacion';
+import { useAvisoDelViaje } from '@/datos/useAvisosDelViaje';
+import { useLlamar } from '@/datos/useLlamar';
 import type { MinutosAntes } from '@/datos/recordatorios';
 import type { Salida } from '@/datos/salidas';
 import { useRecordatorios } from '@/datos/useRecordatorios';
@@ -114,6 +117,7 @@ export function VerBoleto({
   const { boletos, cancelar, reservar } = useBoletos();
   const [pasandoA, establecerPasandoA] = useState<string | null>(null);
   const [falloReubicar, establecerFalloReubicar] = useState(false);
+  const llamar = useLlamar();
   const recordatorios = useRecordatorios();
   const [actividadDisponible, establecerActividadDisponible] = useState(false);
   const [actividadId, establecerActividadId] = useState<string | null>(null);
@@ -200,6 +204,7 @@ export function VerBoleto({
   const motivoCancelado = esMotivoCancelacion(motivoGuardado)
     ? motivoGuardado
     : null;
+  const avisoDelChofer = useAvisoDelViaje(guardado?.boleto.viajeId ?? null);
 
   // mientras la actividad en vivo está abierta, sigue el estado del viaje: cambia de color y de texto sola
   useEffect(() => {
@@ -645,6 +650,37 @@ export function VerBoleto({
             ) : null}
           </View>
         )}
+
+        {puedeOperar && avisoDelChofer ? (
+          <Bloque estiloContenido={estilos.cancelado} testID="aviso-del-chofer">
+            <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+              {rellenar(t('comunicacion.avisoDelChofer'), {
+                texto: avisoDelChofer.texto,
+              })}
+            </Text>
+          </Bloque>
+        ) : null}
+
+        {puedeOperar &&
+        enVentanaDeLlamada(new Date(guardado.resumen.salida), ahora) ? (
+          <>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => void llamar.alChofer(guardado.boleto.viajeId)}
+            >
+              <Bloque estiloContenido={estilos.boton} radio="pildora">
+                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                  {t('comunicacion.llamarChofer')}
+                </Text>
+              </Bloque>
+            </Pressable>
+            {llamar.fallo ? (
+              <Text style={[tipografia.pequeno, { color: colores.cancelado }]}>
+                {t('comunicacion.sinNumero')}
+              </Text>
+            ) : null}
+          </>
+        ) : null}
 
         {viajeCancelado(guardado.boleto.viajeId) && (
           <Bloque estiloContenido={estilos.cancelado}>
