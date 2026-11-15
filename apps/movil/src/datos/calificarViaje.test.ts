@@ -43,10 +43,17 @@ describe('boletoPorCalificar', () => {
   const reciente = boletoDePrueba(new Date(2026, 10, 14, 7, 0), 4, 'BBBB2222');
   const futuro = boletoDePrueba(new Date(2026, 10, 15, 7, 0), 5, 'CCCC3333');
 
+  const llegaron = new Set(['via_2']);
+
   it('elige el viaje ya hecho más reciente que no tiene opinión', () => {
     expect(
-      boletoPorCalificar([hecho, reciente, futuro], [], AHORA)?.boleto.id,
+      boletoPorCalificar([hecho, reciente, futuro], [], AHORA, llegaron)?.boleto
+        .id,
     ).toBe('bol_BBBB2222');
+  });
+
+  it('quien reservó y no viajó no recibe el pedido de calificar', () => {
+    expect(boletoPorCalificar([hecho, reciente], [], AHORA)).toBeNull();
   });
 
   it('un viaje de hace más de dos días ya no se pide', () => {
@@ -68,7 +75,8 @@ describe('boletoPorCalificar', () => {
       id: 'op_1',
     };
     expect(
-      boletoPorCalificar([hecho, reciente], [opinion], AHORA)?.boleto.id,
+      boletoPorCalificar([hecho, reciente], [opinion], AHORA, llegaron)?.boleto
+        .id,
     ).toBe('bol_AAAA1111');
   });
 

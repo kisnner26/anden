@@ -84,6 +84,12 @@ describe('boletoParaOpinar', () => {
     { choferId: 'cho_1', id: 'via_1', salida: '2026-11-12T10:00:00Z' },
     { choferId: 'cho_2', id: 'via_2', salida: '2026-11-12T10:00:00Z' },
     { choferId: 'cho_1', id: 'via_3', salida: '2026-11-12T20:00:00Z' },
+    {
+      choferId: 'cho_1',
+      estado: 'llego',
+      id: 'via_4',
+      salida: '2026-11-12T08:00:00Z',
+    },
   ];
   const ahora = new Date('2026-11-12T12:00:00Z');
   const boleto = (id: string, viajeId: string, estado = 'vigente') => ({
@@ -92,16 +98,34 @@ describe('boletoParaOpinar', () => {
     viajeId,
   });
 
-  it('devuelve el boleto de un viaje del chofer que ya salió', () => {
+  it('devuelve el boleto usado de un viaje del chofer que ya salió', () => {
+    expect(
+      boletoParaOpinar(
+        [boleto('b1', 'via_1', 'usado')],
+        viajes,
+        'cho_1',
+        [],
+        ahora,
+      ),
+    ).toBe('b1');
+  });
+
+  it('también sirve el boleto de un viaje que ya llegó', () => {
+    expect(
+      boletoParaOpinar([boleto('b5', 'via_4')], viajes, 'cho_1', [], ahora),
+    ).toBe('b5');
+  });
+
+  it('quien solo reservó y el viaje no llegó ni abordó, no puede opinar', () => {
     expect(
       boletoParaOpinar([boleto('b1', 'via_1')], viajes, 'cho_1', [], ahora),
-    ).toBe('b1');
+    ).toBeNull();
   });
 
   it('no sirve un viaje de otro chofer, uno que no salió ni uno cancelado', () => {
     const boletos = [
-      boleto('b2', 'via_2'),
-      boleto('b3', 'via_3'),
+      boleto('b2', 'via_2', 'usado'),
+      boleto('b3', 'via_3', 'usado'),
       boleto('b4', 'via_1', 'cancelado'),
     ];
     expect(boletoParaOpinar(boletos, viajes, 'cho_1', [], ahora)).toBeNull();
@@ -111,7 +135,7 @@ describe('boletoParaOpinar', () => {
     const previa = { boletoId: 'b1' } as Opinion;
     expect(
       boletoParaOpinar(
-        [boleto('b1', 'via_1')],
+        [boleto('b1', 'via_1', 'usado')],
         viajes,
         'cho_1',
         [previa],

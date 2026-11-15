@@ -24,7 +24,9 @@ describe('PerfilChofer', () => {
       pantalla.queryByText(/Solo califican quienes ya hicieron/),
     ).toBeNull();
     expect(
-      pantalla.getAllByText(/Podés opinar cuando termine un viaje/),
+      pantalla.getAllByText(
+        /Solo podés opinar de un chofer con el que ya viajaste/,
+      ),
     ).toHaveLength(1);
   });
 

@@ -13,8 +13,8 @@ afterEach(async () => {
   reiniciarMuestra();
 });
 
-/** un viaje de muestra que ya salió y un boleto que no está cancelado en él */
-function conBoletoDeViajePasado() {
+/** un viaje de muestra que ya salió y un boleto en él que el conductor marcó a bordo */
+function conBoletoDeViajePasado(estado: 'usado' | 'vigente' = 'usado') {
   const viaje = obtenerMuestra().viajes.find(
     (candidato) => new Date(candidato.salida).getTime() <= Date.now(),
   );
@@ -22,7 +22,7 @@ function conBoletoDeViajePasado() {
   const valor = {
     boletos: [
       {
-        boleto: { estado: 'vigente', id: 'bol_1', viajeId: viaje.id },
+        boleto: { estado, id: 'bol_1', viajeId: viaje.id },
         resumen: {},
       },
     ],
@@ -49,7 +49,24 @@ describe('OpinionesChofer', () => {
   it('explica que se opina con un boleto de un viaje ya hecho', async () => {
     const pantalla = await renderPantalla(<OpinionesChofer choferId="cho_1" />);
     expect(
-      pantalla.getByText(/Podés opinar cuando termine un viaje/),
+      pantalla.getByText(
+        /Solo podés opinar de un chofer con el que ya viajaste/,
+      ),
+    ).toBeTruthy();
+    expect(
+      pantalla.queryByRole('button', { name: 'Enviar opinión' }),
+    ).toBeNull();
+  });
+
+  it('quien reservó un viaje pasado pero no viajó no puede opinar', async () => {
+    const { choferId, envolver } = conBoletoDeViajePasado('vigente');
+    const pantalla = await renderPantalla(
+      envolver(<OpinionesChofer choferId={choferId} />),
+    );
+    expect(
+      await pantalla.findByText(
+        /Solo podés opinar de un chofer con el que ya viajaste/,
+      ),
     ).toBeTruthy();
     expect(
       pantalla.queryByRole('button', { name: 'Enviar opinión' }),
@@ -65,7 +82,9 @@ describe('OpinionesChofer', () => {
       await pantalla.findByText(/Podés ser la primera persona/),
     ).toBeTruthy();
     expect(
-      pantalla.queryByText(/Podés opinar cuando termine un viaje/),
+      pantalla.queryByText(
+        /Solo podés opinar de un chofer con el que ya viajaste/,
+      ),
     ).toBeNull();
   });
 
