@@ -1,17 +1,23 @@
 import { describe, expect, it } from '@jest/globals';
 
 import {
-  fraseDeRespaldo,
-  instruccionesDeRumbo,
+  instruccionesDeAyuda,
   limpiarRespuestaDeRumbo,
   MAXIMO_RESPUESTA,
 } from './mascotaIA';
 
-describe('instruccionesDeRumbo', () => {
-  it('incluye los datos reales y las reglas de no inventar', () => {
-    const texto = instruccionesDeRumbo('- Boaco a las 3:00 p. m.');
+describe('instruccionesDeAyuda', () => {
+  it('pide una sola frase directa, sin presentarse, y lleva la pantalla, el apuro y los datos', () => {
+    const texto = instruccionesDeAyuda({
+      apuro: 'no logra iniciar sesión',
+      datos: '- Boaco a las 3:00 p. m.',
+      pantalla: 'el ingreso a la cuenta',
+    });
+    expect(texto).toContain('el ingreso a la cuenta');
+    expect(texto).toContain('no logra iniciar sesión');
     expect(texto).toContain('Boaco a las 3:00 p. m.');
-    expect(texto).toMatch(/sin inventar/);
+    expect(texto).toMatch(/UNA sola frase/);
+    expect(texto).toMatch(/No te presentes/);
     expect(texto).toMatch(/voseo/);
   });
 });
@@ -28,12 +34,5 @@ describe('limpiarRespuestaDeRumbo', () => {
     const salida = limpiarRespuestaDeRumbo(larga);
     expect(salida.length).toBeLessThanOrEqual(MAXIMO_RESPUESTA);
     expect(salida.endsWith('.')).toBe(true);
-  });
-});
-
-describe('fraseDeRespaldo', () => {
-  it('rota entre varias frases', () => {
-    expect(fraseDeRespaldo(0)).not.toBe(fraseDeRespaldo(1));
-    expect(fraseDeRespaldo(5)).toBe(fraseDeRespaldo(0));
   });
 });

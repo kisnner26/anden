@@ -48,11 +48,11 @@ describe('registrarSenal', () => {
 });
 
 describe('registrarToque', () => {
-  it('cinco toques rápidos en el mismo lugar son toques repetidos', () => {
+  it('seis toques rápidos en el mismo lugar son toques repetidos', () => {
     let toques: { en: number; x: number; y: number }[] = [];
     let repetidos = false;
-    for (let i = 0; i < 5; i += 1) {
-      const r = registrarToque(toques, { en: i * 300, x: 100, y: 200 });
+    for (let i = 0; i < 6; i += 1) {
+      const r = registrarToque(toques, { en: i * 250, x: 100, y: 200 });
       toques = r.toques;
       repetidos = r.repetidos;
     }

@@ -5,12 +5,15 @@ let mockRuta = '/viajar';
 jest.mock('expo-router', () => ({ usePathname: () => mockRuta }));
 
 import { emitirSenal } from '@/datos/senalesDeAyuda';
+import { ContextoIA, type ValorIA } from '@/datos/useIA';
 import { ContextoMascota, type ValorMascota } from '@/datos/useMascota';
+import { ContextoSuscripcion } from '@/datos/useSuscripcion';
+import { ESTADO_GRATIS } from '@/servicios/suscripcion';
 import { renderPantalla } from '@/pruebas/render';
 
 import { AyudanteRumbo } from './AyudanteRumbo';
 
-function dibujar(activa = true) {
+function dibujar(activa = true, ia?: Partial<ValorIA>, plus = false) {
   const valor: ValorMascota = {
     activa,
     cambiar: async () => undefined,
@@ -18,9 +21,33 @@ function dibujar(activa = true) {
     vistos: {},
   };
   return renderPantalla(
-    <ContextoMascota.Provider value={valor}>
-      <AyudanteRumbo />
-    </ContextoMascota.Provider>,
+    <ContextoSuscripcion.Provider
+      value={{
+        activar: async () => undefined,
+        cancelar: async () => undefined,
+        estado: ESTADO_GRATIS,
+        plus,
+      }}
+    >
+      <ContextoIA.Provider
+        value={
+          {
+            activada: true,
+            cambiar: async () => undefined,
+            cargando: false,
+            disponibilidad: 'disponible',
+            nombre: 'Apple Intelligence',
+            preguntar: async () => '',
+            usable: false,
+            ...ia,
+          } as ValorIA
+        }
+      >
+        <ContextoMascota.Provider value={valor}>
+          <AyudanteRumbo />
+        </ContextoMascota.Provider>
+      </ContextoIA.Provider>
+    </ContextoSuscripcion.Provider>,
   );
 }
 
@@ -87,5 +114,50 @@ describe('AyudanteRumbo', () => {
       emitirSenal('toquesRepetidos');
     });
     expect(p.queryByTestId('ayudante-rumbo')).toBeNull();
+  });
+
+  async function asomarYTocar(p: Awaited<ReturnType<typeof dibujar>>) {
+    await act(async () => {
+      emitirSenal('reservaFallida');
+      emitirSenal('errorFormulario');
+    });
+    await fireEvent.press(
+      await p.findByRole('button', { name: 'Rumbo quiere ayudarte' }),
+    );
+  }
+
+  it('con IA y Plus dice la ayuda que armó el modelo', async () => {
+    const preguntar = jest.fn(
+      async () =>
+        'Elegí otro de los asientos libres y volvé a reservar antes de que salga el bus.',
+    );
+    const p = await dibujar(true, { preguntar, usable: true }, true);
+    await asomarYTocar(p);
+    expect(
+      await p.findByLabelText(/Elegí otro de los asientos libres/),
+    ).toBeTruthy();
+    expect(preguntar).toHaveBeenCalledTimes(1);
+  });
+
+  it('si el modelo contesta algo tonto, se queda con la ayuda escrita', async () => {
+    const preguntar = jest.fn(
+      async () =>
+        "Tranquilo, sos Rumbo, que aquí estoy pa' ayudar, pero nada responde.",
+    );
+    const p = await dibujar(true, { preguntar, usable: true }, true);
+    await asomarYTocar(p);
+    expect(
+      await p.findByLabelText(/Ese asiento se ocupó justo antes/),
+    ).toBeTruthy();
+  });
+
+  it('sin Plus no usa la IA y da la ayuda escrita', async () => {
+    const preguntar = jest.fn(async () => 'No debería llamarse nunca a la IA.');
+    const p = await dibujar(true, { preguntar, usable: true }, false);
+    await asomarYTocar(p);
+    expect(
+      await p.findByLabelText(/Ese asiento se ocupó justo antes/),
+    ).toBeTruthy();
+    expect(preguntar).not.toHaveBeenCalled();
   });
 });
