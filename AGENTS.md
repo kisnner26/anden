@@ -138,7 +138,7 @@ Al terminar la tarea, `pnpm verificar` completo antes de integrar.
 - Toda regla de negocio va en `packages/dominio` con prueba. Una pantalla nunca calcula un precio ni decide si un asiento está libre.
 - Ningún color, tamaño de fuente ni duración fuera de `src/tema/`. Ningún texto visible fuera de `src/textos/es.ts`.
 - Nada de emojis en código, textos, datos de muestra ni commits.
-- La app no usa la cámara.
+- La app no usa la cámara, salvo dos funciones que el dueño del proyecto autorizó (2026-11-15): el escáner del QR de los boletos y la foto de objetos olvidados, ambas del conductor. Cualquier otro uso de la cámara necesita su permiso.
 - Las pruebas de la app van en `apps/movil/pruebas/` o junto al código de `src/`; nunca dentro de `apps/movil/app/`, que Expo Router empaqueta como pantallas.
 - Si tocás `apps/movil`, además de `pnpm verificar` corré `pnpm -F movil exec expo export --platform android` y `--platform ios`: Jest no usa Metro y no detecta errores de empaquetado.
 - Dependencia nueva: solo si la tarea lo dice, en su commit `chore:` propio y con el candado `raiz`.
