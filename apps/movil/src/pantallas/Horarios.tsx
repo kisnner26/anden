@@ -19,6 +19,7 @@ import { SelectorDia } from '@/componentes/SelectorDia';
 import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
+import { OpcionDeLista } from '@/componentes/OpcionDeLista';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { TableroSalidas } from '@/componentes/TableroSalidas';
 import { CORREDORES_INICIALES, TERMINAL_POR_CIUDAD } from '@/datos/corredores';
@@ -212,16 +213,18 @@ export function Horarios({
             <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
               {t('horarios.saleDesde')}
             </Text>
-            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+            <Text
+              adjustsFontSizeToFit
+              minimumFontScale={0.75}
+              numberOfLines={1}
+              style={[tipografia.subtitulo, { color: colores.tinta }]}
+            >
               {terminal?.nombre}
             </Text>
             <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
               {terminal?.ciudad}
             </Text>
           </View>
-          <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-            {t('horarios.cambiar')}
-          </Text>
           <Icono nombre="siguiente" tamano="mediano" />
         </Bloque>
       </Pressable>
@@ -247,19 +250,16 @@ export function Horarios({
               (salida) => salida.origen === candidata.ciudad,
             ).length;
             return (
-              <Pressable
-                accessibilityLabel={`${candidata.nombre}, ${candidata.ciudad}`}
-                accessibilityRole="button"
-                accessibilityState={{ selected: elegida }}
-                key={candidata.id}
-                onPress={() => {
+              <OpcionDeLista
+                alPresionar={() => {
                   establecerTerminalId(candidata.id);
                   establecerDestinoElegido(null);
                   establecerEligiendoTerminal(false);
                 }}
-              >
-                <Bloque estiloContenido={estilos.filaTerminal}>
-                  <Loseta tamano={44} variante={elegida ? 'ambar' : 'negra'}>
+                detalle={candidata.ciudad}
+                etiquetaAccesible={`${candidata.nombre}, ${candidata.ciudad}`}
+                izquierda={
+                  <Loseta tamano={46} variante={elegida ? 'ambar' : 'negra'}>
                     <Text
                       style={[
                         tipografia.dato,
@@ -273,30 +273,18 @@ export function Horarios({
                       {candidata.codigo}
                     </Text>
                   </Loseta>
-                  <View style={estilos.datosTerminal}>
-                    <Text
-                      style={[tipografia.subtitulo, { color: colores.tinta }]}
-                    >
-                      {candidata.nombre}
-                    </Text>
-                    <Text
-                      style={[
-                        tipografia.pequeno,
-                        { color: colores.tintaSuave },
-                      ]}
-                    >
-                      {cuantas > 0
-                        ? rellenar(t('horarios.salidasEseDia'), {
-                            cantidad: cuantas,
-                          })
-                        : candidata.ciudad}
-                    </Text>
-                  </View>
-                  {elegida ? (
-                    <Icono nombre="confirmar" tamano="mediano" />
-                  ) : null}
-                </Bloque>
-              </Pressable>
+                }
+                key={candidata.id}
+                nota={
+                  cuantas > 0
+                    ? rellenar(t('horarios.salidasEseDia'), {
+                        cantidad: cuantas,
+                      })
+                    : undefined
+                }
+                seleccionada={elegida}
+                titulo={candidata.nombre}
+              />
             );
           })}
         </View>
