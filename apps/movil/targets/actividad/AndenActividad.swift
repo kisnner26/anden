@@ -170,6 +170,8 @@ private struct PildoraDeFase: View {
       Image(systemName: simbolo(de: fase)).font(.system(size: 10, weight: .bold))
       Text(texto(de: fase)).font(.system(size: 11, weight: .bold, design: .rounded))
     }
+    .lineLimit(1)
+    .fixedSize()
     .foregroundStyle(tono)
     .padding(.horizontal, 8)
     .padding(.vertical, 3)
@@ -178,38 +180,92 @@ private struct PildoraDeFase: View {
   }
 }
 
-/// el camino de la salida: un punto, una barra que se llena con el tiempo y la meta; el bus viaja encima
-private struct CaminoDeSalida: View {
-  let contexto: ActivityViewContext<AtributosViaje>
+/// una colina suave dibujada con una curva; la fase la desplaza para que las dos capas no coincidan
+private struct Colina: Shape {
+  var desfase: CGFloat
+  var altura: CGFloat
+  func path(in rect: CGRect) -> Path {
+    var camino = Path()
+    camino.move(to: CGPoint(x: 0, y: rect.maxY))
+    camino.addLine(to: CGPoint(x: 0, y: rect.maxY - rect.height * altura))
+    let pasos = 24
+    for i in 0...pasos {
+      let t = CGFloat(i) / CGFloat(pasos)
+      let y = rect.maxY - rect.height * altura - sin((t + desfase) * .pi * 2.4) * rect.height * 0.13
+      camino.addLine(to: CGPoint(x: rect.width * t, y: y))
+    }
+    camino.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+    camino.closeSubpath()
+    return camino
+  }
+}
+
+/// qué tanto del camino lleva recorrido el bus: se llena hacia la hora de salida y, una vez en ruta, queda a medio camino
+private func avance(fase: String, desde: Date, salida: Date, ahora: Date) -> Double {
+  if fase == "llego" { return 1 }
+  if !esperando(fase) { return 0.62 }
+  let total = salida.timeIntervalSince(desde)
+  if total <= 0 { return 0.9 }
+  return min(max(ahora.timeIntervalSince(desde) / total, 0.04), 0.96)
+}
+
+/// el paisaje del viaje, como el de la portada de la app: un sol detrás de las colinas, el camino con rayas y Rumbo
+/// avanzando hacia la meta según se acerca la hora de salida
+private struct EscenaDeCamino: View {
+  let fase: String
+  let desde: Date
+  let salida: Date
+  var alto: CGFloat = 64
 
   var body: some View {
-    let tono = color(de: contexto.state.fase)
-    let espera = esperando(contexto.state.fase)
-    VStack(spacing: 6) {
-      HStack(spacing: 8) {
-        Circle().fill(tono).frame(width: 8, height: 8)
-          .overlay(Circle().stroke(Paleta.carbon, lineWidth: 2))
-        Group {
-          if espera && contexto.attributes.desde < contexto.attributes.salida {
-            ProgressView(
-              timerInterval: contexto.attributes.desde...contexto.attributes.salida,
-              countsDown: false
-            ) {
-              EmptyView()
-            } currentValueLabel: {
-              EmptyView()
+    let tono = color(de: fase)
+    TimelineView(.periodic(from: .now, by: 20)) { linea in
+      let f = avance(fase: fase, desde: desde, salida: salida, ahora: linea.date)
+      GeometryReader { geo in
+        let ancho = geo.size.width
+        ZStack(alignment: .topLeading) {
+          // el sol que sale detrás de las colinas
+          Circle()
+            .fill(
+              RadialGradient(
+                colors: [Paleta.ambar.opacity(0.85), Paleta.ambar.opacity(0.0)], center: .center,
+                startRadius: 1, endRadius: alto * 0.55)
+            )
+            .frame(width: alto * 1.1, height: alto * 1.1)
+            .position(x: ancho * 0.8, y: alto * 0.5)
+          Circle().fill(Paleta.ambarClaro).frame(width: alto * 0.26, height: alto * 0.26)
+            .position(x: ancho * 0.8, y: alto * 0.4)
+          // colinas en dos capas
+          Colina(desfase: 0.1, altura: 0.55).fill(Color.white.opacity(0.07)).frame(height: alto)
+          Colina(desfase: 0.55, altura: 0.36).fill(Color.white.opacity(0.11)).frame(height: alto)
+          // el camino y sus rayas
+          Capsule().fill(Color.white.opacity(0.13))
+            .frame(width: ancho, height: alto * 0.17)
+            .position(x: ancho / 2, y: alto * 0.9)
+          HStack(spacing: 9) {
+            ForEach(0..<max(Int(ancho / 17), 1), id: \.self) { _ in
+              Capsule().fill(Paleta.crema.opacity(0.42)).frame(width: 9, height: 2)
             }
-          } else {
-            ProgressView(value: contexto.state.fase == "llego" ? 1 : 0.55)
           }
+          .frame(width: ancho, alignment: .leading)
+          .position(x: ancho / 2, y: alto * 0.9)
+          // lo recorrido
+          Capsule().fill(tono.opacity(0.8))
+            .frame(width: max(ancho * f, 6), height: 3)
+            .position(x: max(ancho * f, 6) / 2, y: alto * 0.9)
+          // la meta
+          Image(systemName: "flag.checkered.2.crossed")
+            .font(.system(size: 13, weight: .bold))
+            .foregroundStyle(fase == "llego" ? Paleta.verde : Paleta.crema.opacity(0.9))
+            .position(x: ancho - 12, y: alto * 0.62)
+          // Rumbo, sobre el camino
+          MarcaRumbo(tamano: alto * 0.62)
+            .position(x: min(max(ancho * f, alto * 0.34), ancho - alto * 0.45), y: alto * 0.66)
         }
-        .tint(tono)
-        .scaleEffect(y: 1.7)
-        Image(systemName: "flag.checkered.2.crossed")
-          .font(.system(size: 13, weight: .bold))
-          .foregroundStyle(contexto.state.fase == "llego" ? Paleta.verde : tono.opacity(0.85))
       }
     }
+    .frame(height: alto)
+    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
   }
 }
 
@@ -234,7 +290,7 @@ private struct FichaDePunto: View {
 /// la cuenta regresiva hacia la salida, grande y sin que haya que actualizar nada: el sistema la mueve sola
 private struct Cuenta: View {
   let contexto: ActivityViewContext<AtributosViaje>
-  var tamano: CGFloat = 30
+  var tamano: CGFloat = 26
   var body: some View {
     let tono = color(de: contexto.state.fase)
     if esperando(contexto.state.fase) {
@@ -247,8 +303,8 @@ private struct Cuenta: View {
           .font(.system(size: tamano, weight: .heavy, design: .rounded).monospacedDigit())
           .foregroundStyle(contexto.state.fase == "atrasado" ? Paleta.rojo : Paleta.crema)
           .multilineTextAlignment(.trailing)
-          .frame(maxWidth: 112, alignment: .trailing)
-          .minimumScaleFactor(0.7)
+          .frame(maxWidth: 124, alignment: .trailing)
+          .minimumScaleFactor(0.5)
           .lineLimit(1)
       }
     } else {
@@ -285,23 +341,25 @@ struct ActividadDelViaje: Widget {
         FondoAnden(tono: tono)
         VStack(spacing: 14) {
           HStack(alignment: .center, spacing: 12) {
-            MarcaRumbo(tamano: 58, tono: tono == Paleta.gris ? Paleta.ambar : Paleta.ambar)
+            MarcaRumbo(tamano: 50)
             VStack(alignment: .leading, spacing: 3) {
               Text("ANDÉN")
                 .font(.system(size: 9, weight: .heavy, design: .rounded))
                 .tracking(2)
                 .foregroundStyle(Paleta.ambar)
               Text("\(contexto.attributes.origen) → \(contexto.attributes.destino)")
-                .font(.system(size: 19, weight: .heavy, design: .rounded))
+                .font(.system(size: 17, weight: .heavy, design: .rounded))
                 .foregroundStyle(Paleta.crema)
                 .lineLimit(1)
-                .minimumScaleFactor(0.7)
+                .minimumScaleFactor(0.5)
               PildoraDeFase(fase: contexto.state.fase)
             }
             Spacer(minLength: 4)
             Cuenta(contexto: contexto)
           }
-          CaminoDeSalida(contexto: contexto)
+          EscenaDeCamino(
+            fase: contexto.state.fase, desde: contexto.attributes.desde,
+            salida: contexto.attributes.salida, alto: 70)
           HStack {
             FichaDePunto(punto: contexto.state.puntoEncuentro)
             Spacer()
@@ -339,7 +397,9 @@ struct ActividadDelViaje: Widget {
         }
         DynamicIslandExpandedRegion(.bottom) {
           VStack(spacing: 10) {
-            CaminoDeSalida(contexto: contexto)
+            EscenaDeCamino(
+              fase: contexto.state.fase, desde: contexto.attributes.desde,
+              salida: contexto.attributes.salida, alto: 56)
             HStack {
               FichaDePunto(punto: contexto.state.puntoEncuentro)
               Spacer()
