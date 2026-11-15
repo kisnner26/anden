@@ -268,6 +268,36 @@ export function Ajustes({
       )}
 
       <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+        {t('ajustes.sesionSeccion')}
+      </Text>
+      {sesion && (
+        <>
+          <Bloque estiloContenido={estilos.filaOpcion}>
+            <View style={estilos.texto}>
+              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                {nombrePropio(sesion.nombre)}
+              </Text>
+              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+                {t('ajustes.sesionIniciada')}
+              </Text>
+            </View>
+          </Bloque>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => void cerrar().then(() => alSalir?.())}
+          >
+            <Bloque estiloContenido={estilos.filaOpcion}>
+              <Text
+                style={[tipografia.subtitulo, { color: colores.cancelado }]}
+              >
+                {t('ajustes.cerrarSesion')}
+              </Text>
+            </Bloque>
+          </Pressable>
+        </>
+      )}
+
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {t('ajustes.modoSeccion')}
       </Text>
       {MODOS_USO.map((modo) => (
@@ -589,36 +619,6 @@ export function Ajustes({
       )}
 
       {extra}
-
-      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-        {t('ajustes.sesionSeccion')}
-      </Text>
-      {sesion && (
-        <>
-          <Bloque estiloContenido={estilos.filaOpcion}>
-            <View style={estilos.texto}>
-              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                {nombrePropio(sesion.nombre)}
-              </Text>
-              <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-                {t('ajustes.sesionIniciada')}
-              </Text>
-            </View>
-          </Bloque>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => void cerrar().then(() => alSalir?.())}
-          >
-            <Bloque estiloContenido={estilos.filaOpcion}>
-              <Text
-                style={[tipografia.subtitulo, { color: colores.cancelado }]}
-              >
-                {t('ajustes.cerrarSesion')}
-              </Text>
-            </Bloque>
-          </Pressable>
-        </>
-      )}
     </ScrollView>
   );
 }
