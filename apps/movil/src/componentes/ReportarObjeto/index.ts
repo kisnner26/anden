@@ -1,0 +1,1 @@
+export { ReportarObjeto } from './ReportarObjeto';

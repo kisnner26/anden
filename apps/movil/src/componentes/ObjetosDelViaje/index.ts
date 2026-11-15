@@ -1,0 +1,1 @@
+export { ObjetosDelViaje } from './ObjetosDelViaje';
