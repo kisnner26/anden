@@ -35,20 +35,12 @@ describe('Rutas', () => {
     expect(pantalla.getAllByText('Juigalpa').length).toBeGreaterThan(1);
   });
 
-  it('ofrece las salidas como fichas y marca la elegida', async () => {
+  it('no muestra la lista de salidas: toma la próxima sola', async () => {
     const pantalla = await renderPantalla(<Rutas />);
-    const fichas = pantalla.getAllByRole('button', { name: /libres|Agotado/ });
-    expect(fichas.length).toBeGreaterThan(0);
-    expect(fichas[0]?.props.accessibilityState).toMatchObject({
-      selected: true,
-    });
-    if (fichas.length > 1) {
-      await fireEvent.press(fichas[1]!);
-      expect(
-        pantalla.getAllByRole('button', { name: /libres|Agotado/ })[1]?.props
-          .accessibilityState,
-      ).toMatchObject({ selected: true });
-    }
+    expect(
+      pantalla.queryAllByRole('button', { name: /libres|Agotado/ }),
+    ).toHaveLength(0);
+    expect(pantalla.getByText('Elegir asientos')).toBeTruthy();
   });
 
   it('el total sube con los pasajeros y no pasa de seis', async () => {

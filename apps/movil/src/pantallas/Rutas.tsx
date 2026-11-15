@@ -14,7 +14,6 @@ import { SaltoAlCambiar } from '@/componentes/SaltoAlCambiar';
 import { SelectorCiudadFoto } from '@/componentes/SelectorCiudadFoto';
 import { Icono } from '@/componentes/Icono';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
-import { SelectorSalida } from '@/componentes/SelectorSalida';
 import { TrayectoCorredor } from '@/componentes/TrayectoCorredor';
 import { formatoHora, sufijoHora } from '@/datos/formato';
 import { contextoDelDia } from '@/datos/resumenDelDia';
@@ -55,13 +54,10 @@ export function Rutas({
   const { colores } = useTema();
   const [ciudad, establecerCiudad] = useState<CiudadRed>('Boaco');
   const [sentido, establecerSentido] = useState<SentidoRed>('ida');
-  const [elegida, establecerElegida] = useState<string | null>(null);
   const [cantidad, establecerCantidad] = useState(1);
   const corredor = corredorDe({ ciudad, sentido });
   const plan = usePlanificador(corredor);
-  const salida =
-    plan.salidas.find((candidata) => candidata.viajeId === elegida) ??
-    plan.salidas[0];
+  const salida = plan.salidas[0];
   const precio = salida
     ? totalReserva(obtenerMuestra(), salida.viajeId, cantidad)
     : null;
@@ -87,7 +83,6 @@ export function Rutas({
         <SelectorCiudadFoto
           alCambiar={(clave) => {
             establecerCiudad(clave);
-            establecerElegida(null);
           }}
           opciones={CIUDADES_RED.map((nombre) => ({
             clave: nombre,
@@ -98,7 +93,6 @@ export function Rutas({
         <ControlSegmentado
           alCambiar={(clave) => {
             establecerSentido(clave);
-            establecerElegida(null);
           }}
           opciones={[
             { clave: 'ida', etiqueta: t('rutas.desdeManagua') },
@@ -125,27 +119,13 @@ export function Rutas({
         <FichaCiudadIA ciudad={ciudad} />
       </View>
 
-      <View style={estilos.seccion}>
-        {plan.deManana && plan.salidas.length > 0 && (
-          <Text style={[tipografia.pequeno, { color: colores.ambarTexto }]}>
-            {t('rutas.salidasManana')}
-          </Text>
-        )}
-        {plan.salidas.length === 0 ? (
-          <EstadoVacio
-            tamano={120}
-            tipo="salidas"
-            titulo={t('rutas.sinSalidas')}
-          />
-        ) : (
-          <SelectorSalida
-            alElegir={establecerElegida}
-            conDia={plan.deManana}
-            elegida={salida?.viajeId ?? null}
-            salidas={plan.salidas}
-          />
-        )}
-      </View>
+      {plan.salidas.length === 0 && (
+        <EstadoVacio
+          tamano={120}
+          tipo="salidas"
+          titulo={t('rutas.sinSalidas')}
+        />
+      )}
 
       {plan.salidas.length > 0 && (
         <ResumenIA
