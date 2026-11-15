@@ -35,7 +35,8 @@ import { usePreferenciaActividad } from '@/datos/preferenciaActividad';
 import { HojaRecordatorio } from '@/componentes/HojaRecordatorio';
 import { ResumenIA } from '@/componentes/ResumenIA';
 import { lineaDeBoleto } from '@/datos/contextoIA';
-import { viajeCancelado } from '@/datos/historialSalidas';
+import { motivoDeCancelacion, viajeCancelado } from '@/datos/historialSalidas';
+import { esMotivoCancelacion } from '@/datos/motivoCancelacion';
 import type { MinutosAntes } from '@/datos/recordatorios';
 import type { Salida } from '@/datos/salidas';
 import { useRecordatorios } from '@/datos/useRecordatorios';
@@ -192,6 +193,12 @@ export function VerBoleto({
     sonar('boleto');
   }, [sonar]);
   const guardado = boletos.find(({ boleto }) => boleto.id === boletoId);
+  const motivoGuardado = guardado
+    ? motivoDeCancelacion(guardado.boleto.viajeId)
+    : null;
+  const motivoCancelado = esMotivoCancelacion(motivoGuardado)
+    ? motivoGuardado
+    : null;
 
   // mientras la actividad en vivo está abierta, sigue el estado del viaje: cambia de color y de texto sola
   useEffect(() => {
@@ -641,6 +648,15 @@ export function VerBoleto({
             <Text style={[tipografia.subtitulo, { color: colores.cancelado }]}>
               {t('boleto.viajeCancelado')}
             </Text>
+            {motivoCancelado !== null && (
+              <Text style={[tipografia.pequeno, { color: colores.tinta }]}>
+                {rellenar(t('boleto.motivoCancelado'), {
+                  motivo: t(
+                    `motivoCancelacion.${motivoCancelado}`,
+                  ).toLowerCase(),
+                })}
+              </Text>
+            )}
             <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
               {t('boleto.viajeCanceladoDetalle')}
             </Text>
