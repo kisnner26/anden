@@ -1,0 +1,1 @@
+export { PaginaDeDatos } from './PaginaDeDatos';
