@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { AccionDeBoleto } from '@/componentes/AccionDeBoleto';
 import { Bloque } from '@/componentes/Bloque';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { HojaContacto } from '@/componentes/HojaContacto';
@@ -500,96 +501,85 @@ export function VerBoleto({
             })}
           </Text>
         )}
-        {puedeOperar && alTransferir && (
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => alTransferir(boletoId)}
-          >
-            <Text
-              style={[
-                tipografia.pequeno,
-                estilos.cambiarContacto,
-                { color: colores.tintaSuave },
-              ]}
-            >
-              {t('transferir.accion')}
-            </Text>
-          </Pressable>
-        )}
-        {puedeOperar && contacto && (
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => establecerPidiendoContacto(true)}
-          >
-            <Text
-              style={[
-                tipografia.pequeno,
-                estilos.cambiarContacto,
-                { color: colores.tintaSuave },
-              ]}
-            >
-              {t('contacto.cambiar')}
-            </Text>
-          </Pressable>
+        {puedeOperar && (alTransferir || contacto) && (
+          <View style={estilos.enlaces}>
+            {alTransferir && (
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => alTransferir(boletoId)}
+              >
+                <Text
+                  style={[
+                    tipografia.pequeno,
+                    estilos.cambiarContacto,
+                    { color: colores.tintaSuave },
+                  ]}
+                >
+                  {t('transferir.accion')}
+                </Text>
+              </Pressable>
+            )}
+            {alTransferir && contacto ? (
+              <View
+                style={[estilos.separador, { backgroundColor: colores.linea }]}
+              />
+            ) : null}
+            {contacto && (
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => establecerPidiendoContacto(true)}
+              >
+                <Text
+                  style={[
+                    tipografia.pequeno,
+                    estilos.cambiarContacto,
+                    { color: colores.tintaSuave },
+                  ]}
+                >
+                  {t('contacto.cambiar')}
+                </Text>
+              </Pressable>
+            )}
+          </View>
         )}
 
         {puedeOperar && (
           <View style={estilos.acciones}>
-            <Pressable
-              accessibilityLabel={t('boleto.compartir')}
-              accessibilityRole="button"
-              onPress={() => void compartir()}
-              style={estilos.accionEnFila}
-            >
-              <Bloque estiloContenido={estilos.accion} radio="pildora">
-                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                  {t('boleto.compartir')}
-                </Text>
-              </Bloque>
-            </Pressable>
-            <Pressable
-              accessibilityLabel={
+            <AccionDeBoleto
+              alPresionar={() => void compartir()}
+              etiqueta={t('boleto.compartirCorto')}
+              etiquetaAccesible={t('boleto.compartir')}
+              tipo="compartir"
+            />
+            <AccionDeBoleto
+              activa={recordatorioActivo !== undefined}
+              alPresionar={() => establecerEligiendoRecordatorio(true)}
+              etiqueta={
+                recordatorioActivo
+                  ? rellenar(t('boleto.recordatorioCortoPuesto'), {
+                      minutos: recordatorioActivo.minutosAntes,
+                    })
+                  : t('boleto.recordatorioCorto')
+              }
+              etiquetaAccesible={
                 recordatorioActivo
                   ? t('boleto.recordatorioActivo')
                   : t('boleto.recordatorio')
               }
-              accessibilityRole="button"
-              accessibilityState={{
-                selected: recordatorioActivo !== undefined,
-              }}
-              onPress={() => establecerEligiendoRecordatorio(true)}
-              style={estilos.accionEnFila}
-            >
-              <Bloque estiloContenido={estilos.accion} radio="pildora">
-                <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-                  {recordatorioActivo
-                    ? rellenar(t('boleto.recordatorioPuesto'), {
-                        minutos: recordatorioActivo.minutosAntes,
-                      })
-                    : t('boleto.recordatorio')}
-                </Text>
-              </Bloque>
-            </Pressable>
+              tipo="recordatorio"
+            />
             {actividadDisponible && preferenciaActividad.activa !== false ? (
-              <Pressable
-                accessibilityLabel={
+              <AccionDeBoleto
+                activa={actividadId !== null}
+                alPresionar={() => void alternarActividad()}
+                etiqueta={t('boleto.actividadCorto')}
+                etiquetaAccesible={
                   actividadId
                     ? t('boleto.actividadActiva')
                     : t('boleto.actividad')
                 }
-                accessibilityRole="button"
-                accessibilityState={{ selected: actividadId !== null }}
-                onPress={() => void alternarActividad()}
-                style={estilos.accionEnFila}
-              >
-                <Bloque estiloContenido={estilos.accion} radio="pildora">
-                  <Text
-                    style={[tipografia.subtitulo, { color: colores.tinta }]}
-                  >
-                    {t('boleto.actividad')}
-                  </Text>
-                </Bloque>
-              </Pressable>
+                tipo="pantalla"
+              />
             ) : null}
           </View>
         )}
@@ -703,7 +693,14 @@ const estilos = StyleSheet.create({
   cancelado: { gap: 4, padding: espacios.dieciseis },
   cambiarContacto: { textAlign: 'center', textDecorationLine: 'underline' },
   verificar: { gap: espacios.cuatro, padding: espacios.dieciseis },
-  acciones: { flexDirection: 'row', gap: espacios.ocho },
+  acciones: { flexDirection: 'row', gap: espacios.doce },
+  enlaces: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: espacios.dieciseis,
+    justifyContent: 'center',
+  },
+  separador: { height: 16, width: 1 },
   accion: {
     alignItems: 'center',
     flex: 1,
