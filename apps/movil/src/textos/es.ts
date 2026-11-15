@@ -1141,6 +1141,15 @@ export const textos = {
     sinMapa:
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
+  buscarPasajeros: {
+    activa: 'Buscando pasajeros hasta las {hora}',
+    boton: 'Buscar pasajeros',
+    cuanto: '¿Por cuánto tiempo?',
+    detener: 'Dejar de buscar',
+    fallo: 'No se pudo avisar. Revisá tu conexión.',
+    minutos: '{n} min',
+    pasajero: 'Busca pasajeros',
+  },
   inicioSimple: {
     adonde: '¿A dónde querés ir?',
     ir: 'Ir a {ciudad}',
