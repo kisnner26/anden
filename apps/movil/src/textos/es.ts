@@ -1141,6 +1141,58 @@ export const textos = {
     sinMapa:
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
+  resumenAnual: {
+    asiento: 'Tu asiento favorito fue el {asiento}.',
+    asientoCorto: 'Tu asiento favorito',
+    ciudades: 'Ciudades',
+    compartir: 'Compartir mi año',
+    compartirTitulo: 'Mi {anio} con Andén',
+    diaCorto: 'Tu día de viaje',
+    favorito: 'Tu destino favorito: {ciudad}',
+    hora: 'Salí más seguido a las {hora}.',
+    horaCorta: 'Tu hora favorita',
+    km: 'Kilómetros',
+    kilometros: 'Recorrí {km} km de carretera.',
+    mesCorto: 'Tu mes con más viajes',
+    titulo: 'Tu año',
+    vacio:
+      'Cuando viajes, aquí vas a ver tu año: kilómetros, ciudades y lo que más repetís.',
+    viajeUno: 'viaje',
+    viajes: 'Hice {viajes} viajes.',
+    viajesVarios: 'viajes',
+  },
+  pasaporte: {
+    bloqueado: 'Por ganar',
+    raro: {
+      constante: {
+        detalle: 'Llegá cinco veces a la misma ciudad.',
+        titulo: 'Constante',
+      },
+      madrugador: {
+        detalle: 'Viajá en un bus que salga antes de las 6 de la mañana.',
+        titulo: 'Madrugador',
+      },
+      nocturno: {
+        detalle: 'Viajá en un bus que salga desde las 9 de la noche.',
+        titulo: 'Nocturno',
+      },
+      tresCiudades: {
+        detalle: 'Llegá a Managua, Boaco y Juigalpa.',
+        titulo: 'Las tres ciudades',
+      },
+      viajero: {
+        detalle: 'Completá diez viajes.',
+        titulo: 'Viajero',
+      },
+    },
+    raros: 'Sellos raros',
+    resumen: '{viajes} viajes, {sellos} de {total} sellos raros.',
+    selloAccesible: 'Sello de {ciudad}, {llegadas} llegadas',
+    selloVacio: 'Sello de {ciudad}, todavía sin ganar',
+    sinSello: 'Sin sello',
+    titulo: 'Tu pasaporte',
+    vacio: 'Cada ciudad a la que llegues deja su sello aquí.',
+  },
   motivoCancelacion: {
     averia: 'Avería del bus',
     clima: 'Clima o estado del camino',
