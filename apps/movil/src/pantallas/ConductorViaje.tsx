@@ -532,6 +532,7 @@ export function ConductorViaje({
                 cedula: boleto.pasajero.cedula,
                 codigo: boleto.codigo,
                 esMenorEnBrazos: boleto.pasajero.esMenorEnBrazos,
+                fotoUrl: resumen.fotoPasajero,
                 nombre: boleto.pasajero.nombre,
                 plus: resumen.plus,
                 precio: boleto.precio,

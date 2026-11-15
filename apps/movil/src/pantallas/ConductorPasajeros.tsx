@@ -7,13 +7,14 @@ import { useEncomiendas } from '@/datos/useEncomiendas';
 import { ConductorEncomiendas } from './ConductorEncomiendas';
 
 import { Aparece } from '@/componentes/Aparece';
+import { Avatar } from '@/componentes/Avatar';
 import { Autobus, type IdVarianteBus } from '@/componentes/Autobus';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { Bloque } from '@/componentes/Bloque';
 import { HojaPasajero } from '@/componentes/HojaPasajero';
 import type { IdVehiculoPlus } from '@/componentes/VehiculoPlus';
 import { formatoHora } from '@/datos/formato';
-import { nombrePropio } from '@/datos/perfil';
+import { iniciales, nombrePropio } from '@/datos/perfil';
 import { salidasDeChofer, salidasDelDia, type Salida } from '@/datos/salidas';
 import { unirBoletos, useBoletosDelViaje } from '@/datos/useBoletosDelViaje';
 import { useAbordaje } from '@/datos/useAbordaje';
@@ -242,6 +243,15 @@ function SeccionViaje({
                 {boleto.asiento}
               </Text>
             </View>
+            <Avatar
+              descripcion={nombrePropio(boleto.pasajero.nombre)}
+              iniciales={iniciales({
+                apellido: boleto.pasajero.nombre.split(' ').slice(1).join(' '),
+                nombre: boleto.pasajero.nombre.split(' ')[0] ?? '',
+              })}
+              tamano={36}
+              uri={resumen.fotoPasajero ?? null}
+            />
             <View style={estilos.texto}>
               <Text
                 numberOfLines={1}
@@ -301,6 +311,7 @@ function SeccionViaje({
                 cedula: ficha.boleto.pasajero.cedula,
                 codigo: ficha.boleto.codigo,
                 esMenorEnBrazos: ficha.boleto.pasajero.esMenorEnBrazos,
+                fotoUrl: ficha.resumen.fotoPasajero,
                 nombre: ficha.boleto.pasajero.nombre,
                 plus: ficha.resumen.plus,
                 precio: ficha.boleto.precio,
