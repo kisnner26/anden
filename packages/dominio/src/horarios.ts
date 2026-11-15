@@ -17,6 +17,8 @@ export function estadoViaje(
   ahora: Date,
 ): EstadoViaje {
   if (viaje.estado === 'cancelado') return 'cancelado';
+  // el conductor cerró el viaje al llegar: llegó aunque la estimación diga otra cosa
+  if (viaje.estado === 'llego') return 'llego';
 
   const salida = salidaReal(viaje);
   const llegada = sumarMinutos(salida.toISOString(), ruta.duracionMin);

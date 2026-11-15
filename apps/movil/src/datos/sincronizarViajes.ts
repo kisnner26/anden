@@ -37,8 +37,8 @@ export function aplicarViajesPublicados(
   const viajes: Viaje[] = [];
   const buses: Bus[] = [];
   const idsChofer = new Set<string>();
-  // los que ya arrancaron dejan la lista: solo se muestran los que esperan pasajeros
-  for (const fila of publicados.viajes.filter((v) => !v.salio_en)) {
+  // los que ya arrancaron se quedan: los boletos de esos viajes tienen que ver que van en ruta o que ya llegaron
+  for (const fila of publicados.viajes) {
     const busId = `bus_${fila.id}`;
     idsChofer.add(fila.chofer_id);
     buses.push({
@@ -54,11 +54,12 @@ export function aplicarViajesPublicados(
       puntoEncuentro: fila.punto_encuentro ?? '',
       busId,
       choferId: fila.chofer_id,
-      estado: 'programado',
+      estado: fila.estado === 'llego' ? 'llego' : 'programado',
       id: fila.id,
       minutosAtraso: 0,
       rutaId: fila.ruta_id,
-      salida: new Date(fila.salida).toISOString(),
+      // si el conductor ya arrancó, la salida es la hora real: así el boleto pasa a "en ruta" cuando él lo inicia
+      salida: new Date(fila.salio_en ?? fila.salida).toISOString(),
     });
   }
   const choferes = [...idsChofer].map((id) =>

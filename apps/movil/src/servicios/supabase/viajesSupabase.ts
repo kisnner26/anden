@@ -170,6 +170,27 @@ export async function retirarViaje(
   return cliente ? retirarViajeCon(cliente, viajeId, conPasajeros) : false;
 }
 
+/** el conductor cerró el viaje al llegar: los pasajeros con boleto lo ven como llegado */
+export async function marcarLlegadaCon(
+  cliente: SupabaseClient,
+  viajeId: string,
+): Promise<boolean> {
+  try {
+    const { error } = await cliente
+      .from('viajes')
+      .update({ estado: 'llego' })
+      .eq('id', viajeId);
+    return error === null;
+  } catch {
+    return false;
+  }
+}
+
+export async function marcarLlegada(viajeId: string): Promise<boolean> {
+  const cliente = obtenerCliente();
+  return cliente ? marcarLlegadaCon(cliente, viajeId) : false;
+}
+
 /** marca que el bus ya arrancó: desde ahí sirve para calcular cuánto tarda en llenarse esa ruta */
 export async function marcarSalidaCon(
   cliente: SupabaseClient,
