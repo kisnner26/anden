@@ -8,7 +8,11 @@ jest.mock('@/servicios/supabase/viajesSupabase', () => ({
 import { leerViajesPublicados } from '@/servicios/supabase/viajesSupabase';
 
 import { DUENO_REMOTO } from './asientosRemotos';
-import { motivoDeCancelacion, viajeCancelado } from './historialSalidas';
+import {
+  busquedaDe,
+  motivoDeCancelacion,
+  viajeCancelado,
+} from './historialSalidas';
 import { crearBase } from './muestra';
 import { CLAVE_CACHE_VIAJES, guardarCacheViajes } from './cacheViajes';
 import {
@@ -137,6 +141,26 @@ describe('aplicarViajesPublicados', () => {
     aplicarViajesPublicados(datos, { ...PUBLICADOS, viajes: [] });
     expect(datos.viajes).toHaveLength(0);
     expect(datos.ocupaciones).toHaveLength(0);
+  });
+});
+
+describe('buscar pasajeros', () => {
+  it('recuerda la búsqueda vigente de un viaje con su frase', () => {
+    const futuro = new Date(AHORA.getTime() + 20 * 60_000).toISOString();
+    const fila = {
+      ...PUBLICADOS.viajes[0]!,
+      busca_hasta: futuro,
+      busca_mensaje: 'Salgo ya',
+    };
+    aplicarViajesPublicados(crearBase(), { ...PUBLICADOS, viajes: [fila] });
+    expect(busquedaDe(fila.id, AHORA)?.mensaje).toBe('Salgo ya');
+  });
+
+  it('una búsqueda vencida ya no cuenta', () => {
+    const pasado = new Date(AHORA.getTime() - 60_000).toISOString();
+    const fila = { ...PUBLICADOS.viajes[0]!, busca_hasta: pasado };
+    aplicarViajesPublicados(crearBase(), { ...PUBLICADOS, viajes: [fila] });
+    expect(busquedaDe(fila.id, AHORA)).toBeNull();
   });
 });
 

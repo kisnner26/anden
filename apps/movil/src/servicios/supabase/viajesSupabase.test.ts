@@ -93,6 +93,41 @@ describe('publicarViajeCon', () => {
   });
 });
 
+describe('leerViajesPublicadosCon sin las columnas de buscar pasajeros', () => {
+  it('reintenta sin ellas y sigue funcionando', async () => {
+    const pedidos: string[] = [];
+    const cadena = (data: unknown[], error: Error | null) => {
+      const resultado = { data: error ? null : data, error };
+      const c: Record<string, unknown> = {
+        eq: () => c,
+        gte: () => c,
+        limit: async () => resultado,
+        neq: () => c,
+        not: () => c,
+        order: async () => resultado,
+      };
+      return c;
+    };
+    const supabase = {
+      from: (tabla: string) =>
+        tabla === 'viajes'
+          ? {
+              select: (campos: string) => {
+                pedidos.push(campos);
+                return campos.includes('busca_hasta')
+                  ? cadena([], new Error('columna'))
+                  : cadena([FILA], null);
+              },
+            }
+          : { select: async () => ({ data: [], error: null }) },
+      rpc: async () => ({ data: [], error: null }),
+    } as unknown as SupabaseClient;
+    const lectura = await leerViajesPublicadosCon(supabase, new Date());
+    expect(lectura?.viajes).toHaveLength(1);
+    expect(pedidos.some((c) => c.includes('busca_hasta'))).toBe(true);
+  });
+});
+
 describe('retirarViajeCon', () => {
   it('borra el viaje que nadie reservó', async () => {
     const { borrar, supabase } = cliente();
