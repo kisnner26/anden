@@ -367,4 +367,20 @@ describe('ConductorViaje', () => {
     );
     await waitFor(() => expect(detenerTransmision).not.toHaveBeenCalled());
   });
+
+  it('con pasajeros ofrece el plano del bus y avisar a todos', async () => {
+    await AsyncStorage.setItem(
+      CLAVE_BOLETOS_CONDUCTOR,
+      JSON.stringify([boletoDePrueba(new Date(Date.now() + 3_600_000), 8)]),
+    );
+    const pantalla = await dibujar();
+    expect(await pantalla.findByTestId('avisar-a-todos')).toBeTruthy();
+    await fireEvent.press(pantalla.getByRole('tab', { name: 'Plano' }));
+    expect(await pantalla.findByTestId('plano-de-ocupacion')).toBeTruthy();
+    expect(
+      pantalla.getByRole('button', {
+        name: /Asiento 8, reservado por Ana Ruiz/,
+      }),
+    ).toBeTruthy();
+  });
 });
