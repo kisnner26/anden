@@ -22,7 +22,11 @@ import {
   marcarLlegada,
   marcarSalida,
 } from '@/servicios/supabase/viajesSupabase';
+import { ControlSegmentado } from '@/componentes/ControlSegmentado';
+import { HojaPasajero } from '@/componentes/HojaPasajero';
 import { ListaPasajeros } from '@/componentes/ListaPasajeros';
+import { PlanoDeOcupacion } from '@/componentes/PlanoDeOcupacion';
+import { useLlamar } from '@/datos/useLlamar';
 import { AVISOS_RAPIDOS, type AvisoRapido } from '@/datos/comunicacion';
 import { avisarAlViaje } from '@/servicios/supabase/comunicacionSupabase';
 import { HojaCierreViaje } from '@/componentes/HojaCierreViaje';
@@ -53,6 +57,7 @@ import { useDetalleViaje } from '@/datos/useDetalleViaje';
 import { usePagos } from '@/datos/usePagos';
 import { useRecorrido } from '@/datos/useRecorrido';
 import { useSesion } from '@/datos/useSesion';
+import { obtenerMuestra } from '@/datos/useSalidas';
 import { useSonidos } from '@/datos/useSonidos';
 import { useTransmision } from '@/datos/useTransmision';
 import { armarCierre } from '@/servicios/cierres';
@@ -103,6 +108,11 @@ export function ConductorViaje({
   const [resultadoAviso, establecerResultadoAviso] = useState<
     'fallo' | 'ok' | null
   >(null);
+  const [vistaPasajeros, establecerVistaPasajeros] = useState<
+    'lista' | 'plano'
+  >('lista');
+  const [fichaAbierta, establecerFichaAbierta] = useState<string | null>(null);
+  const llamar = useLlamar();
   const [iniciando, establecerIniciando] = useState(false);
   const [yaSalio, establecerYaSalio] = useState(false);
   const [problema, establecerProblema] = useState<string | null>(null);
@@ -173,6 +183,14 @@ export function ConductorViaje({
         Number(b.resumen.plus === true) - Number(a.resumen.plus === true) ||
         a.boleto.asiento - b.boleto.asiento,
     );
+  const fichaPasajero = pasajeros.find(
+    ({ boleto }) => boleto.id === fichaAbierta,
+  );
+  const bus = (() => {
+    const muestra = obtenerMuestra();
+    const viaje = muestra.viajes.find((v) => v.id === viajeId);
+    return muestra.buses.find((b) => b.id === viaje?.busId);
+  })();
   const cobro = resumenDeCobro(
     pasajeros.map(({ boleto }) => ({ id: boleto.id, precio: boleto.precio })),
     registro,
@@ -567,31 +585,96 @@ export function ConductorViaje({
           </>
         ) : (
           <>
-            <ListaPasajeros
-              abordo={abordo}
-              alAlternarAbordaje={(id) => {
-                if (!abordo(id)) sonar('abordo');
-                void alternarAbordaje(id);
-              }}
-              alAlternarPago={(id, pagado) => {
-                if (!pagado) sonar('pago');
-                void (pagado ? revertir(id) : marcarPagado(id, choferId));
-              }}
-              bloqueada={cierre !== undefined}
-              pagado={(id) => estadoDe(id) === 'pagado_efectivo'}
-              pasajeros={pasajeros.map(({ boleto, resumen }) => ({
-                asiento: boleto.asiento,
-                boletoId: boleto.id,
-                cedula: boleto.pasajero.cedula,
-                codigo: boleto.codigo,
-                esMenorEnBrazos: boleto.pasajero.esMenorEnBrazos,
-                fotoUrl: resumen.fotoPasajero,
-                nombre: boleto.pasajero.nombre,
-                plus: resumen.plus,
-                precio: boleto.precio,
-                unidadPlus: resumen.unidadPlus,
-              }))}
+            <ControlSegmentado
+              alCambiar={establecerVistaPasajeros}
+              opciones={[
+                { clave: 'lista', etiqueta: t('plano.lista') },
+                { clave: 'plano', etiqueta: t('plano.plano') },
+              ]}
+              valor={vistaPasajeros}
             />
+            {vistaPasajeros === 'plano' && bus ? (
+              <>
+                <PlanoDeOcupacion
+                  abordo={abordo}
+                  alAbrir={establecerFichaAbierta}
+                  configuracion={bus.configuracion}
+                  ocupantes={pasajeros.map(({ boleto }) => ({
+                    asiento: boleto.asiento,
+                    boletoId: boleto.id,
+                    nombre: boleto.pasajero.nombre,
+                  }))}
+                />
+                <HojaPasajero
+                  abierta={fichaPasajero !== undefined}
+                  abordo={
+                    fichaPasajero ? abordo(fichaPasajero.boleto.id) : false
+                  }
+                  alAlternarAbordaje={(id) => {
+                    if (!abordo(id)) sonar('abordo');
+                    void alternarAbordaje(id);
+                  }}
+                  alAlternarPago={(id, pagado) => {
+                    if (!pagado) sonar('pago');
+                    void (pagado ? revertir(id) : marcarPagado(id, choferId));
+                  }}
+                  alCerrar={() => establecerFichaAbierta(null)}
+                  alLlamar={(id) => void llamar.alPasajero(id)}
+                  bloqueada={cierre !== undefined}
+                  llamadaFallida={llamar.fallo}
+                  pagado={
+                    fichaPasajero
+                      ? estadoDe(fichaPasajero.boleto.id) === 'pagado_efectivo'
+                      : false
+                  }
+                  pasajero={
+                    fichaPasajero
+                      ? {
+                          asiento: fichaPasajero.boleto.asiento,
+                          boletoId: fichaPasajero.boleto.id,
+                          cedula: fichaPasajero.boleto.pasajero.cedula,
+                          codigo: fichaPasajero.boleto.codigo,
+                          esMenorEnBrazos:
+                            fichaPasajero.boleto.pasajero.esMenorEnBrazos,
+                          fotoUrl: fichaPasajero.resumen.fotoPasajero,
+                          nombre: fichaPasajero.boleto.pasajero.nombre,
+                          plus: fichaPasajero.resumen.plus,
+                          precio: fichaPasajero.boleto.precio,
+                          unidadPlus: fichaPasajero.resumen.unidadPlus,
+                        }
+                      : null
+                  }
+                />
+              </>
+            ) : (
+              <>
+                <ListaPasajeros
+                  abordo={abordo}
+                  alAlternarAbordaje={(id) => {
+                    if (!abordo(id)) sonar('abordo');
+                    void alternarAbordaje(id);
+                  }}
+                  alAlternarPago={(id, pagado) => {
+                    if (!pagado) sonar('pago');
+                    void (pagado ? revertir(id) : marcarPagado(id, choferId));
+                  }}
+                  bloqueada={cierre !== undefined}
+                  pagado={(id) => estadoDe(id) === 'pagado_efectivo'}
+                  pasajeros={pasajeros.map(({ boleto, resumen }) => ({
+                    asiento: boleto.asiento,
+                    boletoId: boleto.id,
+                    cedula: boleto.pasajero.cedula,
+                    codigo: boleto.codigo,
+                    esMenorEnBrazos: boleto.pasajero.esMenorEnBrazos,
+                    fotoUrl: resumen.fotoPasajero,
+                    nombre: boleto.pasajero.nombre,
+                    plus: resumen.plus,
+                    precio: boleto.precio,
+                    unidadPlus: resumen.unidadPlus,
+                  }))}
+                />
+              </>
+            )}
             <Bloque estiloContenido={estilos.resumen} hundido radio="loseta">
               <Text
                 style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
