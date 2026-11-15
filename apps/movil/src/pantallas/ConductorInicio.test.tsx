@@ -150,4 +150,16 @@ describe('ConductorInicio', () => {
         .accessibilityState?.selected,
     ).toBe(true);
   });
+
+  it('ofrece buscar pasajeros en los viajes con asientos libres', async () => {
+    const pantalla = await dibujar();
+    await pantalla.findByText('Hola, Marvin Lanzas');
+    const botones = pantalla.getAllByRole('button', {
+      name: 'Buscar pasajeros',
+    });
+    expect(botones.length).toBeGreaterThan(0);
+    await fireEvent.press(botones[0]!);
+    expect(pantalla.getByText('¿Por cuánto tiempo?')).toBeTruthy();
+    expect(pantalla.getByText('30 min')).toBeTruthy();
+  });
 });
