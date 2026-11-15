@@ -18,6 +18,8 @@ export interface PropiedadesPanelDeslizable {
   alturas: AlturasPanel;
   /** lo que se ve siempre, también con el panel recogido */
   cabecera: ReactNode;
+  /** la cabecera forma parte del contenido y se desplaza con él, en vez de quedarse fija sobre el panel */
+  cabeceraDesplazable?: boolean;
   children: ReactNode;
   /** espacio libre al final del contenido, para que un pie flotante no lo tape */
   espacioFinal?: number;
@@ -33,6 +35,7 @@ export function PanelDeslizable({
   alCambiar,
   alturas,
   cabecera,
+  cabeceraDesplazable = false,
   children,
   espacioFinal = 0,
 }: PropiedadesPanelDeslizable) {
@@ -113,7 +116,7 @@ export function PanelDeslizable({
     >
       <View {...gesto.panHandlers} style={estilos.arrastre}>
         <View style={[estilos.asa, { backgroundColor: colores.linea }]} />
-        {cabecera}
+        {cabeceraDesplazable ? null : cabecera}
       </View>
       <ScrollView
         contentContainerStyle={[
@@ -125,6 +128,7 @@ export function PanelDeslizable({
         showsVerticalScrollIndicator={false}
         testID="panel-contenido"
       >
+        {cabeceraDesplazable ? cabecera : null}
         {children}
       </ScrollView>
     </Animated.View>

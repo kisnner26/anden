@@ -28,4 +28,18 @@ describe('PanelDeslizable', () => {
     );
     expect(p.getByTestId('panel-contenido').props.scrollEnabled).toBe(true);
   });
+
+  it('con la cabecera desplazable, esta se mueve junto con el contenido', async () => {
+    const p = await renderPantalla(
+      <PanelDeslizable
+        alturas={[200, 400, 700]}
+        cabecera={<Text>Todavía no compartís</Text>}
+        cabeceraDesplazable
+      >
+        <Text>Contenido</Text>
+      </PanelDeslizable>,
+    );
+    const contenido = p.getByTestId('panel-contenido');
+    expect(contenido).toContainElement(p.getByText('Todavía no compartís'));
+  });
 });
