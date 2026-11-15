@@ -326,7 +326,9 @@ export function entenderPregunta(
     intenciones.add('encomienda');
   }
   if (
-    /\b(visitar|conocer|turista|turismo|turistic\w*|que hacer|que ver|comer|lugares|sitios|fotos?|imagenes)\b/.test(texto)
+    /\b(visitar|conocer|turista|turismo|turistic\w*|que hacer|que ver|comer|lugares|sitios|fotos?|imagenes)\b/.test(
+      texto,
+    )
   ) {
     intenciones.add('visitar');
   }
@@ -374,12 +376,21 @@ export function hechosParaPregunta(
 ): string[] {
   const entendida = entenderPregunta(pregunta, ciudades, ahora);
   const hechos: string[] = [];
+  // "qué visitar en Boaco" no pide buses: sin eso el modelo mezcla salidas y precios que nadie preguntó
+  const soloVisitar =
+    entendida.intenciones.has('visitar') &&
+    !entendida.intenciones.has('horarios') &&
+    !entendida.intenciones.has('tarifa') &&
+    !entendida.intenciones.has('boleto') &&
+    entendida.origen === null &&
+    entendida.dia === null;
   const quiereSalidas =
-    entendida.intenciones.has('horarios') ||
-    entendida.intenciones.has('tarifa') ||
-    entendida.destino !== null ||
-    entendida.origen !== null ||
-    entendida.dia !== null;
+    !soloVisitar &&
+    (entendida.intenciones.has('horarios') ||
+      entendida.intenciones.has('tarifa') ||
+      entendida.destino !== null ||
+      entendida.origen !== null ||
+      entendida.dia !== null);
 
   if (quiereSalidas) {
     const coinciden = datos.salidas.filter(
@@ -443,11 +454,12 @@ export function armarPrompt(
 ): string {
   const hechos = hechosParaPregunta(pregunta, datos, ciudades, ahora);
   return [
-    'Datos reales de Andén (son exactos, usalos tal cual):',
+    'Datos reales de Andén, solo para consultar (son exactos; no los copies ni empieces tu respuesta con este título):',
     ...datos.personal,
     ...hechos,
     '',
     `Pregunta de la persona: ${pregunta}`,
+    'Contestá solo lo que pregunta, sin agregar salidas, precios ni datos que no pidió.',
   ].join('\n');
 }
 
