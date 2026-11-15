@@ -34,6 +34,8 @@ import { t } from '@/textos/t';
 
 export interface PropiedadesPasajeros {
   alContinuar: () => void;
+  /** el código del grupo cuando se llegó desde un enlace de grupo */
+  grupo?: string;
   alVolver: () => void;
   asientos: readonly number[];
   viajeId: string;
@@ -42,6 +44,7 @@ export interface PropiedadesPasajeros {
 /** el nombre de quien viaja en cada asiento elegido */
 export function Pasajeros({
   alContinuar,
+  grupo,
   alVolver,
   asientos,
   viajeId,
@@ -125,7 +128,7 @@ export function Pasajeros({
       nombre: nombres[asiento] ?? '',
       ...(paraOtros[asiento] ? { paraOtro: true } : {}),
     }));
-    establecerBorrador(viajeId, pasajeros);
+    establecerBorrador(viajeId, pasajeros, grupo);
     alContinuar();
   }
 

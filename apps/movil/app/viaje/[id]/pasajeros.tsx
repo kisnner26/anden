@@ -3,8 +3,9 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Pasajeros } from '@/pantallas/Pasajeros';
 
 export default function RutaPasajeros() {
-  const { asientos, id } = useLocalSearchParams<{
+  const { asientos, grupo, id } = useLocalSearchParams<{
     asientos: string;
+    grupo?: string;
     id: string;
   }>();
   const router = useRouter();
@@ -21,6 +22,7 @@ export default function RutaPasajeros() {
       }
       alVolver={() => router.back()}
       asientos={elegidos}
+      grupo={grupo}
       viajeId={viajeId}
     />
   );

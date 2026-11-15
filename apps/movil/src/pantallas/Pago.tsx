@@ -100,7 +100,11 @@ export function Pago({
     enCurso.current = true;
     establecerReservando(true);
     establecerError(null);
-    const resultado = await reservar(viajeId, borrador.pasajeros);
+    const resultado = await reservar(
+      viajeId,
+      borrador.pasajeros,
+      borrador.grupo,
+    );
     enCurso.current = false;
     establecerReservando(false);
     if (resultado.ok) {

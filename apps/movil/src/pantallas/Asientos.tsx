@@ -22,6 +22,8 @@ import { t } from '@/textos/t';
 export interface PropiedadesAsientos {
   alSeguir: (asientos: number[]) => void;
   alVolver: () => void;
+  /** el código del grupo cuando se llegó desde un enlace: sugiere asientos junto a los de los amigos */
+  grupo?: string;
   viajeId: string;
 }
 
