@@ -30,6 +30,7 @@
     "expo-network": "~58.0.5",
     "expo-notifications": "~58.1.7",
     "expo-router": "~58.0.29",
+    "expo-secure-store": "~58.0.3",
     "expo-sensors": "58.0.5",
     "expo-speech": "58.0.4",
     "expo-speech-recognition": "58.0.1",
