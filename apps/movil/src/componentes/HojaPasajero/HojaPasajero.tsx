@@ -77,6 +77,7 @@ export function HojaPasajero({
                 nombre: partes[0] ?? '',
               })}
               tamano={72}
+              uri={pasajero.fotoUrl ?? null}
             />
             <View style={estilos.titulos}>
               <Text

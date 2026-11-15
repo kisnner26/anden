@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Autobus, type IdVarianteBus } from '@/componentes/Autobus';
+import { Avatar } from '@/componentes/Avatar';
 import type { IdVehiculoPlus } from '@/componentes/VehiculoPlus';
 import { Bloque } from '@/componentes/Bloque';
 import { HojaPasajero } from '@/componentes/HojaPasajero';
-import { nombrePropio } from '@/datos/perfil';
+import { iniciales, nombrePropio } from '@/datos/perfil';
 import { conAlfa } from '@/tema/alfa';
 import { espacios, radios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -19,6 +20,8 @@ export interface PasajeroDeLista {
   cedula?: string;
   codigo: string;
   esMenorEnBrazos: boolean;
+  /** foto de quien viaja, si la subió */
+  fotoUrl?: string;
   nombre: string;
   /** tiene Andén Plus: se muestra su sello y el vehículo que eligió */
   plus?: boolean;
@@ -113,6 +116,16 @@ export function ListaPasajeros({
                   {pasajero.asiento}
                 </Text>
               </View>
+
+              <Avatar
+                descripcion={nombre}
+                iniciales={iniciales({
+                  apellido: nombre.split(' ').slice(1).join(' '),
+                  nombre: nombre.split(' ')[0] ?? '',
+                })}
+                tamano={44}
+                uri={pasajero.fotoUrl ?? null}
+              />
 
               <View style={estilos.datos}>
                 <View style={estilos.nombreFila}>
