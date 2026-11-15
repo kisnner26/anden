@@ -35,7 +35,7 @@ import { ProveedorRecordatorios } from '@/datos/ProveedorRecordatorios';
 import { CLAVE_BOLETOS, ProveedorBoletos } from '@/datos/ProveedorBoletos';
 import { ProveedorHabituales } from '@/datos/ProveedorHabituales';
 import { ProveedorPagos } from '@/datos/ProveedorPagos';
-import { fijarCancelados } from '@/datos/historialSalidas';
+import { fijarCancelados, fijarMotivos } from '@/datos/historialSalidas';
 import { reiniciarMuestra } from '@/datos/useSalidas';
 import { boletoDePrueba } from '@/pruebas/boletos';
 import { renderPantalla } from '@/pruebas/render';
@@ -488,6 +488,13 @@ describe('VerBoleto con el viaje cancelado', () => {
   });
   afterEach(() => {
     fijarCancelados([]);
+    fijarMotivos({});
+  });
+
+  it('dice el motivo que dio el conductor', async () => {
+    fijarMotivos({ via_2: 'averia' });
+    const pantalla = await dibujar();
+    expect(await pantalla.findByText('Motivo: avería del bus.')).toBeTruthy();
   });
 
   it('ofrece otras salidas del mismo trayecto', async () => {
