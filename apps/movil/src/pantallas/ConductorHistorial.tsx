@@ -66,7 +66,9 @@ function Indicador({
       <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
         {etiqueta}
       </Text>
-      <Text style={[tipografia.dato, { color: colores.tinta }]}>{valor}</Text>
+      <Text style={[tipografia.datoGrande, { color: colores.tinta }]}>
+        {valor}
+      </Text>
       {detalle !== undefined && (
         <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
           {detalle}
@@ -108,7 +110,7 @@ export function ConductorHistorial() {
       ]}
       style={{ backgroundColor: colores.fondo }}
     >
-      <Text style={[tipografia.titulo, { color: colores.tinta }]}>
+      <Text style={[tipografia.titularPantalla, { color: colores.tinta }]}>
         {t('conductorHistorial.titulo')}.
       </Text>
       <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
@@ -182,7 +184,12 @@ export function ConductorHistorial() {
               {mejorDia
                 ? `${t('conductorHistorial.mejorDia')}: ${rellenar(
                     t('conductorHistorial.mejorDiaValor'),
-                    { cobrado: mejorDia.cobrado, dia: mejorDia.dia },
+                    {
+                      cobrado: mejorDia.cobrado,
+                      dia: formatoFechaCorta(
+                        new Date(`${mejorDia.dia}T12:00:00`),
+                      ),
+                    },
                   )}`
                 : t('conductorHistorial.sinMejorDia')}
             </Text>
@@ -263,7 +270,7 @@ export function ConductorHistorial() {
 
 const estilos = StyleSheet.create({
   contenido: { gap: espacios.doce, paddingHorizontal: espacios.lateral },
-  contenidoIndicador: { gap: 2, padding: espacios.ocho },
+  contenidoIndicador: { gap: 2, minHeight: 88, padding: espacios.dieciseis },
   fila: {
     alignItems: 'center',
     flexDirection: 'row',
@@ -271,7 +278,7 @@ const estilos = StyleSheet.create({
     padding: espacios.doce,
   },
   grafico: { gap: espacios.doce, padding: espacios.dieciseis },
-  indicador: { flexBasis: '30%', flexGrow: 1 },
+  indicador: { flexBasis: '47%', flexGrow: 1 },
   indicadores: { flexDirection: 'row', flexWrap: 'wrap', gap: espacios.doce },
   texto: { flex: 1, gap: 2 },
 });
