@@ -39,6 +39,8 @@ export interface PropiedadesMapaAsientos {
   configuracion: ConfiguracionBus;
   elegidos: readonly number[];
   estados: ReadonlyMap<number, EstadoAsiento>;
+  /** asientos libres que quedan junto a los del grupo: se marcan con un borde ámbar */
+  sugeridos?: readonly number[];
 }
 
 const LADO = 38;
@@ -175,6 +177,7 @@ export function MapaAsientos({
   configuracion,
   elegidos,
   estados,
+  sugeridos = [],
 }: PropiedadesMapaAsientos) {
   const { colores } = useTema();
   const sentir = useSensaciones();
@@ -288,10 +291,11 @@ export function MapaAsientos({
               const estado = estados.get(asiento.numero) ?? 'libre';
               const elegido = elegidos.includes(asiento.numero);
               const ocupado = estado !== 'libre';
+              const sugerido = !elegido && sugeridos.includes(asiento.numero);
 
               return (
                 <Pressable
-                  accessibilityLabel={etiquetaDe(asiento, estado, elegido)}
+                  accessibilityLabel={`${etiquetaDe(asiento, estado, elegido)}${sugerido ? `, ${t('asientos.juntoAlGrupo')}` : ''}`}
                   accessibilityRole="button"
                   accessibilityState={{ disabled: ocupado, selected: elegido }}
                   disabled={ocupado}
@@ -348,7 +352,15 @@ export function MapaAsientos({
                       </View>
                     ) : (
                       <Bloque
-                        estiloContenido={[estilos.asiento, medida]}
+                        estiloContenido={[
+                          estilos.asiento,
+                          medida,
+                          sugerido && {
+                            borderColor: colores.ambar,
+                            borderRadius: radios.asiento,
+                            borderWidth: 2,
+                          },
+                        ]}
                         radio="asiento"
                       >
                         <Text
