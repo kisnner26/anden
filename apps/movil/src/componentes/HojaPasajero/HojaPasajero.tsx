@@ -18,6 +18,10 @@ export interface PropiedadesHojaPasajero {
   alAlternarAbordaje: (boletoId: string) => void;
   alAlternarPago: (boletoId: string, pagado: boolean) => void;
   alCerrar: () => void;
+  /** llama al pasajero; solo se ofrece si el servidor lo permite en este momento */
+  alLlamar?: (boletoId: string) => void;
+  /** la llamada no se pudo hacer: no hay número o el viaje está fuera de la ventana */
+  llamadaFallida?: boolean;
   /** con el viaje cerrado ya no se cambia nada */
   bloqueada?: boolean;
   pagado: boolean;
@@ -53,7 +57,9 @@ export function HojaPasajero({
   alAlternarAbordaje,
   alAlternarPago,
   alCerrar,
+  alLlamar,
   bloqueada = false,
+  llamadaFallida = false,
   pagado,
   pasajero,
 }: PropiedadesHojaPasajero) {
@@ -202,6 +208,25 @@ export function HojaPasajero({
               </Text>
             </Pressable>
           </View>
+          {alLlamar ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => alLlamar(pasajero.boletoId)}
+              style={[
+                estilos.accion,
+                { borderColor: colores.linea, borderWidth: 1 },
+              ]}
+            >
+              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                {t('comunicacion.llamarPasajero')}
+              </Text>
+            </Pressable>
+          ) : null}
+          {llamadaFallida ? (
+            <Text style={[tipografia.pequeno, { color: colores.cancelado }]}>
+              {t('comunicacion.sinNumero')}
+            </Text>
+          ) : null}
         </View>
       ) : null}
     </Hoja>
