@@ -18,7 +18,10 @@ import { EstimacionSalida } from '@/componentes/EstimacionSalida';
 import { ResumenIA } from '@/componentes/ResumenIA';
 import { lineaDeSalida } from '@/datos/contextoIA';
 import { sincronizarViajes } from '@/datos/sincronizarViajes';
-import { marcarSalida } from '@/servicios/supabase/viajesSupabase';
+import {
+  marcarLlegada,
+  marcarSalida,
+} from '@/servicios/supabase/viajesSupabase';
 import { ListaPasajeros } from '@/componentes/ListaPasajeros';
 import { HojaCierreViaje } from '@/componentes/HojaCierreViaje';
 import { Icono } from '@/componentes/Icono';
@@ -202,6 +205,8 @@ export function ConductorViaje({
 
   async function confirmarCierre() {
     await guardarCierreViaje(resumenPrevio);
+    // los pasajeros ven el viaje como llegado
+    void marcarLlegada(viajeId).then(() => sincronizarViajes());
     establecerCerrando(false);
     sonar('fin');
     establecerEscena('llegada');
@@ -220,6 +225,8 @@ export function ConductorViaje({
     const resultado = await iniciarTransmision(viajeId, choferId);
     establecerIniciando(false);
     if (resultado !== 'ok') establecerProblema(mensajeDe(resultado));
+    // al iniciar el viaje también sale: los boletos de los pasajeros pasan a "en ruta" sin que tenga que marcarlo aparte
+    else if (!yaSalio) await registrarSalida();
   }
 
   return (
