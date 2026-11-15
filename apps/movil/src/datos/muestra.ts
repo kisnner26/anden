@@ -40,7 +40,7 @@ export const TERMINALES: Terminal[] = [
     codigo: 'BOA',
     coordenadas: { lat: 12.46781, lng: -85.65786 },
     id: 'ter_boa',
-    nombre: 'Terminal de Buses de Boaco',
+    nombre: 'La Cadena',
   },
   {
     andenes: 3,
