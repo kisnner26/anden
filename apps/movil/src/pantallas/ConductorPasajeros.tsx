@@ -18,6 +18,7 @@ import { iniciales, nombrePropio } from '@/datos/perfil';
 import { salidasDeChofer, salidasDelDia, type Salida } from '@/datos/salidas';
 import { unirBoletos, useBoletosDelViaje } from '@/datos/useBoletosDelViaje';
 import { useAbordaje } from '@/datos/useAbordaje';
+import { useLlamar } from '@/datos/useLlamar';
 import { useBoletos } from '@/datos/useBoletos';
 import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
 import { usePagos } from '@/datos/usePagos';
@@ -135,6 +136,7 @@ function SeccionViaje({
   const { boletos: remotos, fallo } = useBoletosDelViaje(viaje.viajeId);
   const { estadoDe, marcarPagado, registro, revertir } = usePagos();
   const { abordo, alternar: alternarAbordaje } = useAbordaje();
+  const llamar = useLlamar();
   const { sesion } = useSesion();
   const [abierto, establecerAbierto] = useState<string | null>(null);
   const pasajeros = unirBoletos(locales, remotos)
@@ -295,6 +297,8 @@ function SeccionViaje({
       )}
       <HojaPasajero
         abierta={ficha !== undefined}
+        alLlamar={(id) => void llamar.alPasajero(id)}
+        llamadaFallida={llamar.fallo}
         abordo={ficha ? abordo(ficha.boleto.id) : false}
         alAlternarAbordaje={(id) => void alternarAbordaje(id)}
         alAlternarPago={(id, pagado) => {

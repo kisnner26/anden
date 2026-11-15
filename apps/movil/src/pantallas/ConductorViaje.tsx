@@ -23,6 +23,8 @@ import {
   marcarSalida,
 } from '@/servicios/supabase/viajesSupabase';
 import { ListaPasajeros } from '@/componentes/ListaPasajeros';
+import { AVISOS_RAPIDOS, type AvisoRapido } from '@/datos/comunicacion';
+import { avisarAlViaje } from '@/servicios/supabase/comunicacionSupabase';
 import { HojaCierreViaje } from '@/componentes/HojaCierreViaje';
 import { Icono } from '@/componentes/Icono';
 import { MapaConductor } from '@/componentes/MapaConductor';
@@ -98,6 +100,9 @@ export function ConductorViaje({
   const boletos = unirBoletos(locales, remotos);
   const { estadoDe, marcarPagado, registro, revertir } = usePagos();
   const { abordo, alternar: alternarAbordaje } = useAbordaje();
+  const [resultadoAviso, establecerResultadoAviso] = useState<
+    'fallo' | 'ok' | null
+  >(null);
   const [iniciando, establecerIniciando] = useState(false);
   const [yaSalio, establecerYaSalio] = useState(false);
   const [problema, establecerProblema] = useState<string | null>(null);
@@ -185,6 +190,12 @@ export function ConductorViaje({
     viajeId,
     choferId,
   );
+
+  async function avisar(clave: AvisoRapido) {
+    establecerResultadoAviso(null);
+    const bien = await avisarAlViaje(viajeId, t(`comunicacion.aviso.${clave}`));
+    establecerResultadoAviso(bien ? 'ok' : 'fallo');
+  }
 
   async function registrarSalida() {
     if (await marcarSalida(viajeId)) {
@@ -501,6 +512,48 @@ export function ConductorViaje({
           </Text>
         )}
 
+        {pasajeros.length > 0 && !cierre ? (
+          <View style={estilos.avisos} testID="avisar-a-todos">
+            <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+              {t('comunicacion.avisar')}
+            </Text>
+            <View style={estilos.avisosFila}>
+              {AVISOS_RAPIDOS.map((clave) => (
+                <Pressable
+                  accessibilityRole="button"
+                  key={clave}
+                  onPress={() => void avisar(clave)}
+                  style={[
+                    estilos.aviso,
+                    { borderColor: conAlfa(colores.tinta, 0.16) },
+                  ]}
+                >
+                  <Text style={[tipografia.pequeno, { color: colores.tinta }]}>
+                    {t(`comunicacion.aviso.${clave}`)}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+            {resultadoAviso ? (
+              <Text
+                style={[
+                  tipografia.pequeno,
+                  {
+                    color:
+                      resultadoAviso === 'ok'
+                        ? colores.aTiempo
+                        : colores.cancelado,
+                  },
+                ]}
+              >
+                {resultadoAviso === 'ok'
+                  ? t('comunicacion.avisarEnviado')
+                  : t('comunicacion.avisarFallo')}
+              </Text>
+            ) : null}
+          </View>
+        ) : null}
+
         {pasajeros.length === 0 ? (
           <>
             <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
@@ -654,6 +707,14 @@ export function ConductorViaje({
 }
 
 const estilos = StyleSheet.create({
+  aviso: {
+    borderRadius: 999,
+    borderWidth: 1,
+    paddingHorizontal: espacios.doce,
+    paddingVertical: espacios.ocho,
+  },
+  avisos: { gap: espacios.ocho },
+  avisosFila: { flexDirection: 'row', flexWrap: 'wrap', gap: espacios.ocho },
   accionesTramo: { flexDirection: 'row', gap: espacios.dieciseis },
   marcar: { position: 'absolute', right: espacios.dieciseis },
   tramo: {
