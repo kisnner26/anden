@@ -33,6 +33,10 @@ export interface PropiedadesBoletos {
   alAbrirPlus?: () => void;
   /** abre la pantalla para canjear un código de boleto */
   alRecibir?: () => void;
+  /** abre la libreta con los sellos de las ciudades */
+  alAbrirPasaporte?: () => void;
+  /** abre el resumen del año */
+  alAbrirResumen?: () => void;
 }
 
 function porSalida(a: BoletoGuardado, b: BoletoGuardado): number {
@@ -44,6 +48,8 @@ function porSalida(a: BoletoGuardado, b: BoletoGuardado): number {
 /** los boletos guardados en el teléfono, próximos primero; sin boletos muestra cómo conseguir uno */
 export function Boletos({
   alAbrirBoleto,
+  alAbrirPasaporte,
+  alAbrirResumen,
   alAbrirPlus,
   alBuscar,
   alPreguntar,
@@ -113,6 +119,36 @@ export function Boletos({
         ) : null}
       </View>
 
+      {boletos.length > 0 && (alAbrirPasaporte || alAbrirResumen) ? (
+        <View style={estilos.atajos}>
+          {alAbrirPasaporte ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={alAbrirPasaporte}
+              testID="atajo-pasaporte"
+            >
+              <Bloque estiloContenido={estilos.atajo} radio="pildora">
+                <Text style={[tipografia.etiqueta, { color: colores.tinta }]}>
+                  {t('pasaporte.titulo')}
+                </Text>
+              </Bloque>
+            </Pressable>
+          ) : null}
+          {alAbrirResumen ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={alAbrirResumen}
+              testID="atajo-resumen"
+            >
+              <Bloque estiloContenido={estilos.atajo} radio="pildora">
+                <Text style={[tipografia.etiqueta, { color: colores.tinta }]}>
+                  {t('resumenAnual.titulo')}
+                </Text>
+              </Bloque>
+            </Pressable>
+          ) : null}
+        </View>
+      ) : null}
       {boletos.length === 0 ? (
         <Bloque estilo={estilos.bloque} estiloContenido={estilos.vacio}>
           <View style={estilos.centrada}>
@@ -247,6 +283,11 @@ export function Boletos({
 }
 
 const estilos = StyleSheet.create({
+  atajo: {
+    paddingHorizontal: espacios.dieciseis,
+    paddingVertical: espacios.doce,
+  },
+  atajos: { flexDirection: 'row', gap: espacios.ocho },
   botonRecibir: {
     alignItems: 'center',
     height: 52,

@@ -9,6 +9,8 @@ export default function RutaBoletos() {
       alAbrirBoleto={(id) =>
         router.push({ params: { id }, pathname: '/boleto/[id]' })
       }
+      alAbrirPasaporte={() => router.push('/pasaporte')}
+      alAbrirResumen={() => router.push('/resumen-anual')}
       alAbrirPlus={() => router.push('/plus')}
       alBuscar={() => router.navigate('/viajar')}
       alRecibir={() => router.push('/recibir')}
