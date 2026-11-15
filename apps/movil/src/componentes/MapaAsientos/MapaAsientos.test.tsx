@@ -113,4 +113,20 @@ describe('MapaAsientos', () => {
         .accessibilityState,
     ).toMatchObject({ selected: true });
   });
+
+  it('los asientos junto al grupo lo dicen en su descripción', async () => {
+    const pantalla = await render(
+      <MapaAsientos
+        alElegir={() => undefined}
+        configuracion="coaster26"
+        elegidos={[]}
+        estados={ESTADOS}
+        sugeridos={[5]}
+      />,
+    );
+    expect(pantalla.getAllByLabelText(/junto a tu grupo/)).toHaveLength(1);
+    expect(
+      pantalla.getByLabelText(/^Asiento 5,.*junto a tu grupo/),
+    ).toBeTruthy();
+  });
 });
