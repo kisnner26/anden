@@ -107,6 +107,19 @@ describe('ConductorInicio', () => {
     expect(await pantalla.findByText('En vivo')).toBeTruthy();
   });
 
+  it('un viaje que ya está en marcha no se puede retirar ni ofrecer a más pasajeros', async () => {
+    const pantalla = await dibujar();
+    await pantalla.findByText('Hola, Marvin Lanzas');
+    const antes = pantalla.getAllByRole('button', {
+      name: 'Retirar viaje',
+    }).length;
+    TRANSMISION.iniciar('via_2', 'cho_2');
+    await pantalla.findByText('En vivo');
+    expect(
+      pantalla.getAllByRole('button', { name: 'Retirar viaje' }).length,
+    ).toBe(antes - 1);
+  });
+
   it('marca los viajes que ya cerró con lo que cobró', async () => {
     const viaje = obtenerMuestra().viajes.find((v) => v.choferId === 'cho_2')!;
     await AsyncStorage.setItem(

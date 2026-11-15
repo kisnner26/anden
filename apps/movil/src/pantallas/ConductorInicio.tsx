@@ -292,7 +292,7 @@ export function ConductorInicio({
                 </View>
               </Bloque>
             </Pressable>
-            {!cierreDe(viaje.viajeId) && (
+            {!cierreDe(viaje.viajeId) && !transmitiendo && (
               <View style={estilos.busqueda}>
                 {busquedaDe(viaje.viajeId, ahora) ? (
                   <Pressable
@@ -417,7 +417,7 @@ export function ConductorInicio({
                 </View>
               </View>
             )}
-            {!cierreDe(viaje.viajeId) && (
+            {!cierreDe(viaje.viajeId) && !transmitiendo && (
               <Pressable
                 accessibilityRole="button"
                 onPress={() =>
