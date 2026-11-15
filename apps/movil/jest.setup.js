@@ -2,6 +2,20 @@ jest.mock('@react-native-async-storage/async-storage', () =>
   require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
 );
 
+// Llavero simulado: el módulo nativo de expo-secure-store no existe en jest
+jest.mock('expo-secure-store', () => {
+  const guardado = new Map();
+  return {
+    deleteItemAsync: jest.fn(async (clave) => {
+      guardado.delete(clave);
+    }),
+    getItemAsync: jest.fn(async (clave) => guardado.get(clave) ?? null),
+    setItemAsync: jest.fn(async (clave, valor) => {
+      guardado.set(clave, valor);
+    }),
+  };
+});
+
 // audio simulado: el módulo nativo de expo-audio no existe en jest
 jest.mock('expo-audio', () => ({
   createAudioPlayer: jest.fn(() => ({

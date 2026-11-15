@@ -1,6 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
+import { almacenSeguro } from './almacenSeguro';
 import { leerConfiguracion } from './configuracion';
 
 let cliente: SupabaseClient | null | undefined;
@@ -17,7 +17,7 @@ export function obtenerCliente(): SupabaseClient | null {
           autoRefreshToken: true,
           detectSessionInUrl: false,
           persistSession: true,
-          storage: AsyncStorage,
+          storage: almacenSeguro,
         },
       })
     : null;
