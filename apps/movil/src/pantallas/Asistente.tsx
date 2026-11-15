@@ -64,7 +64,8 @@ import {
   type RespuestaRica,
 } from '@/datos/conversacionIA';
 import { FICHAS } from '@/datos/fichasCiudad';
-import { formatoHoraCompleta } from '@/datos/formato';
+import { mismoDia } from '@/datos/dias';
+import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
 import { useBoletos } from '@/datos/useBoletos';
 import { useConexion } from '@/datos/useConexion';
 import { useEncomiendas } from '@/datos/useEncomiendas';
@@ -309,11 +310,17 @@ export function Asistente({
       orden.destino,
       orden.origen,
       new Date(),
+      orden.cuando,
     );
     if (!salida) {
-      return `No encontré salidas a ${orden.destino} con asientos por ahora. Revisá Horarios más tarde.`;
+      return orden.cuando
+        ? `No encontré salidas a ${orden.destino} con asientos para ese momento. Probá con otra hora u otro día.`
+        : `No encontré salidas a ${orden.destino} con asientos por ahora. Revisá Horarios más tarde.`;
     }
-    const hora = formatoHoraCompleta(salida.salida);
+    const hoy = mismoDia(salida.salida, new Date());
+    const hora = hoy
+      ? formatoHoraCompleta(salida.salida)
+      : `${formatoFechaCorta(salida.salida)} a las ${formatoHoraCompleta(salida.salida)}`;
     const tarifa = salida.tarifa === null ? '' : `, C$ ${salida.tarifa}`;
     if (orden.tipo === 'viaje') {
       return `El próximo bus a ${salida.destino} sale de ${salida.origen} a las ${hora}, punto de encuentro ${salida.puntoEncuentro || 'por confirmar'}${tarifa}. Quedan ${salida.asientosLibres} asientos.`;
