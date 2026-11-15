@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { Bloque } from '@/componentes/Bloque';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { CampoTexto } from '@/componentes/CampoTexto';
@@ -29,7 +30,7 @@ import { useSalidas } from '@/datos/useSalidas';
 import { useSesion } from '@/datos/useSesion';
 import { publicarViaje } from '@/servicios/supabase/viajesSupabase';
 import { DIAS_RESERVA_PLUS } from '@/servicios/beneficios';
-import { espacios } from '@/tema/espacios';
+import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { t, type RutaTexto } from '@/textos/t';
@@ -235,11 +236,15 @@ export function ConductorNuevoViaje({
             disabled={ubicando}
             onPress={() => void usarMiUbicacion()}
           >
-            <Text style={[tipografia.subtitulo, { color: colores.ambarTexto }]}>
-              {ubicando
-                ? t('nuevoViaje.ubicando')
-                : t('nuevoViaje.usarUbicacion')}
-            </Text>
+            <Bloque estiloContenido={estilos.botonUbicacion} radio="pildora">
+              <Text
+                style={[tipografia.subtitulo, { color: colores.ambarTexto }]}
+              >
+                {ubicando
+                  ? t('nuevoViaje.ubicando')
+                  : t('nuevoViaje.usarUbicacion')}
+              </Text>
+            </Bloque>
           </Pressable>
           {sinUbicacion && (
             <Text
@@ -272,6 +277,12 @@ export function ConductorNuevoViaje({
 }
 
 const estilos = StyleSheet.create({
+  botonUbicacion: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: tamanosControl.toqueMinimo,
+    paddingHorizontal: espacios.veinticuatro,
+  },
   campos: { gap: espacios.dieciseis },
   contenido: { gap: espacios.dieciseis, paddingHorizontal: espacios.lateral },
   pantalla: { flex: 1 },
