@@ -1141,6 +1141,17 @@ export const textos = {
     sinMapa:
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
+  escaner: {
+    abrir: 'Escanear boleto',
+    apuntar: 'Apuntá al QR del boleto.',
+    cerrar: 'Cerrar',
+    dejarUsar: 'Permitir la cámara',
+    invalido: 'Boleto no válido.',
+    otroViaje: 'Este boleto es de otro viaje.',
+    sinPermiso: 'Para leer el QR del boleto, Andén necesita usar la cámara.',
+    sube: 'Sube: asiento {asiento}, {nombre}.',
+    yaSubio: 'Ya había subido: asiento {asiento}, {nombre}.',
+  },
   plano: {
     abordo: 'Asiento {n}, {nombre}, ya subió',
     libre: 'Asiento {n}, libre',
