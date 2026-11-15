@@ -5,21 +5,20 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Aparece } from '@/componentes/Aparece';
 import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
+import { FilaDeViajeChofer } from '@/componentes/FilaDeViajeChofer';
 import { BuscarPasajeros } from '@/componentes/BuscarPasajeros';
 import { BotonAccion } from '@/componentes/BotonAccion';
-import { Autobus } from '@/componentes/Autobus';
 import { Icono } from '@/componentes/Icono';
 import { GuiaConductor } from '@/componentes/GuiaConductor';
 import { EjeDelDia } from '@/componentes/EjeDelDia';
-import { Loseta } from '@/componentes/Loseta';
 import { HORA_FINAL, HORA_INICIAL, bloquesDelDia } from '@/datos/diaDelChofer';
 import { pasosDeGuia } from '@/datos/guiaConductor';
 import { useEncomiendas } from '@/datos/useEncomiendas';
-import { formatoDiaCorto, formatoHora, sufijoHora } from '@/datos/formato';
+import { formatoFechaCorta } from '@/datos/formato';
 import { iniciales, nombreCompleto, nombrePropio } from '@/datos/perfil';
 import { usePerfil } from '@/datos/usePerfil';
 import { inicioDelDia, nombreDelDia } from '@/datos/dias';
-import { salidasDeChofer } from '@/datos/salidas';
+import { salidasDeChofer, type Salida } from '@/datos/salidas';
 import { sincronizarViajes } from '@/datos/sincronizarViajes';
 import { retirarViaje } from '@/servicios/supabase/viajesSupabase';
 import { buscarPasajeros } from '@/servicios/supabase/comunicacionSupabase';
@@ -28,17 +27,36 @@ import { useCierres } from '@/datos/useCierres';
 import { useSesion } from '@/datos/useSesion';
 import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
 import { useViajesEnVivo } from '@/datos/useTransmision';
-import {
-  MOTIVOS_CANCELACION,
-  type MotivoCancelacion,
-} from '@/datos/motivoCancelacion';
-import { conAlfa } from '@/tema/alfa';
+import { type MotivoCancelacion } from '@/datos/motivoCancelacion';
 import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { rellenar } from '@/textos/rellenar';
 import { t } from '@/textos/t';
-import { etiquetaPunto } from '@/datos/puntoEncuentro';
+
+/** los viajes agrupados por día, en orden, para mostrar un rótulo por cada día */
+function diasConViajes(viajes: readonly Salida[]) {
+  const grupos: { clave: string; dia: Date; viajes: Salida[] }[] = [];
+  for (const viaje of viajes) {
+    const clave = inicioDelDia(viaje.salida).toISOString();
+    const existente = grupos.find((g) => g.clave === clave);
+    if (existente) existente.viajes.push(viaje);
+    else
+      grupos.push({ clave, dia: inicioDelDia(viaje.salida), viajes: [viaje] });
+  }
+  return grupos;
+}
+
+/** "Hoy · lun 16 nov", "Mañana · mar 17 nov" o solo la fecha */
+function rotuloDelDia(dia: Date, ahora: Date): string {
+  const nombre = nombreDelDia(dia, ahora);
+  const fecha = formatoFechaCorta(dia);
+  return nombre === 'hoy'
+    ? `${t('conductor.diaHoy')} · ${fecha}`
+    : nombre === 'manana'
+      ? `${t('conductor.diaManana')} · ${fecha}`
+      : fecha;
+}
 
 export interface PropiedadesConductorInicio {
   /** abre el perfil del conductor al tocar su foto */
@@ -145,26 +163,12 @@ export function ConductorInicio({
           {rellenar(t('conductor.saludo'), { nombre })}
         </Text>
       </View>
-      <Text style={[tipografia.titulo, { color: colores.tinta }]}>
+      <Text style={[tipografia.titularPantalla, { color: colores.tinta }]}>
         {t('conductor.titulo')}.
       </Text>
       <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
         {t('conductor.detalle')}
       </Text>
-
-      <GuiaConductor
-        pasos={pasosDeGuia({
-          cerrados: cierres.filter((c) => c.choferId === sesion?.choferId)
-            .length,
-          conFoto: perfil.fotoUri !== null,
-          nombreListo: nombre !== '',
-          viajesPublicados: viajes.length,
-          // con pasajeros o encomiendas reales, ya conoce esa pestaña
-          vioPasajeros: encomiendas.some(
-            (e) => e.choferId === sesion?.choferId,
-          ),
-        })}
-      />
 
       {alNuevoViaje && (
         <BotonAccion
@@ -207,6 +211,21 @@ export function ConductorInicio({
           </Bloque>
         </Pressable>
       )}
+
+      <GuiaConductor
+        pasos={pasosDeGuia({
+          cerrados: cierres.filter((c) => c.choferId === sesion?.choferId)
+            .length,
+          conFoto: perfil.fotoUri !== null,
+          nombreListo: nombre !== '',
+          viajesPublicados: viajes.length,
+          // con pasajeros o encomiendas reales, ya conoce esa pestaña
+          vioPasajeros: encomiendas.some(
+            (e) => e.choferId === sesion?.choferId,
+          ),
+        })}
+      />
+
       {viajes.length > 0 && (
         <EjeDelDia
           ahoraEnElEje={
@@ -229,151 +248,34 @@ export function ConductorInicio({
           {t('conductor.sinViajes')}
         </Text>
       )}
-      {viajes.map((viaje, indice) => {
-        const transmitiendo = enVivo.includes(viaje.viajeId);
-        return (
-          <Aparece indice={indice} key={viaje.viajeId}>
-            <Pressable
-              accessibilityLabel={rellenar(t('conductor.abrirViaje'), {
-                destino: viaje.destino,
-              })}
-              accessibilityRole="button"
-              onPress={() => alAbrirViaje(viaje.viajeId)}
-            >
-              <Bloque estiloContenido={estilos.fila}>
-                <Loseta variante="negra">
-                  {viaje.servicio === 'expreso' ? (
-                    <Icono nombre="rayo" tamano="ilustracion" />
-                  ) : (
-                    <Autobus ancho={tamanosControl.toqueMinimo} usarMiUnidad />
-                  )}
-                  {transmitiendo && (
-                    <View
-                      style={[
-                        estilos.enVivo,
-                        {
-                          backgroundColor: colores.aTiempo,
-                          borderColor: colores.bloqueNegro,
-                        },
-                      ]}
-                    />
-                  )}
-                </Loseta>
-                <View style={estilos.texto}>
-                  <Text
-                    style={[tipografia.subtitulo, { color: colores.tinta }]}
-                  >
-                    {`${viaje.origen} → ${viaje.destino}`}
-                  </Text>
-                  <Text
-                    style={[tipografia.pequeno, { color: colores.tintaSuave }]}
-                  >
-                    {`${t(`servicios.${viaje.servicio}`)} · ${etiquetaPunto(viaje.puntoEncuentro)} · ${viaje.placa}`}
-                  </Text>
-                  {cierreDe(viaje.viajeId) && (
-                    <Text
-                      style={[tipografia.etiqueta, { color: colores.aTiempo }]}
-                    >
-                      {rellenar(t('conductor.cerradoCorto'), {
-                        cobrado: cierreDe(viaje.viajeId)?.cobrado ?? 0,
-                      })}
-                    </Text>
-                  )}
-                  {transmitiendo && (
-                    <Text
-                      style={[
-                        tipografia.etiqueta,
-                        { color: colores.ambarTexto },
-                      ]}
-                    >
-                      {t('conductor.enVivo')}
-                    </Text>
-                  )}
-                </View>
-                <View style={estilos.hora}>
-                  {nombreDelDia(viaje.salida, ahora) !== 'hoy' && (
-                    <Text
-                      style={[
-                        tipografia.pequeno,
-                        { color: colores.tintaSuave },
-                      ]}
-                    >
-                      {formatoDiaCorto(viaje.salida)}
-                    </Text>
-                  )}
-                  <Text
-                    style={[tipografia.dato, { color: colores.ambarTexto }]}
-                  >
-                    {formatoHora(viaje.salida)}
-                  </Text>
-                  <Text
-                    style={[tipografia.pequeno, { color: colores.tintaSuave }]}
-                  >
-                    {sufijoHora(viaje.salida)}
-                  </Text>
-                </View>
-              </Bloque>
-            </Pressable>
-            {retirando === viaje.viajeId && hayPasajeros(viaje.viajeId) && (
-              <View style={estilos.motivos}>
-                <Text
-                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
-                >
-                  {t('nuevoViaje.motivoTitulo')}
-                </Text>
-                <View style={estilos.fichas}>
-                  {MOTIVOS_CANCELACION.map((clave) => (
-                    <Pressable
-                      accessibilityRole="button"
-                      accessibilityState={{ selected: motivo === clave }}
-                      key={clave}
-                      onPress={() => establecerMotivo(clave)}
-                      style={[
-                        estilos.ficha,
-                        {
-                          backgroundColor:
-                            motivo === clave
-                              ? conAlfa(colores.ambar, 0.2)
-                              : 'transparent',
-                          borderColor:
-                            motivo === clave
-                              ? colores.ambar
-                              : conAlfa(colores.tinta, 0.16),
-                        },
-                      ]}
-                    >
-                      <Text
-                        style={[tipografia.pequeno, { color: colores.tinta }]}
-                      >
-                        {t(`motivoCancelacion.${clave}`)}
-                      </Text>
-                    </Pressable>
-                  ))}
-                </View>
-              </View>
-            )}
-            {!cierreDe(viaje.viajeId) && !transmitiendo && (
-              <Pressable
-                accessibilityRole="button"
-                onPress={() =>
+      {diasConViajes(viajes).map((grupo) => (
+        <View key={grupo.clave} style={estilos.grupo}>
+          <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
+            {rotuloDelDia(grupo.dia, ahora)}
+          </Text>
+          {grupo.viajes.map((viaje, indice) => (
+            <Aparece indice={indice} key={viaje.viajeId}>
+              <FilaDeViajeChofer
+                alAbrir={() => alAbrirViaje(viaje.viajeId)}
+                alElegirMotivo={establecerMotivo}
+                alRetirar={() =>
                   retirando === viaje.viajeId
                     ? void retirar(viaje.viajeId)
                     : establecerRetirando(viaje.viajeId)
                 }
-                style={estilos.retirar}
-              >
-                <Text
-                  style={[tipografia.pequeno, { color: colores.cancelado }]}
-                >
-                  {retirando === viaje.viajeId
-                    ? t('nuevoViaje.retirarConfirmar')
-                    : t('nuevoViaje.retirar')}
-                </Text>
-              </Pressable>
-            )}
-          </Aparece>
-        );
-      })}
+                cobrado={cierreDe(viaje.viajeId)?.cobrado ?? null}
+                confirmando={retirando === viaje.viajeId}
+                motivo={motivo}
+                pideMotivo={
+                  retirando === viaje.viajeId && hayPasajeros(viaje.viajeId)
+                }
+                transmitiendo={enVivo.includes(viaje.viajeId)}
+                viaje={viaje}
+              />
+            </Aparece>
+          ))}
+        </View>
+      ))}
     </ScrollView>
   );
 }
@@ -389,6 +291,7 @@ const estilos = StyleSheet.create({
     width: 14,
   },
   contenido: { gap: espacios.doce, paddingHorizontal: espacios.lateral },
+  grupo: { gap: espacios.doce },
   fila: {
     alignItems: 'center',
     flexDirection: 'row',

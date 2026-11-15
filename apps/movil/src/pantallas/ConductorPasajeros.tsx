@@ -83,7 +83,7 @@ export function ConductorPasajeros({
           titulo={t('conductorPasajeros.pestana')}
         />
       )}
-      <Text style={[tipografia.titulo, { color: colores.tinta }]}>
+      <Text style={[tipografia.titularPantalla, { color: colores.tinta }]}>
         {t('conductorPasajeros.titulo')}.
       </Text>
       <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
