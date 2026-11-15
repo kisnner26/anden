@@ -1,9 +1,25 @@
 import { useRouter } from 'expo-router';
 
+import { useModoSimple } from '@/datos/modoSimple';
+import { InicioSimple } from '@/pantallas/InicioSimple';
 import { Viajar } from '@/pantallas/Viajar';
 
 export default function RutaViajar() {
   const router = useRouter();
+  const modoSimple = useModoSimple();
+  if (modoSimple.activo) {
+    return (
+      <InicioSimple
+        alAbrirBoleto={(id) =>
+          router.push({ params: { id }, pathname: '/boleto/[id]' })
+        }
+        alBuscar={(destino) =>
+          router.push({ params: { q: destino }, pathname: '/buscar' })
+        }
+        alSalir={() => void modoSimple.cambiar(false)}
+      />
+    );
+  }
   return (
     <Viajar
       alAbrirAjustes={() => router.push('/ajustes')}
