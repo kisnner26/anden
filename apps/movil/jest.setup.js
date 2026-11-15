@@ -16,6 +16,18 @@ jest.mock('expo-secure-store', () => {
   };
 });
 
+// cámara simulada: el módulo nativo de expo-camera no existe en jest
+jest.mock('expo-camera', () => {
+  const { View } = require('react-native');
+  return {
+    CameraView: View,
+    useCameraPermissions: () => [
+      { granted: true },
+      jest.fn(async () => ({ granted: true })),
+    ],
+  };
+});
+
 // audio simulado: el módulo nativo de expo-audio no existe en jest
 jest.mock('expo-audio', () => ({
   createAudioPlayer: jest.fn(() => ({
