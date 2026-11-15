@@ -30,6 +30,7 @@ import {
   terminarActividad,
 } from '../../modules/anden-actividad';
 import { useEstadoRemotoBoletos } from '@/datos/useEstadoRemotoBoletos';
+import { useBusPropio } from '@/datos/useBusPropio';
 import { usePreferenciaActividad } from '@/datos/preferenciaActividad';
 import { HojaRecordatorio } from '@/componentes/HojaRecordatorio';
 import { ResumenIA } from '@/componentes/ResumenIA';
@@ -104,6 +105,7 @@ export function VerBoleto({
   const [actividadDisponible, establecerActividadDisponible] = useState(false);
   const [actividadId, establecerActividadId] = useState<string | null>(null);
   const preferenciaActividad = usePreferenciaActividad();
+  const { efectivo: unidadElegida } = useBusPropio();
   // si la persona apaga la actividad en los ajustes, la que esté puesta se retira
   useEffect(() => {
     if (preferenciaActividad.activa === false && actividadId) {
@@ -235,7 +237,13 @@ export function VerBoleto({
     establecerActividadId(
       await iniciarActividad({
         fase: faseDeActividad(salidaVigente?.estado),
-        origen: guardado!.resumen.origen ?? '',
+        // la ciudad y no el nombre largo de la terminal: en la isla no cabe
+        origen:
+          obtenerMuestra().terminales.find(
+            (terminal) => terminal.nombre === guardado!.resumen.origen,
+          )?.ciudad ??
+          guardado!.resumen.origen ??
+          '',
         puntoEncuentro: guardado!.resumen.puntoEncuentro,
         destino: guardado!.resumen.destino,
         estado: rellenar(t('boleto.actividadEstado'), {
@@ -243,6 +251,10 @@ export function VerBoleto({
           hora: horaTexto(salidaGuardada),
         }),
         salida: salidaGuardada,
+        // la hora a la que se espera que llegue y el vehículo que eligió la persona (su bus o su vehículo Plus)
+        llegada: armarDetalle(obtenerMuestra(), guardado!.boleto.viajeId, ahora)
+          ?.llegada,
+        vehiculo: unidadElegida ?? undefined,
       }),
     );
   }
