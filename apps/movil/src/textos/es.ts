@@ -1141,6 +1141,24 @@ export const textos = {
     sinMapa:
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
+  inicioSimple: {
+    adonde: '¿A dónde querés ir?',
+    ir: 'Ir a {ciudad}',
+    mensajeFamilia:
+      'Hola, soy {nombre}. ¿Me ayudás a sacar un boleto en Andén? Decime a qué hora te sirve y me lo mandás.',
+    miBoleto: 'Tu boleto a {destino}, {dia}, {hora}. Tocá para abrirlo.',
+    pedirAyuda: 'Pedir ayuda a mi familia',
+    pedirAyudaDetalle: 'Les mando un mensaje para que me saquen el boleto.',
+    salir: 'Volver al inicio de siempre',
+    titulo: 'Hola. ¿A dónde vamos?',
+    tuBoleto: 'Tu boleto',
+  },
+  modoSimple: {
+    detalle:
+      'Un inicio con botones muy grandes y pocas palabras, para quien usa poco el teléfono.',
+    seccion: 'Modo simple',
+    titulo: 'Inicio simple',
+  },
   resumenAnual: {
     asiento: 'Tu asiento favorito fue el {asiento}.',
     asientoCorto: 'Tu asiento favorito',
