@@ -1,12 +1,6 @@
 import { usePathname } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import {
-  Animated,
-  Easing,
-  StyleSheet,
-  useWindowDimensions,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { armarContexto } from '@/datos/contextoIA';
 import {
@@ -14,48 +8,49 @@ import {
   registrarSenal,
   type EstadoDificultad,
 } from '@/datos/dificultad';
-import { ayudaPorDefecto, descripcionDelApuro } from '@/datos/ayudaDeRumbo';
 import {
-  instruccionesDeRumbo,
+  ayudaPorDefecto,
+  descripcionDelApuro,
+  esRespuestaUtil,
+  nombreDePantalla,
+  pantallaDeRuta,
+} from '@/datos/ayudaDeRumbo';
+import {
+  instruccionesDeAyuda,
   limpiarRespuestaDeRumbo,
 } from '@/datos/mascotaIA';
 import { escucharSenales, type SenalDeAyuda } from '@/datos/senalesDeAyuda';
 import { useBoletos } from '@/datos/useBoletos';
 import { useConexion } from '@/datos/useConexion';
 import { useIA } from '@/datos/useIA';
-import { useSuscripcion } from '@/datos/useSuscripcion';
-import { rumboUsaIA } from '@/servicios/beneficios';
 import { useMascota } from '@/datos/useMascota';
 import { useSalidas } from '@/datos/useSalidas';
 import { useSonidos } from '@/datos/useSonidos';
-import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
+import { useSuscripcion } from '@/datos/useSuscripcion';
+import { rumboUsaIA } from '@/servicios/beneficios';
 
-import { CuerpoQueSeTransforma } from './CuerpoQueSeTransforma';
-import { OjosQueAsoman } from './OjosQueAsoman';
+import { GloboDeAyuda } from './GloboDeAyuda';
+import { ANCHO_OJOS, OjosDeRumbo, type EstadoDeOjos } from './OjosDeRumbo';
 
-/** cuánto se queda asomando los ojos si nadie los toca */
+/** cuánto se quedan los ojos asomados si nadie los toca */
 export const SEGUNDOS_ASOMADO = 9;
-/** cuánto se queda la ayuda abierta */
-export const SEGUNDOS_DE_AYUDA = 16;
+/** cuánto se queda la ayuda a la vista */
+export const SEGUNDOS_DE_AYUDA = 14;
+/** cuánto se le espera a la IA antes de usar la ayuda escrita */
+export const SEGUNDOS_DE_ESPERA_IA = 6;
 
-const TAMANO = 64;
-const MARGEN = 12;
-const ANCHO_AYUDA = 260;
-
-type Fase = 'ayuda' | 'asomado' | 'oculto';
+type Fase = 'asomado' | 'hablando' | 'oculto' | 'pensando';
 
 /**
- * Rumbo solo existe cuando hace falta: si nota que la persona se está trabando (errores repetidos, una reserva que
- * falla, toques que no responden, sin señal) asoma los ojos por el borde derecho de la pantalla. Si los toca, se
- * materializa, se transforma en una tarjeta y le da una ayuda concreta, armada con la IA del teléfono cuando se puede.
- * Si nadie lo atiende, se esconde y no vuelve a insistir por un rato
+ * Rumbo solo existe cuando hace falta, y de él solo se ven los ojos: si nota que la persona se está trabando (errores
+ * repetidos, una reserva que falla, toques que no responden, sin señal) asoma por el borde derecho. Al tocarlo piensa un
+ * momento y, con Apple Intelligence (o Gemini) y los datos reales de la persona, dice en un globo pequeño qué hacer en esa
+ * pantalla; sin IA usa una ayuda escrita para el lugar. Si nadie lo atiende, se esconde y no insiste por un rato
  */
 export function AyudanteRumbo() {
   const { activa } = useMascota();
   const ruta = usePathname();
-  const margenes = useSafeAreaInsets();
-  const { height, width } = useWindowDimensions();
-  const reducido = useMovimientoReducido();
+  const { height } = useWindowDimensions();
   const sonar = useSonidos();
   const ia = useIA();
   const { plus } = useSuscripcion();
@@ -64,12 +59,11 @@ export function AyudanteRumbo() {
   const { ahora, salidas } = useSalidas();
 
   const [fase, establecerFase] = useState<Fase>('oculto');
-  const [texto, establecerTexto] = useState<string | null>(null);
-  const [abierto, establecerAbierto] = useState(false);
-  const [montada, establecerMontada] = useState(false);
+  const [texto, establecerTexto] = useState('');
   const detector = useRef<EstadoDificultad>(DIFICULTAD_INICIAL);
-  const forma = useRef(new Animated.Value(0)).current;
   const motivo = useRef<SenalDeAyuda>('errorFormulario');
+  const pantalla = useRef(pantallaDeRuta(ruta));
+  pantalla.current = pantallaDeRuta(ruta);
 
   // en la portada de inicio no sale: ahí nadie está trabado todavía
   const permitido = activa && ruta !== '/';
@@ -96,128 +90,84 @@ export function AyudanteRumbo() {
     if (permitido && !enLinea) alimentar('sinConexion');
   }, [enLinea, permitido]);
 
-  // si nadie atiende los ojos, se esconden solos
+  // si nadie atiende los ojos, se esconden solos; la ayuda también se va sola
   useEffect(() => {
-    if (fase !== 'asomado') return;
+    if (fase !== 'asomado' && fase !== 'hablando') return;
     const espera = setTimeout(
       () => establecerFase('oculto'),
-      SEGUNDOS_ASOMADO * 1000,
+      (fase === 'asomado' ? SEGUNDOS_ASOMADO : SEGUNDOS_DE_AYUDA) * 1000,
     );
     return () => clearTimeout(espera);
-  }, [fase]);
+  }, [fase, texto]);
 
-  // al cambiar de pantalla a la portada todo se esconde
   useEffect(() => {
     if (!permitido) establecerFase('oculto');
   }, [permitido]);
 
-  // la ayuda se abre con la transformación y se cierra sola
-  useEffect(() => {
-    if (fase === 'ayuda') {
-      establecerMontada(true);
-      if (reducido) {
-        forma.setValue(1);
-        establecerAbierto(true);
-      } else {
-        Animated.sequence([
-          Animated.timing(forma, {
-            duration: 170,
-            easing: Easing.out(Easing.quad),
-            toValue: 0.45,
-            useNativeDriver: false,
-          }),
-          Animated.spring(forma, {
-            friction: 6,
-            tension: 85,
-            toValue: 1,
-            useNativeDriver: false,
-          }),
-        ]).start(() => establecerAbierto(true));
-      }
-      const cierre = setTimeout(
-        () => establecerFase('oculto'),
-        SEGUNDOS_DE_AYUDA * 1000,
-      );
-      return () => clearTimeout(cierre);
-    }
-    if (montada) {
-      establecerAbierto(false);
-      if (reducido) {
-        forma.setValue(0);
-        establecerMontada(false);
-      } else {
-        Animated.timing(forma, {
-          duration: 280,
-          easing: Easing.inOut(Easing.cubic),
-          toValue: 0,
-          useNativeDriver: false,
-        }).start(() => establecerMontada(false));
-      }
-    }
-  }, [fase]);
-
-  /** al tocar los ojos: ayuda escrita al instante y, si la IA del teléfono puede, una más a medida */
+  /** al tocar los ojos: piensa un momento con la IA del teléfono y dice qué hacer; si no puede, usa la ayuda escrita del lugar */
   async function ayudar() {
     sonar('mascotaHola');
-    establecerTexto(ayudaPorDefecto(motivo.current));
-    establecerFase('ayuda');
-    if (!ia.usable || !rumboUsaIA(plus)) return;
-    try {
-      const respuesta = await ia.preguntar(
-        instruccionesDeRumbo(armarContexto(salidas, boletos, ahora)),
-        `La persona ${descripcionDelApuro(motivo.current)}. Ayudala en una o dos frases concretas, sin repetir el problema.`,
-      );
-      const limpia = limpiarRespuestaDeRumbo(respuesta);
-      if (limpia !== '') establecerTexto(limpia);
-    } catch {
-      /* se queda con la ayuda escrita */
+    const escrita = ayudaPorDefecto(motivo.current, pantalla.current);
+    if (!ia.usable || !rumboUsaIA(plus)) {
+      establecerTexto(escrita);
+      establecerFase('hablando');
+      return;
     }
+    establecerFase('pensando');
+    try {
+      const respuesta = await Promise.race([
+        ia.preguntar(
+          instruccionesDeAyuda({
+            apuro: descripcionDelApuro(motivo.current),
+            datos: armarContexto(salidas, boletos, ahora),
+            pantalla: nombreDePantalla(pantalla.current),
+          }),
+          'Dame la ayuda.',
+        ),
+        new Promise<string>((_, rechazar) =>
+          setTimeout(
+            () => rechazar(new Error('espera')),
+            SEGUNDOS_DE_ESPERA_IA * 1000,
+          ),
+        ),
+      ]);
+      const limpia = limpiarRespuestaDeRumbo(respuesta);
+      establecerTexto(esRespuestaUtil(limpia) ? limpia : escrita);
+    } catch {
+      establecerTexto(escrita);
+    }
+    establecerFase('hablando');
   }
 
-  if (!permitido || fase === 'oculto') {
-    if (!montada) return null;
-  }
+  if (!permitido || fase === 'oculto') return null;
 
-  const anchoCard = Math.min(ANCHO_AYUDA, width - 2 * MARGEN);
-  const altoCard = Math.max(58, 28 + Math.ceil((texto?.length ?? 0) / 30) * 18);
-  const xBus = width - TAMANO - MARGEN;
-  const yBus = Math.min(yOjos, height - margenes.bottom - 160);
+  const estado: EstadoDeOjos =
+    fase === 'pensando' ? 'pensando' : fase === 'hablando' ? 'habla' : 'espera';
 
   return (
-    <Animated.View
+    <View
       pointerEvents="box-none"
       style={[StyleSheet.absoluteFill, estilos.capa]}
       testID="ayudante-rumbo"
     >
-      {fase === 'asomado' ? (
-        <OjosQueAsoman alToque={() => void ayudar()} y={yOjos} />
+      {fase === 'hablando' ? (
+        <GloboDeAyuda
+          alToque={() => establecerFase('oculto')}
+          derecha={ANCHO_OJOS + 16}
+          texto={texto}
+          y={yOjos - 6}
+        />
       ) : null}
-      {montada ? (
-        <Animated.View
-          pointerEvents="box-none"
-          style={[estilos.bus, { left: xBus, top: yBus }]}
-        >
-          <CuerpoQueSeTransforma
-            abierto={abierto}
-            alToque={() => establecerFase('oculto')}
-            alto={altoCard}
-            altoBus={TAMANO * 0.86}
-            ancho={anchoCard}
-            anchoBus={TAMANO}
-            desplazamientoX={width - MARGEN - anchoCard - xBus}
-            forma={forma}
-            haciaArriba
-            humor="saludando"
-            salto={0}
-            texto={texto}
-          />
-        </Animated.View>
-      ) : null}
-    </Animated.View>
+      <OjosDeRumbo
+        alToque={() => {
+          if (fase === 'asomado') void ayudar();
+          else if (fase === 'hablando') establecerFase('oculto');
+        }}
+        estado={estado}
+        y={yOjos}
+      />
+    </View>
   );
 }
 
-const estilos = StyleSheet.create({
-  bus: { height: TAMANO, position: 'absolute', width: TAMANO },
-  capa: { zIndex: 40 },
-});
+const estilos = StyleSheet.create({ capa: { zIndex: 40 } });
