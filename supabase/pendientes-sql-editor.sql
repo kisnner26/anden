@@ -975,3 +975,8 @@ revoke all on function public.reclamar_transferencia(text) from public, anon;
 revoke all on function public.cancelar_transferencia(text) from public, anon;
 revoke all on function public.crear_compartido(text, text, text, text, integer) from public, anon;
 grant execute on function public.crear_compartido(text, text, text, text, integer) to authenticated;
+
+-- 0025_motivo_de_cancelacion.sql
+-- el motivo con que un conductor cancela un viaje con pasajeros: lo ven quienes tenían boleto
+alter table public.viajes add column if not exists motivo_cancelacion text
+  check (motivo_cancelacion is null or motivo_cancelacion in ('averia', 'clima', 'pocos', 'otro'));
