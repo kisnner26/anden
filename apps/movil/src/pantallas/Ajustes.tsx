@@ -170,7 +170,8 @@ export function Ajustes({
       contentContainerStyle={[
         estilos.contenido,
         {
-          paddingBottom: espacios.cuarentaYOcho,
+          // como pestaña, la barra de abajo flota sobre la pantalla y tapa el final: hay que dejarle sitio
+          paddingBottom: alVolver ? espacios.cuarentaYOcho : 120,
           paddingTop: margenes.top + espacios.ocho,
         },
       ]}
@@ -225,6 +226,8 @@ export function Ajustes({
           </Bloque>
         </Pressable>
       )}
+      {/* lo propio de quien conduce va arriba, a la vista, y no al final de una lista larga */}
+      {extra}
       {sesion?.rol !== 'conductor' && (
         <>
           <Pressable
@@ -681,8 +684,6 @@ export function Ajustes({
           {opcionActiva.detalle()}
         </Text>
       )}
-
-      {extra}
     </ScrollView>
   );
 }
