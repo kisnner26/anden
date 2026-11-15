@@ -15,4 +15,8 @@ struct AtributosViaje: ActivityAttributes {
   var origen: String
   /// desde cuándo se llena la barra que avanza hacia la salida
   var desde: Date
+  /// cuándo se espera que llegue el bus a su destino
+  var llegada: Date
+  /// el vehículo de la persona (un bus de Andén o su vehículo Plus): es el nombre del dibujo "veh_<id>" del widget
+  var vehiculo: String
 }
