@@ -813,7 +813,11 @@ export const textos = {
       'De estas salidas de {origen} a {destino}, decime cuál me conviene y por qué, según la hora y los asientos libres.',
     resumenTitulo: 'Elegir la mejor salida con IA',
   },
-  galeriaLugares: { titulo: 'Lugares para ver' },
+  galeriaLugares: {
+    deCiudad: 'Lugares para ver en {ciudad}.',
+    deVarias: 'Lugares para ver en Managua, Boaco y Juigalpa.',
+    titulo: 'Lugares para ver',
+  },
   asistenteRico: {
     actividadDe: '{actividad}…',
     boletosTitulo: 'Tus boletos',
