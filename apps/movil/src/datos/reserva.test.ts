@@ -38,7 +38,11 @@ describe('crearReserva', () => {
         { asiento: 9, nombre: 'Luis Ruiz', paraOtro: true },
       ],
       AHORA,
-      () => 0.5,
+      // con un azar fijo los dos códigos saldrían iguales y el generador no terminaría
+      (() => {
+        let n = 0;
+        return () => (n += 0.137) % 1;
+      })(),
     );
     expect(resultado.ok).toBe(true);
     if (!resultado.ok) return;
