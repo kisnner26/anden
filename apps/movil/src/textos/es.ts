@@ -1141,6 +1141,21 @@ export const textos = {
     sinMapa:
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
+  comunicacion: {
+    aviso: {
+      diezMinutos: 'Salimos en 10 minutos.',
+      lleno: 'El bus está lleno, salimos ya.',
+      trafico: 'Hay tráfico, vamos a llegar tarde.',
+    },
+    avisar: 'Avisar a todos',
+    avisarEnviado: 'Aviso enviado.',
+    avisarFallo: 'No se pudo enviar el aviso. Revisá tu conexión.',
+    avisoDelChofer: 'El chofer avisa: {texto}',
+    llamarChofer: 'Llamar al chofer',
+    llamarPasajero: 'Llamar',
+    sinNumero:
+      'No se pudo llamar: el teléfono solo se puede usar con un boleto vigente, desde 2 horas antes de la salida.',
+  },
   buscarPasajeros: {
     activa: 'Buscando pasajeros hasta las {hora}',
     boton: 'Buscar pasajeros',
