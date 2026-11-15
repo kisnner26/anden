@@ -1,0 +1,1 @@
+export { TalonRasgado } from './TalonRasgado';

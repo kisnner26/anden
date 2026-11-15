@@ -56,6 +56,15 @@ export function OverlayBoleto({
           estilos.contenido,
           {
             transform: [
+              // el papel se levanta y se curva hacia quien lo mira mientras se arrastra, y se aplana al llegar arriba
+              { perspective: 900 },
+              {
+                rotateX: progreso.interpolate({
+                  extrapolate: 'clamp',
+                  inputRange: [0, 1],
+                  outputRange: ['38deg', '0deg'],
+                }),
+              },
               {
                 scale: progreso.interpolate({
                   extrapolate: 'clamp',
