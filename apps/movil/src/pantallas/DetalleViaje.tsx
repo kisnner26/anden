@@ -9,6 +9,7 @@ import { lineaDeSalida } from '@/datos/contextoIA';
 import { Bloque } from '@/componentes/Bloque';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
+import { BarraDeLlenado } from '@/componentes/BarraDeLlenado';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { FotoDestino } from '@/componentes/FotoDestino';
 import { Icono } from '@/componentes/Icono';
@@ -357,6 +358,7 @@ export function DetalleViaje({
         <Bloque estiloContenido={estilos.recorrido}>
           <LineaRuta paradas={detalle.paradas} />
         </Bloque>
+        <BarraDeLlenado salida={salida} />
         <PuntoDeEncuentro codigo={salida.puntoEncuentro} />
         {turista && (
           <ResumenIA
