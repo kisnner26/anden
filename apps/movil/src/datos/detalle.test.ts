@@ -73,7 +73,7 @@ describe('armarDetalle', () => {
   it('lista las dos paradas con su hora', () => {
     expect(detalle?.paradas.map((parada) => parada.nombre)).toEqual([
       'Mercado Mayoreo',
-      'Terminal de Buses de Boaco',
+      'La Cadena',
     ]);
     const primera = detalle?.paradas[0]?.hora.getTime() ?? 0;
     const ultima = detalle?.paradas[1]?.hora.getTime() ?? 0;

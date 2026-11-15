@@ -67,11 +67,11 @@ describe('Horarios', () => {
     await fireEvent.press(pantalla.getByTestId('terminal-de-salida'));
     await fireEvent.press(
       await pantalla.findByRole('button', {
-        name: 'Terminal de Buses de Boaco, Boaco',
+        name: 'La Cadena, Boaco',
       }),
     );
     expect(
-      await pantalla.findByLabelText(/Sale desde Terminal de Buses de Boaco/),
+      await pantalla.findByLabelText(/Sale desde La Cadena/),
     ).toBeTruthy();
   });
 

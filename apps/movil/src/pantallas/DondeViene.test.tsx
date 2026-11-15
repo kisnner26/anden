@@ -66,7 +66,7 @@ describe('DondeViene', () => {
   it('cambiar de terminal cambia los buses', async () => {
     const pantalla = await dibujar();
     await fireEvent.press(pantalla.getByRole('tab', { name: 'Boaco' }));
-    expect(pantalla.getByText('Terminal de Buses de Boaco')).toBeTruthy();
+    expect(pantalla.getByText('La Cadena')).toBeTruthy();
     expect(pantalla.getByText(/^a \d+ km de Boaco/)).toBeTruthy();
   });
 

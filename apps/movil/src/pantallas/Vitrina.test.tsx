@@ -83,7 +83,7 @@ describe('Vitrina', () => {
     const pantalla = await render(<Vitrina />);
     await fireEvent.changeText(pantalla.getByLabelText('Origen'), 'Boaco');
     expect(
-      pantalla.getByRole('button', { name: 'Terminal de Buses de Boaco' }),
+      pantalla.getByRole('button', { name: 'La Cadena' }),
     ).toBeTruthy();
   });
 });

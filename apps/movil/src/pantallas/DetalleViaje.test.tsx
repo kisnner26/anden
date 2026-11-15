@@ -95,7 +95,7 @@ describe('DetalleViaje', () => {
   it('muestra el recorrido con las dos terminales', async () => {
     const pantalla = await dibujar();
     expect(pantalla.getByText('Mercado Mayoreo')).toBeTruthy();
-    expect(pantalla.getByText('Terminal de Buses de Boaco')).toBeTruthy();
+    expect(pantalla.getByText('La Cadena')).toBeTruthy();
   });
 
   it('muestra la tarifa de muestra', async () => {
