@@ -9,6 +9,7 @@ import { FotoDestino } from '@/componentes/FotoDestino';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
 import { fotoDeDestino } from '@/datos/fotosDestino';
+import { busquedaDe } from '@/datos/historialSalidas';
 import { nivelDisponibilidad } from '@/datos/disponibilidad';
 import { formatoHora, formatoHoraCompleta, sufijoHora } from '@/datos/formato';
 import type { Salida } from '@/datos/salidas';
@@ -50,6 +51,7 @@ export function FilaSalida({
   const servicio = t(`servicios.${salida.servicio}`);
   const puntoEncuentro = etiquetaPunto(salida.puntoEncuentro);
   const nivel = nivelDisponibilidad(salida.asientosLibres);
+  const busqueda = busquedaDe(salida.viajeId, new Date());
   const textoDisponibilidad =
     nivel === 'agotado'
       ? t('horarios.agotado')
@@ -84,6 +86,16 @@ export function FilaSalida({
           <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
             {`${servicio} · ${puntoEncuentro}`}
           </Text>
+          {busqueda && salida.asientosLibres > 0 ? (
+            <Text
+              style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
+              testID="busca-pasajeros"
+            >
+              {busqueda.mensaje
+                ? `${t('buscarPasajeros.pasajero')} · ${busqueda.mensaje}`
+                : t('buscarPasajeros.pasajero')}
+            </Text>
+          ) : null}
           {sugerida ? (
             <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
               {sugerida}
