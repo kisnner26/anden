@@ -45,8 +45,16 @@
         "expo-image-picker",
         {
           "photosPermission": "Andén usa tu galería solo para que elijas la foto de tu perfil.",
-          "cameraPermission": false,
+          "cameraPermission": "Andén usa la cámara solo para leer el QR de un boleto y para fotografiar un objeto olvidado en el bus.",
           "microphonePermission": "Andén usa el micrófono solo mientras le hablás al asistente."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Andén usa la cámara solo para leer el QR de un boleto y para fotografiar un objeto olvidado en el bus.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
         }
       ],
       [
