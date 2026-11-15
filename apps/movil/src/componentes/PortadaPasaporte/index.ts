@@ -1,0 +1,1 @@
+export { PortadaPasaporte } from './PortadaPasaporte';
