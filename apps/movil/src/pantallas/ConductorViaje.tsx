@@ -39,7 +39,6 @@ import { HojaCierreViaje } from '@/componentes/HojaCierreViaje';
 import { Icono } from '@/componentes/Icono';
 import { MapaConductor } from '@/componentes/MapaConductor';
 import { PanelDeslizable } from '@/componentes/PanelDeslizable';
-import { PieReserva } from '@/componentes/PieReserva';
 import { formatoDuracion, formatoHoraCompleta } from '@/datos/formato';
 import {
   intercambiarPuntos,
@@ -68,12 +67,7 @@ import { useSonidos } from '@/datos/useSonidos';
 import { useTransmision } from '@/datos/useTransmision';
 import { armarCierre } from '@/servicios/cierres';
 import { resumenDeCobro } from '@/servicios/pagos';
-import {
-  disposicionPantalla,
-  espacios,
-  radios,
-  tamanosControl,
-} from '@/tema/espacios';
+import { espacios, radios, tamanosControl } from '@/tema/espacios';
 import { conAlfa } from '@/tema/alfa';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -513,8 +507,49 @@ export function ConductorViaje({
             </BloqueNegro>
           </View>
         }
-        espacioFinal={disposicionPantalla.espacioPie}
+        espacioFinal={espacios.cuarentaYOcho}
       >
+        {!cierre && (
+          <BloqueNegro estiloContenido={estilos.pie}>
+            <BotonAccion
+              alPresionar={() =>
+                transmision.activa ? void terminar() : void iniciar()
+              }
+              cargando={iniciando && !transmision.activa}
+              etiqueta={
+                transmision.activa
+                  ? t('conductor.terminar')
+                  : t('conductor.iniciar')
+              }
+            />
+            {transmision.activa && (
+              <Text
+                style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
+              >
+                {rellenar(t('conductor.cierreAutomatico'), {
+                  destino: salida.destino,
+                })}
+              </Text>
+            )}
+            {!transmision.activa && (
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => establecerCerrando(true)}
+                style={estilos.cerrarSinCompartir}
+              >
+                <Text
+                  style={[
+                    tipografia.pequeno,
+                    { color: colores.sobreNegroSuave },
+                  ]}
+                >
+                  {t('conductor.cerrarSinCompartir')}
+                </Text>
+              </Pressable>
+            )}
+          </BloqueNegro>
+        )}
+
         <EstimacionSalida viajeId={viajeId} />
         <ResumenIA
           contexto={[
@@ -772,44 +807,6 @@ export function ConductorViaje({
           </Text>
         )}
       </PanelDeslizable>
-
-      {!cierre && (
-        <PieReserva estiloContenido={estilos.pie}>
-          <BotonAccion
-            alPresionar={() =>
-              transmision.activa ? void terminar() : void iniciar()
-            }
-            cargando={iniciando && !transmision.activa}
-            etiqueta={
-              transmision.activa
-                ? t('conductor.terminar')
-                : t('conductor.iniciar')
-            }
-          />
-          {transmision.activa && (
-            <Text
-              style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
-            >
-              {rellenar(t('conductor.cierreAutomatico'), {
-                destino: salida.destino,
-              })}
-            </Text>
-          )}
-          {!transmision.activa && (
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => establecerCerrando(true)}
-              style={estilos.cerrarSinCompartir}
-            >
-              <Text
-                style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
-              >
-                {t('conductor.cerrarSinCompartir')}
-              </Text>
-            </Pressable>
-          )}
-        </PieReserva>
-      )}
 
       {escena && (
         <EscenaViaje
