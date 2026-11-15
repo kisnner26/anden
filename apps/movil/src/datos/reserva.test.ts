@@ -28,6 +28,25 @@ function reservar(
   );
 }
 
+describe('crearReserva en grupo', () => {
+  it('el boleto lleva el código del grupo para armar su avance', () => {
+    const resultado = crearReserva(
+      crearMuestra(AHORA),
+      VIAJE_BOACO,
+      [{ asiento: 8, nombre: 'Ana Ruiz' }],
+      AHORA,
+      generador(),
+      { grupo: 'AB12CD34', plus: false, unidad: null },
+    );
+    expect(resultado.ok && resultado.valor[0]?.resumen.grupo).toBe('AB12CD34');
+  });
+
+  it('sin grupo el resumen no trae el campo', () => {
+    const resultado = reservar([8]);
+    expect(resultado.ok && 'grupo' in resultado.valor[0]!.resumen).toBe(false);
+  });
+});
+
 describe('crearReserva', () => {
   it('marca en el resumen solo los boletos que son para otra persona', () => {
     const resultado = crearReserva(
