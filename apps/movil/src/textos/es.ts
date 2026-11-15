@@ -1141,6 +1141,22 @@ export const textos = {
     sinMapa:
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
+  grupo: {
+    cupo: 'Cuántos van',
+    crear: 'Reservar en grupo',
+    elegirAsiento: 'Elegir mi asiento',
+    expirado: 'Este grupo ya venció. Pedile a quien lo armó que cree otro.',
+    mensaje:
+      'Vamos a {destino} en el bus de las {hora}. Elegí tu asiento y quedamos juntos ({cupo} personas): {enlace}',
+    miembros: 'Ya eligieron',
+    ninguno: 'Todavía nadie eligió asiento.',
+    noExiste: 'No encontramos este grupo.',
+    sinSesion: 'Entrá a tu cuenta para unirte al grupo.',
+    titulo: 'Viaje en grupo',
+    compartir: 'Compartir el enlace',
+    avance: '{n} de {cupo} ya eligieron',
+    juntos: 'Los asientos marcados quedan junto a los de tu grupo.',
+  },
   objetosEncontrados: {
     avisar: 'Avisar a los pasajeros',
     cerrar: 'Cerrar',
