@@ -1,8 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Bloque } from '@/componentes/Bloque';
-import { FotoDestino } from '@/componentes/FotoDestino';
+import { GaleriaLugares } from '@/componentes/GaleriaLugares';
 import { fichaDeCiudad } from '@/datos/fichasCiudad';
+import { lugaresDeCiudad } from '@/datos/lugaresTuristicos';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -20,16 +21,15 @@ export function FichaCiudadIA({ ciudad }: PropiedadesFichaCiudadIA) {
   if (!ficha) return null;
   return (
     <Bloque estiloContenido={estilos.contenido} testID="ficha-ciudad-ia">
-      <FotoDestino destino={ficha.ciudad} estilo={estilos.foto} radio="tarjeta">
-        <View style={estilos.sobreFoto}>
-          <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>
-            {t('asistenteRico.conocer')}
-          </Text>
-          <Text style={[tipografia.titulo, { color: colores.sobreNegro }]}>
-            {ficha.ciudad}
-          </Text>
-        </View>
-      </FotoDestino>
+      <View style={estilos.sobreFoto}>
+        <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+          {t('asistenteRico.conocer')}
+        </Text>
+        <Text style={[tipografia.titulo, { color: colores.tinta }]}>
+          {ficha.ciudad}
+        </Text>
+      </View>
+      <GaleriaLugares lugares={lugaresDeCiudad(ficha.ciudad)} />
       <View
         accessible
         accessibilityLabel={rellenar(t('asistenteRico.ficha'), {
@@ -63,10 +63,9 @@ export function FichaCiudadIA({ ciudad }: PropiedadesFichaCiudadIA) {
 
 const estilos = StyleSheet.create({
   contenido: { padding: espacios.ocho },
-  foto: { height: 156, justifyContent: 'flex-end' },
   lugar: { flexDirection: 'row', gap: espacios.ocho },
   punto: { borderRadius: 3, height: 6, marginTop: 7, width: 6 },
-  sobreFoto: { gap: 2, padding: espacios.dieciseis },
+  sobreFoto: { gap: 2, padding: espacios.ocho },
   texto: { gap: espacios.ocho, padding: espacios.doce },
   textoLugar: { flex: 1 },
 });
