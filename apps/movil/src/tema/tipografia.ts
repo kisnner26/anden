@@ -82,6 +82,11 @@ export const tipografia = {
     letterSpacing: 2,
     lineHeight: 28,
   }),
+  numeroGigante: escalable({
+    fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
+    fontSize: 112,
+    lineHeight: 108,
+  }),
   titularBoleto: escalable({
     fontFamily: 'ArchivoExtraCondensed_800ExtraBold',
     fontSize: 52,
