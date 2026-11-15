@@ -482,6 +482,27 @@ describe('VerBoleto', () => {
   });
 });
 
+describe('VerBoleto: llamar al chofer', () => {
+  it('se puede llamar cuando el viaje está por salir', async () => {
+    const pantalla = await dibujar();
+    expect(
+      await pantalla.findByRole('button', { name: 'Llamar al chofer' }),
+    ).toBeTruthy();
+  });
+
+  it('no se ofrece cuando falta mucho para la salida', async () => {
+    await AsyncStorage.setItem(
+      CLAVE_BOLETOS,
+      JSON.stringify([boletoDePrueba(new Date(Date.now() + 30 * 3_600_000))]),
+    );
+    const pantalla = await dibujar();
+    await pantalla.findByTestId('talon-boleto');
+    expect(
+      pantalla.queryByRole('button', { name: 'Llamar al chofer' }),
+    ).toBeNull();
+  });
+});
+
 describe('VerBoleto con el viaje cancelado', () => {
   beforeEach(() => {
     fijarCancelados(['via_2']);
