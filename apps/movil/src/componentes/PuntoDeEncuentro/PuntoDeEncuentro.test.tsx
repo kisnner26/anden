@@ -2,6 +2,14 @@ import { afterEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent } from '@testing-library/react-native';
 import { Linking } from 'react-native';
 
+jest.mock('@/datos/useBrujula', () => ({
+  useBrujula: () => ({
+    estado: 'cargando',
+    haciaDondeMira: null,
+    posicion: null,
+  }),
+}));
+
 import { renderPantalla } from '@/pruebas/render';
 
 import { PuntoDeEncuentro } from './PuntoDeEncuentro';
@@ -40,5 +48,25 @@ describe('PuntoDeEncuentro', () => {
     const pantalla = await renderPantalla(<PuntoDeEncuentro codigo="" />);
     expect(pantalla.getByText('punto por confirmar')).toBeTruthy();
     expect(pantalla.queryByRole('button')).toBeNull();
+  });
+});
+
+describe('PuntoDeEncuentro: guiar hasta el bus', () => {
+  it('con un código válido ofrece guiarte hasta el bus', async () => {
+    const pantalla = await renderPantalla(
+      <PuntoDeEncuentro codigo="764M4PPX+HC" />,
+    );
+    expect(
+      pantalla.getByRole('button', { name: 'Guiame hasta el bus' }),
+    ).toBeTruthy();
+  });
+
+  it('con un código que no se puede leer no ofrece guiar', async () => {
+    const pantalla = await renderPantalla(
+      <PuntoDeEncuentro codigo="no-es-un-codigo" />,
+    );
+    expect(
+      pantalla.queryByRole('button', { name: 'Guiame hasta el bus' }),
+    ).toBeNull();
   });
 });

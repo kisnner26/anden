@@ -1151,6 +1151,20 @@ export const textos = {
     sinMapa:
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
+  brujula: {
+    ayuda:
+      'La flecha apunta al punto de encuentro. Girá hasta que quede hacia arriba.',
+    boton: 'Guiame hasta el bus',
+    buscando: 'Buscando tu ubicación…',
+    calibrar: 'Movés el teléfono en un ocho para calibrar la brújula.',
+    cerrar: 'Cerrar',
+    desactivado: 'La ubicación está apagada. Prendela en Ajustes del teléfono.',
+    faltan: 'Faltan {distancia}',
+    llegaste: 'Llegaste. Acá se sube al bus.',
+    sinPermiso:
+      'Para guiarte necesito tu ubicación. Dame el permiso en Ajustes del teléfono.',
+    titulo: 'Hacia el bus',
+  },
   calor: {
     casiLleno: 'casi lleno',
     madrugada: 'Madrugada',

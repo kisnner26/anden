@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { decodificarPlus, leerPlus } from '@anden/dominio';
+
 import { Bloque } from '@/componentes/Bloque';
+import { BrujulaAlPunto } from '@/componentes/BrujulaAlPunto';
 import { abrirPuntoEnMapa } from '@/datos/puntoEncuentro';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
@@ -17,6 +20,9 @@ export interface PropiedadesPuntoDeEncuentro {
 export function PuntoDeEncuentro({ codigo }: PropiedadesPuntoDeEncuentro) {
   const { colores } = useTema();
   const [fallo, establecerFallo] = useState(false);
+  const [guiando, establecerGuiando] = useState(false);
+  const completo = codigo === '' ? null : leerPlus(codigo);
+  const coordenadas = completo ? decodificarPlus(completo) : null;
 
   async function abrir() {
     establecerFallo(!(await abrirPuntoEnMapa(codigo)));
@@ -41,8 +47,27 @@ export function PuntoDeEncuentro({ codigo }: PropiedadesPuntoDeEncuentro) {
               {t('punto.abrirMapa')}
             </Text>
           </Pressable>
+          {coordenadas ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => establecerGuiando(true)}
+            >
+              <Text
+                style={[tipografia.subtitulo, { color: colores.ambarTexto }]}
+              >
+                {t('brujula.boton')}
+              </Text>
+            </Pressable>
+          ) : null}
         </View>
       )}
+      {coordenadas ? (
+        <BrujulaAlPunto
+          abierta={guiando}
+          alCerrar={() => establecerGuiando(false)}
+          punto={coordenadas}
+        />
+      ) : null}
       {fallo && (
         <Text
           accessibilityLiveRegion="polite"
