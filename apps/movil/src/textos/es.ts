@@ -1151,6 +1151,19 @@ export const textos = {
     sinMapa:
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
+  calor: {
+    casiLleno: 'casi lleno',
+    madrugada: 'Madrugada',
+    manana: 'Mañana',
+    noche: 'Noche',
+    poco: 'queda poco lugar',
+    sinBuses: 'sin buses',
+    sobra: 'hay lugar de sobra',
+    tarde: 'Tarde',
+    titulo: 'La semana, de un vistazo',
+    unBus: '1 bus',
+    variosBuses: '{n} buses',
+  },
   cielo: {
     amanecer: 'amaneciendo',
     atardecer: 'al atardecer',
