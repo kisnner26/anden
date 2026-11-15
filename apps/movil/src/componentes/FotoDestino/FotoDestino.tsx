@@ -19,6 +19,8 @@ export interface PropiedadesFotoDestino {
   origen?: string;
   radio?: keyof typeof radios;
   testID?: string;
+  /** reparte las fotos de la ciudad: con el mismo número o texto sale siempre la misma, con otro sale otra */
+  variante?: number | string;
 }
 
 /**
@@ -32,10 +34,11 @@ export function FotoDestino({
   origen,
   radio = 'bloque',
   testID,
+  variante,
 }: PropiedadesFotoDestino) {
   const { colores } = useTema();
   const ciudadDeLaFoto = fotoDeDestino(destino) || !origen ? destino : origen;
-  const foto = fotoDeDestino(ciudadDeLaFoto);
+  const foto = fotoDeDestino(ciudadDeLaFoto, variante);
   const borde = radios[radio];
 
   return (
@@ -56,7 +59,7 @@ export function FotoDestino({
           contentFit="cover"
           contentPosition={{
             left: '50%',
-            top: `${enfoqueDeDestino(ciudadDeLaFoto)}%`,
+            top: `${enfoqueDeDestino(ciudadDeLaFoto, variante)}%`,
           }}
           source={foto}
           style={estilos.foto}

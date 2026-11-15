@@ -81,6 +81,7 @@ export function TarjetaHabitual({
             estilo={estilos.foto}
             origen={grupo.origen}
             radio="tarjeta"
+            variante={grupo.id}
           >
             <View style={estilos.sobreFoto}>
               <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>

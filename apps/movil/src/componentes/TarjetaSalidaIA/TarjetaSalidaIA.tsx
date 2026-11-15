@@ -59,6 +59,7 @@ export function TarjetaSalidaIA({
           estilo={estilos.foto}
           origen={salida.origen}
           radio="tarjeta"
+          variante={salida.viajeId}
         >
           <View style={estilos.sobreFoto}>
             <View style={estilos.titulos}>

@@ -51,6 +51,7 @@ export function ProximaSalidaFoto({
           estilo={estilos.foto}
           origen={salida.origen}
           radio="tarjeta"
+          variante={salida.viajeId}
         >
           <View style={estilos.sobreFoto}>
             <Text style={[tipografia.etiqueta, { color: colores.ambar }]}>

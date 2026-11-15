@@ -70,6 +70,7 @@ export function FilaSalida({
             destino={salida.destino}
             estilo={estilos.miniatura}
             radio="loseta"
+            variante={salida.viajeId}
           />
         ) : (
           <Loseta>
