@@ -1141,6 +1141,14 @@ export const textos = {
     sinMapa:
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
+  plano: {
+    abordo: 'Asiento {n}, {nombre}, ya subió',
+    libre: 'Asiento {n}, libre',
+    lista: 'Lista',
+    plano: 'Plano',
+    reservado: 'Asiento {n}, reservado por {nombre}',
+    titulo: 'Plano del bus',
+  },
   llenado: {
     accesible: '{vendidos} de {total} asientos vendidos',
     falta1: 'Falta 1 para que salga.',
