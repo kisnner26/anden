@@ -24,6 +24,7 @@ import { ActividadIA } from '@/componentes/ActividadIA';
 import { CompositorIA } from '@/componentes/CompositorIA';
 import { FichaCiudadIA } from '@/componentes/FichaCiudadIA';
 import { FotoDestino } from '@/componentes/FotoDestino';
+import { GaleriaLugares } from '@/componentes/GaleriaLugares';
 import { TarjetaSalidaIA } from '@/componentes/TarjetaSalidaIA';
 import { Chip } from '@/componentes/Chip';
 import { Interruptor } from '@/componentes/Interruptor';
@@ -84,6 +85,7 @@ import {
   leerVozEnLinea,
 } from '@/servicios/voz';
 import { coloresIA } from '@/tema/colores';
+import { lugaresParaPregunta } from '@/datos/lugaresTuristicos';
 import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -944,6 +946,9 @@ export function Asistente({
                     salidas,
                     ahora,
                   );
+              const lugares = intercambio.enCurso
+                ? []
+                : lugaresParaPregunta(intercambio.pregunta);
               return (
                 <View key={intercambio.id} style={estilos.intercambio}>
                   <View
@@ -1000,6 +1005,11 @@ export function Asistente({
                     </Bloque>
                   </SurgeDelOrbe>
 
+                  {lugares.length > 0 ? (
+                    <Aparece>
+                      <GaleriaLugares lugares={lugares} />
+                    </Aparece>
+                  ) : null}
                   {rica?.ciudad ? (
                     <Aparece>
                       <FichaCiudadIA ciudad={rica.ciudad} />
