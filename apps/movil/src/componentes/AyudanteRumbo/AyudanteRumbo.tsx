@@ -23,6 +23,8 @@ import { escucharSenales, type SenalDeAyuda } from '@/datos/senalesDeAyuda';
 import { useBoletos } from '@/datos/useBoletos';
 import { useConexion } from '@/datos/useConexion';
 import { useIA } from '@/datos/useIA';
+import { useSuscripcion } from '@/datos/useSuscripcion';
+import { rumboUsaIA } from '@/servicios/beneficios';
 import { useMascota } from '@/datos/useMascota';
 import { useSalidas } from '@/datos/useSalidas';
 import { useSonidos } from '@/datos/useSonidos';
@@ -56,6 +58,7 @@ export function AyudanteRumbo() {
   const reducido = useMovimientoReducido();
   const sonar = useSonidos();
   const ia = useIA();
+  const { plus } = useSuscripcion();
   const { enLinea } = useConexion();
   const { boletos } = useBoletos();
   const { ahora, salidas } = useSalidas();
@@ -158,7 +161,7 @@ export function AyudanteRumbo() {
     sonar('mascotaHola');
     establecerTexto(ayudaPorDefecto(motivo.current));
     establecerFase('ayuda');
-    if (!ia.usable) return;
+    if (!ia.usable || !rumboUsaIA(plus)) return;
     try {
       const respuesta = await ia.preguntar(
         instruccionesDeRumbo(armarContexto(salidas, boletos, ahora)),
