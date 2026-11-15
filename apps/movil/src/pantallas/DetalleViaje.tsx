@@ -47,6 +47,8 @@ export interface PropiedadesDetalleViaje {
   /** abre el asistente con una pregunta sobre este viaje; solo se ofrece si la IA está lista */
   alPreguntar?: (pregunta: string) => void;
   alElegirAsiento: (viajeId: string) => void;
+  /** abre la pantalla para armar un grupo con enlace; sin esta función no se ofrece */
+  alArmarGrupo?: (viajeId: string) => void;
   alVerChofer: (choferId: string) => void;
   alVolver: () => void;
   viajeId: string;
@@ -54,6 +56,7 @@ export interface PropiedadesDetalleViaje {
 
 /** el viaje completo: horas, unidad con su placa, chofer, recorrido y la tarifa antes de elegir asiento */
 export function DetalleViaje({
+  alArmarGrupo,
   alElegirAsiento,
   alPreguntar,
   alVerChofer,
@@ -359,6 +362,18 @@ export function DetalleViaje({
           <LineaRuta paradas={detalle.paradas} />
         </Bloque>
         <BarraDeLlenado salida={salida} />
+        {alArmarGrupo && salida.ventaAbierta && salida.asientosLibres >= 2 ? (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => alArmarGrupo(salida.viajeId)}
+          >
+            <Bloque estiloContenido={estilos.grupo} radio="pildora">
+              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                {t('grupo.botonDetalle')}
+              </Text>
+            </Bloque>
+          </Pressable>
+        ) : null}
         <PuntoDeEncuentro codigo={salida.puntoEncuentro} />
         {turista && (
           <ResumenIA
@@ -427,6 +442,7 @@ export function DetalleViaje({
 }
 
 const estilos = StyleSheet.create({
+  grupo: { alignItems: 'center', padding: espacios.dieciseis },
   fotoCiudad: { height: 150 },
   preguntar: {
     alignItems: 'center',

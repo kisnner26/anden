@@ -9,6 +9,9 @@ export default function RutaDetalleViaje() {
 
   return (
     <DetalleViaje
+      alArmarGrupo={() =>
+        router.push({ params: { id: viajeId }, pathname: '/viaje/[id]/grupo' })
+      }
       alElegirAsiento={() =>
         router.push({
           params: { id: viajeId },
