@@ -23,6 +23,11 @@ import { useCierres } from '@/datos/useCierres';
 import { useSesion } from '@/datos/useSesion';
 import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
 import { useViajesEnVivo } from '@/datos/useTransmision';
+import {
+  MOTIVOS_CANCELACION,
+  type MotivoCancelacion,
+} from '@/datos/motivoCancelacion';
+import { conAlfa } from '@/tema/alfa';
 import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -65,14 +70,22 @@ export function ConductorInicio({
       )
     : [];
   const [retirando, establecerRetirando] = useState<string | null>(null);
+  const [motivo, establecerMotivo] = useState<MotivoCancelacion | null>(null);
 
-  async function retirar(viajeId: string) {
-    const conPasajeros = obtenerMuestra().ocupaciones.some(
+  function hayPasajeros(viajeId: string): boolean {
+    return obtenerMuestra().ocupaciones.some(
       (ocupacion) =>
         ocupacion.viajeId === viajeId && ocupacion.estado === 'vendido',
     );
+  }
+
+  async function retirar(viajeId: string) {
+    const conPasajeros = hayPasajeros(viajeId);
     establecerRetirando(null);
-    if (await retirarViaje(viajeId, conPasajeros)) await sincronizarViajes();
+    const elegido = motivo ?? 'otro';
+    establecerMotivo(null);
+    if (await retirarViaje(viajeId, conPasajeros, elegido))
+      await sincronizarViajes();
   }
 
   return (
@@ -249,6 +262,44 @@ export function ConductorInicio({
                 </View>
               </Bloque>
             </Pressable>
+            {retirando === viaje.viajeId && hayPasajeros(viaje.viajeId) && (
+              <View style={estilos.motivos}>
+                <Text
+                  style={[tipografia.pequeno, { color: colores.tintaSuave }]}
+                >
+                  {t('nuevoViaje.motivoTitulo')}
+                </Text>
+                <View style={estilos.fichas}>
+                  {MOTIVOS_CANCELACION.map((clave) => (
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: motivo === clave }}
+                      key={clave}
+                      onPress={() => establecerMotivo(clave)}
+                      style={[
+                        estilos.ficha,
+                        {
+                          backgroundColor:
+                            motivo === clave
+                              ? conAlfa(colores.ambar, 0.2)
+                              : 'transparent',
+                          borderColor:
+                            motivo === clave
+                              ? colores.ambar
+                              : conAlfa(colores.tinta, 0.16),
+                        },
+                      ]}
+                    >
+                      <Text
+                        style={[tipografia.pequeno, { color: colores.tinta }]}
+                      >
+                        {t(`motivoCancelacion.${clave}`)}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
+              </View>
+            )}
             {!cierreDe(viaje.viajeId) && (
               <Pressable
                 accessibilityRole="button"
@@ -298,6 +349,14 @@ const estilos = StyleSheet.create({
     flexDirection: 'row',
     gap: espacios.doce,
   },
+  fichas: { flexDirection: 'row', flexWrap: 'wrap', gap: espacios.ocho },
+  ficha: {
+    borderRadius: 999,
+    borderWidth: 1,
+    paddingHorizontal: espacios.doce,
+    paddingVertical: espacios.ocho,
+  },
+  motivos: { gap: espacios.ocho, paddingHorizontal: espacios.doce },
   retirar: {
     justifyContent: 'center',
     minHeight: tamanosControl.toqueMinimo,
