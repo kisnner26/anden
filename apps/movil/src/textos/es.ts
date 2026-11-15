@@ -1151,6 +1151,13 @@ export const textos = {
     sinMapa:
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
+  cielo: {
+    amanecer: 'amaneciendo',
+    atardecer: 'al atardecer',
+    dia: 'de día',
+    frase: 'Sale {salida} y llega {llegada}.',
+    noche: 'de noche',
+  },
   grupo: {
     cupo: 'Cuántos van',
     crear: 'Reservar en grupo',

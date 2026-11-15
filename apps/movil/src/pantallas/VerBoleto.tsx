@@ -41,6 +41,8 @@ import { esMotivoCancelacion } from '@/datos/motivoCancelacion';
 import { enVentanaDeLlamada } from '@/datos/comunicacion';
 import { useAvisoDelViaje } from '@/datos/useAvisosDelViaje';
 import { useLlamar } from '@/datos/useLlamar';
+import { CieloDelTrayecto } from '@/componentes/CieloDelTrayecto';
+import { datosDelCielo } from '@/datos/cieloDelBoleto';
 import { ObjetosDelViaje } from '@/componentes/ObjetosDelViaje';
 import { useObjetosDelViaje } from '@/datos/useObjetosDelViaje';
 import type { MinutosAntes } from '@/datos/recordatorios';
@@ -205,6 +207,9 @@ export function VerBoleto({
     : null;
   const motivoCancelado = esMotivoCancelacion(motivoGuardado)
     ? motivoGuardado
+    : null;
+  const cielo = guardado
+    ? datosDelCielo(guardado, obtenerMuestra().terminales)
     : null;
   const avisoDelChofer = useAvisoDelViaje(guardado?.boleto.viajeId ?? null);
   const objetosDelChofer = useObjetosDelViaje(guardado?.boleto.viajeId ?? null);
@@ -396,6 +401,14 @@ export function VerBoleto({
             <TalonBoleto guardado={guardado} />
           </TalonRasgado>
         </TalonAmpliable>
+
+        {puedeOperar && cielo ? (
+          <CieloDelTrayecto
+            duracionMin={cielo.duracionMin}
+            lugar={cielo.lugar}
+            salida={new Date(guardado.resumen.salida)}
+          />
+        ) : null}
         {(estado === 'usado' || estado === 'vencido') && (
           <CalificarViaje guardado={guardado} />
         )}
