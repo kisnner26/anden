@@ -48,6 +48,10 @@ export interface PropiedadesAjustes {
   /** se llama al cerrar la sesión, para volver al ingreso */
   alSalir?: () => void;
   alAbrirPerfil?: () => void;
+  /** el pasaporte de viajes */
+  alAbrirPasaporte?: () => void;
+  /** el resumen del año: solo se ofrece a fin de año */
+  alAbrirResumen?: () => void;
   alAbrirPlus?: () => void;
   /** con sesión de conductor, abre su perfil: es la primera opción */
   alAbrirPerfilConductor?: () => void;
@@ -101,6 +105,8 @@ const OPCIONES: readonly {
 export function Ajustes({
   alSalir,
   alAbrirPerfil,
+  alAbrirPasaporte,
+  alAbrirResumen,
   alAbrirPlus,
   alAbrirPerfilConductor,
   alVolver,
@@ -266,6 +272,42 @@ export function Ajustes({
               <Icono nombre="siguiente" tamano="mediano" />
             </Bloque>
           </Pressable>
+          {alAbrirPasaporte && (
+            <Pressable
+              accessibilityRole="button"
+              onPress={alAbrirPasaporte}
+              testID="ajustes-pasaporte"
+            >
+              <Bloque estiloContenido={estilos.filaOpcion}>
+                <View style={estilos.texto}>
+                  <Text
+                    style={[tipografia.subtitulo, { color: colores.tinta }]}
+                  >
+                    {t('pasaporte.titulo')}
+                  </Text>
+                </View>
+                <Icono nombre="siguiente" tamano="mediano" />
+              </Bloque>
+            </Pressable>
+          )}
+          {alAbrirResumen && new Date().getMonth() === 11 && (
+            <Pressable
+              accessibilityRole="button"
+              onPress={alAbrirResumen}
+              testID="ajustes-resumen"
+            >
+              <Bloque estiloContenido={estilos.filaOpcion}>
+                <View style={estilos.texto}>
+                  <Text
+                    style={[tipografia.subtitulo, { color: colores.tinta }]}
+                  >
+                    {t('resumenAnual.titulo')}
+                  </Text>
+                </View>
+                <Icono nombre="siguiente" tamano="mediano" />
+              </Bloque>
+            </Pressable>
+          )}
         </>
       )}
 

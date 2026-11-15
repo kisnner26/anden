@@ -8,6 +8,8 @@ export default function RutaAjustes() {
     <Ajustes
       alSalir={() => router.replace('/ingresar')}
       alAbrirPlus={() => router.push('/plus')}
+      alAbrirPasaporte={() => router.push('/pasaporte')}
+      alAbrirResumen={() => router.push('/resumen-anual')}
       alAbrirPerfil={() => router.push('/perfil')}
       alAbrirPerfilConductor={() => router.push('/conductor/perfil')}
       alVolver={() => router.back()}
