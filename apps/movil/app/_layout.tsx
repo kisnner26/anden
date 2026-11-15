@@ -39,6 +39,7 @@ import { ProveedorSesion } from '@/datos/ProveedorSesion';
 import { ProveedorConexion } from '@/datos/ProveedorConexion';
 import { ProveedorViajes } from '@/datos/ProveedorViajes';
 import { AvisoConexion } from '@/componentes/AvisoConexion';
+import { BarraDeEstado } from '@/componentes/BarraDeEstado';
 import { AyudanteRumbo, VigiaDeToques } from '@/componentes/AyudanteRumbo';
 import { ProveedorRecordatorios } from '@/datos/ProveedorRecordatorios';
 import { ProveedorPerfil } from '@/datos/ProveedorPerfil';
@@ -101,6 +102,7 @@ export default function DisenoRaiz() {
                                                       <ProveedorEncomiendas>
                                                         <ProveedorSeguridad>
                                                           <GuardiaDeSesion />
+                                                          <BarraDeEstado />
                                                           <AvisoConexion />
                                                           <AyudanteRumbo />
                                                           <VigiaDeToques>
