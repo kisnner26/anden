@@ -709,6 +709,10 @@ export const textos = {
       'Sigue tu boleto fuera de la app con la cuenta regresiva y el camino de salida. Apagalo y deja de ofrecerse.',
     noDisponible: 'Este teléfono no ofrece actividades en vivo.',
   },
+  campo: {
+    mostrarClave: 'Mostrar la contraseña',
+    ocultarClave: 'Ocultar la contraseña',
+  },
   inicioAutomatico: {
     seccion: 'Inicio',
     titulo: 'Inicio automático',
