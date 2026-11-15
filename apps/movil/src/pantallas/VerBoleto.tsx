@@ -41,6 +41,8 @@ import { esMotivoCancelacion } from '@/datos/motivoCancelacion';
 import { enVentanaDeLlamada } from '@/datos/comunicacion';
 import { useAvisoDelViaje } from '@/datos/useAvisosDelViaje';
 import { useLlamar } from '@/datos/useLlamar';
+import { ObjetosDelViaje } from '@/componentes/ObjetosDelViaje';
+import { useObjetosDelViaje } from '@/datos/useObjetosDelViaje';
 import type { MinutosAntes } from '@/datos/recordatorios';
 import type { Salida } from '@/datos/salidas';
 import { useRecordatorios } from '@/datos/useRecordatorios';
@@ -205,6 +207,7 @@ export function VerBoleto({
     ? motivoGuardado
     : null;
   const avisoDelChofer = useAvisoDelViaje(guardado?.boleto.viajeId ?? null);
+  const objetosDelChofer = useObjetosDelViaje(guardado?.boleto.viajeId ?? null);
 
   // mientras la actividad en vivo está abierta, sigue el estado del viaje: cambia de color y de texto sola
   useEffect(() => {
@@ -650,6 +653,11 @@ export function VerBoleto({
             ) : null}
           </View>
         )}
+
+        <ObjetosDelViaje
+          alReclamar={objetosDelChofer.reclamar}
+          objetos={objetosDelChofer.objetos}
+        />
 
         {puedeOperar && avisoDelChofer ? (
           <Bloque estiloContenido={estilos.cancelado} testID="aviso-del-chofer">

@@ -24,6 +24,7 @@ import {
 } from '@/servicios/supabase/viajesSupabase';
 import { ControlSegmentado } from '@/componentes/ControlSegmentado';
 import { EscanerDeBoletos } from '@/componentes/EscanerDeBoletos';
+import { ReportarObjeto } from '@/componentes/ReportarObjeto';
 import {
   resultadoDeLectura,
   type ResultadoDeLectura,
@@ -119,6 +120,7 @@ export function ConductorViaje({
   const [fichaAbierta, establecerFichaAbierta] = useState<string | null>(null);
   const llamar = useLlamar();
   const [escaneando, establecerEscaneando] = useState(false);
+  const [reportandoObjeto, establecerReportandoObjeto] = useState(false);
   const [iniciando, establecerIniciando] = useState(false);
   const [yaSalio, establecerYaSalio] = useState(false);
   const [problema, establecerProblema] = useState<string | null>(null);
@@ -557,6 +559,21 @@ export function ConductorViaje({
             </Bloque>
           </Pressable>
         ) : null}
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => establecerReportandoObjeto(true)}
+        >
+          <Bloque estiloContenido={estilos.escanear} radio="pildora">
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+              {t('objetosEncontrados.reportar')}
+            </Text>
+          </Bloque>
+        </Pressable>
+        <ReportarObjeto
+          abierta={reportandoObjeto}
+          alCerrar={() => establecerReportandoObjeto(false)}
+          viajeId={viajeId}
+        />
         <EscanerDeBoletos
           alCerrar={() => establecerEscaneando(false)}
           alLeer={leerBoleto}
