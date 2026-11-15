@@ -927,7 +927,12 @@ export const textos = {
     limpiar: 'Quitar filtros',
   },
   asientos: {
+    conSol: 'le pega el sol',
+    derecha: 'derecho',
+    izquierda: 'izquierdo',
     juntoAlGrupo: 'junto a tu grupo',
+    ladoDelSol:
+      'En este viaje el sol pega por el lado {lado}. El lado {fresco} va más fresco. Los asientos con sol llevan una marca.',
     tituloInicio: 'Elegí tu',
     tituloResalte: 'asiento.',
     libre: 'Libre',

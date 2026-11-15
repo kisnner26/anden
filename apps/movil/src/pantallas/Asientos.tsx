@@ -18,6 +18,8 @@ import { disposicionPantalla, espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
 import { asientosJuntos } from '@/datos/grupo';
+import { rellenar } from '@/textos/rellenar';
+import { asientosDelLado, ladoDelSolEnViaje } from '@/datos/solEnViaje';
 import { useGrupo } from '@/datos/useGrupo';
 import { t } from '@/textos/t';
 
@@ -91,6 +93,26 @@ export function Asientos({
       )
     : [];
   const salida = salidas.find((candidata) => candidata.viajeId === viajeId);
+  // de qué lado pega el sol en este viaje, para elegir asiento con sombra o con sol
+  const solDelViaje = (() => {
+    if (!mapa || !salida) return null;
+    const origenCiudad = datos.terminales.find(
+      (x) => x.ciudad === salida.origen,
+    );
+    const destinoCiudad = datos.terminales.find(
+      (x) => x.ciudad === salida.destino,
+    );
+    if (!origenCiudad || !destinoCiudad) return null;
+    const lado = ladoDelSolEnViaje(
+      salida.salida,
+      origenCiudad.coordenadas,
+      destinoCiudad.coordenadas,
+    );
+    return lado === 'ninguno'
+      ? { lado, asientos: [] as number[] }
+      : { lado, asientos: asientosDelLado(mapa.configuracion, lado) };
+  })();
+  const soleados = solDelViaje?.asientos ?? [];
   const ruta = datos.rutas.find((candidata) => candidata.id === salida?.rutaId);
   const origen = datos.terminales.find(
     (terminal) => terminal.id === ruta?.origenId,
@@ -240,6 +262,28 @@ export function Asientos({
           </Text>
         )}
 
+        {solDelViaje && solDelViaje.lado !== 'ninguno' ? (
+          <Text
+            style={[
+              tipografia.pequeno,
+              estilos.aviso,
+              { color: colores.tintaSuave },
+            ]}
+            testID="aviso-del-sol"
+          >
+            {rellenar(t('asientos.ladoDelSol'), {
+              lado:
+                solDelViaje.lado === 'derecha'
+                  ? t('asientos.derecha')
+                  : t('asientos.izquierda'),
+              fresco:
+                solDelViaje.lado === 'derecha'
+                  ? t('asientos.izquierda')
+                  : t('asientos.derecha'),
+            })}
+          </Text>
+        ) : null}
+
         {seVencio && elegidos.length === 0 && (
           <Text
             accessibilityLiveRegion="polite"
@@ -259,6 +303,7 @@ export function Asientos({
             configuracion={mapa.configuracion}
             elegidos={elegidos}
             estados={mapa.estados}
+            soleados={soleados}
             sugeridos={sugeridos}
           />
         </View>

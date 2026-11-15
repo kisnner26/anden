@@ -6,6 +6,7 @@ import {
   type EstadoAsiento,
 } from '@anden/dominio';
 import { LinearGradient } from 'expo-linear-gradient';
+import Svg, { Circle, Line } from 'react-native-svg';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   Animated,
@@ -41,6 +42,8 @@ export interface PropiedadesMapaAsientos {
   estados: ReadonlyMap<number, EstadoAsiento>;
   /** asientos libres que quedan junto a los del grupo: se marcan con un borde ámbar */
   sugeridos?: readonly number[];
+  /** asientos del lado donde pega el sol: llevan una marca de sol y se sienten más calientes */
+  soleados?: readonly number[];
 }
 
 const LADO = 38;
@@ -178,6 +181,7 @@ export function MapaAsientos({
   elegidos,
   estados,
   sugeridos = [],
+  soleados = [],
 }: PropiedadesMapaAsientos) {
   const { colores } = useTema();
   const sentir = useSensaciones();
@@ -292,10 +296,11 @@ export function MapaAsientos({
               const elegido = elegidos.includes(asiento.numero);
               const ocupado = estado !== 'libre';
               const sugerido = !elegido && sugeridos.includes(asiento.numero);
+              const conSol = !ocupado && soleados.includes(asiento.numero);
 
               return (
                 <Pressable
-                  accessibilityLabel={`${etiquetaDe(asiento, estado, elegido)}${sugerido ? `, ${t('asientos.juntoAlGrupo')}` : ''}`}
+                  accessibilityLabel={`${etiquetaDe(asiento, estado, elegido)}${sugerido ? `, ${t('asientos.juntoAlGrupo')}` : ''}${conSol ? `, ${t('asientos.conSol')}` : ''}`}
                   accessibilityRole="button"
                   accessibilityState={{ disabled: ocupado, selected: elegido }}
                   disabled={ocupado}
@@ -371,6 +376,26 @@ export function MapaAsientos({
                       </Bloque>
                     )}
                   </AsientoQueSalta>
+                  {conSol ? (
+                    <View pointerEvents="none" style={estilos.sol}>
+                      <Svg height={11} viewBox="0 0 12 12" width={11}>
+                        <Circle cx={6} cy={6} fill={colores.ambar} r={2.6} />
+                        {[0, 45, 90, 135, 180, 225, 270, 315].map((g) => (
+                          <Line
+                            key={g}
+                            stroke={colores.ambar}
+                            strokeLinecap="round"
+                            strokeWidth={1.2}
+                            transform={`rotate(${g} 6 6)`}
+                            x1={6}
+                            x2={6}
+                            y1={0.8}
+                            y2={2.2}
+                          />
+                        ))}
+                      </Svg>
+                    </View>
+                  ) : null}
                 </Pressable>
               );
             })}
@@ -397,6 +422,7 @@ const estilos = StyleSheet.create({
     width: LADO,
   },
   fila: { flexDirection: 'row', gap: SEPARACION },
+  sol: { position: 'absolute', right: -2, top: -3 },
   puerta: {
     alignItems: 'center',
     borderLeftWidth: 2,

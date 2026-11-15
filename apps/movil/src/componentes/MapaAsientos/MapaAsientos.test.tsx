@@ -129,4 +129,19 @@ describe('MapaAsientos', () => {
       pantalla.getByLabelText(/^Asiento 5,.*junto a tu grupo/),
     ).toBeTruthy();
   });
+
+  it('los asientos del lado del sol lo dicen y los ocupados no', async () => {
+    const pantalla = await render(
+      <MapaAsientos
+        alElegir={() => undefined}
+        configuracion="coaster26"
+        elegidos={[]}
+        estados={ESTADOS}
+        soleados={[2, 3]}
+      />,
+    );
+    // el 2 está vendido: no se marca; el 3 sí
+    expect(pantalla.getAllByLabelText(/le pega el sol/)).toHaveLength(1);
+    expect(pantalla.getByLabelText(/^Asiento 3,.*le pega el sol/)).toBeTruthy();
+  });
 });

@@ -154,4 +154,22 @@ describe('Asientos', () => {
       jest.useRealTimers();
     }
   });
+
+  it('si el sol pega de un lado lo avisa y marca esos asientos', async () => {
+    // salida de muestra de Managua a Boaco: se fija a primera hora de la mañana
+    const datos = obtenerMuestra();
+    const viaje = datos.viajes.find((v) => v.id === VIAJE_BOACO)!;
+    viaje.salida = new Date('2026-11-15T13:00:00Z').toISOString();
+    const pantalla = await renderPantalla(
+      <Asientos
+        alSeguir={() => undefined}
+        alVolver={() => undefined}
+        viajeId={VIAJE_BOACO}
+      />,
+    );
+    expect(pantalla.getByTestId('aviso-del-sol')).toBeTruthy();
+    expect(pantalla.getAllByLabelText(/le pega el sol/).length).toBeGreaterThan(
+      0,
+    );
+  });
 });
