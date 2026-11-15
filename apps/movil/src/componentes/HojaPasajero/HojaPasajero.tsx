@@ -31,7 +31,12 @@ function Dato({ etiqueta, valor }: { etiqueta: string; valor: string }) {
       <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
         {etiqueta}
       </Text>
-      <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+      <Text
+        adjustsFontSizeToFit
+        minimumFontScale={0.7}
+        numberOfLines={1}
+        style={[tipografia.subtitulo, { color: colores.tinta }]}
+      >
         {valor}
       </Text>
     </View>
@@ -154,6 +159,9 @@ export function HojaPasajero({
               ]}
             >
               <Text
+                adjustsFontSizeToFit
+                minimumFontScale={0.75}
+                numberOfLines={1}
                 style={[
                   tipografia.subtitulo,
                   { color: abordo ? colores.sobreNegro : colores.tinta },
@@ -179,6 +187,9 @@ export function HojaPasajero({
               ]}
             >
               <Text
+                adjustsFontSizeToFit
+                minimumFontScale={0.75}
+                numberOfLines={1}
                 style={[
                   tipografia.subtitulo,
                   { color: pagado ? colores.sobreNegro : colores.tinta },
@@ -217,7 +228,7 @@ const estilos = StyleSheet.create({
     flexWrap: 'wrap',
     gap: espacios.dieciseis,
   },
-  dato: { gap: 2, minWidth: '44%' },
+  dato: { gap: 2, width: '46%' },
   sello: {
     alignItems: 'center',
     alignSelf: 'flex-start',

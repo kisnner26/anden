@@ -39,7 +39,7 @@ export function PanelDeslizable({
   const { colores } = useTema();
   const reducido = useMovimientoReducido();
   const total = alturas[2];
-  const [posicion, establecerPosicion] = useState<0 | 1 | 2>(0);
+  const [, establecerPosicion] = useState<0 | 1 | 2>(0);
   const desplazamiento = (i: 0 | 1 | 2) => total - alturas[i];
   const ty = useRef(new Animated.Value(desplazamiento(0))).current;
   const actual = useRef(desplazamiento(0));
@@ -118,10 +118,10 @@ export function PanelDeslizable({
       <ScrollView
         contentContainerStyle={[
           estilos.contenido,
-          { paddingBottom: espacioFinal + espacios.veinticuatro },
+          { paddingBottom: espacioFinal + espacios.cuarentaYOcho },
         ]}
         nestedScrollEnabled
-        scrollEnabled={posicion === 2}
+        scrollEnabled
         showsVerticalScrollIndicator={false}
         testID="panel-contenido"
       >
