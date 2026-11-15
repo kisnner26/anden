@@ -150,11 +150,20 @@ describe('viajes cancelados', () => {
     expect(viajeCancelado('via_a')).toBe(false);
   });
 
-  it('un viaje que ya salió deja la lista de los que esperan pasajeros', () => {
+  it('un viaje que el conductor ya inició se queda con su hora real, para que el boleto pase a en ruta', () => {
     const datos = crearBase();
-    const salido = { ...PUBLICADOS.viajes[0]!, salio_en: SALIDA };
+    const real = new Date(AHORA.getTime() - 5 * 60_000).toISOString();
+    const salido = { ...PUBLICADOS.viajes[0]!, salio_en: real };
     aplicarViajesPublicados(datos, { ...PUBLICADOS, viajes: [salido] });
-    expect(datos.viajes).toHaveLength(0);
+    expect(datos.viajes).toHaveLength(1);
+    expect(datos.viajes[0]?.salida).toBe(real);
+  });
+
+  it('un viaje que el conductor cerró al llegar queda como llegó', () => {
+    const datos = crearBase();
+    const cerrado = { ...PUBLICADOS.viajes[0]!, estado: 'llego' };
+    aplicarViajesPublicados(datos, { ...PUBLICADOS, viajes: [cerrado] });
+    expect(datos.viajes[0]?.estado).toBe('llego');
   });
 });
 

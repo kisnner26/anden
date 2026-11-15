@@ -27,6 +27,16 @@ const viaje: Viaje = {
 };
 
 describe('estadoViaje', () => {
+  it('un viaje que el conductor cerró llegó aunque falte tiempo según la estimación', () => {
+    expect(
+      estadoViaje(
+        { ...viaje, estado: 'llego' },
+        ruta,
+        new Date('2026-11-02T14:10:00-06:00'),
+      ),
+    ).toBe('llego');
+  });
+
   it('entra a abordando exactamente veinte minutos antes', () => {
     expect(
       estadoViaje(viaje, ruta, new Date('2026-11-02T13:40:00-06:00')),
