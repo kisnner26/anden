@@ -99,7 +99,8 @@ export function CampoTexto({
 const estilos = StyleSheet.create({
   caja: { paddingHorizontal: espacios.dieciseis },
   contenedor: { gap: espacios.ocho },
-  entrada: { flex: 1, minHeight: 56, paddingVertical: espacios.dieciseis },
+  // altura fija y sin relleno vertical: así el texto y el ejemplo quedan centrados, uno igual al otro
+  entrada: { flex: 1, height: 56, paddingVertical: 0 },
   fila: { alignItems: 'center', flexDirection: 'row', gap: espacios.ocho },
   ojo: {
     alignItems: 'center',

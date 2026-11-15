@@ -97,7 +97,7 @@ export function BarraPreguntaIA({
 
 const estilos = StyleSheet.create({
   contenedor: { gap: espacios.ocho },
-  entrada: { flex: 1, minHeight: 52, paddingVertical: espacios.doce },
+  entrada: { flex: 1, height: 52, paddingVertical: 0 },
   fila: {
     alignItems: 'center',
     flexDirection: 'row',

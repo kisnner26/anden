@@ -186,7 +186,7 @@ const estilos = StyleSheet.create({
     width: tamanosControl.toqueMinimo,
   },
   contenedor: { gap: espacios.ocho },
-  entrada: { flex: 1, minHeight: tamanosControl.toqueMinimo },
+  entrada: { flex: 1, height: tamanosControl.toqueMinimo, paddingVertical: 0 },
   opcion: {
     alignItems: 'center',
     flexDirection: 'row',

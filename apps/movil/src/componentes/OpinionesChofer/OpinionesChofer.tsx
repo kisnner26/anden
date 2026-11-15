@@ -21,7 +21,7 @@ import {
   type Opinion,
 } from '@/datos/opiniones';
 import { useBoletos } from '@/datos/useBoletos';
-import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
+import { obtenerMuestra, useAhora, useSalidas } from '@/datos/useSalidas';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -44,6 +44,7 @@ export function OpinionesChofer({
 }: PropiedadesOpinionesChofer) {
   const { colores } = useTema();
   const { boletos } = useBoletos();
+  const { salidas } = useSalidas();
   const ahora = useAhora();
   const [todas, establecerTodas] = useState<Opinion[]>([]);
   const [estrellas, establecerEstrellas] = useState(0);
@@ -60,7 +61,11 @@ export function OpinionesChofer({
   const propias = opinionesDe(todas, choferId);
   const boletoId = boletoParaOpinar(
     boletos.map(({ boleto }) => boleto),
-    obtenerMuestra().viajes,
+    // el estado de cada viaje sale de las salidas: llegó si ya terminó o si el conductor lo cerró
+    obtenerMuestra().viajes.map((viaje) => ({
+      ...viaje,
+      estado: salidas.find((s) => s.viajeId === viaje.id)?.estado,
+    })),
     choferId,
     todas,
     ahora,
