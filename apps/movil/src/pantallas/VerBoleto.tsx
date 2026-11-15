@@ -42,6 +42,10 @@ import { enVentanaDeLlamada } from '@/datos/comunicacion';
 import { useAvisoDelViaje } from '@/datos/useAvisosDelViaje';
 import { useLlamar } from '@/datos/useLlamar';
 import { CieloDelTrayecto } from '@/componentes/CieloDelTrayecto';
+import { PlanDelViaje } from '@/componentes/PlanDelViaje';
+import { distanciaM } from '@/datos/geometria';
+import { planDelViaje } from '@/datos/planViaje';
+import { obtenerUbicacionActual } from '@/datos/ubicacion';
 import { datosDelCielo } from '@/datos/cieloDelBoleto';
 import { ObjetosDelViaje } from '@/componentes/ObjetosDelViaje';
 import { useObjetosDelViaje } from '@/datos/useObjetosDelViaje';
@@ -122,6 +126,9 @@ export function VerBoleto({
   const [pasandoA, establecerPasandoA] = useState<string | null>(null);
   const [falloReubicar, establecerFalloReubicar] = useState(false);
   const llamar = useLlamar();
+  const [metrosACasa, establecerMetrosACasa] = useState<number | null>(null);
+  const [calculandoCasa, establecerCalculandoCasa] = useState(false);
+  const [falloUbicacion, establecerFalloUbicacion] = useState(false);
   const recordatorios = useRecordatorios();
   const [actividadDisponible, establecerActividadDisponible] = useState(false);
   const [actividadId, establecerActividadId] = useState<string | null>(null);
@@ -145,6 +152,19 @@ export function VerBoleto({
     };
   }, []);
   const { salidas } = useSalidas();
+  /** pide la ubicación una sola vez, tras tocar el botón, para calcular cuánto hay de tu casa a la terminal */
+  async function calcularDeCasa(terminal: { lat: number; lng: number }) {
+    establecerCalculandoCasa(true);
+    establecerFalloUbicacion(false);
+    const resultado = await obtenerUbicacionActual();
+    establecerCalculandoCasa(false);
+    if (resultado.estado !== 'otorgado') {
+      establecerFalloUbicacion(true);
+      return;
+    }
+    establecerMetrosACasa(distanciaM(resultado.punto, terminal));
+  }
+
   async function pasarmeA(destino: Salida) {
     if (!guardado || pasandoA) return;
     establecerPasandoA(destino.viajeId);
@@ -401,6 +421,20 @@ export function VerBoleto({
             <TalonBoleto guardado={guardado} />
           </TalonRasgado>
         </TalonAmpliable>
+
+        {puedeOperar && cielo ? (
+          <PlanDelViaje
+            ahora={ahora}
+            alCalcularDeCasa={() => void calcularDeCasa(cielo.lugar)}
+            calculando={calculandoCasa}
+            fallo={falloUbicacion}
+            pasos={planDelViaje(
+              new Date(guardado.resumen.salida),
+              cielo.duracionMin,
+              metrosACasa,
+            )}
+          />
+        ) : null}
 
         {puedeOperar && cielo ? (
           <CieloDelTrayecto

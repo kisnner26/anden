@@ -482,6 +482,15 @@ describe('VerBoleto', () => {
   });
 });
 
+describe('VerBoleto: plan del viaje y cielo', () => {
+  it('muestra los pasos del día de viaje y el cielo del trayecto', async () => {
+    const pantalla = await dibujar();
+    expect(await pantalla.findByTestId('plan-del-viaje')).toBeTruthy();
+    expect(pantalla.getByText('Sale el bus')).toBeTruthy();
+    expect(pantalla.getByTestId('cielo-del-trayecto')).toBeTruthy();
+  });
+});
+
 describe('VerBoleto: llamar al chofer', () => {
   it('se puede llamar cuando el viaje está por salir', async () => {
     const pantalla = await dibujar();

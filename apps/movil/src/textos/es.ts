@@ -1151,6 +1151,18 @@ export const textos = {
     sinMapa:
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
+  plan: {
+    anden: 'Estar en el punto de encuentro',
+    calcular: 'Calcular cuándo salir de casa',
+    calculando: 'Calculando…',
+    casa: 'Salir de casa',
+    llegada: 'Llegada estimada',
+    salida: 'Sale el bus',
+    siguiente: 'el siguiente paso',
+    sinUbicacion:
+      'No pude leer tu ubicación. Prendela y dame el permiso en Ajustes del teléfono.',
+    titulo: 'Tu día de viaje',
+  },
   red: {
     accesible:
       'Hacia {ciudad}: próximo bus a las {hora}, {libres} asientos libres',
