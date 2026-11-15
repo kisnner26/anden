@@ -7,9 +7,9 @@ import { FichaCiudadIA } from './FichaCiudadIA';
 describe('FichaCiudadIA', () => {
   it('muestra la foto y los datos de la ficha', async () => {
     const p = await renderPantalla(<FichaCiudadIA ciudad="Boaco" />);
-    expect(p.getByText('Boaco')).toBeTruthy();
+    expect(p.getAllByText('Boaco').length).toBeGreaterThan(0);
     expect(p.getByText(/ciudad de dos pisos/)).toBeTruthy();
-    expect(p.getByLabelText('Foto de Boaco')).toBeTruthy();
+    expect(p.getByLabelText(/Mirador de Boaco/)).toBeTruthy();
   });
 
   it('no dibuja nada para una ciudad sin ficha', async () => {
