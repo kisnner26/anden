@@ -16,6 +16,7 @@ export interface ValorBoletos {
   reservar: (
     viajeId: string,
     pasajeros: readonly PasajeroReserva[],
+    grupo?: string,
   ) => Promise<Resultado<BoletoGuardado[], ErrorReserva>>;
 }
 

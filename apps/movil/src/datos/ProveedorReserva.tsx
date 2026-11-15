@@ -9,8 +9,12 @@ export function ProveedorReserva({ children }: { children: ReactNode }) {
     useState<BorradorReserva | null>(null);
 
   const establecerBorrador = useCallback(
-    (viajeId: string, pasajeros: PasajeroReserva[]) =>
-      establecerBorradorInterno({ pasajeros, viajeId }),
+    (viajeId: string, pasajeros: PasajeroReserva[], grupo?: string) =>
+      establecerBorradorInterno({
+        ...(grupo ? { grupo } : {}),
+        pasajeros,
+        viajeId,
+      }),
     [],
   );
   const limpiar = useCallback(() => establecerBorradorInterno(null), []);

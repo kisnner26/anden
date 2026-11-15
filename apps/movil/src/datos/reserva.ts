@@ -40,6 +40,8 @@ export interface ResumenBoleto {
   /** el boleto es para otra persona, no para quien lo compró */
   paraOtro?: boolean;
   placa: string;
+  /** el código del grupo con el que se reservó; lo usa el servidor para armar el avance del grupo */
+  grupo?: string;
   /** la persona que reservó tiene Plus: el conductor ve su sello y su vehículo */
   plus?: boolean;
   salida: string;
@@ -77,7 +79,7 @@ export function crearReserva(
   pasajeros: readonly PasajeroReserva[],
   ahora: Date,
   aleatorio: () => number,
-  persona: { plus: boolean; unidad: string | null } = {
+  persona: { grupo?: string; plus: boolean; unidad: string | null } = {
     plus: false,
     unidad: null,
   },
@@ -137,6 +139,7 @@ export function crearReserva(
     metodoPago: 'efectivo-al-abordar',
     origen: origen.nombre,
     placa: bus.placa,
+    ...(persona.grupo ? { grupo: persona.grupo } : {}),
     ...(persona.plus
       ? {
           plus: true,

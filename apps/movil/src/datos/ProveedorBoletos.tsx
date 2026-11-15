@@ -124,7 +124,7 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
   );
 
   const reservar = useCallback<ValorBoletos['reservar']>(
-    async (viajeId, pasajeros) => {
+    async (viajeId, pasajeros, grupo) => {
       // antes de vender se mira lo que ya vendieron los demás teléfonos
       await sincronizarAsientos(viajeId);
       const resultado = crearReserva(
@@ -133,7 +133,7 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
         pasajeros,
         new Date(),
         Math.random,
-        { plus, unidad: efectivo },
+        { grupo, plus, unidad: efectivo },
       );
       if (!resultado.ok) return resultado;
       // el servidor es quien decide si el asiento sigue libre: si otro lo vendió justo antes, no se reserva
