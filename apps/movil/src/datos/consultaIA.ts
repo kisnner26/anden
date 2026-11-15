@@ -4,6 +4,7 @@ import type { Encomienda } from './encomiendas';
 import { formatoFechaCorta, formatoHoraCompleta } from './formato';
 import { formatoDiasSemana } from './formato';
 import type { Habitual } from './habituales';
+import { hechosDeLugares, lugaresParaPregunta } from './lugaresTuristicos';
 import { agruparPorDestino } from './historialViajes';
 import type { BoletoGuardado } from './reserva';
 import type { Salida } from './salidas';
@@ -325,7 +326,7 @@ export function entenderPregunta(
     intenciones.add('encomienda');
   }
   if (
-    /\b(visitar|conocer|turista|turismo|que hacer|comer|lugares)\b/.test(texto)
+    /\b(visitar|conocer|turista|turismo|turistic\w*|que hacer|que ver|comer|lugares|sitios|fotos?|imagenes)\b/.test(texto)
   ) {
     intenciones.add('visitar');
   }
@@ -426,6 +427,7 @@ export function hechosParaPregunta(
       ...datos.encomiendas,
     );
   }
+  hechos.push(...hechosDeLugares(lugaresParaPregunta(pregunta).slice(0, 6)));
   return hechos;
 }
 
