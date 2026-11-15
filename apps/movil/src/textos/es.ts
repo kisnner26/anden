@@ -246,6 +246,7 @@ export const textos = {
     titulo: 'Boletos',
     detalle:
       'Lo vendido en cada viaje, con quién compró, lo que ya ganaste y lo que falta cobrar.',
+    sinVentas: 'Sin boletos vendidos',
     vendidos: 'Vendidos',
     ganado: 'Ganado',
     porCobrar: 'Por cobrar',
@@ -1153,6 +1154,7 @@ export const textos = {
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
   eje: {
+    masViajes: 'y {n} más',
     cerrado: 'ya cerró',
     choque: 'choca con otro viaje de la misma unidad',
     enVivo: 'en vivo',
@@ -1171,13 +1173,6 @@ export const textos = {
       'No pude leer tu ubicación. Prendela y dame el permiso en Ajustes del teléfono.',
     titulo: 'Tu día de viaje',
   },
-  red: {
-    accesible:
-      'Hacia {ciudad}: próximo bus a las {hora}, {libres} asientos libres',
-    nada: 'sin buses',
-    sinSalidas: 'Hacia {ciudad}: sin salidas por ahora',
-    titulo: 'La red, en vivo',
-  },
   brujula: {
     ayuda:
       'La flecha apunta al punto de encuentro. Girá hasta que quede hacia arriba.',
@@ -1191,19 +1186,6 @@ export const textos = {
     sinPermiso:
       'Para guiarte necesito tu ubicación. Dame el permiso en Ajustes del teléfono.',
     titulo: 'Hacia el bus',
-  },
-  calor: {
-    casiLleno: 'casi lleno',
-    madrugada: 'Madrugada',
-    manana: 'Mañana',
-    noche: 'Noche',
-    poco: 'queda poco lugar',
-    sinBuses: 'sin buses',
-    sobra: 'hay lugar de sobra',
-    tarde: 'Tarde',
-    titulo: 'La semana, de un vistazo',
-    unBus: '1 bus',
-    variosBuses: '{n} buses',
   },
   cielo: {
     amanecer: 'amaneciendo',
@@ -1597,6 +1579,8 @@ export const textos = {
     cerrarSinCompartir: 'Cerrar el viaje y ver el resumen',
     cerrado: 'Viaje cerrado',
     cerradoCorto: 'Cerrado · cobrado C$ {cobrado}',
+    diaHoy: 'Hoy',
+    diaManana: 'Mañana',
     cerradoEl: 'Cerrado a las {hora}',
     cerrarHoja: 'Cerrar resumen',
     saludo: 'Hola, {nombre}',
