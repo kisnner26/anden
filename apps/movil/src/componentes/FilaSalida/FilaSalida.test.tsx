@@ -1,6 +1,14 @@
-import { beforeAll, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  jest,
+} from '@jest/globals';
 import { fireEvent, render } from '@testing-library/react-native';
 
+import { fijarBusquedas } from '@/datos/historialSalidas';
 import { crearMuestra, VIAJE_BOACO } from '@/datos/muestra';
 import { armarSalidas, type Salida } from '@/datos/salidas';
 
@@ -91,5 +99,30 @@ describe('FilaSalida', () => {
       />,
     );
     expect(ninguno.getByText('Agotado')).toBeTruthy();
+  });
+});
+
+describe('FilaSalida: buscar pasajeros', () => {
+  afterEach(() => fijarBusquedas({}));
+
+  it('avisa cuando el chofer busca pasajeros, con su frase', async () => {
+    fijarBusquedas({
+      [VIAJE_BOACO]: {
+        hasta: new Date(Date.now() + 20 * 60_000),
+        mensaje: 'Salgo ya, quedan 6 asientos',
+      },
+    });
+    const pantalla = await render(<FilaSalida salida={boaco} />);
+    expect(
+      pantalla.getByText('Busca pasajeros · Salgo ya, quedan 6 asientos'),
+    ).toBeTruthy();
+  });
+
+  it('sin búsqueda vigente no dice nada', async () => {
+    fijarBusquedas({
+      [VIAJE_BOACO]: { hasta: new Date(Date.now() - 1000), mensaje: null },
+    });
+    const pantalla = await render(<FilaSalida salida={boaco} />);
+    expect(pantalla.queryByTestId('busca-pasajeros')).toBeNull();
   });
 });
