@@ -1,5 +1,7 @@
 import {
+  launchCameraAsync,
   launchImageLibraryAsync,
+  requestCameraPermissionsAsync,
   requestMediaLibraryPermissionsAsync,
 } from 'expo-image-picker';
 
@@ -36,4 +38,25 @@ export async function elegirFotoDeGaleria(
 /** la foto de un lado de la cédula, con el recorte del tamaño de una tarjeta (86 por 54) */
 export function elegirFotoDeCedula(): Promise<ResultadoFoto> {
   return elegirFotoDeGaleria([86, 54]);
+}
+
+/**
+ * abre la cámara para fotografiar un objeto olvidado en el bus. Es la única función de la app que usa la cámara para tomar una foto
+ * (la otra es leer el QR de un boleto), y solo la usa el chofer
+ */
+export async function tomarFotoDeObjeto(): Promise<ResultadoFoto> {
+  const permiso = await requestCameraPermissionsAsync();
+  if (!permiso.granted) return { tipo: 'sin-permiso' };
+  const resultado = await launchCameraAsync({
+    allowsEditing: false,
+    mediaTypes: ['images'],
+    quality: 0.6,
+  });
+  const foto = resultado.assets?.[0];
+  if (resultado.canceled || !foto) return { tipo: 'cancelada' };
+  try {
+    return { tipo: 'elegida', uri: guardarFoto(foto.uri) };
+  } catch {
+    return { tipo: 'elegida', uri: foto.uri };
+  }
 }
