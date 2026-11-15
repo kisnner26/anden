@@ -85,7 +85,11 @@ import {
   leerVozEnLinea,
 } from '@/servicios/voz';
 import { coloresIA } from '@/tema/colores';
-import { lugaresParaPregunta } from '@/datos/lugaresTuristicos';
+import {
+  lugaresParaPregunta,
+  pideSoloFotos,
+  textoDeFotos,
+} from '@/datos/lugaresTuristicos';
 import { espacios, radios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -489,6 +493,10 @@ export function Asistente({
       const orden = await ejecutarOrden(limpia);
       if (orden !== null) {
         responder(limpia, orden, porVoz);
+        return;
+      }
+      if (pideSoloFotos(limpia)) {
+        responder(limpia, textoDeFotos(lugaresParaPregunta(limpia)), porVoz);
         return;
       }
       const todosLosDestinos = [...new Set(salidas.map((s) => s.destino))];
