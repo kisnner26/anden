@@ -8,7 +8,7 @@ describe('FichaCiudadIA', () => {
   it('muestra la foto y los datos de la ficha', async () => {
     const p = await renderPantalla(<FichaCiudadIA ciudad="Boaco" />);
     expect(p.getAllByText('Boaco').length).toBeGreaterThan(0);
-    expect(p.getByText(/ciudad de dos pisos/)).toBeTruthy();
+    expect(p.getAllByText(/ciudad de dos pisos/).length).toBeGreaterThan(0);
     expect(p.getByLabelText(/Mirador de Boaco/)).toBeTruthy();
   });
 
