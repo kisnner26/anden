@@ -1,0 +1,1 @@
+export { BarraDeNivel } from './BarraDeNivel';

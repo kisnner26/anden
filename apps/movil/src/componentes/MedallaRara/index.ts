@@ -1,0 +1,1 @@
+export { MedallaRara } from './MedallaRara';
