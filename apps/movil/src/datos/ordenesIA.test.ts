@@ -1,6 +1,11 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { interpretarOrden, proximaSalidaA, telefonoDictado } from './ordenesIA';
+import {
+  entenderCuando,
+  interpretarOrden,
+  proximaSalidaA,
+  telefonoDictado,
+} from './ordenesIA';
 import type { Salida } from './salidas';
 
 const CIUDADES = ['Managua', 'Boaco', 'Juigalpa'];
@@ -115,5 +120,131 @@ describe('proximaSalidaA', () => {
   it('respeta el origen y devuelve nulo si no hay', () => {
     expect(proximaSalidaA([salida('a', 1)], 'Boaco', 'León', AHORA)).toBeNull();
     expect(proximaSalidaA([], 'Boaco', null, AHORA)).toBeNull();
+  });
+});
+
+describe('entenderCuando', () => {
+  const AHORA = new Date(2026, 10, 15, 10, 0);
+
+  it('mañana temprano es el día siguiente, de madrugada a primera hora', () => {
+    const c = entenderCuando('un asiento a Boaco mañana temprano', AHORA);
+    expect(c?.franja).toBe('temprano');
+    expect(c?.dia?.getDate()).toBe(16);
+  });
+
+  it('"por la mañana" es la franja y no el día siguiente', () => {
+    const c = entenderCuando('un boleto por la mañana', AHORA);
+    expect(c?.franja).toBe('manana');
+    expect(c?.dia?.getDate()).toBe(15);
+  });
+
+  it('una hora exacta con pm se pasa a 24 horas', () => {
+    expect(entenderCuando('a las 5 pm', AHORA)?.hora).toBe(17);
+    expect(entenderCuando('a las 6 de la mañana', AHORA)?.hora).toBe(6);
+  });
+
+  it('un día de la semana es el próximo que llega', () => {
+    expect(entenderCuando('el viernes', AHORA)?.dia?.getDay()).toBe(5);
+  });
+
+  it('sin nada de tiempo devuelve nulo', () => {
+    expect(entenderCuando('un asiento a Boaco', AHORA)).toBeNull();
+  });
+});
+
+describe('reservar con cuándo', () => {
+  const AHORA = new Date(2026, 10, 15, 10, 0);
+
+  it('la orden lleva lo que se dijo del momento', () => {
+    const orden = interpretarOrden(
+      'reservame un asiento a Boaco mañana temprano',
+      CIUDADES,
+      AHORA,
+    );
+    expect(orden?.tipo).toBe('reservar');
+    expect(orden && 'cuando' in orden ? orden.cuando?.franja : null).toBe(
+      'temprano',
+    );
+  });
+
+  it('sin momento la orden no trae cuándo', () => {
+    const orden = interpretarOrden(
+      'reservame un asiento a Boaco',
+      CIUDADES,
+      AHORA,
+    );
+    expect(orden && 'cuando' in orden).toBe(false);
+  });
+});
+
+describe('pedido directo', () => {
+  const AHORA = new Date(2026, 10, 15, 10, 0);
+  const C = ['Boaco', 'Managua'];
+
+  it('"un asiento a Boaco mañana temprano" reserva sin decir reservame', () => {
+    const orden = interpretarOrden(
+      'Un asiento a Boaco mañana temprano',
+      C,
+      AHORA,
+    );
+    expect(orden?.tipo).toBe('reservar');
+  });
+
+  it('una pregunta de precio no reserva', () => {
+    expect(
+      interpretarOrden('¿cuánto cuesta un asiento a Boaco?', C, AHORA),
+    ).toBeNull();
+    expect(
+      interpretarOrden('cuanto vale un boleto a Boaco', C, AHORA),
+    ).toBeNull();
+  });
+
+  it('preguntar por los buses no reserva', () => {
+    expect(
+      interpretarOrden('muéstrame los asientos libres a Boaco', C, AHORA),
+    ).toBeNull();
+  });
+});
+
+describe('proximaSalidaA con cuándo', () => {
+  const AHORA = new Date(2026, 10, 15, 10, 0);
+  const base = {
+    asientosLibres: 5,
+    destino: 'Boaco',
+    origen: 'Managua',
+    ventaAbierta: true,
+  };
+  const salidas = [
+    { ...base, salida: new Date(2026, 10, 15, 15, 0), viajeId: 'hoy-tarde' },
+    { ...base, salida: new Date(2026, 10, 16, 5, 0), viajeId: 'manana-5' },
+    { ...base, salida: new Date(2026, 10, 16, 7, 0), viajeId: 'manana-7' },
+    { ...base, salida: new Date(2026, 10, 16, 17, 0), viajeId: 'manana-17' },
+  ] as unknown as Parameters<typeof proximaSalidaA>[0];
+
+  it('mañana temprano es la primera de la mañana siguiente', () => {
+    const s = proximaSalidaA(salidas, 'Boaco', null, AHORA, {
+      dia: new Date(2026, 10, 16),
+      franja: 'temprano',
+      hora: null,
+    });
+    expect(s?.viajeId).toBe('manana-5');
+  });
+
+  it('con una hora exacta elige la más cercana', () => {
+    const s = proximaSalidaA(salidas, 'Boaco', null, AHORA, {
+      dia: new Date(2026, 10, 16),
+      franja: null,
+      hora: 8,
+    });
+    expect(s?.viajeId).toBe('manana-7');
+  });
+
+  it('sin salidas en esa franja devuelve nulo', () => {
+    const s = proximaSalidaA(salidas, 'Boaco', null, AHORA, {
+      dia: new Date(2026, 10, 15),
+      franja: 'noche',
+      hora: null,
+    });
+    expect(s).toBeNull();
   });
 });
