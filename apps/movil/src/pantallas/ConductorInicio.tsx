@@ -10,8 +10,6 @@ import { BuscarPasajeros } from '@/componentes/BuscarPasajeros';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { Icono } from '@/componentes/Icono';
 import { GuiaConductor } from '@/componentes/GuiaConductor';
-import { EjeDelDia } from '@/componentes/EjeDelDia';
-import { HORA_FINAL, HORA_INICIAL, bloquesDelDia } from '@/datos/diaDelChofer';
 import { pasosDeGuia } from '@/datos/guiaConductor';
 import { useEncomiendas } from '@/datos/useEncomiendas';
 import { formatoFechaCorta } from '@/datos/formato';
@@ -226,23 +224,6 @@ export function ConductorInicio({
         })}
       />
 
-      {viajes.length > 0 && (
-        <EjeDelDia
-          ahoraEnElEje={
-            ahora.getHours() >= HORA_INICIAL && ahora.getHours() < HORA_FINAL
-              ? (ahora.getHours() + ahora.getMinutes() / 60 - HORA_INICIAL) /
-                (HORA_FINAL - HORA_INICIAL)
-              : null
-          }
-          alAbrir={alAbrirViaje}
-          bloques={bloquesDelDia(
-            viajes,
-            ahora,
-            (id) => enVivo.includes(id),
-            (id) => cierreDe(id) !== undefined,
-          )}
-        />
-      )}
       {viajes.length === 0 && (
         <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
           {t('conductor.sinViajes')}

@@ -1153,14 +1153,6 @@ export const textos = {
     sinMapa:
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
-  eje: {
-    masViajes: 'y {n} más',
-    cerrado: 'ya cerró',
-    choque: 'choca con otro viaje de la misma unidad',
-    enVivo: 'en vivo',
-    pendiente: 'por salir',
-    titulo: 'Tu día',
-  },
   plan: {
     anden: 'Estar en el punto de encuentro',
     calcular: 'Calcular cuándo salir de casa',
