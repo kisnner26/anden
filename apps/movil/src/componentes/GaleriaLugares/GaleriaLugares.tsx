@@ -72,7 +72,7 @@ const estilos = StyleSheet.create({
   },
   tarjeta: {
     borderRadius: radios.tarjeta,
-    height: 170,
+    height: 200,
     justifyContent: 'flex-end',
     overflow: 'hidden',
     width: 250,
