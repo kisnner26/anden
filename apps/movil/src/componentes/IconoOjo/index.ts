@@ -1,0 +1,1 @@
+export { IconoOjo } from './IconoOjo';

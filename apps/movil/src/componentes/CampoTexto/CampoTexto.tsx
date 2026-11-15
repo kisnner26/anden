@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import {
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -7,9 +9,11 @@ import {
 } from 'react-native';
 
 import { Bloque } from '@/componentes/Bloque';
+import { IconoOjo } from '@/componentes/IconoOjo';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
+import { t } from '@/textos/t';
 
 /** sin interlínea fija: en iOS un lineHeight menor que la letra recorta las colas de g, y, p */
 const textoCampo = {
@@ -39,6 +43,7 @@ export function CampoTexto({
   valor,
 }: PropiedadesCampoTexto) {
   const { colores, modo } = useTema();
+  const [visible, establecerVisible] = useState(false);
 
   return (
     <View style={estilos.contenedor}>
@@ -46,22 +51,38 @@ export function CampoTexto({
         {etiqueta}
       </Text>
       <Bloque estiloContenido={estilos.caja} hundido radio="loseta">
-        <TextInput
-          accessibilityLabel={etiqueta}
-          accessibilityHint={error}
-          aria-invalid={error !== undefined}
-          keyboardAppearance={modo === 'oscuro' ? 'dark' : 'light'}
-          keyboardType={teclado}
-          autoCapitalize={oculto ? 'none' : undefined}
-          autoCorrect={oculto ? false : undefined}
-          onChangeText={alCambiar}
-          secureTextEntry={oculto}
-          placeholder={marcador}
-          placeholderTextColor={colores.tintaSuave}
-          selectionColor={colores.ambarTexto}
-          style={[textoCampo, estilos.entrada, { color: colores.tinta }]}
-          value={valor}
-        />
+        <View style={estilos.fila}>
+          <TextInput
+            accessibilityLabel={etiqueta}
+            accessibilityHint={error}
+            aria-invalid={error !== undefined}
+            keyboardAppearance={modo === 'oscuro' ? 'dark' : 'light'}
+            keyboardType={teclado}
+            autoCapitalize={oculto ? 'none' : undefined}
+            autoCorrect={oculto ? false : undefined}
+            onChangeText={alCambiar}
+            secureTextEntry={oculto && !visible}
+            placeholder={marcador}
+            placeholderTextColor={colores.tintaSuave}
+            selectionColor={colores.ambarTexto}
+            style={[textoCampo, estilos.entrada, { color: colores.tinta }]}
+            value={valor}
+          />
+          {oculto ? (
+            <Pressable
+              accessibilityLabel={
+                visible ? t('campo.ocultarClave') : t('campo.mostrarClave')
+              }
+              accessibilityRole="button"
+              accessibilityState={{ checked: visible }}
+              hitSlop={8}
+              onPress={() => establecerVisible((v) => !v)}
+              style={estilos.ojo}
+            >
+              <IconoOjo abierto={visible} />
+            </Pressable>
+          ) : null}
+        </View>
       </Bloque>
       {error !== undefined && (
         <Text
@@ -78,5 +99,12 @@ export function CampoTexto({
 const estilos = StyleSheet.create({
   caja: { paddingHorizontal: espacios.dieciseis },
   contenedor: { gap: espacios.ocho },
-  entrada: { minHeight: 56, paddingVertical: espacios.dieciseis },
+  entrada: { flex: 1, minHeight: 56, paddingVertical: espacios.dieciseis },
+  fila: { alignItems: 'center', flexDirection: 'row', gap: espacios.ocho },
+  ojo: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 44,
+    minWidth: 40,
+  },
 });
