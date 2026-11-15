@@ -369,6 +369,15 @@ export const textos = {
     resumenViajesTitulo: 'Resumen de tus viajes',
     resumenViajesDetalle:
       'Kilómetros recorridos, lo que gastaste, tu destino favorito y tu mes con más viajes.',
+    abordajePrioritarioTitulo: 'Subís primero',
+    abordajePrioritarioDetalle:
+      'El conductor te ve primero en su lista y tu unidad queda reservada al abordar.',
+    transferenciasIlimitadasTitulo: 'Pasá boletos sin límite',
+    transferenciasIlimitadasDetalle:
+      'Mandá tus boletos a quien quieras cuantas veces haga falta. Sin Plus, uno por día.',
+    rumboConIATitulo: 'Rumbo con IA a tu medida',
+    rumboConIADetalle:
+      'Cuando te trabás, Rumbo te ayuda con la IA de tu teléfono y tus datos reales. Sin Plus, recibís la ayuda escrita.',
     busPropioTitulo: 'Tu propio vehículo',
     busPropioDetalle:
       'Elegí un avión, una nave espacial, un tractor u otro vehículo, o un bus de otro color. Se ve en tus boletos y los conductores lo ven junto a tu nombre.',
@@ -685,6 +694,9 @@ export const textos = {
     titulo: 'Transferir boleto',
     vencida: 'La oferta venció. Preparemos una nueva.',
     enPersona: 'En persona: dictale el código',
+    limite:
+      'Hoy ya pasaste un boleto. Sin Plus se puede uno por día; con Andén Plus, todos los que quieras.',
+    conocerPlus: 'Conocer Andén Plus',
     sinCuenta: 'Para transferir un boleto necesitás una cuenta y conexión.',
   },
   recibir: {
