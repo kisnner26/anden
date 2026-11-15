@@ -69,6 +69,12 @@ import {
   objetosDeBoleto,
   type ObjetoOlvidado,
 } from '@/datos/objetosOlvidados';
+import { AlternativasDeViaje } from '@/componentes/AlternativasDeViaje';
+import {
+  alternativasParaBoleto,
+  pasajeroParaReubicar,
+  primerAsientoLibre,
+} from '@/datos/reubicarBoleto';
 import { habitualDeSalida, horaTexto, idHabitual } from '@/datos/habituales';
 import { useHabituales } from '@/datos/useHabituales';
 import { espacios, tamanosControl } from '@/tema/espacios';
@@ -79,6 +85,8 @@ import { t } from '@/textos/t';
 
 export interface PropiedadesVerBoleto {
   alCancelado: () => void;
+  /** abre el boleto nuevo cuando se pasó a otra salida porque el viaje se canceló */
+  alReubicado?: (boletoId: string) => void;
   /** abre la búsqueda con el destino de este boleto, para volver a viajar */
   alReservarOtra?: (destino: string) => void;
   /** abre la pantalla para pasar este boleto a otra persona */
@@ -91,6 +99,7 @@ export interface PropiedadesVerBoleto {
 /** un boleto reservado con pago en efectivo: el talón con su código y QR y lo que hay que pagar al subir */
 export function VerBoleto({
   alCancelado,
+  alReubicado,
   alReservarOtra,
   alTransferir,
   alVerChofer,
@@ -100,7 +109,9 @@ export function VerBoleto({
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const ahora = useAhora();
-  const { boletos, cancelar } = useBoletos();
+  const { boletos, cancelar, reservar } = useBoletos();
+  const [pasandoA, establecerPasandoA] = useState<string | null>(null);
+  const [falloReubicar, establecerFalloReubicar] = useState(false);
   const recordatorios = useRecordatorios();
   const [actividadDisponible, establecerActividadDisponible] = useState(false);
   const [actividadId, establecerActividadId] = useState<string | null>(null);
@@ -124,6 +135,32 @@ export function VerBoleto({
     };
   }, []);
   const { salidas } = useSalidas();
+  async function pasarmeA(destino: Salida) {
+    if (!guardado || pasandoA) return;
+    establecerPasandoA(destino.viajeId);
+    establecerFalloReubicar(false);
+    const asiento = primerAsientoLibre(
+      obtenerMuestra(),
+      destino.viajeId,
+      new Date(),
+    );
+    const resultado =
+      asiento === null
+        ? null
+        : await reservar(destino.viajeId, [
+            pasajeroParaReubicar(guardado, asiento),
+          ]);
+    if (resultado?.ok) {
+      // el boleto del viaje cancelado ya no sirve: se cancela para soltar su asiento
+      await cancelar(guardado.boleto.id);
+      const nuevo = resultado.valor[0];
+      if (nuevo) alReubicado?.(nuevo.boleto.id);
+      else alCancelado();
+    } else {
+      establecerFalloReubicar(true);
+    }
+    establecerPasandoA(null);
+  }
   const [eligiendoRecordatorio, establecerEligiendoRecordatorio] =
     useState(false);
   const [errorRecordatorio, establecerErrorRecordatorio] = useState<
@@ -608,6 +645,15 @@ export function VerBoleto({
               {t('boleto.viajeCanceladoDetalle')}
             </Text>
           </Bloque>
+        )}
+
+        {puedeOperar && viajeCancelado(guardado.boleto.viajeId) && (
+          <AlternativasDeViaje
+            alElegir={(destino) => void pasarmeA(destino)}
+            eligiendo={pasandoA}
+            error={falloReubicar ? t('alternativas.error') : null}
+            salidas={alternativasParaBoleto(salidas, guardado, ahora)}
+          />
         )}
 
         <ResumenIA

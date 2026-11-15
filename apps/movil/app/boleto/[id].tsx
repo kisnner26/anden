@@ -9,6 +9,9 @@ export default function RutaBoleto() {
   return (
     <VerBoleto
       alCancelado={() => router.replace('/boletos')}
+      alReubicado={(nuevoId) =>
+        router.replace({ params: { id: nuevoId }, pathname: '/boleto/[id]' })
+      }
       alTransferir={(boletoId) =>
         router.push({ params: { id: boletoId }, pathname: '/transferir/[id]' })
       }
