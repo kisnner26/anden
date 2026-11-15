@@ -80,7 +80,19 @@ export function Bloque({
             colors={[colores.barroClaro, colores.barroOscuro]}
             end={{ x: 1, y: 1 }}
             start={{ x: 0, y: 0 }}
-            style={[{ borderRadius: borde }, estiloContenido]}
+            style={[
+              {
+                borderRadius: borde,
+                // en oscuro las sombras no se ven: un borde finito de luz define el borde de la tarjeta
+                ...(modo === 'oscuro'
+                  ? {
+                      borderColor: conAlfa(colores.luzRelieve, 0.07),
+                      borderWidth: 1,
+                    }
+                  : null),
+              },
+              estiloContenido,
+            ]}
           >
             {children}
           </LinearGradient>

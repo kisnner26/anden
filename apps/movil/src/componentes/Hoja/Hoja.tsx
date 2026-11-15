@@ -30,7 +30,7 @@ export function Hoja({
   children,
   etiquetaCerrar,
 }: PropiedadesHoja) {
-  const { colores } = useTema();
+  const { colores, modo } = useTema();
   const reducirMovimiento = useMovimientoReducido();
   const desplazamiento = useRef(new Animated.Value(0)).current;
 
@@ -94,6 +94,7 @@ export function Hoja({
         >
           <BlurView
             intensity={espacios.cuarentaYOcho}
+            tint={modo === 'oscuro' ? 'dark' : 'light'}
             style={[estilos.cristal, { backgroundColor: colores.barroClaro }]}
           >
             <Pressable

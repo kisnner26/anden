@@ -38,7 +38,7 @@ export function CampoTexto({
   teclado = 'default',
   valor,
 }: PropiedadesCampoTexto) {
-  const { colores } = useTema();
+  const { colores, modo } = useTema();
 
   return (
     <View style={estilos.contenedor}>
@@ -50,6 +50,7 @@ export function CampoTexto({
           accessibilityLabel={etiqueta}
           accessibilityHint={error}
           aria-invalid={error !== undefined}
+          keyboardAppearance={modo === 'oscuro' ? 'dark' : 'light'}
           keyboardType={teclado}
           autoCapitalize={oculto ? 'none' : undefined}
           autoCorrect={oculto ? false : undefined}
