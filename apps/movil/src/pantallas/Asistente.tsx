@@ -948,7 +948,9 @@ export function Asistente({
                   );
               const lugares = intercambio.enCurso
                 ? []
-                : lugaresParaPregunta(intercambio.pregunta);
+                : lugaresParaPregunta(intercambio.pregunta).filter(
+                    (l) => l.ciudad !== rica?.ciudad,
+                  );
               return (
                 <View key={intercambio.id} style={estilos.intercambio}>
                   <View
