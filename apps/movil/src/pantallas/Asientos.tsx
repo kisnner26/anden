@@ -17,6 +17,8 @@ import { useSeleccionAsientos } from '@/datos/useSeleccionAsientos';
 import { disposicionPantalla, espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
+import { asientosJuntos } from '@/datos/grupo';
+import { useGrupo } from '@/datos/useGrupo';
 import { t } from '@/textos/t';
 
 export interface PropiedadesAsientos {
@@ -54,14 +56,30 @@ function Leyenda({
 }
 
 /** elegir asiento: el plano del bus, la retención de diez minutos y el total con la tarifa */
-export function Asientos({ alSeguir, alVolver, viajeId }: PropiedadesAsientos) {
+export function Asientos({
+  alSeguir,
+  alVolver,
+  grupo,
+  viajeId,
+}: PropiedadesAsientos) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const [version, establecerVersion] = useState(0);
   const mapa = useMapaAsientos(viajeId, version);
   const { datos, salidas } = useSalidas();
+  const avanceDelGrupo = useGrupo(grupo ?? null);
   const { alternar, aviso, elegidos, total } = useSeleccionAsientos(viajeId);
   const restantes = useCuentaRegresiva(SEGUNDOS_RETENCION);
+  // con un enlace de grupo se marcan los asientos libres pegados a los que ya eligieron los amigos
+  const sugeridos = mapa
+    ? asientosJuntos(
+        mapa.configuracion,
+        new Set(
+          [...mapa.estados].filter(([, e]) => e === 'libre').map(([n]) => n),
+        ),
+        (avanceDelGrupo.estado?.miembros ?? []).map((m) => m.asiento),
+      )
+    : [];
   const salida = salidas.find((candidata) => candidata.viajeId === viajeId);
   const ruta = datos.rutas.find((candidata) => candidata.id === salida?.rutaId);
   const origen = datos.terminales.find(
@@ -218,6 +236,7 @@ export function Asientos({ alSeguir, alVolver, viajeId }: PropiedadesAsientos) {
             configuracion={mapa.configuracion}
             elegidos={elegidos}
             estados={mapa.estados}
+            sugeridos={sugeridos}
           />
         </View>
       </ScrollView>
