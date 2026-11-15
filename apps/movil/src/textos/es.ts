@@ -256,6 +256,10 @@ export const textos = {
     sinPasados: 'Todavía no hay viajes pasados.',
     cancelados: '{cantidad} boleto(s) cancelado(s)',
     viajeCerrado: 'Viaje cerrado',
+    heroDetalle: '{boletos} boletos vendidos en {viajes} viajes',
+    tituloIA: 'Resumir mis ventas con IA',
+    pedidoIA:
+      'Resumime cómo me fue vendiendo boletos: cuánto gané, cuánto me falta cobrar y qué viaje rindió más.',
   },
   conductorHistorial: {
     pestana: 'Análisis',
