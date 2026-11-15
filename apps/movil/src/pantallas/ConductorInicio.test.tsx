@@ -128,4 +128,26 @@ describe('ConductorInicio', () => {
     const pantalla = await dibujar();
     expect(await pantalla.findByText('Cerrado · cobrado C$ 140')).toBeTruthy();
   });
+
+  it('al retirar un viaje con pasajeros pide el motivo para avisarles', async () => {
+    const pantalla = await dibujar();
+    await pantalla.findByText('Hola, Marvin Lanzas');
+    const retirar = pantalla.getAllByRole('button', { name: 'Retirar viaje' });
+    // el viaje de Boaco ya tiene asientos vendidos: alguno de los viajes del chofer pide motivo
+    let pidio = false;
+    for (const boton of retirar) {
+      await fireEvent.press(boton);
+      if (pantalla.queryByText('Decile a tus pasajeros por qué')) {
+        pidio = true;
+        break;
+      }
+    }
+    expect(pidio).toBe(true);
+    expect(pantalla.getByText('Avería del bus')).toBeTruthy();
+    await fireEvent.press(pantalla.getByText('Clima o estado del camino'));
+    expect(
+      pantalla.getByRole('button', { name: 'Clima o estado del camino' }).props
+        .accessibilityState?.selected,
+    ).toBe(true);
+  });
 });
