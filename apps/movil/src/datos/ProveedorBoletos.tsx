@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -70,7 +71,13 @@ function ocuparEnMuestra(boletos: readonly BoletoGuardado[]): void {
 
 /** guarda los boletos en el teléfono para verlos sin conexión y los comparte con toda la app */
 export function ProveedorBoletos({ children }: { children: ReactNode }) {
-  const [boletos, establecerBoletos] = useState<BoletoGuardado[]>([]);
+  const [boletos, establecerBoletosEstado] = useState<BoletoGuardado[]>([]);
+  // la lista al día: dos acciones seguidas (reservar y luego cancelar) no deben partir de una lista vieja
+  const lista = useRef<BoletoGuardado[]>([]);
+  const establecerBoletos = useCallback((nuevos: BoletoGuardado[]) => {
+    lista.current = nuevos;
+    establecerBoletosEstado(nuevos);
+  }, []);
   const [cargando, establecerCargando] = useState(true);
   const { sesion } = useSesion();
   const { perfil } = usePerfil();
@@ -102,7 +109,7 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
     return () => {
       activo = false;
     };
-  }, [clave, sesion, perfil.fotoUri]);
+  }, [clave, establecerBoletos, sesion, perfil.fotoUri]);
 
   const guardar = useCallback(
     async (nuevos: BoletoGuardado[]) => {
@@ -113,7 +120,7 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
         () => undefined,
       );
     },
-    [clave, perfil.fotoUri],
+    [clave, establecerBoletos, perfil.fotoUri],
   );
 
   const reservar = useCallback<ValorBoletos['reservar']>(
@@ -139,30 +146,32 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
         return { error: 'asiento-ocupado', ok: false };
       }
       ocuparEnMuestra(resultado.valor);
-      await guardar([...boletos, ...resultado.valor]);
+      await guardar([...lista.current, ...resultado.valor]);
       return resultado;
     },
-    [boletos, guardar, perfil.fotoUri],
+    [guardar, perfil.fotoUri],
   );
 
   const agregar = useCallback(
     async (guardado: BoletoGuardado) => {
-      if (boletos.some(({ boleto }) => boleto.id === guardado.boleto.id))
+      if (lista.current.some(({ boleto }) => boleto.id === guardado.boleto.id))
         return;
       ocuparEnMuestra([guardado]);
-      await guardar([...boletos, guardado]);
+      await guardar([...lista.current, guardado]);
     },
-    [boletos, guardar],
+    [guardar],
   );
 
   // el boleto que se pasó a otra persona ya no es de esta cuenta: se saca de la lista sin publicarlo de nuevo
   const quitar = useCallback(
     async (boletoId: string) => {
-      const restantes = boletos.filter(({ boleto }) => boleto.id !== boletoId);
+      const restantes = lista.current.filter(
+        ({ boleto }) => boleto.id !== boletoId,
+      );
       establecerBoletos(restantes);
       await AsyncStorage.setItem(clave, JSON.stringify(restantes));
     },
-    [boletos, clave],
+    [clave, establecerBoletos],
   );
 
   const cancelar = useCallback(
@@ -173,7 +182,7 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
           !(ocupacion.estado === 'vendido' && ocupacion.boletoId === boletoId),
       );
       await guardar(
-        boletos.map((guardado) =>
+        lista.current.map((guardado) =>
           guardado.boleto.id === boletoId
             ? {
                 ...guardado,
@@ -183,20 +192,20 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
         ),
       );
     },
-    [boletos, guardar],
+    [guardar],
   );
 
   const validar = useCallback(
     async (boletoId: string) => {
       await guardar(
-        boletos.map((guardado) =>
+        lista.current.map((guardado) =>
           guardado.boleto.id === boletoId
             ? { ...guardado, boleto: { ...guardado.boleto, estado: 'usado' } }
             : guardado,
         ),
       );
     },
-    [boletos, guardar],
+    [guardar],
   );
 
   const valor = useMemo(
