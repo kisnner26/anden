@@ -20,12 +20,12 @@ describe('PanelDeslizable', () => {
     expect(p.getByTestId('panel-deslizable')).toBeTruthy();
   });
 
-  it('empieza recogido: el contenido no se desplaza hasta abrirlo del todo', async () => {
+  it('el contenido se puede desplazar en cualquier posición, para que nada quede oculto', async () => {
     const p = await renderPantalla(
       <PanelDeslizable alturas={[200, 400, 700]} cabecera={<Text>Hola</Text>}>
         <Text>Contenido</Text>
       </PanelDeslizable>,
     );
-    expect(p.getByTestId('panel-contenido').props.scrollEnabled).toBe(false);
+    expect(p.getByTestId('panel-contenido').props.scrollEnabled).toBe(true);
   });
 });
