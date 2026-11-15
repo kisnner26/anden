@@ -23,7 +23,9 @@ describe('ObjetosDelViaje', () => {
   });
 
   it('muestra lo encontrado y deja decir "es mío"', async () => {
-    const alReclamar = jest.fn(async (_id: string) => true);
+    const alReclamar = jest.fn<(id: string) => Promise<boolean>>(
+      async () => true,
+    );
     const p = await renderPantalla(
       <ObjetosDelViaje alReclamar={alReclamar} objetos={[OBJETO]} />,
     );

@@ -7,7 +7,9 @@ import { renderPantalla } from '@/pruebas/render';
 import { EscanerDeBoletos } from './EscanerDeBoletos';
 
 function dibujar(resultado: ResultadoDeLectura) {
-  const alLeer = jest.fn((_texto: string) => resultado);
+  const alLeer = jest.fn<(texto: string) => ResultadoDeLectura>(
+    () => resultado,
+  );
   return renderPantalla(
     <EscanerDeBoletos alCerrar={() => undefined} alLeer={alLeer} visible />,
   ).then((p) => ({ alLeer, p }));
