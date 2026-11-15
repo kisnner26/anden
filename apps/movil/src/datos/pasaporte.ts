@@ -14,6 +14,8 @@ export interface SelloDeCiudad {
 }
 
 export interface SelloRaro {
+  /** lo que ya se logró y lo que se pide, para mostrar el avance de los que faltan */
+  avance: { actual: number; meta: number };
   desbloqueado: boolean;
   id: RarezaDelSello;
   /** cuándo se ganó, en ISO; nulo si todavía no */
@@ -92,22 +94,45 @@ export function armarPasaporte(
         .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0]!
     : null;
 
+  const mejorLlegadas = Math.max(0, ...ciudades.map((c) => c.llegadas));
+  const avance = (actual: number, meta: number) => ({
+    actual: Math.min(actual, meta),
+    meta,
+  });
+
   return {
     ciudades,
     raros: [
       {
+        avance: avance(madrugador !== null ? 1 : 0, 1),
         cuando: madrugador,
         desbloqueado: madrugador !== null,
         id: 'madrugador',
       },
-      { cuando: nocturno, desbloqueado: nocturno !== null, id: 'nocturno' },
       {
+        avance: avance(nocturno !== null ? 1 : 0, 1),
+        cuando: nocturno,
+        desbloqueado: nocturno !== null,
+        id: 'nocturno',
+      },
+      {
+        avance: avance(mejorLlegadas, 5),
         cuando: constante?.primera ?? null,
         desbloqueado: constante !== undefined,
         id: 'constante',
       },
-      { cuando: ultimaPrimera, desbloqueado: tres, id: 'tresCiudades' },
-      { cuando: viajero, desbloqueado: viajero !== null, id: 'viajero' },
+      {
+        avance: avance(visitadas.length, CIUDADES_DEL_PASAPORTE.length),
+        cuando: ultimaPrimera,
+        desbloqueado: tres,
+        id: 'tresCiudades',
+      },
+      {
+        avance: avance(hechos.length, 10),
+        cuando: viajero,
+        desbloqueado: viajero !== null,
+        id: 'viajero',
+      },
     ],
     viajes: hechos.length,
   };
