@@ -1,0 +1,1 @@
+export { RecorridoPasaporte } from './RecorridoPasaporte';
