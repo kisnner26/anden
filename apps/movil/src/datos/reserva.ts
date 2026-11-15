@@ -35,6 +35,8 @@ export interface ResumenBoleto {
   metodoPago: 'efectivo-al-abordar';
   /** terminal guardada al reservar; ausente en boletos creados antes de T-105 */
   origen?: string;
+  /** la foto de quien viaja, para que el conductor lo reconozca al abordar; falta si el boleto es para otra persona */
+  fotoPasajero?: string;
   /** el boleto es para otra persona, no para quien lo compró */
   paraOtro?: boolean;
   placa: string;

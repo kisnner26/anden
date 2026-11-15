@@ -1,6 +1,7 @@
 import type { BoletoGuardado } from '@/datos/reserva';
 
 import { obtenerCliente } from './cliente';
+import { subirFotoDePasajero } from './fotoPasajeroSupabase';
 
 interface FilaBoleto {
   asiento: number;
@@ -35,12 +36,24 @@ const CODIGO_DUPLICADO = '23505';
  */
 export async function publicarBoletos(
   boletos: readonly BoletoGuardado[],
+  opciones: { fotoLocal?: string | null } = {},
 ): Promise<ResultadoPublicacion> {
   const resultado: ResultadoPublicacion = { conflictos: [], fallidos: [] };
   const cliente = obtenerCliente();
   if (!cliente || boletos.length === 0) return resultado;
+  // la foto de quien compró viaja con el boleto para que el conductor lo reconozca; si es para otra persona no se pone
+  const fotoUrl = opciones.fotoLocal
+    ? await subirFotoDePasajero(opciones.fotoLocal)
+    : null;
   await Promise.all(
-    boletos.map(async (guardado) => {
+    boletos.map(async (original) => {
+      const guardado =
+        fotoUrl && !original.resumen.paraOtro
+          ? {
+              ...original,
+              resumen: { ...original.resumen, fotoPasajero: fotoUrl },
+            }
+          : original;
       try {
         const { error } = await cliente
           .from('boletos')

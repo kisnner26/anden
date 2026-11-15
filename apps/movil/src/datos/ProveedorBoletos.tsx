@@ -15,6 +15,7 @@ import { emitirSenal } from './senalesDeAyuda';
 import { sincronizarAsientos } from './asientosRemotos';
 import { crearReserva, ocupacionesDe, type BoletoGuardado } from './reserva';
 import { useBusPropio } from './useBusPropio';
+import { usePerfil } from './usePerfil';
 import { useSesion } from './useSesion';
 import { useSuscripcion } from './useSuscripcion';
 import { ContextoBoletos, type ValorBoletos } from './useBoletos';
@@ -72,6 +73,7 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
   const [boletos, establecerBoletos] = useState<BoletoGuardado[]>([]);
   const [cargando, establecerCargando] = useState(true);
   const { sesion } = useSesion();
+  const { perfil } = usePerfil();
   const { plus } = useSuscripcion();
   const { efectivo } = useBusPropio();
   const clave = claveBoletosDe(sesion);
@@ -88,7 +90,10 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
         ocuparEnMuestra(guardados);
         establecerBoletos(guardados);
         // los boletos que no llegaron al servidor (sin conexión, o hechos antes de entrar) se suben ahora
-        if (sesion) void publicarBoletos(guardados).catch(() => undefined);
+        if (sesion)
+          void publicarBoletos(guardados, { fotoLocal: perfil.fotoUri }).catch(
+            () => undefined,
+          );
       })
       .catch(() => undefined)
       .finally(() => {
@@ -97,16 +102,18 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
     return () => {
       activo = false;
     };
-  }, [clave, sesion]);
+  }, [clave, sesion, perfil.fotoUri]);
 
   const guardar = useCallback(
     async (nuevos: BoletoGuardado[]) => {
       establecerBoletos(nuevos);
       await AsyncStorage.setItem(clave, JSON.stringify(nuevos));
       // copia para el conductor; si falla la red, el boleto sigue guardado y se sube la próxima vez
-      void publicarBoletos(nuevos).catch(() => undefined);
+      void publicarBoletos(nuevos, { fotoLocal: perfil.fotoUri }).catch(
+        () => undefined,
+      );
     },
-    [clave],
+    [clave, perfil.fotoUri],
   );
 
   const reservar = useCallback<ValorBoletos['reservar']>(
@@ -123,9 +130,9 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
       );
       if (!resultado.ok) return resultado;
       // el servidor es quien decide si el asiento sigue libre: si otro lo vendió justo antes, no se reserva
-      const publicacion = await publicarBoletos(resultado.valor).catch(
-        () => undefined,
-      );
+      const publicacion = await publicarBoletos(resultado.valor, {
+        fotoLocal: perfil.fotoUri,
+      }).catch(() => undefined);
       if (publicacion && publicacion.conflictos.length > 0) {
         await sincronizarAsientos(viajeId);
         emitirSenal('reservaFallida');
@@ -135,7 +142,7 @@ export function ProveedorBoletos({ children }: { children: ReactNode }) {
       await guardar([...boletos, ...resultado.valor]);
       return resultado;
     },
-    [boletos, guardar],
+    [boletos, guardar, perfil.fotoUri],
   );
 
   const agregar = useCallback(
