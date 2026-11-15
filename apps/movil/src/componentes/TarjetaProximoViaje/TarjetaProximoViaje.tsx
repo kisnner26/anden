@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Autobus, varianteDeClave } from '@/componentes/Autobus';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
+import { DigitosGiratorios } from '@/componentes/DigitosGiratorios';
 import { formatoHora, formatoHoraCompleta, sufijoHora } from '@/datos/formato';
 import { useBusPropio } from '@/datos/useBusPropio';
 import type { Salida } from '@/datos/salidas';
@@ -70,11 +71,28 @@ export function TarjetaProximoViaje({
             >
               {sufijoHora(salida.salida)}
             </Text>
-            <Text
-              style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
+            <View
+              accessible
+              accessibilityLabel={`${t('viajar.saleEn')} ${minutos} ${t('viajar.minutos')}`}
+              style={estilos.cuenta}
             >
-              {`${t('viajar.saleEn')} ${minutos} ${t('viajar.minutos')}`}
-            </Text>
+              <Text
+                importantForAccessibility="no"
+                style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
+              >
+                {t('viajar.saleEn')}
+              </Text>
+              <DigitosGiratorios
+                estilo={{ ...tipografia.pequeno, color: colores.sobreNegro }}
+                valor={minutos}
+              />
+              <Text
+                importantForAccessibility="no"
+                style={[tipografia.pequeno, { color: colores.sobreNegroSuave }]}
+              >
+                {t('viajar.minutos')}
+              </Text>
+            </View>
           </View>
         </View>
         <View style={estilos.boton}>
@@ -90,6 +108,7 @@ export function TarjetaProximoViaje({
 }
 
 const estilos = StyleSheet.create({
+  cuenta: { alignItems: 'center', flexDirection: 'row', gap: 4 },
   boton: { marginTop: espacios.dieciseis },
   bus: {
     alignItems: 'center',
