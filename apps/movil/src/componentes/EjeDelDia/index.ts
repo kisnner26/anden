@@ -1,0 +1,1 @@
+export { EjeDelDia } from './EjeDelDia';
