@@ -19,32 +19,127 @@ function clave(nombre: string): string {
   return nombre.normalize('NFD').replace(/[̀-ͯ]/g, '').trim().toLowerCase();
 }
 
-interface FotoDeCiudad {
+export interface FotoDeCiudad {
+  descripcion: string;
   /** qué parte de la foto conservar cuando el marco es más ancho que alto, en porcentaje desde arriba */
   enfoque: number;
   fuente: ImageSource;
+  /** palabras con las que alguien pediría ver este lugar, sin tildes */
+  etiquetas: readonly string[];
+  titulo: string;
 }
 
 /** varias fotos por ciudad, todas horizontales y con su punto de enfoque para que lo importante quede dentro del marco */
 const FOTOS: Readonly<Record<string, readonly FotoDeCiudad[]>> = {
   boaco: [
-    { enfoque: 35, fuente: boaco },
-    { enfoque: 42, fuente: boacoArco },
-    { enfoque: 38, fuente: boacoMirador },
-    { enfoque: 50, fuente: boacoIglesia },
+    {
+      descripcion:
+        'Vista de la ciudad de Boaco, conocida como la ciudad de dos pisos.',
+      enfoque: 35,
+      etiquetas: ['ciudad', 'vista', 'panoramica', 'dos pisos'],
+      fuente: boaco,
+      titulo: 'Boaco, la ciudad de dos pisos',
+    },
+    {
+      descripcion: 'Arco de Boaco, uno de sus puntos más fotografiados.',
+      enfoque: 42,
+      etiquetas: ['arco', 'entrada', 'monumento'],
+      fuente: boacoArco,
+      titulo: 'El arco de Boaco',
+    },
+    {
+      descripcion: 'Mirador de Boaco, con vista a la ciudad y a su valle.',
+      enfoque: 38,
+      etiquetas: ['mirador', 'vista', 'paisaje', 'naturaleza'],
+      fuente: boacoMirador,
+      titulo: 'Mirador de Boaco',
+    },
+    {
+      descripcion: 'Iglesia de Boaco, en el centro histórico de la ciudad.',
+      enfoque: 50,
+      etiquetas: ['iglesia', 'centro', 'historico', 'catedral', 'parque'],
+      fuente: boacoIglesia,
+      titulo: 'Iglesia de Boaco',
+    },
   ],
   juigalpa: [
-    { enfoque: 25, fuente: juigalpa },
-    { enfoque: 55, fuente: juigalpaColina },
-    { enfoque: 50, fuente: juigalpaPuma },
-    { enfoque: 42, fuente: juigalpaRisco },
-    { enfoque: 50, fuente: juigalpaMuseo },
+    {
+      descripcion: 'Vista de Juigalpa, cabecera del departamento de Chontales.',
+      enfoque: 25,
+      etiquetas: ['ciudad', 'vista', 'panoramica'],
+      fuente: juigalpa,
+      titulo: 'Juigalpa, Chontales',
+    },
+    {
+      descripcion: 'La colina sobre Juigalpa, con vista a la ciudad.',
+      enfoque: 55,
+      etiquetas: [
+        'colina',
+        'cerro',
+        'mirador',
+        'vista',
+        'paisaje',
+        'naturaleza',
+      ],
+      fuente: juigalpaColina,
+      titulo: 'Colina de Juigalpa',
+    },
+    {
+      descripcion: 'El puma, símbolo de Juigalpa.',
+      enfoque: 50,
+      etiquetas: ['puma', 'estatua', 'monumento', 'simbolo'],
+      fuente: juigalpaPuma,
+      titulo: 'El puma de Juigalpa',
+    },
+    {
+      descripcion:
+        'Risco de Juigalpa, un punto para mirar el paisaje de Chontales.',
+      enfoque: 42,
+      etiquetas: ['risco', 'roca', 'mirador', 'paisaje', 'naturaleza'],
+      fuente: juigalpaRisco,
+      titulo: 'Risco de Juigalpa',
+    },
+    {
+      descripcion:
+        'Museo Arqueológico Gregorio Aguilar Barea, con estatuaria precolombina.',
+      enfoque: 50,
+      etiquetas: ['museo', 'arqueologico', 'estatuas', 'historia', 'cultura'],
+      fuente: juigalpaMuseo,
+      titulo: 'Museo Arqueológico de Juigalpa',
+    },
   ],
   managua: [
-    { enfoque: 55, fuente: managua },
-    { enfoque: 55, fuente: managuaCatedral },
-    { enfoque: 50, fuente: managuaPuerto },
-    { enfoque: 55, fuente: managuaNoche },
+    {
+      descripcion:
+        'Vista de Managua, capital de Nicaragua, junto al lago Xolotlán.',
+      enfoque: 55,
+      etiquetas: ['ciudad', 'vista', 'panoramica', 'capital'],
+      fuente: managua,
+      titulo: 'Managua, la capital',
+    },
+    {
+      descripcion:
+        'Catedral Metropolitana de la Inmaculada Concepción, inaugurada en 1993.',
+      enfoque: 55,
+      etiquetas: ['catedral', 'iglesia', 'centro', 'historico'],
+      fuente: managuaCatedral,
+      titulo: 'Catedral de Managua',
+    },
+    {
+      descripcion:
+        'Puerto Salvador Allende, el malecón a orillas del lago Xolotlán.',
+      enfoque: 50,
+      etiquetas: ['puerto', 'malecon', 'lago', 'xolotlan', 'paseo'],
+      fuente: managuaPuerto,
+      titulo: 'Puerto Salvador Allende',
+    },
+    {
+      descripcion: 'Managua iluminada de noche.',
+      enfoque: 55,
+      etiquetas: ['noche', 'luces', 'nocturna', 'ciudad'],
+      fuente: managuaNoche,
+      titulo: 'Managua de noche',
+    },
   ],
 };
 
@@ -93,4 +188,14 @@ export function enfoqueDeDestino(
 /** cuántas fotos hay de una ciudad */
 export function cantidadDeFotos(destino: string): number {
   return FOTOS[clave(destino)]?.length ?? 0;
+}
+
+/** todas las fotos de una ciudad con su título, descripción y etiquetas */
+export function fotosDeCiudad(destino: string): readonly FotoDeCiudad[] {
+  return FOTOS[clave(destino)] ?? [];
+}
+
+/** las ciudades que tienen fotos, con su nombre en minúsculas y sin tildes */
+export function ciudadesConFotos(): string[] {
+  return Object.keys(FOTOS);
 }
