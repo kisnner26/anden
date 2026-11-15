@@ -8,6 +8,8 @@ import { BotonRecordatorio } from '@/componentes/BotonRecordatorio';
 import { FotoDestino } from '@/componentes/FotoDestino';
 import { Icono } from '@/componentes/Icono';
 import { Loseta } from '@/componentes/Loseta';
+import { SiluetaDeBus } from '@/componentes/SiluetaDeBus';
+import { llenadoDe } from '@/datos/llenado';
 import { fotoDeDestino } from '@/datos/fotosDestino';
 import { busquedaDe } from '@/datos/historialSalidas';
 import { nivelDisponibilidad } from '@/datos/disponibilidad';
@@ -52,6 +54,7 @@ export function FilaSalida({
   const puntoEncuentro = etiquetaPunto(salida.puntoEncuentro);
   const nivel = nivelDisponibilidad(salida.asientosLibres);
   const busqueda = busquedaDe(salida.viajeId, new Date());
+  const llenado = llenadoDe(salida);
   const textoDisponibilidad =
     nivel === 'agotado'
       ? t('horarios.agotado')
@@ -122,6 +125,9 @@ export function FilaSalida({
           <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
             {sufijoHora(salida.salida)}
           </Text>
+          {mostrarDisponibilidad && llenado ? (
+            <SiluetaDeBus ancho={52} proporcion={llenado.proporcion} />
+          ) : null}
         </View>
         {conBoleto ? (
           <Loseta tamano={44} variante="negra">
@@ -153,7 +159,7 @@ const estilos = StyleSheet.create({
     paddingVertical: espacios.doce,
   },
   fila: { marginTop: espacios.doce },
-  hora: { alignItems: 'flex-end' },
+  hora: { alignItems: 'flex-end', gap: 4 },
   miniatura: { height: 64, width: 64 },
   principal: {
     alignItems: 'center',

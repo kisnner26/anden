@@ -125,4 +125,21 @@ describe('FilaSalida: buscar pasajeros', () => {
     const pantalla = await render(<FilaSalida salida={boaco} />);
     expect(pantalla.queryByTestId('busca-pasajeros')).toBeNull();
   });
+
+  it('con disponibilidad y asientos totales dibuja la silueta que se llena', async () => {
+    const conTotal = { ...boaco, asientosTotales: 26 };
+    const pantalla = await render(
+      <FilaSalida mostrarDisponibilidad salida={conTotal} />,
+    );
+    expect(
+      pantalla.getByTestId('silueta-de-bus', { includeHiddenElements: true }),
+    ).toBeTruthy();
+  });
+
+  it('sin disponibilidad no dibuja la silueta', async () => {
+    const pantalla = await render(<FilaSalida salida={boaco} />);
+    expect(
+      pantalla.queryByTestId('silueta-de-bus', { includeHiddenElements: true }),
+    ).toBeNull();
+  });
 });
