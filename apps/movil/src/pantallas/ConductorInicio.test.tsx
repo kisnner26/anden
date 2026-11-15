@@ -7,7 +7,7 @@ import {
   it,
   jest,
 } from '@jest/globals';
-import { fireEvent, waitFor } from '@testing-library/react-native';
+import { fireEvent } from '@testing-library/react-native';
 
 import { ProveedorCierres } from '@/datos/ProveedorCierres';
 import { ProveedorSesion } from '@/datos/ProveedorSesion';
@@ -42,7 +42,6 @@ afterEach(() => {
 
 function dibujar(
   alAbrirViaje: (id: string) => void = () => undefined,
-  alSalir: () => void = () => undefined,
   alAbrirPerfil?: () => void,
 ) {
   return renderPantalla(
@@ -51,7 +50,6 @@ function dibujar(
         <ConductorInicio
           alAbrirPerfil={alAbrirPerfil}
           alAbrirViaje={alAbrirViaje}
-          alSalir={alSalir}
         />
       </ProveedorCierres>
     </ProveedorSesion>,
@@ -83,7 +81,7 @@ describe('ConductorInicio', () => {
 
   it('tocar la foto del chofer abre su perfil', async () => {
     const alAbrirPerfil = jest.fn();
-    const pantalla = await dibujar(undefined, undefined, alAbrirPerfil);
+    const pantalla = await dibujar(undefined, alAbrirPerfil);
     await pantalla.findByText('Hola, Marvin Lanzas');
     await fireEvent.press(pantalla.getByRole('button', { name: 'Tu perfil' }));
     expect(alAbrirPerfil).toHaveBeenCalledTimes(1);
@@ -107,17 +105,6 @@ describe('ConductorInicio', () => {
     expect(pantalla.queryByText('En vivo')).toBeNull();
     TRANSMISION.iniciar('via_2', 'cho_2');
     expect(await pantalla.findByText('En vivo')).toBeTruthy();
-  });
-
-  it('cierra la sesión y avisa para volver a la app de pasajero', async () => {
-    const alSalir = jest.fn();
-    const pantalla = await dibujar(undefined, alSalir);
-    await pantalla.findByText('Hola, Marvin Lanzas');
-    await fireEvent.press(
-      pantalla.getByRole('button', { name: 'Cerrar sesión' }),
-    );
-    await waitFor(() => expect(alSalir).toHaveBeenCalledTimes(1));
-    expect(await AsyncStorage.getItem('anden.sesion')).toBeNull();
   });
 
   it('marca los viajes que ya cerró con lo que cobró', async () => {
