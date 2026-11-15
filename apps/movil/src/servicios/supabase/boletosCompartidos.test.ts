@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 
 jest.mock('./cliente', () => ({ obtenerCliente: jest.fn() }));
+jest.mock('./fotoPasajeroSupabase', () => ({
+  subirFotoDePasajero: jest.fn(async () => 'https://cdn/ana.jpg'),
+}));
 
 import { boletoDePrueba } from '@/pruebas/boletos';
 
@@ -30,6 +33,29 @@ beforeEach(() => {
 });
 
 describe('publicarBoletos', () => {
+  it('sube la foto de quien compró y la manda con el boleto, salvo si es para otra persona', async () => {
+    const { cliente, upsert } = clienteConErrores({});
+    jest.mocked(obtenerCliente).mockReturnValue(cliente as never);
+    const propio = boleto('propio');
+    const ajeno = {
+      ...boleto('ajeno'),
+      resumen: { ...boleto('ajeno').resumen, paraOtro: true },
+    };
+    await publicarBoletos([propio, ajeno], { fotoLocal: 'file:///ana.jpg' });
+    const filas = upsert.mock.calls.map(([f]) => f) as unknown as {
+      boleto_id: string;
+      contenido: { resumen: { fotoPasajero?: string } };
+    }[];
+    expect(
+      filas.find((f) => f.boleto_id === 'propio')?.contenido.resumen
+        .fotoPasajero,
+    ).toBe('https://cdn/ana.jpg');
+    expect(
+      filas.find((f) => f.boleto_id === 'ajeno')?.contenido.resumen
+        .fotoPasajero,
+    ).toBeUndefined();
+  });
+
   it('sin servidor no hace nada', async () => {
     jest.mocked(obtenerCliente).mockReturnValue(null);
     expect(await publicarBoletos([boleto('a')])).toEqual({
