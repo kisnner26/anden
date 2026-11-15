@@ -39,7 +39,6 @@ export interface PropiedadesConductorInicio {
   /** abre el formulario para publicar un viaje nuevo */
   alNuevoViaje?: () => void;
   /** cierra la sesión y vuelve a la app de pasajero */
-  alSalir: () => void;
 }
 
 /** los viajes del día del chofer; desde acá empieza a compartir su ubicación */
@@ -48,11 +47,10 @@ export function ConductorInicio({
   alAbrirPerfil,
   alAbrirViaje,
   alNuevoViaje,
-  alSalir,
 }: PropiedadesConductorInicio) {
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
-  const { cerrar, sesion } = useSesion();
+  const { sesion } = useSesion();
   const ahora = useAhora();
   const enVivo = useViajesEnVivo();
   const { cierreDe } = useCierres();
@@ -273,18 +271,6 @@ export function ConductorInicio({
           </Aparece>
         );
       })}
-
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => {
-          void cerrar().then(alSalir);
-        }}
-        style={estilos.salir}
-      >
-        <Text style={[tipografia.subtitulo, { color: colores.cancelado }]}>
-          {t('conductor.cerrarSesion')}
-        </Text>
-      </Pressable>
     </ScrollView>
   );
 }
@@ -316,12 +302,6 @@ const estilos = StyleSheet.create({
     justifyContent: 'center',
     minHeight: tamanosControl.toqueMinimo,
     paddingHorizontal: espacios.doce,
-  },
-  salir: {
-    alignItems: 'center',
-    marginTop: espacios.veinticuatro,
-    minHeight: tamanosControl.toqueMinimo,
-    justifyContent: 'center',
   },
   texto: { flex: 1, gap: 2 },
 });
