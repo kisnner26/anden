@@ -10,6 +10,8 @@ export default tseslint.config(
       '**/ios/**',
       '**/coverage/**',
       '**/dist/**',
+      '**/targets/**/expo-target.config.js',
+      'apps/compartir/config.ejemplo.js',
     ],
   },
   js.configs.recommended,
