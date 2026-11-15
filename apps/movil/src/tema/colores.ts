@@ -84,6 +84,23 @@ export const paletaIconos = {
   verdeOscuro: '#2E9E6B',
 } as const;
 
+/** el pasaporte de viajes: tapa de cuero, hojas de papel con guilloché y sellos de tinta; es igual en claro y oscuro */
+export const paletaPasaporte = {
+  cueroClaro: '#2A2820',
+  cueroOscuro: '#0E0D0A',
+  guilloche: '#CFC2A4',
+  hoja: '#F4EDDC',
+  hojaSombra: '#E2D7BC',
+  oro: '#E8B64A',
+  oroClaro: '#F7DB92',
+  oroOscuro: '#A9741A',
+  tintaHoja: '#1B1A17',
+  tintaHojaSuave: '#6B6354',
+  tintaSello: '#B5530F',
+  tintaSelloAzul: '#1F4E79',
+  zonaDeLectura: '#3B372D',
+} as const;
+
 /** colores del bus de personaje; son los mismos en claro y oscuro */
 export const paletaAutobus = {
   banda: '#FFB21E',
