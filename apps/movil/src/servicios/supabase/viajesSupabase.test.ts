@@ -100,6 +100,12 @@ describe('retirarViajeCon', () => {
     expect(borrar).toHaveBeenCalled();
   });
 
+  it('cancela con el motivo cuando se da', async () => {
+    const { actualizar, supabase } = cliente();
+    expect(await retirarViajeCon(supabase, 'via_x', true, 'averia')).toBe(true);
+    expect(actualizar).toHaveBeenCalledTimes(1);
+  });
+
   it('cancela el viaje que ya tiene pasajeros', async () => {
     const { actualizar, borrar, supabase } = cliente();
     expect(await retirarViajeCon(supabase, 'via_x', true)).toBe(true);

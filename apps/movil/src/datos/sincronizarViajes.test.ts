@@ -8,7 +8,7 @@ jest.mock('@/servicios/supabase/viajesSupabase', () => ({
 import { leerViajesPublicados } from '@/servicios/supabase/viajesSupabase';
 
 import { DUENO_REMOTO } from './asientosRemotos';
-import { viajeCancelado } from './historialSalidas';
+import { motivoDeCancelacion, viajeCancelado } from './historialSalidas';
 import { crearBase } from './muestra';
 import { CLAVE_CACHE_VIAJES, guardarCacheViajes } from './cacheViajes';
 import {
@@ -148,6 +148,16 @@ describe('viajes cancelados', () => {
     });
     expect(viajeCancelado('via_x')).toBe(true);
     expect(viajeCancelado('via_a')).toBe(false);
+  });
+
+  it('recuerda por qué lo canceló, si lo dijo', () => {
+    aplicarViajesPublicados(crearBase(), {
+      ...PUBLICADOS,
+      cancelados: ['via_x', 'via_y'],
+      motivos: { via_x: 'averia' },
+    });
+    expect(motivoDeCancelacion('via_x')).toBe('averia');
+    expect(motivoDeCancelacion('via_y')).toBeNull();
   });
 
   it('un viaje que el conductor ya inició se queda con su hora real, para que el boleto pase a en ruta', () => {
