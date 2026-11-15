@@ -12,13 +12,21 @@ import { GuiaConductor } from '@/componentes/GuiaConductor';
 import { Loseta } from '@/componentes/Loseta';
 import { pasosDeGuia } from '@/datos/guiaConductor';
 import { useEncomiendas } from '@/datos/useEncomiendas';
-import { formatoDiaCorto, formatoHora, sufijoHora } from '@/datos/formato';
+import {
+  formatoDiaCorto,
+  formatoHora,
+  formatoHoraCompleta,
+  sufijoHora,
+} from '@/datos/formato';
 import { iniciales, nombreCompleto, nombrePropio } from '@/datos/perfil';
 import { usePerfil } from '@/datos/usePerfil';
 import { inicioDelDia, nombreDelDia } from '@/datos/dias';
 import { salidasDeChofer } from '@/datos/salidas';
 import { sincronizarViajes } from '@/datos/sincronizarViajes';
 import { retirarViaje } from '@/servicios/supabase/viajesSupabase';
+import { buscarPasajeros } from '@/servicios/supabase/comunicacionSupabase';
+import { MINUTOS_DE_BUSQUEDA, mensajeDeBusqueda } from '@/datos/comunicacion';
+import { busquedaDe } from '@/datos/historialSalidas';
 import { useCierres } from '@/datos/useCierres';
 import { useSesion } from '@/datos/useSesion';
 import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
@@ -71,12 +79,34 @@ export function ConductorInicio({
     : [];
   const [retirando, establecerRetirando] = useState<string | null>(null);
   const [motivo, establecerMotivo] = useState<MotivoCancelacion | null>(null);
+  const [eligiendoBusqueda, establecerEligiendoBusqueda] = useState<
+    string | null
+  >(null);
+  const [falloBusqueda, establecerFalloBusqueda] = useState(false);
 
   function hayPasajeros(viajeId: string): boolean {
     return obtenerMuestra().ocupaciones.some(
       (ocupacion) =>
         ocupacion.viajeId === viajeId && ocupacion.estado === 'vendido',
     );
+  }
+
+  async function buscar(
+    viajeId: string,
+    minutos: number | null,
+    libres: number,
+  ) {
+    establecerEligiendoBusqueda(null);
+    establecerFalloBusqueda(false);
+    const hasta =
+      minutos === null ? null : new Date(Date.now() + minutos * 60_000);
+    const bien = await buscarPasajeros(
+      viajeId,
+      hasta,
+      hasta ? mensajeDeBusqueda(libres) : null,
+    );
+    if (bien) await sincronizarViajes();
+    else establecerFalloBusqueda(true);
   }
 
   async function retirar(viajeId: string) {
@@ -262,6 +292,93 @@ export function ConductorInicio({
                 </View>
               </Bloque>
             </Pressable>
+            {!cierreDe(viaje.viajeId) && (
+              <View style={estilos.busqueda}>
+                {busquedaDe(viaje.viajeId, ahora) ? (
+                  <Pressable
+                    accessibilityRole="button"
+                    onPress={() => void buscar(viaje.viajeId, null, 0)}
+                    style={[estilos.buscando, { borderColor: colores.ambar }]}
+                  >
+                    <Text
+                      style={[tipografia.pequeno, { color: colores.tinta }]}
+                    >
+                      {rellenar(t('buscarPasajeros.activa'), {
+                        hora: formatoHoraCompleta(
+                          busquedaDe(viaje.viajeId, ahora)!.hasta,
+                        ),
+                      })}
+                    </Text>
+                    <Text
+                      style={[
+                        tipografia.etiqueta,
+                        { color: colores.cancelado },
+                      ]}
+                    >
+                      {t('buscarPasajeros.detener')}
+                    </Text>
+                  </Pressable>
+                ) : eligiendoBusqueda === viaje.viajeId ? (
+                  <View style={estilos.fichas}>
+                    <Text
+                      style={[
+                        tipografia.pequeno,
+                        { color: colores.tintaSuave },
+                      ]}
+                    >
+                      {t('buscarPasajeros.cuanto')}
+                    </Text>
+                    {MINUTOS_DE_BUSQUEDA.map((minutos) => (
+                      <Pressable
+                        accessibilityRole="button"
+                        key={minutos}
+                        onPress={() =>
+                          void buscar(
+                            viaje.viajeId,
+                            minutos,
+                            viaje.asientosLibres,
+                          )
+                        }
+                        style={[
+                          estilos.ficha,
+                          { borderColor: conAlfa(colores.tinta, 0.16) },
+                        ]}
+                      >
+                        <Text
+                          style={[tipografia.pequeno, { color: colores.tinta }]}
+                        >
+                          {rellenar(t('buscarPasajeros.minutos'), {
+                            n: minutos,
+                          })}
+                        </Text>
+                      </Pressable>
+                    ))}
+                  </View>
+                ) : viaje.asientosLibres > 0 ? (
+                  <Pressable
+                    accessibilityRole="button"
+                    onPress={() => establecerEligiendoBusqueda(viaje.viajeId)}
+                    style={estilos.retirar}
+                  >
+                    <Text
+                      style={[
+                        tipografia.pequeno,
+                        { color: colores.ambarTexto },
+                      ]}
+                    >
+                      {t('buscarPasajeros.boton')}
+                    </Text>
+                  </Pressable>
+                ) : null}
+                {falloBusqueda && eligiendoBusqueda === null ? (
+                  <Text
+                    style={[tipografia.pequeno, { color: colores.cancelado }]}
+                  >
+                    {t('buscarPasajeros.fallo')}
+                  </Text>
+                ) : null}
+              </View>
+            )}
             {retirando === viaje.viajeId && hayPasajeros(viaje.viajeId) && (
               <View style={estilos.motivos}>
                 <Text
@@ -349,7 +466,21 @@ const estilos = StyleSheet.create({
     flexDirection: 'row',
     gap: espacios.doce,
   },
-  fichas: { flexDirection: 'row', flexWrap: 'wrap', gap: espacios.ocho },
+  buscando: {
+    alignItems: 'center',
+    borderRadius: 16,
+    borderWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: espacios.doce,
+  },
+  busqueda: { paddingHorizontal: espacios.doce },
+  fichas: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: espacios.ocho,
+  },
   ficha: {
     borderRadius: 999,
     borderWidth: 1,
