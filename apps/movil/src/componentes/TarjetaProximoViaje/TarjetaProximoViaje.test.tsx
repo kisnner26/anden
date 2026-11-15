@@ -37,7 +37,7 @@ describe('TarjetaProximoViaje', () => {
         salida={boaco}
       />,
     );
-    expect(pantalla.getByText('sale en 20 min')).toBeTruthy();
+    expect(pantalla.getByLabelText('sale en 20 min')).toBeTruthy();
   });
 
   it('avisa al presionar el botón de acción', async () => {
