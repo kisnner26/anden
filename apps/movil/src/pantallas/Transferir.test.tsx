@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { act, fireEvent } from '@testing-library/react-native';
 
@@ -63,7 +64,8 @@ function envolver(alVolver = jest.fn()) {
   );
 }
 
-beforeEach(() => {
+beforeEach(async () => {
+  await AsyncStorage.clear();
   jest.clearAllMocks();
   jest.mocked(crearTransferencia).mockResolvedValue('ABCD2345');
 });
@@ -85,6 +87,20 @@ describe('Transferir', () => {
     );
     expect(await pantalla.findByLabelText('Código ABCD-2345')).toBeTruthy();
     expect(crearTransferencia).toHaveBeenCalledTimes(2);
+  });
+
+  it('sin Plus no deja pasar un segundo boleto el mismo día y ofrece conocer Plus', async () => {
+    const hoy = new Date();
+    await AsyncStorage.setItem(
+      'anden.transferenciasDelDia',
+      JSON.stringify({
+        dia: `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`,
+        n: 1,
+      }),
+    );
+    const pantalla = await envolver();
+    expect(await pantalla.findByText(/Hoy ya pasaste un boleto/)).toBeTruthy();
+    expect(crearTransferencia).not.toHaveBeenCalled();
   });
 
   it('cancela la oferta y vuelve', async () => {

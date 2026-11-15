@@ -7,12 +7,27 @@ import {
   puedeGuardarHabitual,
   diasDeAnticipacion,
   puedeReservarSalida,
+  puedeTransferir,
+  rumboUsaIA,
 } from './beneficios';
 
+describe('beneficios nuevos de Plus', () => {
+  it('sin Plus se puede pasar un boleto por día y con Plus los que quieras', () => {
+    expect(puedeTransferir(false, 0)).toBe(true);
+    expect(puedeTransferir(false, 1)).toBe(false);
+    expect(puedeTransferir(true, 12)).toBe(true);
+  });
+
+  it('Rumbo afina su ayuda con la IA solo para Plus', () => {
+    expect(rumboUsaIA(true)).toBe(true);
+    expect(rumboUsaIA(false)).toBe(false);
+  });
+});
+
 describe('beneficios de Plus', () => {
-  it('hay siete beneficios, cada uno con ícono y sin repetirse', () => {
-    expect(BENEFICIOS_PLUS).toHaveLength(7);
-    expect(new Set(BENEFICIOS_PLUS.map((b) => b.id)).size).toBe(7);
+  it('hay diez beneficios, cada uno con ícono y sin repetirse', () => {
+    expect(BENEFICIOS_PLUS).toHaveLength(10);
+    expect(new Set(BENEFICIOS_PLUS.map((b) => b.id)).size).toBe(10);
     expect(BENEFICIOS_PLUS.every((b) => b.icono !== undefined)).toBe(true);
   });
 
