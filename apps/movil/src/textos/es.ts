@@ -208,6 +208,7 @@ export const textos = {
       'Falta preparar el servidor: corré el SQL de los viajes en Supabase y probá de nuevo.',
     publicado: 'Viaje publicado. Ya lo ven los pasajeros.',
     retirar: 'Retirar viaje',
+    motivoTitulo: 'Decile a tus pasajeros por qué',
     retirarConfirmar:
       'Retirar este viaje. Los pasajeros que ya reservaron lo verán cancelado.',
     nuevo: 'Publicar un viaje',
@@ -1140,6 +1141,12 @@ export const textos = {
     sinMapa:
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
+  motivoCancelacion: {
+    averia: 'Avería del bus',
+    clima: 'Clima o estado del camino',
+    otro: 'Otro motivo',
+    pocos: 'No se juntaron pasajeros',
+  },
   alternativas: {
     detalle:
       'Mismo trayecto, sin pagar nada más: pagás al abordar. Tu asiento actual se libera.',
@@ -1196,6 +1203,7 @@ export const textos = {
     actividadEstado: 'Punto {puntoEncuentro}, salida a las {hora}',
     cancelado: 'Boleto cancelado',
     viajeCancelado: 'El conductor canceló este viaje',
+    motivoCancelado: 'Motivo: {motivo}.',
     viajeCanceladoDetalle:
       'No tenés que pagar nada. Podés reservar otra salida.',
     usado: 'Boleto usado',
