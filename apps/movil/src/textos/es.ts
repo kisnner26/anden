@@ -1141,6 +1141,15 @@ export const textos = {
     sinMapa:
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
+  llenado: {
+    accesible: '{vendidos} de {total} asientos vendidos',
+    falta1: 'Falta 1 para que salga.',
+    faltan: 'Faltan {n} para que salga.',
+    invitacion:
+      'Voy a {destino} en el bus de las {hora} y faltan {n} asientos para que salga. ¿Te venís? Sacá tu boleto en Andén.',
+    invitar: 'Invitar a alguien',
+    lleno: 'El bus está lleno: sale en cualquier momento.',
+  },
   comunicacion: {
     aviso: {
       diezMinutos: 'Salimos en 10 minutos.',
