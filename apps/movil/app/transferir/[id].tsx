@@ -7,6 +7,7 @@ export default function RutaTransferir() {
   const router = useRouter();
   return (
     <Transferir
+      alAbrirPlus={() => router.push('/plus')}
       alTerminar={() => router.replace('/boletos')}
       alVolver={() => router.back()}
       boletoId={id ?? ''}

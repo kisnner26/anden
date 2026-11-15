@@ -23,7 +23,13 @@ import {
   mensajeDeTransferencia,
   MINUTOS_DE_OFERTA,
 } from '@/datos/transferencia';
+import {
+  sumarTransferencia,
+  transferenciasDeHoy,
+} from '@/datos/conteoTransferencias';
 import { useBoletos } from '@/datos/useBoletos';
+import { useSuscripcion } from '@/datos/useSuscripcion';
+import { puedeTransferir } from '@/servicios/beneficios';
 import { useSensaciones } from '@/datos/useSensaciones';
 import {
   cancelarTransferencia,
@@ -41,9 +47,12 @@ import { t } from '@/textos/t';
 /** cada cuánto se pregunta si ya lo recibieron */
 export const CADA_CUANTO_MS = 2500;
 
-type Fase = 'fallo' | 'preparando' | 'esperando' | 'recibido' | 'vencida';
+type Fase =
+  'fallo' | 'limite' | 'preparando' | 'esperando' | 'recibido' | 'vencida';
 
 export interface PropiedadesTransferir {
+  /** abre Andén Plus, que no tiene límite de boletos pasados por día */
+  alAbrirPlus?: () => void;
   alTerminar?: () => void;
   alVolver: () => void;
   boletoId: string;
@@ -158,11 +167,13 @@ function Ondas() {
  * boleto vuela hacia arriba con chispas y sale de este teléfono
  */
 export function Transferir({
+  alAbrirPlus,
   alTerminar,
   alVolver,
   boletoId,
 }: PropiedadesTransferir) {
   const { colores } = useTema();
+  const { plus } = useSuscripcion();
   const margenes = useSafeAreaInsets();
   const reducido = useMovimientoReducido();
   const sentir = useSensaciones();
@@ -177,15 +188,21 @@ export function Transferir({
 
   const preparar = useCallback(async () => {
     establecerFase('preparando');
+    // sin Plus se puede pasar un boleto por día
+    if (!puedeTransferir(plus, await transferenciasDeHoy())) {
+      establecerFase('limite');
+      return;
+    }
     const nuevo = await crearTransferencia(boletoId);
     if (nuevo === null) {
       establecerFase('fallo');
       return;
     }
+    void sumarTransferencia();
     establecerCodigo(nuevo);
     establecerSegundos(MINUTOS_DE_OFERTA * 60);
     establecerFase('esperando');
-  }, [boletoId]);
+  }, [boletoId, plus]);
 
   useEffect(() => {
     void preparar();
@@ -282,6 +299,16 @@ export function Transferir({
 
       {!guardado ? (
         <EstadoVacio tipo="error" titulo={t('boleto.noExiste')} />
+      ) : fase === 'limite' ? (
+        <View style={estilos.centro}>
+          <EstadoVacio tipo="error" titulo={t('transferir.limite')} />
+          {alAbrirPlus ? (
+            <BotonAccion
+              alPresionar={alAbrirPlus}
+              etiqueta={t('transferir.conocerPlus')}
+            />
+          ) : null}
+        </View>
       ) : fase === 'fallo' ? (
         <View style={estilos.centro}>
           <EstadoVacio tipo="error" titulo={t('transferir.ofertaFallo')} />
