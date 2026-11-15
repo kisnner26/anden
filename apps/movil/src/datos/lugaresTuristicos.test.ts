@@ -1,6 +1,11 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { hechosDeLugares, lugaresParaPregunta } from './lugaresTuristicos';
+import {
+  hechosDeLugares,
+  lugaresParaPregunta,
+  pideSoloFotos,
+  textoDeFotos,
+} from './lugaresTuristicos';
 
 describe('lugaresParaPregunta', () => {
   it('con una ciudad devuelve todos sus lugares', () => {
@@ -29,5 +34,21 @@ describe('lugaresParaPregunta', () => {
   it('los hechos listan los lugares para el modelo', () => {
     const h = hechosDeLugares(lugaresParaPregunta('qué ver en Juigalpa'));
     expect(h.join('\n')).toContain('Museo Arqueológico de Juigalpa');
+  });
+});
+
+describe('pideSoloFotos', () => {
+  it('solo fotos se contesta sin el modelo', () => {
+    expect(pideSoloFotos('fotos de lugares turisticos')).toBe(true);
+    expect(pideSoloFotos('quiero ver lugares turísticos de Boaco')).toBe(true);
+  });
+  it('si pide recomendación o buses va al modelo', () => {
+    expect(pideSoloFotos('recomendame qué visitar en Boaco')).toBe(false);
+    expect(pideSoloFotos('fotos de Boaco y cuánto cuesta el bus')).toBe(false);
+  });
+  it('presenta las fotos con una frase corta', () => {
+    expect(textoDeFotos(lugaresParaPregunta('fotos de Boaco'))).toBe(
+      'Lugares para ver en Boaco.',
+    );
   });
 });
