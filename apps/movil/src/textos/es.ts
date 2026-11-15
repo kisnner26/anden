@@ -702,6 +702,13 @@ export const textos = {
     titulo: 'Recibir boleto',
     verBoleto: 'Ver mi boleto',
   },
+  actividadEnVivo: {
+    seccion: 'Actividad del viaje',
+    titulo: 'Isla dinámica y pantalla de bloqueo',
+    detalle:
+      'Sigue tu boleto fuera de la app con la cuenta regresiva y el camino de salida. Apagalo y deja de ofrecerse.',
+    noDisponible: 'Este teléfono no ofrece actividades en vivo.',
+  },
   inicioAutomatico: {
     seccion: 'Inicio',
     titulo: 'Inicio automático',
