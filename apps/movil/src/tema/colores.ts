@@ -187,6 +187,14 @@ export const paletasAutobus: Readonly<
   ),
 };
 
+/** el color del cielo en cada momento del trayecto: de arriba hacia abajo en el amanecer y el atardecer, de noche y de día */
+export const coloresCielo = {
+  amanecer: ['#FFB38A', '#F37C5B', '#7B5E9E'],
+  atardecer: ['#FFC857', '#F2765A', '#5A4A8C'],
+  dia: ['#8FD3FF', '#5BB4F0', '#3E8FDB'],
+  noche: ['#2B3A6B', '#1B2548', '#0E1430'],
+} as const;
+
 /** el degradado que identifica todo lo que genera la IA del teléfono */
 export const coloresIA = ['#7B61FF', '#2EC4F1', '#FFB21E'] as const;
 
