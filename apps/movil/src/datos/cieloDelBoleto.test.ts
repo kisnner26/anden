@@ -26,6 +26,11 @@ describe('datosDelCielo', () => {
 
   it('sin terminal conocida devuelve nulo', () => {
     expect(datosDelCielo(boleto('Lugar raro', 'Boaco'), TERMINALES)).toBeNull();
-    expect(datosDelCielo(boleto(undefined, 'Boaco'), TERMINALES)).toBeNull();
+    expect(datosDelCielo(boleto(undefined, 'Managua'), TERMINALES)).toBeNull();
+  });
+
+  it('un boleto viejo sin terminal que no va a Managua sale de Managua', () => {
+    const d = datosDelCielo(boleto(undefined, 'Boaco'), TERMINALES);
+    expect(d?.lugar.lat).toBeCloseTo(12.13, 1);
   });
 });

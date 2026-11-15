@@ -9,8 +9,11 @@ export function datosDelCielo(
   terminales: DatosMuestra['terminales'],
 ): { duracionMin: number; lugar: Coordenada } | null {
   const origen = guardado.resumen.origen;
-  const salida = terminales.find(
-    (t) => t.nombre === origen || t.ciudad === origen,
+  const salida = terminales.find((t) =>
+    origen === undefined
+      ? // los boletos viejos no guardaron la terminal: si no van a Managua, salen de Managua
+        guardado.resumen.destino !== 'Managua' && t.ciudad === 'Managua'
+      : t.nombre === origen || t.ciudad === origen,
   );
   if (!salida) return null;
   const trazo = trazoEntre(salida.ciudad, guardado.resumen.destino);
