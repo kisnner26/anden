@@ -1,5 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from '@jest/globals';
 import { fireEvent, waitFor } from '@testing-library/react-native';
 import { Linking, Share } from 'react-native';
 
@@ -28,6 +35,7 @@ import { ProveedorRecordatorios } from '@/datos/ProveedorRecordatorios';
 import { CLAVE_BOLETOS, ProveedorBoletos } from '@/datos/ProveedorBoletos';
 import { ProveedorHabituales } from '@/datos/ProveedorHabituales';
 import { ProveedorPagos } from '@/datos/ProveedorPagos';
+import { fijarCancelados } from '@/datos/historialSalidas';
 import { reiniciarMuestra } from '@/datos/useSalidas';
 import { boletoDePrueba } from '@/pruebas/boletos';
 import { renderPantalla } from '@/pruebas/render';
@@ -471,5 +479,38 @@ describe('VerBoleto', () => {
     await waitFor(() =>
       expect(terminarActividad).toHaveBeenCalledWith('act_1'),
     );
+  });
+});
+
+describe('VerBoleto con el viaje cancelado', () => {
+  beforeEach(() => {
+    fijarCancelados(['via_2']);
+  });
+  afterEach(() => {
+    fijarCancelados([]);
+  });
+
+  it('ofrece otras salidas del mismo trayecto', async () => {
+    const pantalla = await dibujar();
+    expect(await pantalla.findByTestId('alternativas-de-viaje')).toBeTruthy();
+    expect(pantalla.getAllByText('Pasarme').length).toBeGreaterThan(0);
+  });
+
+  it('pasa al boleto nuevo y cancela el del viaje cancelado', async () => {
+    const alReubicado = jest.fn();
+    const pantalla = await dibujar({ alReubicado });
+    const boton = (
+      await pantalla.findAllByRole('button', { name: /Pasarme a la salida/ })
+    )[0]!;
+    await fireEvent.press(boton);
+    await waitFor(() => expect(alReubicado).toHaveBeenCalledTimes(1));
+    const guardados = JSON.parse(
+      (await AsyncStorage.getItem(CLAVE_BOLETOS)) ?? '[]',
+    ) as { boleto: { estado: string; id: string; viajeId: string } }[];
+    const viejo = guardados.find((g) => g.boleto.id === 'bol_K7RM4QX9');
+    const nuevo = guardados.find((g) => g.boleto.id !== 'bol_K7RM4QX9');
+    expect(viejo?.boleto.estado).toBe('cancelado');
+    expect(nuevo?.boleto.estado).toBe('vigente');
+    expect(nuevo?.boleto.viajeId).not.toBe('via_2');
   });
 });
