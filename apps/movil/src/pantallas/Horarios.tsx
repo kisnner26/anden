@@ -15,9 +15,7 @@ import { BotonAccion } from '@/componentes/BotonAccion';
 import { Hoja } from '@/componentes/Hoja';
 import { HojaRecordatorio } from '@/componentes/HojaRecordatorio';
 import { Chip } from '@/componentes/Chip';
-import { MapaDeCalor } from '@/componentes/MapaDeCalor';
 import { SelectorDia } from '@/componentes/SelectorDia';
-import { mapaDeCalor } from '@/datos/mapaDeCalor';
 import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
 import { FotoTerminal } from '@/componentes/FotoTerminal';
@@ -84,8 +82,6 @@ export function Horarios({
   const { ahora, datos, salidas } = useSalidas(terminalId, dia);
   // las salidas del mismo día que salen de otras terminales: si no se mira la correcta, parece que no hay viajes
   const { salidas: delDiaEnTodas } = useSalidas(undefined, dia);
-  // todas las salidas de esta terminal en los días reservables, para el mapa de calor de la semana
-  const { salidas: deLaSemana } = useSalidas(terminalId);
   const proxima = proximaSalida(salidas);
   const esHoy = mismoDia(dia, ahora);
   const { plus } = useSuscripcion();
@@ -324,12 +320,6 @@ export function Horarios({
       <SelectorDia
         ahora={ahora}
         alElegir={establecerDia}
-        dias={dias}
-        seleccionado={dia}
-      />
-      <MapaDeCalor
-        alElegirDia={establecerDia}
-        celdas={mapaDeCalor(deLaSemana, dias, ahora)}
         dias={dias}
         seleccionado={dia}
       />
