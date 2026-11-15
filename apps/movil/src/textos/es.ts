@@ -1141,6 +1141,26 @@ export const textos = {
     sinMapa:
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
+  objetosEncontrados: {
+    avisar: 'Avisar a los pasajeros',
+    cerrar: 'Cerrar',
+    ejemplo: 'Mochila negra bajo el asiento 12',
+    encontrados: 'Encontrados en tu viaje',
+    enviando: 'Enviando…',
+    esMio: 'Es mío',
+    fallo: 'No se pudo enviar. Revisá tu conexión.',
+    fotoTomada: 'Foto del objeto olvidado',
+    listo: 'Listo: quienes viajaron ya lo ven en su boleto.',
+    noSePudo:
+      'No se pudo reclamar: alguien más ya lo hizo o no tuviste boleto en este viaje.',
+    otraFoto: 'Tomar otra foto',
+    queEs: '¿Qué es?',
+    reportar: 'Objeto olvidado',
+    sinPermiso: 'Para fotografiarlo, Andén necesita usar la cámara.',
+    tomarFoto: 'Tomar foto',
+    titulo: 'Objeto olvidado en el bus',
+    yaReclamado: 'Ya lo reclamaron.',
+  },
   escaner: {
     abrir: 'Escanear boleto',
     apuntar: 'Apuntá al QR del boleto.',
