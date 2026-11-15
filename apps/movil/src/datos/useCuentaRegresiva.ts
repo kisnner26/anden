@@ -1,8 +1,17 @@
 import { useEffect, useState } from 'react';
 
-/** segundos que faltan, bajando de uno en uno hasta llegar a cero */
-export function useCuentaRegresiva(segundosIniciales: number): number {
+/**
+ * segundos que faltan, bajando de uno en uno hasta llegar a cero; al cambiar `ronda` la cuenta vuelve a empezar, que es
+ * lo que se hace después de avisar que el tiempo se acabó
+ */
+export function useCuentaRegresiva(
+  segundosIniciales: number,
+  ronda = 0,
+): number {
   const [restantes, establecerRestantes] = useState(segundosIniciales);
+  useEffect(() => {
+    establecerRestantes(segundosIniciales);
+  }, [ronda, segundosIniciales]);
   useEffect(() => {
     const temporizador = setInterval(
       () => establecerRestantes((actual) => Math.max(0, actual - 1)),

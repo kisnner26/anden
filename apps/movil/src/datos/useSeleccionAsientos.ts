@@ -74,5 +74,11 @@ export function useSeleccionAsientos(viajeId: string) {
     [ahora, bus, datos, elegidos, viaje],
   );
 
-  return { alternar, aviso, elegidos, total };
+  /** suelta todos los asientos elegidos, por ejemplo cuando se acabó el tiempo para decidir */
+  const limpiar = useCallback(() => {
+    establecerElegidos([]);
+    establecerAviso(null);
+  }, []);
+
+  return { alternar, aviso, elegidos, limpiar, total };
 }

@@ -36,4 +36,18 @@ describe('useCuentaRegresiva', () => {
     });
     expect(result.current).toBe(0);
   });
+
+  it('vuelve a empezar cuando cambia la ronda', async () => {
+    jest.useFakeTimers();
+    const { rerender, result } = await renderHook(
+      ({ ronda }: { ronda: number }) => useCuentaRegresiva(10, ronda),
+      { initialProps: { ronda: 0 } },
+    );
+    await act(async () => {
+      jest.advanceTimersByTime(4000);
+    });
+    expect(result.current).toBe(6);
+    await rerender({ ronda: 1 });
+    expect(result.current).toBe(10);
+  });
 });

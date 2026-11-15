@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
-import { fireEvent } from '@testing-library/react-native';
+import { act, fireEvent } from '@testing-library/react-native';
 
 import { VIAJE_BOACO } from '@/datos/muestra';
 import { formatoFechaCorta } from '@/datos/formato';
@@ -127,5 +127,31 @@ describe('Asientos', () => {
     expect(
       pantalla.getByRole('button', { name: 'Seguir' }).props.accessibilityState,
     ).toMatchObject({ disabled: false });
+  });
+
+  it('al acabarse los diez minutos suelta los asientos y avisa', async () => {
+    jest.useFakeTimers();
+    try {
+      const pantalla = await renderPantalla(
+        <Asientos
+          alSeguir={() => undefined}
+          alVolver={() => undefined}
+          viajeId={VIAJE_BOACO}
+        />,
+      );
+      const libres = pantalla.getAllByRole('button', { name: /libre/ });
+      await fireEvent.press(libres[0]!);
+      expect(pantalla.queryByText('C$ 0')).toBeNull();
+      await act(async () => {
+        jest.advanceTimersByTime(601_000);
+      });
+      expect(
+        pantalla.getByText(/Se acabó el tiempo para decidir/),
+      ).toBeTruthy();
+      expect(pantalla.getByText('C$ 0')).toBeTruthy();
+      expect(pantalla.getByText('10:00')).toBeTruthy();
+    } finally {
+      jest.useRealTimers();
+    }
   });
 });

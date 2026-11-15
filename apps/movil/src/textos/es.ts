@@ -945,6 +945,8 @@ export const textos = {
     avisoMaximo: 'Podés elegir hasta 6 asientos.',
     avisoVentaCerrada: 'La venta de este viaje ya cerró.',
     avisoOcupado: 'Ese asiento ya no está libre.',
+    tiempoVencido:
+      'Se acabó el tiempo para decidir y soltamos tus asientos. Elegí de nuevo.',
     noExiste: 'No encontramos este viaje.',
   },
   detalle: {

@@ -68,8 +68,18 @@ export function Asientos({
   const mapa = useMapaAsientos(viajeId, version);
   const { datos, salidas } = useSalidas();
   const avanceDelGrupo = useGrupo(grupo ?? null);
-  const { alternar, aviso, elegidos, total } = useSeleccionAsientos(viajeId);
-  const restantes = useCuentaRegresiva(SEGUNDOS_RETENCION);
+  const { alternar, aviso, elegidos, limpiar, total } =
+    useSeleccionAsientos(viajeId);
+  const [ronda, establecerRonda] = useState(0);
+  const [seVencio, establecerSeVencio] = useState(false);
+  const restantes = useCuentaRegresiva(SEGUNDOS_RETENCION, ronda);
+  // al acabarse los diez minutos los asientos se sueltan y la cuenta vuelve a empezar, con un aviso
+  useEffect(() => {
+    if (restantes > 0) return;
+    limpiar();
+    establecerSeVencio(true);
+    establecerRonda((r) => r + 1);
+  }, [limpiar, restantes]);
   // con un enlace de grupo se marcan los asientos libres pegados a los que ya eligieron los amigos
   const sugeridos = mapa
     ? asientosJuntos(
@@ -227,6 +237,19 @@ export function Asientos({
             ]}
           >
             {AVISOS[aviso]()}
+          </Text>
+        )}
+
+        {seVencio && elegidos.length === 0 && (
+          <Text
+            accessibilityLiveRegion="polite"
+            style={[
+              tipografia.pequeno,
+              estilos.aviso,
+              { color: colores.ambarTexto },
+            ]}
+          >
+            {t('asientos.tiempoVencido')}
           </Text>
         )}
 
