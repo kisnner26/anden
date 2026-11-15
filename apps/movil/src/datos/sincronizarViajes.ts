@@ -7,7 +7,11 @@ import {
 
 import { DUENO_REMOTO } from './asientosRemotos';
 import { guardarCacheViajes, leerCacheViajes } from './cacheViajes';
-import { fijarCancelados, fijarHistorial } from './historialSalidas';
+import {
+  fijarCancelados,
+  fijarHistorial,
+  fijarMotivos,
+} from './historialSalidas';
 import { CONFIGURACION_POR_SERVICIO, type DatosMuestra } from './muestra';
 import { notificarCambioDeViajes, obtenerMuestra } from './useSalidas';
 
@@ -93,6 +97,7 @@ export function aplicarViajesPublicados(
   }
 
   fijarCancelados(publicados.cancelados ?? []);
+  fijarMotivos(publicados.motivos ?? {});
   fijarHistorial(
     (publicados.historial ?? []).map((fila) => {
       const puesto = new Date(fila.salida);

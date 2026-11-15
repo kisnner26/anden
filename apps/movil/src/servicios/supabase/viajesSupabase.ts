@@ -39,6 +39,8 @@ export interface FilaSalidaReal {
 export interface ViajesPublicados {
   /** viajes que el conductor canceló: los pasajeros con boleto deben enterarse */
   cancelados?: string[];
+  /** el motivo que dio el conductor al cancelar, por viaje; falta si no lo dio o el servidor no lo guarda todavía */
+  motivos?: Record<string, string>;
   choferes: FilaChofer[];
   /** viajes que ya salieron, para aprender cuánto tarda en llenarse cada ruta */
   historial: FilaSalidaReal[];
@@ -71,16 +73,37 @@ export async function leerViajesPublicadosCon(
           .limit(300),
         cliente
           .from('viajes')
-          .select('id')
+          .select('id, motivo_cancelacion')
           .eq('estado', 'cancelado')
           .gte('salida', desde.toISOString()),
       ]);
+    // si el servidor todavía no tiene la columna del motivo, se piden solo los viajes cancelados
+    const sinMotivo = cancelados.error
+      ? await cliente
+          .from('viajes')
+          .select('id')
+          .eq('estado', 'cancelado')
+          .gte('salida', desde.toISOString())
+      : null;
+    const filasCanceladas = (sinMotivo ?? cancelados).data as
+      { id: string; motivo_cancelacion?: string | null }[] | null;
+    const errorCancelados = (sinMotivo ?? cancelados).error;
     if (viajes.error || !viajes.data) return null;
     return {
       cancelados:
-        cancelados.error || !cancelados.data
+        errorCancelados || !filasCanceladas
           ? []
-          : (cancelados.data as { id: string }[]).map((fila) => fila.id),
+          : filasCanceladas.map((fila) => fila.id),
+      motivos:
+        errorCancelados || !filasCanceladas
+          ? {}
+          : Object.fromEntries(
+              filasCanceladas.flatMap((fila) =>
+                fila.motivo_cancelacion
+                  ? [[fila.id, fila.motivo_cancelacion]]
+                  : [],
+              ),
+            ),
       historial:
         historial.error || !historial.data
           ? []
@@ -148,14 +171,25 @@ export async function retirarViajeCon(
   cliente: SupabaseClient,
   viajeId: string,
   conPasajeros: boolean,
+  motivo?: string,
 ): Promise<boolean> {
   try {
-    const { error } = conPasajeros
-      ? await cliente
-          .from('viajes')
-          .update({ estado: 'cancelado' })
-          .eq('id', viajeId)
-      : await cliente.from('viajes').delete().eq('id', viajeId);
+    if (!conPasajeros) {
+      const { error } = await cliente.from('viajes').delete().eq('id', viajeId);
+      return error === null;
+    }
+    if (motivo) {
+      const conMotivo = await cliente
+        .from('viajes')
+        .update({ estado: 'cancelado', motivo_cancelacion: motivo })
+        .eq('id', viajeId);
+      if (conMotivo.error === null) return true;
+      // si el servidor todavía no guarda el motivo, igual se cancela el viaje
+    }
+    const { error } = await cliente
+      .from('viajes')
+      .update({ estado: 'cancelado' })
+      .eq('id', viajeId);
     return error === null;
   } catch {
     return false;
@@ -165,9 +199,12 @@ export async function retirarViajeCon(
 export async function retirarViaje(
   viajeId: string,
   conPasajeros: boolean,
+  motivo?: string,
 ): Promise<boolean> {
   const cliente = obtenerCliente();
-  return cliente ? retirarViajeCon(cliente, viajeId, conPasajeros) : false;
+  return cliente
+    ? retirarViajeCon(cliente, viajeId, conPasajeros, motivo)
+    : false;
 }
 
 /** el conductor cerró el viaje al llegar: los pasajeros con boleto lo ven como llegado */

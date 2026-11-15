@@ -21,3 +21,14 @@ export function fijarCancelados(ids: readonly string[]): void {
 export function viajeCancelado(viajeId: string): boolean {
   return cancelados.has(viajeId);
 }
+
+let motivos: Readonly<Record<string, string>> = {};
+
+/** por qué canceló el conductor cada viaje, cuando lo dijo */
+export function fijarMotivos(porViaje: Readonly<Record<string, string>>): void {
+  motivos = porViaje;
+}
+
+export function motivoDeCancelacion(viajeId: string): string | null {
+  return motivos[viajeId] ?? null;
+}
