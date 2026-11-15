@@ -15,6 +15,9 @@ export interface FilaViaje {
   /** cuándo arrancó de verdad; nulo mientras espera pasajeros */
   salio_en?: string | null;
   servicio: 'expreso' | 'ordinario';
+  /** hasta cuándo el chofer está buscando pasajeros; nulo si no */
+  busca_hasta?: string | null;
+  busca_mensaje?: string | null;
 }
 
 export interface FilaChofer {
@@ -48,6 +51,19 @@ export interface ViajesPublicados {
   viajes: FilaViaje[];
 }
 
+const CAMPOS_BASE =
+  'id, chofer_id, ruta_id, servicio, placa, punto_encuentro, salida, estado, salio_en';
+const CAMPOS_CON_BUSQUEDA = `${CAMPOS_BASE}, busca_hasta, busca_mensaje`;
+
+function consultarViajes(cliente: SupabaseClient, desde: Date, campos: string) {
+  return cliente
+    .from('viajes')
+    .select(campos)
+    .gte('salida', desde.toISOString())
+    .neq('estado', 'cancelado')
+    .order('salida', { ascending: true });
+}
+
 /** los viajes de hoy en adelante con sus choferes y asientos vendidos; nulo si no hay servidor o no respondió */
 export async function leerViajesPublicadosCon(
   cliente: SupabaseClient,
@@ -56,14 +72,7 @@ export async function leerViajesPublicadosCon(
   try {
     const [viajes, choferes, ocupacion, historial, cancelados] =
       await Promise.all([
-        cliente
-          .from('viajes')
-          .select(
-            'id, chofer_id, ruta_id, servicio, placa, punto_encuentro, salida, estado, salio_en',
-          )
-          .gte('salida', desde.toISOString())
-          .neq('estado', 'cancelado')
-          .order('salida', { ascending: true }),
+        consultarViajes(cliente, desde, CAMPOS_CON_BUSQUEDA),
         cliente.from('perfiles_chofer').select('chofer_id, nombre, foto_url'),
         cliente.rpc('ocupacion_de_viajes'),
         cliente
@@ -88,7 +97,12 @@ export async function leerViajesPublicadosCon(
     const filasCanceladas = (sinMotivo ?? cancelados).data as
       { id: string; motivo_cancelacion?: string | null }[] | null;
     const errorCancelados = (sinMotivo ?? cancelados).error;
-    if (viajes.error || !viajes.data) return null;
+    // si el servidor todavía no tiene las columnas de "buscar pasajeros", se piden los viajes sin ellas
+    const viajesLeidos =
+      viajes.error || !viajes.data
+        ? await consultarViajes(cliente, desde, CAMPOS_BASE)
+        : viajes;
+    if (viajesLeidos.error || !viajesLeidos.data) return null;
     return {
       cancelados:
         errorCancelados || !filasCanceladas
@@ -114,7 +128,7 @@ export async function leerViajesPublicadosCon(
         ocupacion.error || !Array.isArray(ocupacion.data)
           ? []
           : (ocupacion.data as FilaOcupacion[]),
-      viajes: viajes.data as FilaViaje[],
+      viajes: viajesLeidos.data as unknown as FilaViaje[],
     };
   } catch {
     return null;

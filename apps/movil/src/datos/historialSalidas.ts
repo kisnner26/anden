@@ -32,3 +32,28 @@ export function fijarMotivos(porViaje: Readonly<Record<string, string>>): void {
 export function motivoDeCancelacion(viajeId: string): string | null {
   return motivos[viajeId] ?? null;
 }
+
+export interface BusquedaDePasajeros {
+  hasta: Date;
+  mensaje: string | null;
+}
+
+let busquedas: Readonly<Record<string, BusquedaDePasajeros>> = {};
+
+/** los viajes cuyo chofer está buscando pasajeros, con hasta cuándo y su frase */
+export function fijarBusquedas(
+  porViaje: Readonly<Record<string, BusquedaDePasajeros>>,
+): void {
+  busquedas = porViaje;
+}
+
+/** la búsqueda de pasajeros de un viaje si sigue vigente; nula si no la hay o ya venció */
+export function busquedaDe(
+  viajeId: string,
+  ahora: Date,
+): BusquedaDePasajeros | null {
+  const busqueda = busquedas[viajeId];
+  return busqueda && busqueda.hasta.getTime() > ahora.getTime()
+    ? busqueda
+    : null;
+}

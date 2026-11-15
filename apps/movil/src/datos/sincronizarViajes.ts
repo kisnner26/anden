@@ -8,6 +8,7 @@ import {
 import { DUENO_REMOTO } from './asientosRemotos';
 import { guardarCacheViajes, leerCacheViajes } from './cacheViajes';
 import {
+  fijarBusquedas,
   fijarCancelados,
   fijarHistorial,
   fijarMotivos,
@@ -96,6 +97,23 @@ export function aplicarViajesPublicados(
     });
   }
 
+  fijarBusquedas(
+    Object.fromEntries(
+      publicados.viajes.flatMap((fila) =>
+        fila.busca_hasta
+          ? [
+              [
+                fila.id,
+                {
+                  hasta: new Date(fila.busca_hasta),
+                  mensaje: fila.busca_mensaje ?? null,
+                },
+              ],
+            ]
+          : [],
+      ),
+    ),
+  );
   fijarCancelados(publicados.cancelados ?? []);
   fijarMotivos(publicados.motivos ?? {});
   fijarHistorial(
