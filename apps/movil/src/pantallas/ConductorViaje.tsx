@@ -23,6 +23,11 @@ import {
   marcarSalida,
 } from '@/servicios/supabase/viajesSupabase';
 import { ControlSegmentado } from '@/componentes/ControlSegmentado';
+import { EscanerDeBoletos } from '@/componentes/EscanerDeBoletos';
+import {
+  resultadoDeLectura,
+  type ResultadoDeLectura,
+} from '@/datos/lecturaDeBoleto';
 import { HojaPasajero } from '@/componentes/HojaPasajero';
 import { ListaPasajeros } from '@/componentes/ListaPasajeros';
 import { PlanoDeOcupacion } from '@/componentes/PlanoDeOcupacion';
@@ -113,6 +118,7 @@ export function ConductorViaje({
   >('lista');
   const [fichaAbierta, establecerFichaAbierta] = useState<string | null>(null);
   const llamar = useLlamar();
+  const [escaneando, establecerEscaneando] = useState(false);
   const [iniciando, establecerIniciando] = useState(false);
   const [yaSalio, establecerYaSalio] = useState(false);
   const [problema, establecerProblema] = useState<string | null>(null);
@@ -208,6 +214,15 @@ export function ConductorViaje({
     viajeId,
     choferId,
   );
+
+  function leerBoleto(texto: string): ResultadoDeLectura {
+    const lectura = resultadoDeLectura(texto, boletos, viajeId, abordo);
+    if (lectura.tipo === 'ok') {
+      sonar('abordo');
+      void alternarAbordaje(lectura.boletoId);
+    }
+    return lectura;
+  }
 
   async function avisar(clave: AvisoRapido) {
     establecerResultadoAviso(null);
@@ -531,6 +546,24 @@ export function ConductorViaje({
         )}
 
         {pasajeros.length > 0 && !cierre ? (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => establecerEscaneando(true)}
+          >
+            <Bloque estiloContenido={estilos.escanear} radio="pildora">
+              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                {t('escaner.abrir')}
+              </Text>
+            </Bloque>
+          </Pressable>
+        ) : null}
+        <EscanerDeBoletos
+          alCerrar={() => establecerEscaneando(false)}
+          alLeer={leerBoleto}
+          visible={escaneando}
+        />
+
+        {pasajeros.length > 0 && !cierre ? (
           <View style={estilos.avisos} testID="avisar-a-todos">
             <Text style={[tipografia.etiqueta, { color: colores.tintaSuave }]}>
               {t('comunicacion.avisar')}
@@ -790,6 +823,7 @@ export function ConductorViaje({
 }
 
 const estilos = StyleSheet.create({
+  escanear: { alignItems: 'center', padding: espacios.dieciseis },
   aviso: {
     borderRadius: 999,
     borderWidth: 1,
