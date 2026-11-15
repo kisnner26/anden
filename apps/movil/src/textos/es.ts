@@ -1065,7 +1065,7 @@ export const textos = {
     gracias: 'Gracias, tu opinión quedó guardada en este teléfono.',
     viajoConEl: 'Viajó con este chofer',
     soloConBoleto:
-      'Podés opinar cuando termine un viaje con este chofer, una vez por boleto.',
+      'Solo podés opinar de un chofer con el que ya viajaste: cuando te marque a bordo o el viaje llegue a su destino. Una opinión por boleto.',
     reportar: 'Reportar a este chofer',
     motivo: 'Motivo del reporte',
     reporteEnviado:
