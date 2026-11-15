@@ -2,13 +2,16 @@ import type { NombreIcono } from '@/componentes/Icono';
 
 /** lo que incluye Andén Plus; cada uno se engancha a `esPlus` en el lugar donde se aplica */
 export type Beneficio =
+  | 'abordajePrioritario'
   | 'avisosPersonalizados'
   | 'busPropio'
   | 'busquedasAmpliadas'
   | 'habitualesIlimitados'
   | 'insigniaPlus'
   | 'reservaAnticipada'
-  | 'resumenViajes';
+  | 'resumenViajes'
+  | 'rumboConIA'
+  | 'transferenciasIlimitadas';
 
 export interface DescripcionBeneficio {
   icono: NombreIcono;
@@ -23,7 +26,22 @@ export const BENEFICIOS_PLUS: readonly DescripcionBeneficio[] = [
   { icono: 'lupa', id: 'busquedasAmpliadas' },
   { icono: 'rayo', id: 'insigniaPlus' },
   { icono: 'reloj', id: 'reservaAnticipada' },
+  { icono: 'confirmar', id: 'abordajePrioritario' },
+  { icono: 'boleto', id: 'transferenciasIlimitadas' },
+  { icono: 'estrella', id: 'rumboConIA' },
 ];
+
+/** cuántos boletos se pueden pasar a otra persona por día sin Plus */
+export const TRANSFERENCIAS_GRATIS_POR_DIA = 1;
+
+export function puedeTransferir(plus: boolean, hechasHoy: number): boolean {
+  return plus || hechasHoy < TRANSFERENCIAS_GRATIS_POR_DIA;
+}
+
+/** Rumbo afina su ayuda con la IA del teléfono solo para quien tiene Plus; los demás reciben la ayuda escrita */
+export function rumboUsaIA(plus: boolean): boolean {
+  return plus;
+}
 
 /** cuántos viajes habituales se pueden guardar sin Plus */
 export const HABITUALES_GRATIS = 1;
