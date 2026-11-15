@@ -44,4 +44,33 @@ describe('CampoTexto', () => {
     expect(entrada.props.accessibilityHint).toBe('Escribí un nombre válido.');
     expect(pantalla.getByText('Escribí un nombre válido.')).toBeTruthy();
   });
+
+  it('un campo de clave deja mostrar y volver a ocultar lo escrito con el ojo', async () => {
+    const p = await render(
+      <CampoTexto
+        alCambiar={() => undefined}
+        etiqueta="Contraseña"
+        oculto
+        valor="secreta"
+      />,
+    );
+    expect(p.getByLabelText('Contraseña').props.secureTextEntry).toBe(true);
+    await fireEvent.press(
+      p.getByRole('button', { name: 'Mostrar la contraseña' }),
+    );
+    expect(p.getByLabelText('Contraseña').props.secureTextEntry).toBe(false);
+    await fireEvent.press(
+      p.getByRole('button', { name: 'Ocultar la contraseña' }),
+    );
+    expect(p.getByLabelText('Contraseña').props.secureTextEntry).toBe(true);
+  });
+
+  it('un campo normal no tiene ojo', async () => {
+    const p = await render(
+      <CampoTexto alCambiar={() => undefined} etiqueta="Nombre" valor="" />,
+    );
+    expect(
+      p.queryByRole('button', { name: 'Mostrar la contraseña' }),
+    ).toBeNull();
+  });
 });
