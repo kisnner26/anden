@@ -43,6 +43,7 @@ export interface PropiedadesConductorNuevoViaje {
 const MENSAJES = {
   punto: 'nuevoViaje.errorPunto',
   hora: 'nuevoViaje.errorHora',
+  ocupada: 'nuevoViaje.errorOcupada',
   pasado: 'nuevoViaje.errorPasado',
   placa: 'nuevoViaje.errorPlaca',
   ruta: 'nuevoViaje.errorRuta',
@@ -78,7 +79,12 @@ export function ConductorNuevoViaje({
     null,
   );
 
-  const errores = validarViaje(borrador, ahora);
+  // las salidas que ya tiene cada unidad, para no publicar el mismo bus en dos viajes casi a la vez
+  const ocupadas = datos.viajes.flatMap((viaje) => {
+    const bus = datos.buses.find((candidato) => candidato.id === viaje.busId);
+    return bus ? [{ placa: bus.placa, salida: new Date(viaje.salida) }] : [];
+  });
+  const errores = validarViaje(borrador, ahora, ocupadas);
   const nombreTerminal = (id: string) =>
     datos.terminales.find((terminal) => terminal.id === id)?.ciudad ?? id;
 
@@ -212,7 +218,7 @@ export function ConductorNuevoViaje({
           />
           <CampoTexto
             alCambiar={(placa) => cambiar({ placa })}
-            error={mensaje('placa')}
+            error={mensaje('placa') ?? mensaje('ocupada')}
             etiqueta={t('nuevoViaje.placa')}
             marcador={t('nuevoViaje.placaMarcador')}
             valor={borrador.placa}

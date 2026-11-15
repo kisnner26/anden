@@ -202,6 +202,8 @@ export const textos = {
     errorServidor: 'No se pudo publicar. Revisá la conexión y probá de nuevo.',
     sinServidor:
       'Esta versión de la app no está conectada al servidor, así que no puede publicar viajes.',
+    errorOcupada:
+      'Esa unidad ya tiene un viaje a esa hora. Elegí otra hora o revisá la placa.',
     sinPermiso:
       'Tu cuenta no tiene permiso de conductor para publicar. Revisá que tenga el rol y el código de chofer en Supabase.',
     tablaFaltante:

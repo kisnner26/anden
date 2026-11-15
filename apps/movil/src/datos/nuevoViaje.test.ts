@@ -33,6 +33,29 @@ describe('leerHora', () => {
   });
 });
 
+describe('validarViaje: una unidad no sale dos veces a la vez', () => {
+  const OTRO = { placa: 'm123456', salida: new Date(2026, 10, 12, 14, 0) };
+
+  it('rechaza la misma unidad con otro viaje a menos de una hora', () => {
+    expect(validarViaje(BUENO, AHORA, [OTRO])).toContain('ocupada');
+  });
+
+  it('compara la placa sin espacios, guiones ni mayúsculas', () => {
+    const mismaPlaca = { ...OTRO, placa: 'M 123-456' };
+    expect(validarViaje(BUENO, AHORA, [mismaPlaca])).toContain('ocupada');
+  });
+
+  it('acepta la misma unidad con una hora o más de diferencia', () => {
+    const lejos = { ...OTRO, salida: new Date(2026, 10, 12, 16, 0) };
+    expect(validarViaje(BUENO, AHORA, [lejos])).toEqual([]);
+  });
+
+  it('acepta otra unidad a la misma hora', () => {
+    const otra = { ...OTRO, placa: 'M 999-111' };
+    expect(validarViaje(BUENO, AHORA, [otra])).toEqual([]);
+  });
+});
+
 describe('validarViaje', () => {
   it('un viaje completo y a futuro no tiene errores', () => {
     expect(validarViaje(BUENO, AHORA)).toEqual([]);

@@ -16,7 +16,21 @@ export interface BorradorViaje {
   servicio: 'expreso' | 'ordinario';
 }
 
-export type ErrorViaje = 'hora' | 'pasado' | 'placa' | 'punto' | 'ruta';
+export type ErrorViaje =
+  'hora' | 'ocupada' | 'pasado' | 'placa' | 'punto' | 'ruta';
+
+/** un viaje ya publicado de una unidad, para no ponerla en dos salidas a la vez */
+export interface ViajeDeUnidad {
+  placa: string;
+  salida: Date;
+}
+
+/** cuánto antes o después de otro viaje la misma unidad no puede salir, en minutos */
+export const MINUTOS_ENTRE_VIAJES = 60;
+
+function clavePlaca(placa: string): string {
+  return placa.replace(/[\s-]/g, '').toUpperCase();
+}
 
 const HORA = /^([01]?\d|2[0-3]):([0-5]\d)$/;
 const PLACA = /^[A-Za-z]{0,2}\s?\d{2,4}[-\s]?\d{0,4}$/;
@@ -58,6 +72,7 @@ export function fechaDeSalida(borrador: BorradorViaje): Date | null {
 export function validarViaje(
   borrador: BorradorViaje,
   ahora: Date,
+  existentes: readonly ViajeDeUnidad[] = [],
 ): ErrorViaje[] {
   const errores: ErrorViaje[] = [];
   if (borrador.rutaId === null) errores.push('ruta');
@@ -71,6 +86,17 @@ export function validarViaje(
   // una hora que ya pasó hoy se acepta: el bus ya espera en andén y se publica con su hora real
   else if (fecha.getTime() < inicioDelDia(ahora).getTime())
     errores.push('pasado');
+  // una unidad no puede estar en dos salidas a la vez
+  if (fecha && !errores.includes('placa')) {
+    const placa = clavePlaca(borrador.placa);
+    const choca = existentes.some(
+      (otro) =>
+        clavePlaca(otro.placa) === placa &&
+        Math.abs(otro.salida.getTime() - fecha.getTime()) <
+          MINUTOS_ENTRE_VIAJES * 60_000,
+    );
+    if (choca) errores.push('ocupada');
+  }
   return errores;
 }
 
