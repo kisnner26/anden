@@ -18,7 +18,7 @@ import { Chip } from '@/componentes/Chip';
 import { SelectorDia } from '@/componentes/SelectorDia';
 import { FilaSalida } from '@/componentes/FilaSalida';
 import { Icono } from '@/componentes/Icono';
-import { Loseta } from '@/componentes/Loseta';
+import { FotoTerminal } from '@/componentes/FotoTerminal';
 import { OpcionDeLista } from '@/componentes/OpcionDeLista';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { TableroSalidas } from '@/componentes/TableroSalidas';
@@ -204,11 +204,13 @@ export function Horarios({
         testID="terminal-de-salida"
       >
         <Bloque estiloContenido={estilos.filaTerminal}>
-          <Loseta tamano={50} variante="ambar">
-            <Text style={[tipografia.dato, { color: colores.sobreAmbar }]}>
-              {terminal?.codigo}
-            </Text>
-          </Loseta>
+          <FotoTerminal
+            codigo={terminal?.codigo ?? ''}
+            elegida
+            nombre={terminal?.nombre ?? ''}
+            tamano={56}
+            terminalId={terminalId}
+          />
           <View style={estilos.datosTerminal}>
             <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
               {t('horarios.saleDesde')}
@@ -259,20 +261,13 @@ export function Horarios({
                 detalle={candidata.ciudad}
                 etiquetaAccesible={`${candidata.nombre}, ${candidata.ciudad}`}
                 izquierda={
-                  <Loseta tamano={46} variante={elegida ? 'ambar' : 'negra'}>
-                    <Text
-                      style={[
-                        tipografia.dato,
-                        {
-                          color: elegida
-                            ? colores.sobreAmbar
-                            : colores.sobreNegro,
-                        },
-                      ]}
-                    >
-                      {candidata.codigo}
-                    </Text>
-                  </Loseta>
+                  <FotoTerminal
+                    codigo={candidata.codigo}
+                    elegida={elegida}
+                    nombre={candidata.nombre}
+                    tamano={52}
+                    terminalId={candidata.id}
+                  />
                 }
                 key={candidata.id}
                 nota={

@@ -65,11 +65,14 @@ function MuestraCampoLugar({
 }) {
   const [valorId, establecerValorId] = useState<string | null>('ter_may');
   const [lugares] = useState(() =>
-    crearMuestra(new Date()).terminales.map(({ codigo, id, nombre }) => ({
-      codigo,
-      id,
-      nombre,
-    })),
+    crearMuestra(new Date()).terminales.map(
+      ({ ciudad, codigo, id, nombre }) => ({
+        ciudad,
+        codigo,
+        id,
+        nombre,
+      }),
+    ),
   );
   return (
     <View style={[estilos.seccion, { borderColor: colores.linea }]}>
