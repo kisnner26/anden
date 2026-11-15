@@ -1140,6 +1140,19 @@ export const textos = {
     sinMapa:
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
+  alternativas: {
+    detalle:
+      'Mismo trayecto, sin pagar nada más: pagás al abordar. Tu asiento actual se libera.',
+    elegir: 'Pasarme',
+    error:
+      'No pude pasarte a esa salida: alguien tomó el asiento. Probá con otra.',
+    libres: '{cantidad} libres',
+    ninguna:
+      'Todavía no hay otra salida de este trayecto con asientos. Te avisamos cuando haya.',
+    pasando: 'Pasando…',
+    pasarme: 'Pasarme a la salida de las {hora}, {dia}',
+    titulo: 'Pasate a otra salida',
+  },
   boleto: {
     compartirCorto: 'Compartir',
     recordatorioCorto: 'Recordar',
