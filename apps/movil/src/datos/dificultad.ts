@@ -67,9 +67,9 @@ export interface Toque {
 }
 
 /** cuántos toques seguidos en el mismo lugar se consideran golpear una pantalla que no responde */
-export const TOQUES_REPETIDOS = 5;
-export const VENTANA_TOQUES_MS = 1800;
-export const RADIO_TOQUES = 70;
+export const TOQUES_REPETIDOS = 6;
+export const VENTANA_TOQUES_MS = 1600;
+export const RADIO_TOQUES = 55;
 
 /** agrega un toque y dice si ya son varios, rápidos y en el mismo lugar */
 export function registrarToque(

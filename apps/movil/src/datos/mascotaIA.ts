@@ -1,22 +1,29 @@
 import { limpiarTexto } from './consultaIA';
-import { t } from '@/textos/t';
 
 /** lo máximo que cabe cómodo en el globo de la mascota */
 export const MAXIMO_RESPUESTA = 170;
 
 /**
- * las reglas con las que habla Rumbo: breve, con voseo, sin inventar nada que no esté en los datos que se le pasan
- * y sin hablar de cosas ajenas a viajar en bus
+ * lo que se le pide a la IA del teléfono: una sola frase de ayuda, directa y concreta para la pantalla donde está la
+ * persona, sin presentarse ni saludar ni hacer chistes, con ejemplos del tono y solo con datos reales
  */
-export function instruccionesDeRumbo(datos: string): string {
+export function instruccionesDeAyuda(entrada: {
+  apuro: string;
+  datos: string;
+  pantalla: string;
+}): string {
   return [
-    'Sos Rumbo, un microbús simpático que acompaña a la persona dentro de la app Andén, de buses interlocales de Nicaragua.',
-    'Respondé en español con voseo, en una o dos frases cortas, tono cálido y con un poquito de humor, sin emojis.',
-    'Usá solo los datos de abajo. Si no los tenés, decilo sin inventar horarios, precios ni lugares.',
-    'Nunca muestres identificadores internos. Si te piden algo que no tiene que ver con viajar, redirigí con amabilidad.',
+    'Escribís la ayuda breve de la app Andén, de buses interlocales de Nicaragua.',
+    `La persona está en ${entrada.pantalla}. Le pasa esto: ${entrada.apuro}.`,
+    'Escribí UNA sola frase de 12 a 24 palabras, en español con voseo, que le diga exactamente qué hacer ahora para salir del apuro en esa pantalla.',
+    'Reglas: hablale directo ("probá", "revisá", "elegí"). No te presentes, no digas quién sos, no saludes, no digas "tranquilo", no hagas chistes, no uses emojis ni comillas, no repitas el problema y no hagas preguntas. No inventes horarios, precios ni lugares: usá solo los datos reales de abajo, y solo si hacen falta.',
+    'Ejemplos del tono:',
+    '- Revisá que tu usuario y tu contraseña estén bien escritos; con el ojito podés ver lo que escribís.',
+    '- Ese asiento ya se ocupó, así que elegí otro de los libres y volvé a reservar.',
+    '- Sin señal tus boletos guardados se ven igual; lo demás vuelve cuando haya internet.',
     '',
     'Datos reales de la app:',
-    datos,
+    entrada.datos,
   ].join('\n');
 }
 
@@ -36,17 +43,4 @@ export function limpiarRespuestaDeRumbo(texto: string): string {
   return finDeFrase > 60
     ? corte.slice(0, finDeFrase + 1)
     : `${corte.replace(/[\s,;:]+\S*$/, '')}…`;
-}
-
-const FRASES = [
-  'mascota.frase1',
-  'mascota.frase2',
-  'mascota.frase3',
-  'mascota.frase4',
-  'mascota.frase5',
-] as const;
-
-/** una frase suelta para cuando se la toca y la IA no está disponible; rota para no repetirse */
-export function fraseDeRespaldo(vez: number): string {
-  return t(FRASES[Math.abs(vez) % FRASES.length]!);
 }
