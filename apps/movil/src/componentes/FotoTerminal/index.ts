@@ -1,0 +1,1 @@
+export { FotoTerminal } from './FotoTerminal';
