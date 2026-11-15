@@ -1,3 +1,5 @@
+import { lugaresDeCiudad } from './lugaresTuristicos';
+
 /**
  * Fichas de las ciudades de la red. Solo datos que se pueden confirmar; el asistente no agrega lugares
  * que no estén aquí. Para sumar una ciudad se agrega su ficha y su foto en `fotosDestino.ts`.
@@ -53,5 +55,12 @@ export function fichaDeCiudad(ciudad: string): FichaCiudad | null {
 
 /** la ficha en una línea, para que la consulte el modelo */
 export function textoDeFicha(ficha: FichaCiudad): string {
-  return `${ficha.ciudad}: ${ficha.resumen} Para visitar: ${ficha.lugares.join('; ')}.`;
+  const fotos = lugaresDeCiudad(ficha.ciudad).map(
+    (l) => `${l.titulo} (${l.descripcion})`,
+  );
+  const conFotos =
+    fotos.length > 0
+      ? ` La app le muestra a la persona estas fotos de ${ficha.ciudad}: ${fotos.join('; ')}.`
+      : '';
+  return `${ficha.ciudad}: ${ficha.resumen} Para visitar: ${ficha.lugares.join('; ')}.${conFotos}`;
 }
