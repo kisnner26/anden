@@ -3,6 +3,8 @@ import {
   fotosDeCiudad,
   type FotoDeCiudad,
 } from './fotosDestino';
+import { rellenar } from '@/textos/rellenar';
+import { t } from '@/textos/t';
 
 export interface LugarTuristico extends FotoDeCiudad {
   ciudad: string;
@@ -63,4 +65,23 @@ export function hechosDeLugares(lugares: readonly LugarTuristico[]): string[] {
     'Lugares con foto que la app le muestra a la persona debajo de tu respuesta (mencionalos, no agregues otros):',
     ...lugares.map((l) => `${l.ciudad}: ${l.titulo}. ${l.descripcion}`),
   ];
+}
+
+/** quiere solo ver fotos o lugares, sin pedir recomendaciones ni consejos: eso se contesta sin el modelo */
+const PIDE_RECOMENDACION =
+  /\b(recomend\w*|visitar|que hacer|conocer|que comer|donde comer|como llegar|cuanto|precio|tarifa|horario\w*|salida\w*|bus|buses|boleto\w*|explica\w*|cuent\w*|historia|dime|decime)\b/;
+
+export function pideSoloFotos(pregunta: string): boolean {
+  const texto = sinTildes(pregunta);
+  return (
+    lugaresParaPregunta(pregunta).length > 0 && !PIDE_RECOMENDACION.test(texto)
+  );
+}
+
+/** la frase corta con que se presentan las fotos pedidas */
+export function textoDeFotos(lugares: readonly LugarTuristico[]): string {
+  const ciudades = [...new Set(lugares.map((l) => l.ciudad))];
+  return ciudades.length === 1
+    ? rellenar(t('galeriaLugares.deCiudad'), { ciudad: ciudades[0] ?? '' })
+    : t('galeriaLugares.deVarias');
 }
