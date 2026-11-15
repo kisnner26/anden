@@ -14,6 +14,7 @@ import { SaltoAlCambiar } from '@/componentes/SaltoAlCambiar';
 import { SelectorCiudadFoto } from '@/componentes/SelectorCiudadFoto';
 import { Icono } from '@/componentes/Icono';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
+import { RedViva } from '@/componentes/RedViva';
 import { SelectorSalida } from '@/componentes/SelectorSalida';
 import { TrayectoCorredor } from '@/componentes/TrayectoCorredor';
 import { formatoHora, sufijoHora } from '@/datos/formato';
@@ -27,7 +28,8 @@ import {
 } from '@/datos/redRutas';
 import { totalReserva } from '@/datos/reserva';
 import { usePlanificador } from '@/datos/usePlanificador';
-import { obtenerMuestra } from '@/datos/useSalidas';
+import { obtenerMuestra, useSalidas } from '@/datos/useSalidas';
+import { resumenDeLaRed } from '@/datos/resumenDeLaRed';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -57,6 +59,7 @@ export function Rutas({
   const [sentido, establecerSentido] = useState<SentidoRed>('ida');
   const [elegida, establecerElegida] = useState<string | null>(null);
   const [cantidad, establecerCantidad] = useState(1);
+  const { ahora: ahoraDeLaRed, salidas: todasLasSalidas } = useSalidas();
   const corredor = corredorDe({ ciudad, sentido });
   const plan = usePlanificador(corredor);
   const salida =
@@ -82,6 +85,15 @@ export function Rutas({
           </Text>
         </View>
       </Aparece>
+
+      <RedViva
+        alElegir={(clave) => {
+          establecerCiudad(clave);
+          establecerElegida(null);
+        }}
+        ciudad={ciudad}
+        tramos={resumenDeLaRed(todasLasSalidas, ahoraDeLaRed)}
+      />
 
       <View style={estilos.selectores}>
         <SelectorCiudadFoto

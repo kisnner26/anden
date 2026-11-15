@@ -1,12 +1,6 @@
 import { mismoDia } from './dias';
 import type { Salida } from './salidas';
 
-export interface ResumenDeCiudad {
-  /** salidas de hoy que todavía no parten y llegan a esta ciudad */
-  llegadasHoy: number;
-  ciudad: string;
-}
-
 export interface ResumenDeTramo {
   ciudad: 'Boaco' | 'Juigalpa';
   /** la próxima salida del tramo, en cualquiera de los dos sentidos; nula si no hay */

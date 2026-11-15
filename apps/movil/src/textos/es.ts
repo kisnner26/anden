@@ -1151,6 +1151,13 @@ export const textos = {
     sinMapa:
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
+  red: {
+    accesible:
+      'Hacia {ciudad}: próximo bus a las {hora}, {libres} asientos libres',
+    nada: 'sin buses',
+    sinSalidas: 'Hacia {ciudad}: sin salidas por ahora',
+    titulo: 'La red, en vivo',
+  },
   brujula: {
     ayuda:
       'La flecha apunta al punto de encuentro. Girá hasta que quede hacia arriba.',
