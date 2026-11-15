@@ -46,9 +46,13 @@ describe('Asientos', () => {
         viajeId={VIAJE_BOACO}
       />,
     );
-    await fireEvent.press(pantalla.getByLabelText('Asiento 8, pasillo, libre'));
+    await fireEvent.press(
+      pantalla.getByLabelText(/^Asiento 8, pasillo, libre/),
+    );
     expect(pantalla.getByText('C$ 66')).toBeTruthy();
-    await fireEvent.press(pantalla.getByLabelText('Asiento 9, ventana, libre'));
+    await fireEvent.press(
+      pantalla.getByLabelText(/^Asiento 9, ventana, libre/),
+    );
     expect(pantalla.getByText('C$ 132')).toBeTruthy();
   });
 
@@ -61,8 +65,12 @@ describe('Asientos', () => {
         viajeId={VIAJE_BOACO}
       />,
     );
-    await fireEvent.press(pantalla.getByLabelText('Asiento 9, ventana, libre'));
-    await fireEvent.press(pantalla.getByLabelText('Asiento 8, pasillo, libre'));
+    await fireEvent.press(
+      pantalla.getByLabelText(/^Asiento 9, ventana, libre/),
+    );
+    await fireEvent.press(
+      pantalla.getByLabelText(/^Asiento 8, pasillo, libre/),
+    );
     await fireEvent.press(pantalla.getByRole('button', { name: 'Seguir' }));
     expect(alSeguir).toHaveBeenCalledWith([8, 9]);
   });
