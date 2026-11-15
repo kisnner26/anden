@@ -64,7 +64,7 @@ describe('ConductorBoletos', () => {
         <ConductorBoletos />,
       ),
     );
-    expect(await p.findByText('Vendidos')).toBeTruthy();
+    expect(await p.findByText('Por cobrar')).toBeTruthy();
     const tarjeta = within(p.getByTestId(`viaje-vendido-${viaje.viajeId}`));
     expect(tarjeta.getByText('2')).toBeTruthy();
     expect(tarjeta.getByText(/Ganaste C\$ 0 de C\$ 132/)).toBeTruthy();

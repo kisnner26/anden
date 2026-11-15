@@ -232,10 +232,12 @@ function TarjetaDeViaje({ viaje }: { viaje: ViajeVendido }) {
             {`${formatoFechaCorta(viaje.fecha)} · ${formatoHoraCompleta(viaje.fecha)} · ${viaje.placa}`}
           </Text>
           <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-            {rellenar(t('conductorBoletos.ganadoDe'), {
-              ganado: ventas.cobrado,
-              total: ventas.total,
-            })}
+            {ventas.total === 0
+              ? t('conductorBoletos.sinVentas')
+              : rellenar(t('conductorBoletos.ganadoDe'), {
+                  ganado: ventas.cobrado,
+                  total: ventas.total,
+                })}
           </Text>
         </View>
         <AnilloDeVentas
@@ -403,7 +405,7 @@ export function ConductorBoletos() {
       contentInsetAdjustmentBehavior="automatic"
       style={{ backgroundColor: colores.fondo }}
     >
-      <Text style={[tipografia.titulo, { color: colores.tinta }]}>
+      <Text style={[tipografia.titularPantalla, { color: colores.tinta }]}>
         {t('conductorBoletos.titulo')}.
       </Text>
       <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
@@ -437,17 +439,6 @@ export function ConductorBoletos() {
       </BloqueNegro>
 
       <View style={estilos.cifras}>
-        <Cifra
-          etiqueta={t('conductorBoletos.vendidos')}
-          tipo="vendidos"
-          valor={String(totales.vendidos)}
-        />
-        <Cifra
-          color={colores.aTiempo}
-          etiqueta={t('conductorBoletos.ganado')}
-          tipo="ganado"
-          valor={`C$ ${totales.cobrado}`}
-        />
         <Cifra
           etiqueta={t('conductorBoletos.porCobrar')}
           tipo="porCobrar"
