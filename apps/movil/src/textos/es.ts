@@ -925,6 +925,7 @@ export const textos = {
     limpiar: 'Quitar filtros',
   },
   asientos: {
+    juntoAlGrupo: 'junto a tu grupo',
     tituloInicio: 'Elegí tu',
     tituloResalte: 'asiento.',
     libre: 'Libre',
