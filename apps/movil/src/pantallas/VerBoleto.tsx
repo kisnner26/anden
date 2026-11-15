@@ -28,6 +28,7 @@ import {
   iniciarActividad,
   terminarActividad,
 } from '../../modules/anden-actividad';
+import { usePreferenciaActividad } from '@/datos/preferenciaActividad';
 import { HojaRecordatorio } from '@/componentes/HojaRecordatorio';
 import { ResumenIA } from '@/componentes/ResumenIA';
 import { lineaDeBoleto } from '@/datos/contextoIA';
@@ -100,6 +101,14 @@ export function VerBoleto({
   const recordatorios = useRecordatorios();
   const [actividadDisponible, establecerActividadDisponible] = useState(false);
   const [actividadId, establecerActividadId] = useState<string | null>(null);
+  const preferenciaActividad = usePreferenciaActividad();
+  // si la persona apaga la actividad en los ajustes, la que esté puesta se retira
+  useEffect(() => {
+    if (preferenciaActividad.activa === false && actividadId) {
+      void terminarActividad(actividadId);
+      establecerActividadId(null);
+    }
+  }, [actividadId, preferenciaActividad.activa]);
 
   useEffect(() => {
     let activo = true;
@@ -561,7 +570,7 @@ export function VerBoleto({
                 </Text>
               </Bloque>
             </Pressable>
-            {actividadDisponible ? (
+            {actividadDisponible && preferenciaActividad.activa !== false ? (
               <Pressable
                 accessibilityLabel={
                   actividadId

@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import {
   Linking,
   Pressable,
@@ -13,6 +13,8 @@ import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
 import { Interruptor } from '@/componentes/Interruptor';
+import { actividadesDisponibles } from '../../modules/anden-actividad';
+import { usePreferenciaActividad } from '@/datos/preferenciaActividad';
 import { useInicioAutomatico } from '@/datos/inicioAutomatico';
 import { MascotaRumbo } from '@/componentes/MascotaRumbo';
 import { useMascota } from '@/datos/useMascota';
@@ -112,6 +114,17 @@ export function Ajustes({
   const ia = useIA();
   const mascota = useMascota();
   const inicioAutomatico = useInicioAutomatico();
+  const preferenciaActividad = usePreferenciaActividad();
+  const [actividadSoportada, establecerActividadSoportada] = useState(false);
+  useEffect(() => {
+    let vigente = true;
+    void actividadesDisponibles().then((si) => {
+      if (vigente) establecerActividadSoportada(si);
+    });
+    return () => {
+      vigente = false;
+    };
+  }, []);
   const seguridad = useSeguridad();
   const memoriaIA = useMemoriaIA();
   const [memoriaBorrada, establecerMemoriaBorrada] = useState(false);
@@ -331,6 +344,30 @@ export function Ajustes({
           alCambiar={(encender) => void inicioAutomatico.cambiar(encender)}
           deshabilitado={inicioAutomatico.activo === null}
           etiqueta={t('inicioAutomatico.titulo')}
+        />
+      </Bloque>
+
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+        {t('actividadEnVivo.seccion')}
+      </Text>
+      <Bloque estiloContenido={estilos.filaOpcion}>
+        <View style={estilos.texto}>
+          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+            {t('actividadEnVivo.titulo')}
+          </Text>
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {actividadSoportada
+              ? t('actividadEnVivo.detalle')
+              : t('actividadEnVivo.noDisponible')}
+          </Text>
+        </View>
+        <Interruptor
+          activo={preferenciaActividad.activa !== false}
+          alCambiar={(activa) => void preferenciaActividad.cambiar(activa)}
+          deshabilitado={
+            preferenciaActividad.activa === null || !actividadSoportada
+          }
+          etiqueta={t('actividadEnVivo.titulo')}
         />
       </Bloque>
 
