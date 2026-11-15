@@ -1116,6 +1116,10 @@ export const textos = {
       'No pudimos abrir el mapa. Copiá el código y buscalo en Google Maps.',
   },
   boleto: {
+    compartirCorto: 'Compartir',
+    recordatorioCorto: 'Recordar',
+    recordatorioCortoPuesto: 'Aviso {minutos} min antes',
+    actividadCorto: 'Pantalla de bloqueo',
     ampliarAccion: 'Mostrar el código grande',
     titulo: 'Tu boleto',
     reservado: 'Reservado',
