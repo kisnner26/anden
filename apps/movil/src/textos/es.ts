@@ -1346,7 +1346,44 @@ export const textos = {
     viajesVarios: 'viajes',
   },
   pasaporte: {
+    avance: '{actual} / {meta}',
     bloqueado: 'Por ganar',
+    cifras: {
+      ciudades: 'Ciudades',
+      km: 'Kilómetros',
+      sellos: 'Sellos raros',
+      viajes: 'Viajes',
+    },
+    datos: {
+      apellidos: 'Apellidos',
+      desde: 'Viajando desde',
+      nivel: 'Nivel',
+      nombres: 'Nombres',
+      titulo: 'Pasaporte de viajes',
+    },
+    nivelMaximo: 'Llegaste al nivel más alto. Gracias por viajar con Andén.',
+    niveles: {
+      aspirante: 'Aspirante',
+      frecuente: 'Viajero frecuente',
+      pasajero: 'Pasajero',
+      trotamundos: 'Trotamundos',
+      viajero: 'Viajero',
+    },
+    portada: {
+      abrir: 'Abrir pasaporte',
+      abrirAyuda: 'Abre la libreta con tus sellos y tus viajes',
+      pais: 'Viajes por Nicaragua',
+      subtitulo: 'de viajes',
+      titulo: 'Pasaporte',
+    },
+    proximoNivel: {
+      muchos: 'Te faltan {n} viajes para ser {nivel}.',
+      uno: 'Te falta {n} viaje para ser {nivel}.',
+    },
+    recorrido: 'Tu recorrido',
+    recorridoKm: '{km} km',
+    recorridoVacio: 'Tu primer viaje dibuja la ruta.',
+    visados: 'Visados',
     raro: {
       constante: {
         detalle: 'Llegá cinco veces a la misma ciudad.',
