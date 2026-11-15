@@ -29,6 +29,7 @@ import {
   iniciarActividad,
   terminarActividad,
 } from '../../modules/anden-actividad';
+import { useEstadoRemotoBoletos } from '@/datos/useEstadoRemotoBoletos';
 import { usePreferenciaActividad } from '@/datos/preferenciaActividad';
 import { HojaRecordatorio } from '@/componentes/HojaRecordatorio';
 import { ResumenIA } from '@/componentes/ResumenIA';
@@ -127,6 +128,7 @@ export function VerBoleto({
     'fallo' | 'permiso-negado' | 'ya-paso' | null
   >(null);
   const { estadoDe } = usePagos();
+  const remoto = useEstadoRemotoBoletos();
   const { agregar: agregarHabitual, habituales } = useHabituales();
   const [confirmando, establecerConfirmando] = useState(false);
   const [objetos, establecerObjetos] = useState<ObjetoOlvidado[]>([]);
@@ -340,7 +342,8 @@ export function VerBoleto({
         <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
           {`${t('boletos.estado')}: ${etiquetaEstado}`}
         </Text>
-        {estadoDe(guardado.boleto.id) === 'pagado_efectivo' && (
+        {(estadoDe(guardado.boleto.id) === 'pagado_efectivo' ||
+          remoto.pagados.has(guardado.boleto.id)) && (
           <Text
             accessibilityLiveRegion="polite"
             style={[tipografia.etiqueta, { color: colores.aTiempo }]}
