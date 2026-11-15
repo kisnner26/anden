@@ -42,6 +42,8 @@ export function boletoPorCalificar(
   boletos: readonly BoletoGuardado[],
   opiniones: readonly Opinion[],
   ahora: Date,
+  /** los viajes que ya llegaron a su destino; sin esto solo cuentan los boletos que el conductor marcó a bordo */
+  viajesLlegados: ReadonlySet<string> = new Set(),
 ): BoletoGuardado | null {
   const calificados = new Set(opiniones.map((opinion) => opinion.boletoId));
   const pendientes = boletos
@@ -52,7 +54,11 @@ export function boletoPorCalificar(
       const salio = new Date(resumen.salida).getTime();
       // un viaje de hace más de dos días ya no se pide: no se acumulan encabezados viejos
       if (ahora.getTime() - salio > VENTANA_CALIFICAR_MS) return false;
-      return boleto.estado === 'usado' || salio < ahora.getTime();
+      // solo se califica un viaje que de verdad se hizo: abordó o el viaje llegó
+      return (
+        boleto.estado === 'usado' ||
+        (salio < ahora.getTime() && viajesLlegados.has(boleto.viajeId))
+      );
     })
     .sort(
       (a, b) =>

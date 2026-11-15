@@ -61,13 +61,16 @@ export interface BoletoParaOpinar {
 
 export interface ViajeParaOpinar {
   choferId: string;
+  /** cómo va el viaje; con "llego" ya se hizo completo */
+  estado?: string;
   id: string;
   salida: string;
 }
 
 /**
- * el boleto con el que se puede opinar sobre un chofer: no cancelado, de un viaje suyo que ya
- * salió, y sin opinión previa; una opinión por boleto. nulo si no hay ninguno.
+ * el boleto con el que se puede opinar sobre un chofer: de un viaje suyo que de verdad se hizo con esa persona a bordo
+ * (el chofer la marcó como que abordó, o el viaje ya llegó), no cancelado y sin opinión previa; una opinión por boleto.
+ * Quien solo reservó y no viajó no puede opinar. Nulo si no hay ninguno.
  */
 export function boletoParaOpinar(
   boletos: readonly BoletoParaOpinar[],
@@ -83,7 +86,9 @@ export function boletoParaOpinar(
     return (
       viaje !== undefined &&
       viaje.choferId === choferId &&
-      new Date(viaje.salida).getTime() <= ahora.getTime()
+      new Date(viaje.salida).getTime() <= ahora.getTime() &&
+      // viajó con él: abordó, o el viaje llegó a su destino
+      (boleto.estado === 'usado' || viaje.estado === 'llego')
     );
   });
   return elegible?.id ?? null;
