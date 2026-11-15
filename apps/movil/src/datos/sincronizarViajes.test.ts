@@ -201,6 +201,27 @@ describe('viajes cancelados', () => {
   });
 });
 
+describe('sincronizarViajes sin cruzarse', () => {
+  it('con una en marcha hace una más después y comparte esa entre todas las demás', async () => {
+    let liberar: (v: typeof PUBLICADOS) => void = () => undefined;
+    jest.mocked(leerViajesPublicados).mockReset();
+    jest
+      .mocked(leerViajesPublicados)
+      .mockImplementationOnce(
+        () => new Promise((resolver) => (liberar = resolver)),
+      );
+    jest.mocked(leerViajesPublicados).mockResolvedValue(PUBLICADOS);
+    const a = sincronizarViajes();
+    const b = sincronizarViajes();
+    const c = sincronizarViajes();
+    expect(b).toBe(c);
+    liberar(PUBLICADOS);
+    await Promise.all([a, b, c]);
+    // la primera y una segunda para todas las que llegaron mientras tanto
+    expect(leerViajesPublicados).toHaveBeenCalledTimes(2);
+  });
+});
+
 describe('sincronizarViajes', () => {
   it('sin respuesta del servidor no toca nada', async () => {
     jest.mocked(leerViajesPublicados).mockResolvedValue(null);

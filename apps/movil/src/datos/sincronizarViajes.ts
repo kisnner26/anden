@@ -148,13 +148,36 @@ export function reiniciarUltimaSincronizacion(): void {
   ultimaSincronizacion = null;
 }
 
+let enCurso: Promise<boolean> | null = null;
+let enEspera: Promise<boolean> | null = null;
+
 /**
  * trae los viajes publicados, los guarda en el teléfono para cuando no haya señal y avisa a las pantallas;
- * devuelve si hubo respuesta del servidor
+ * devuelve si hubo respuesta del servidor. Nunca corren dos a la vez, porque una respuesta lenta y vieja podía pisar a
+ * una nueva: si ya hay una en marcha, se hace una más justo después, y todas las llamadas de mientras comparten esa
  */
-export async function sincronizarViajes(
+export function sincronizarViajes(
   desde: Date = new Date(Date.now() - 6 * 3_600_000),
 ): Promise<boolean> {
+  if (enCurso === null) {
+    const actual = sincronizarUna(desde).finally(() => {
+      if (enCurso === actual) enCurso = null;
+    });
+    enCurso = actual;
+    return actual;
+  }
+  if (enEspera === null) {
+    enEspera = enCurso
+      .catch(() => false)
+      .then(() => {
+        enEspera = null;
+        return sincronizarViajes(desde);
+      });
+  }
+  return enEspera;
+}
+
+async function sincronizarUna(desde: Date): Promise<boolean> {
   const publicados = await leerViajesPublicados(desde);
   if (publicados === null) return false;
   aplicarViajesPublicados(obtenerMuestra(), publicados);
