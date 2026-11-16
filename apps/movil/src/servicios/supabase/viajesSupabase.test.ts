@@ -19,13 +19,15 @@ const FILA: FilaViaje = {
   servicio: 'ordinario',
 };
 
-function cliente(opciones: { error?: boolean } = {}) {
+function cliente(opciones: { borrarFalla?: boolean; error?: boolean } = {}) {
   const error = opciones.error ? new Error('x') : null;
   const insert = jest.fn<(fila: unknown) => Promise<{ error: Error | null }>>(
     async () => ({ error }),
   );
   const actualizar = jest.fn(async () => ({ error }));
-  const borrar = jest.fn(async () => ({ error }));
+  const borrar = jest.fn(async () => ({
+    error: opciones.borrarFalla ? new Error('no se puede borrar') : error,
+  }));
   const consulta = (data: unknown[]) => {
     const resultado = { data: opciones.error ? null : data, error };
     const cadena: Record<string, unknown> = {
@@ -133,6 +135,13 @@ describe('retirarViajeCon', () => {
     const { borrar, supabase } = cliente();
     expect(await retirarViajeCon(supabase, 'via_x', false)).toBe(true);
     expect(borrar).toHaveBeenCalled();
+  });
+
+  it('si no se puede borrar lo cancela para que nadie lo vea disponible', async () => {
+    const { actualizar, borrar, supabase } = cliente({ borrarFalla: true });
+    expect(await retirarViajeCon(supabase, 'via_x', false)).toBe(true);
+    expect(borrar).toHaveBeenCalled();
+    expect(actualizar).toHaveBeenCalledTimes(1);
   });
 
   it('cancela con el motivo cuando se da', async () => {
