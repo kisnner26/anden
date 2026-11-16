@@ -1,1 +1,0 @@
-export { AjusteClaudePuente } from './AjusteClaudePuente';
