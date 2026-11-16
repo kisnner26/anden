@@ -106,4 +106,23 @@ describe('AjusteClaudePuente', () => {
     const pantalla = await renderPantalla(<AjusteClaudePuente />);
     expect(await pantalla.findByText(t('claudePuente.conectado'))).toBeTruthy();
   });
+
+  it('desconectar borra lo guardado y vuelve a pedir los datos', async () => {
+    mockServicio.leerPuente.mockResolvedValue({
+      codigo: CODIGO,
+      url: 'http://192.168.1.52:4780',
+    });
+    const pantalla = await renderPantalla(<AjusteClaudePuente />);
+    await fireEvent.press(
+      await pantalla.findByRole('button', {
+        name: t('claudePuente.desconectar'),
+      }),
+    );
+    await waitFor(() =>
+      expect(mockServicio.borrarPuente).toHaveBeenCalledTimes(1),
+    );
+    expect(
+      await pantalla.findByLabelText(t('claudePuente.direccion')),
+    ).toBeTruthy();
+  });
 });
