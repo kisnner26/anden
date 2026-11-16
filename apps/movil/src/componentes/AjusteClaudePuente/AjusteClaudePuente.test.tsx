@@ -8,7 +8,7 @@ import { AjusteClaudePuente } from './AjusteClaudePuente';
 
 const mockServicio = {
   borrarPuente: jest.fn(async () => undefined),
-  guardarPuente: jest.fn(async () => undefined),
+  guardarPuente: jest.fn(async (_puente: unknown) => undefined),
   leerPuente: jest.fn(
     async (): Promise<{ codigo: string; url: string } | null> => null,
   ),
@@ -18,7 +18,7 @@ const mockServicio = {
 jest.mock('@/servicios/puenteClaude', () => ({
   ...(jest.requireActual('@/servicios/puenteClaude') as object),
   borrarPuente: () => mockServicio.borrarPuente(),
-  guardarPuente: (p: unknown) => mockServicio.guardarPuente(p as never),
+  guardarPuente: (p: unknown) => mockServicio.guardarPuente(p),
   leerPuente: () => mockServicio.leerPuente(),
   probarPuente: () => mockServicio.probarPuente(),
 }));
