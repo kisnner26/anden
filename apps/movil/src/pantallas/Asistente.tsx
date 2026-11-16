@@ -8,6 +8,7 @@ import {
   Platform,
   Pressable,
   ScrollView,
+  Share,
   type ScrollViewInstance,
   StyleSheet,
   Text,
@@ -89,7 +90,12 @@ import { useMemoriaIA } from '@/datos/useMemoriaIA';
 import { useTurista } from '@/datos/useTurista';
 import { obtenerMuestra, useSalidas } from '@/datos/useSalidas';
 import { useVoz } from '@/datos/useVoz';
-import { motivoNoDisponible } from '@/servicios/ia';
+import {
+  crearPostalDeCiudad,
+  motivoNoDisponible,
+  puedeCrearImagenes,
+  sabeCrearImagenes,
+} from '@/servicios/ia';
 import {
   guardarRespuestaHablada,
   guardarVozEnLinea,
@@ -118,6 +124,13 @@ export interface PropiedadesAsistente {
   alVolver: () => void;
   /** una pregunta que se envía sola al abrir, por ejemplo desde el detalle de un viaje */
   preguntaInicial?: string;
+}
+
+/** la postal solo se ofrece donde el teléfono sabe crear imágenes */
+function accionesDisponibles(acciones: readonly AccionIA[]): AccionIA[] {
+  return acciones.filter(
+    (accion) => accion.tipo !== 'postal' || sabeCrearImagenes,
+  );
 }
 
 interface Intercambio {
@@ -292,6 +305,18 @@ export function Asistente({
     if (accion.tipo === 'abrir') {
       alAbrirPantalla?.(accion.pantalla);
       return t(`ia.abriendo.${accion.pantalla}`);
+    }
+    if (accion.tipo === 'postal') {
+      if (!sabeCrearImagenes || !(await puedeCrearImagenes())) {
+        return t('accionesIA.postalNoPuedo');
+      }
+      const ruta = await crearPostalDeCiudad(
+        accion.ciudad,
+        'ilustración cálida y colorida, como un cuaderno de viaje, sin texto',
+      );
+      if (!ruta) return t('accionesIA.postalFallo');
+      await Share.share({ url: `file://${ruta}` }).catch(() => undefined);
+      return rellenar(t('accionesIA.postalListo'), { ciudad: accion.ciudad });
     }
     if (!proximoBoleto) return t('accionesIA.sinBoleto');
     const { boleto, resumen } = proximoBoleto;
@@ -1110,17 +1135,21 @@ export function Asistente({
                   {esUltimo &&
                   !intercambio.enCurso &&
                   rica &&
-                  rica.acciones.length > 0 ? (
+                  accionesDisponibles(rica.acciones).length > 0 ? (
                     <View style={estilos.sugerencias}>
-                      {rica.acciones.map((accion) => {
+                      {accionesDisponibles(rica.acciones).map((accion) => {
                         const etiqueta =
                           accion.tipo === 'abrir'
                             ? t(`ia.abriendo.${accion.pantalla}`)
-                            : accion.tipo === 'avisar'
-                              ? rellenar(t('accionesIA.avisar'), {
-                                  minutos: accion.minutos,
+                            : accion.tipo === 'postal'
+                              ? rellenar(t('accionesIA.postal'), {
+                                  ciudad: accion.ciudad,
                                 })
-                              : t('accionesIA.compartir');
+                              : accion.tipo === 'avisar'
+                                ? rellenar(t('accionesIA.avisar'), {
+                                    minutos: accion.minutos,
+                                  })
+                                : t('accionesIA.compartir');
                         return (
                           <Chip
                             alCambiar={() =>
