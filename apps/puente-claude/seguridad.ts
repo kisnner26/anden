@@ -56,3 +56,17 @@ export function crearLimite(
     return true;
   };
 }
+
+/**
+ * las cabeceras que dejan a una página web (el panel de la cooperativa) hablar con el puente. Cualquier origen puede
+ * intentarlo porque nada entra sin el código de emparejamiento en `Authorization` y sin venir de la red local
+ */
+export function cabecerasCors(): Record<string, string> {
+  return {
+    'Access-Control-Allow-Headers': 'authorization, content-type',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Private-Network': 'true',
+    'Access-Control-Max-Age': '600',
+  };
+}
