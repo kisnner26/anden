@@ -101,4 +101,16 @@ describe('SelectorSalida', () => {
     );
     expect(pantalla.getByText(`7 ${t('horarios.libres')}`)).toBeTruthy();
   });
+
+  it('con el día pedido muestra la fecha en cada salida', async () => {
+    const pantalla = await render(
+      <SelectorSalida
+        alElegir={jest.fn()}
+        conDia
+        elegida={null}
+        salidas={[salida('a', 9)]}
+      />,
+    );
+    expect(pantalla.getByText('vie 13 nov')).toBeTruthy();
+  });
 });
