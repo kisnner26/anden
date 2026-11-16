@@ -199,6 +199,20 @@ struct FichaDeCiudad: Tool {
   }
 }
 
+/// algo que el modelo propone hacer por la persona; la app lo valida y la persona lo confirma con un toque
+@available(iOS 26.0, *)
+@Generable
+struct AccionPropuesta {
+  @Guide(description: "Qué hacer: avisar (recordatorio antes de que salga su próximo bus), compartir (mandarle el viaje a su contacto de confianza), abrir (llevarla a una pantalla de la app) o postal (crear una ilustración de una ciudad).", .anyOf(["avisar", "compartir", "abrir", "postal"]))
+  var tipo: String
+  @Guide(description: "Para avisar: cuántos minutos antes, 15, 30 o 60. 0 en las demás.")
+  var minutos: Int
+  @Guide(description: "Para abrir: ajustes, avisos, boletos, encomienda, horarios, plus o rutas. Vacío en las demás.")
+  var pantalla: String
+  @Guide(description: "Para postal: Managua, Boaco o Juigalpa. Vacío en las demás.")
+  var ciudad: String
+}
+
 /// lo que el modelo devuelve; la app solo muestra salidas y boletos que existen de verdad
 @available(iOS 26.0, *)
 @Generable
@@ -213,6 +227,8 @@ struct RespuestaAnden {
   var mostrarBoletos: Bool
   @Guide(description: "De 0 a 3 preguntas cortas que la persona podría hacer a continuación.")
   var seguimientos: [String]
+  @Guide(description: "Hasta 2 acciones que le servirían a la persona ahora mismo, solo si encajan con lo que pidió o con su próximo viaje. Lista vacía si ninguna aplica; nunca propongas una acción solo por proponer.")
+  var acciones: [AccionPropuesta]
 }
 
 @available(iOS 26.0, *)
@@ -247,6 +263,14 @@ func resumenParcial(_ id: String, _ contenido: RespuestaAnden.PartiallyGenerated
     "ciudad": contenido.ciudad ?? "",
     "mostrarBoletos": contenido.mostrarBoletos ?? false,
     "seguimientos": contenido.seguimientos ?? [],
+    "acciones": (contenido.acciones ?? []).map { accion -> [String: Any] in
+      [
+        "tipo": accion.tipo ?? "",
+        "minutos": accion.minutos ?? 0,
+        "pantalla": accion.pantalla ?? "",
+        "ciudad": accion.ciudad ?? "",
+      ]
+    },
   ]
   let datos = (try? JSONSerialization.data(withJSONObject: cuerpo)) ?? Data("{}".utf8)
   return String(decoding: datos, as: UTF8.self)
