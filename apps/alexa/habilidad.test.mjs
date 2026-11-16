@@ -124,4 +124,15 @@ describe('responder', () => {
       'Ir a Boaco cuesta desde 66 hasta 90 córdobas por persona.',
     );
   });
+
+  it('no inventa un precio si no hay tarifas', async () => {
+    const r = await responder(
+      pedido('PrecioIntent', 'Boaco'),
+      async () => [salida('a', 15, { tarifa: null })],
+      AHORA,
+    );
+    expect(r.response.outputSpeech.text).toContain(
+      'No tengo cargada la tarifa',
+    );
+  });
 });
