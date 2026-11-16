@@ -32,4 +32,10 @@ describe('useAppActiva', () => {
     const { result } = await renderHook(() => useAppActiva());
     expect(result.current).toBe(true);
   });
+
+  it('empieza inactiva si la app ya está en segundo plano', async () => {
+    simular('background');
+    const { result } = await renderHook(() => useAppActiva());
+    expect(result.current).toBe(false);
+  });
 });
