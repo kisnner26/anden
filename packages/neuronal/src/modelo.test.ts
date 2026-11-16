@@ -69,4 +69,14 @@ describe('leerModelo', () => {
       leerModelo(JSON.stringify({ ...m, etiquetas: ['a', 'b'] })),
     ).toBeNull();
   });
+
+  it('completa los datos de meta que falten', () => {
+    const m = aModelo(crearRed(4, [5], 3, 2), ['a', 'b', 'c'], 4, META);
+    const sinMeta = { ...m, meta: undefined };
+    expect(leerModelo(JSON.stringify(sinMeta))?.meta).toEqual({
+      ejemplos: 0,
+      entrenadoEn: '',
+      precisionValidacion: null,
+    });
+  });
 });
