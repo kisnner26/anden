@@ -26,4 +26,9 @@ describe('validarFrase', () => {
       validarFrase({ etiqueta: 'saludo', texto: 'a'.repeat(161) }),
     ).toBeNull();
   });
+
+  it('rechaza una intención con caracteres raros', () => {
+    expect(validarFrase({ etiqueta: '../../etc', texto: 'hola' })).toBeNull();
+    expect(validarFrase({ etiqueta: 'Saludo', texto: 'hola' })).toBeNull();
+  });
 });
