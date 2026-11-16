@@ -79,4 +79,10 @@ describe('entrenar', () => {
     expect(h[0]!.perdidaValidacion).not.toBeNull();
     expect(h[0]!.precisionValidacion).not.toBeNull();
   });
+
+  it('sin validación no mide aparte', () => {
+    const red = crearRed(2, [6], 2, 4);
+    const h = entrenar(red, dosGrupos(), { epocas: 3 });
+    expect(h[0]!.perdidaValidacion).toBeNull();
+  });
 });
