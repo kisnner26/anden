@@ -54,4 +54,12 @@ describe('BoletosSimple', () => {
     expect(pantalla.getByText('Boaco')).toBeTruthy();
     expect(pantalla.getByText(/Asiento 3/)).toBeTruthy();
   });
+
+  it('tocar un boleto lo abre', async () => {
+    const alAbrirBoleto = jest.fn();
+    const a = boletoDePrueba(new Date(2099, 0, 5, 9, 0), 3, 'AAAA1111');
+    const pantalla = await dibujar([a], { alAbrirBoleto });
+    await fireEvent.press(pantalla.getByText('Boaco'));
+    expect(alAbrirBoleto).toHaveBeenCalledWith(a.boleto.id);
+  });
 });
