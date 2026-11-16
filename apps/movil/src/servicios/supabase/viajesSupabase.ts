@@ -178,8 +178,8 @@ export async function publicarViaje(
 }
 
 /**
- * quita un viaje del conductor: si nadie lo reservó se borra; si ya tiene pasajeros se marca
- * como cancelado para que dejen de verlo disponible
+ * quita un viaje del conductor: si nadie lo reservó se borra (y si no se puede borrar, se cancela); si ya tiene
+ * pasajeros se marca como cancelado para que dejen de verlo disponible
  */
 export async function retirarViajeCon(
   cliente: SupabaseClient,
@@ -190,7 +190,8 @@ export async function retirarViajeCon(
   try {
     if (!conPasajeros) {
       const { error } = await cliente.from('viajes').delete().eq('id', viajeId);
-      return error === null;
+      if (error === null) return true;
+      // si no se pudo borrar (por ejemplo, otro teléfono ya tiene una reserva) se cancela para que nadie lo vea disponible
     }
     if (motivo) {
       const conMotivo = await cliente
