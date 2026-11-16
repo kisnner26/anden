@@ -65,4 +65,12 @@ describe('predecir', () => {
     expect(p).toHaveLength(3);
     expect(p[0]! + p[1]! + p[2]!).toBeCloseTo(1, 5);
   });
+
+  it('es lo mismo que la última activación de avanzar', () => {
+    const red = crearRed(4, [6], 3);
+    const x = new Float32Array([0.5, 0, 1, 0]);
+    expect(Array.from(predecir(red, x))).toEqual(
+      Array.from(avanzar(red, x).probabilidades),
+    );
+  });
 });
