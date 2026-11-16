@@ -68,3 +68,14 @@ describe('matrizDeConfusion', () => {
     expect(m[1]!.reduce((s, x) => s + x, 0)).toBe(3);
   });
 });
+
+describe('precisionPorClase', () => {
+  it('divide los aciertos de la diagonal por el total de la fila', () => {
+    expect(
+      precisionPorClase([
+        [3, 1],
+        [0, 4],
+      ]),
+    ).toEqual([0.75, 1]);
+  });
+});
