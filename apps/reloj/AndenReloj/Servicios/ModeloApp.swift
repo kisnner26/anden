@@ -61,8 +61,11 @@ final class ModeloApp: ObservableObject {
         guard cliente.tieneSesion else { fase = .ingreso; return }
         do {
             reservas = try await cliente.reservas()
-            salidas = (try? await cliente.salidas()) ?? salidas
-            encomiendas = ((try? await cliente.encomiendas()) ?? encomiendas).sorted { $0.activa && !$1.activa }
+            // las salidas y las encomiendas no dependen de las reservas: se piden juntas y el reloj espera menos
+            async let nuevasSalidas = try? cliente.salidas()
+            async let nuevasEncomiendas = try? cliente.encomiendas()
+            salidas = await nuevasSalidas ?? salidas
+            encomiendas = (await nuevasEncomiendas ?? encomiendas).sorted { $0.activa && !$1.activa }
             avisarSiEstaPorSalir()
             actualizarComplicacion()
             mensaje = nil
@@ -114,11 +117,13 @@ final class ModeloApp: ObservableObject {
         }
     }
 
-    /// vuelve a leer cada 20 s mientras la app está abierta
+    /// vuelve a leer mientras la app está a la vista; el ritmo depende de qué tan cerca está el viaje
     func vigilar() async {
         while !Task.isCancelled {
             await refrescar()
-            try? await Task.sleep(for: .seconds(20))
+            let espera = RitmoDeLectura.espera(
+                salida: proxima?.viaje.salida, salio: proxima?.viaje.salioEn != nil)
+            try? await Task.sleep(for: espera)
         }
     }
 }
