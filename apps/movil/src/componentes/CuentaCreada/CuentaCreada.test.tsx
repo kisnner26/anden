@@ -47,4 +47,11 @@ describe('CuentaCreada', () => {
       pantalla.getByText(rellenar(t('cuenta.bienvenida'), { nombre: 'Ana' })),
     ).toBeTruthy();
   });
+
+  it('explica qué sigue', async () => {
+    const pantalla = await render(
+      <CuentaCreada alTerminar={jest.fn()} nombre="Ana" />,
+    );
+    expect(pantalla.getByText(t('cuenta.bienvenidaDetalle'))).toBeTruthy();
+  });
 });
