@@ -73,4 +73,19 @@ describe('CalendarioViajes', () => {
         .accessibilityState,
     ).toEqual(expect.objectContaining({ disabled: true }));
   });
+
+  it('sin boletos muestra el mes de hoy y las dos flechas apagadas', async () => {
+    const pantalla = await render(
+      <CalendarioViajes ahora={AHORA} alAbrirBoleto={jest.fn()} boletos={[]} />,
+    );
+    expect(pantalla.getByText('Noviembre')).toBeTruthy();
+    expect(
+      pantalla.getByRole('button', { name: t('boletos.mesAnterior') }).props
+        .accessibilityState,
+    ).toEqual(expect.objectContaining({ disabled: true }));
+    expect(
+      pantalla.getByRole('button', { name: t('boletos.mesSiguiente') }).props
+        .accessibilityState,
+    ).toEqual(expect.objectContaining({ disabled: true }));
+  });
 });
