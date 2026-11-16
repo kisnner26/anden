@@ -96,4 +96,9 @@ describe('interpretarOrden con acciones', () => {
     ).toEqual({ accion: { minutos: 15, tipo: 'avisar' }, tipo: 'accion' });
   });
 
+  it('sigue reservando como antes', () => {
+    expect(
+      interpretarOrden('reservame un boleto a Boaco', ciudades)?.tipo,
+    ).toBe('reservar');
+  });
 });
