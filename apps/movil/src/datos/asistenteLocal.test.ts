@@ -80,4 +80,9 @@ describe('responderLocal', () => {
     expect(r.texto).toContain('C$ 70');
     expect(r.salidas).toHaveLength(2);
   });
+
+  it('dice el rango de precios del trayecto', () => {
+    const r = responderLocal('cuánto cuesta ir a Boaco', estado());
+    expect(r.texto).toContain('desde C$ 70 hasta C$ 90');
+  });
 });
