@@ -102,4 +102,16 @@ describe('AlternativasDeViaje', () => {
     expect(pantalla.getAllByText(t('alternativas.pasando'))).toHaveLength(1);
     expect(pantalla.getAllByText(t('alternativas.elegir'))).toHaveLength(1);
   });
+
+  it('muestra el error cuando lo hay', async () => {
+    const pantalla = await render(
+      <AlternativasDeViaje
+        alElegir={jest.fn()}
+        error="No se pudo cambiar"
+        eligiendo={null}
+        salidas={[salida('a', 15)]}
+      />,
+    );
+    expect(pantalla.getByText('No se pudo cambiar')).toBeTruthy();
+  });
 });
