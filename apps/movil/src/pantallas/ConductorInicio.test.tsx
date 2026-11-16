@@ -174,6 +174,27 @@ describe('ConductorInicio', () => {
     ).toBe(true);
   });
 
+  it('arriba muestra el resumen del día con el viaje que sigue', async () => {
+    const pantalla = await dibujar();
+    await pantalla.findByText('Hola, Marvin Lanzas');
+    expect(await pantalla.findByTestId('resumen-del-dia')).toBeTruthy();
+    expect(pantalla.getByText('Tu día')).toBeTruthy();
+    expect(pantalla.getByText('Sigue')).toBeTruthy();
+  });
+
+  it('tocar el viaje que sigue abre ese viaje', async () => {
+    const alAbrirViaje = jest.fn();
+    const pantalla = await dibujar(alAbrirViaje);
+    await pantalla.findByText('Hola, Marvin Lanzas');
+    await fireEvent.press(
+      within(await pantalla.findByTestId('resumen-del-dia')).getByRole(
+        'button',
+        { name: /^Abrir el viaje a / },
+      ),
+    );
+    expect(alAbrirViaje).toHaveBeenCalledWith(expect.stringMatching(/^via_/));
+  });
+
   describe('retirar un viaje', () => {
     /** abre la confirmación del primer viaje que pide motivo (el que ya tiene pasajeros) */
     async function abrirConMotivo(
