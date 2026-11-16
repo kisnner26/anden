@@ -92,4 +92,12 @@ describe('leerContacto valida lo guardado', () => {
       telefono: '88881234',
     });
   });
+
+  it('descarta un teléfono con caracteres que no son dígitos', async () => {
+    await AsyncStorage.setItem(
+      CLAVE_CONTACTO,
+      JSON.stringify({ nombre: 'Mamá', telefono: '8888&body=x' }),
+    );
+    expect(await leerContacto()).toBeNull();
+  });
 });
