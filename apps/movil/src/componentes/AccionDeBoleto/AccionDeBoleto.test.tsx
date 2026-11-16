@@ -82,4 +82,18 @@ describe('AccionDeBoleto', () => {
     );
     expect(pantalla.getByTestId('accion-boleto-pantalla')).toBeTruthy();
   });
+
+  it('activa también responde al toque', async () => {
+    const alPresionar = jest.fn();
+    const pantalla = await render(
+      <AccionDeBoleto
+        activa
+        alPresionar={alPresionar}
+        etiqueta="Aviso"
+        tipo="recordatorio"
+      />,
+    );
+    await fireEvent.press(pantalla.getByTestId('accion-boleto-recordatorio'));
+    expect(alPresionar).toHaveBeenCalledTimes(1);
+  });
 });
