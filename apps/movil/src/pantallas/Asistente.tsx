@@ -94,7 +94,7 @@ import { useVoz } from '@/datos/useVoz';
 import {
   crearPostalDeCiudad,
   motivoNoDisponible,
-  puedeCrearImagenes,
+  estadoDeImagenes,
   sabeCrearImagenes,
 } from '@/servicios/ia';
 import {
@@ -125,6 +125,24 @@ export interface PropiedadesAsistente {
   alVolver: () => void;
   /** una pregunta que se envía sola al abrir, por ejemplo desde el detalle de un viaje */
   preguntaInicial?: string;
+}
+
+/** por qué Image Playground no pudo, dicho para la persona; un motivo desconocido cuenta como fallo */
+function textoDeMotivoImagen(motivo: string): string {
+  switch (motivo) {
+    case 'idioma-no-soportado':
+      return t('accionesIA.imagen.idiomaNoSoportado');
+    case 'no-compatible':
+      return t('accionesIA.imagen.noCompatible');
+    case 'no-lista':
+      return t('accionesIA.imagen.noLista');
+    case 'sin-modulo':
+      return t('accionesIA.imagen.sinModulo');
+    case 'sistema-antiguo':
+      return t('accionesIA.imagen.sistemaAntiguo');
+    default:
+      return t('accionesIA.imagen.fallo');
+  }
 }
 
 /** la postal solo se ofrece donde el teléfono sabe crear imágenes */
@@ -314,14 +332,16 @@ export function Asistente({
       return t(`ia.abriendo.${accion.pantalla}`);
     }
     if (accion.tipo === 'postal') {
-      if (!sabeCrearImagenes || !(await puedeCrearImagenes())) {
-        return t('accionesIA.postalNoPuedo');
-      }
-      const ruta = await crearPostalDeCiudad(
+      const estado = sabeCrearImagenes
+        ? await estadoDeImagenes()
+        : 'sin-modulo';
+      if (estado !== 'disponible') return textoDeMotivoImagen(estado);
+      const resultado = await crearPostalDeCiudad(
         accion.ciudad,
-        'ilustración cálida y colorida, como un cuaderno de viaje, sin texto',
+        'warm colorful illustration, like a travel notebook, no text',
       );
-      if (!ruta) return t('accionesIA.postalFallo');
+      if ('motivo' in resultado) return textoDeMotivoImagen(resultado.motivo);
+      const { ruta } = resultado;
       await Share.share({ url: `file://${ruta}` }).catch(() => undefined);
       return rellenar(t('accionesIA.postalListo'), { ciudad: accion.ciudad });
     }

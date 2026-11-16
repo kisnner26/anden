@@ -839,8 +839,17 @@ export const textos = {
     postalFallo: 'No pude crear la postal ahora. Probá de nuevo en un rato.',
     postalListo:
       'Listo, hice una postal de {ciudad} en tu teléfono. Elegí dónde mandarla.',
-    postalNoPuedo:
-      'Este teléfono no puede crear imágenes. En un iPhone con Apple Intelligence sí puedo.',
+    imagen: {
+      fallo:
+        'Image Playground no pudo crear la imagen. Probá de nuevo en un rato.',
+      idiomaNoSoportado:
+        'Image Playground no está disponible en el idioma o la región de este teléfono.',
+      noCompatible: 'Este teléfono no es compatible con Image Playground.',
+      noLista:
+        'Image Playground todavía no está listo en tu iPhone. Abrí la app Image Playground una vez para que descargue lo que necesita, y revisá que Apple Intelligence esté activado en Ajustes.',
+      sinModulo: 'Este teléfono no puede crear imágenes desde Andén.',
+      sistemaAntiguo: 'Para crear imágenes necesitás iOS 18.4 o más nuevo.',
+    },
     sinBoleto: 'No tenés un boleto vigente para esto. Reservá uno y te ayudo.',
     sinContacto:
       'Todavía no tenés un contacto de confianza. Decime, por ejemplo, "agregá a Mamá como contacto" y después compartimos tu viaje.',
