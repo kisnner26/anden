@@ -76,4 +76,18 @@ describe('AlternativasDeViaje', () => {
     await fireEvent.press(pantalla.getByRole('button'));
     expect(alElegir).toHaveBeenCalledWith(elegida);
   });
+
+  it('mientras se pasa a una salida no se puede tocar otra', async () => {
+    const alElegir = jest.fn();
+    const pantalla = await render(
+      <AlternativasDeViaje
+        alElegir={alElegir}
+        eligiendo="a"
+        salidas={[salida('a', 15), salida('b', 17)]}
+      />,
+    );
+    for (const boton of pantalla.getAllByRole('button'))
+      await fireEvent.press(boton);
+    expect(alElegir).not.toHaveBeenCalled();
+  });
 });
