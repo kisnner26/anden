@@ -5,7 +5,7 @@ jest.mock('@/servicios/supabase/cliente', () => ({
   obtenerCliente: jest.fn(() => null),
 }));
 jest.mock('@/servicios/supabase/mensajesSupabase', () => ({
-  enviarMensaje: jest.fn(async () => false),
+  enviarMensaje: jest.fn(async () => ({ ok: false, razon: 'sin-conexion' })),
   leerMensajes: jest.fn(async () => null),
 }));
 
@@ -27,6 +27,16 @@ describe('useMensajesViaje', () => {
     });
     await waitFor(() => expect(result.current.mensajes).toHaveLength(1));
     expect(result.current.mensajes[0]?.texto).toBe('ya estoy aquí');
+  });
+
+  it('un envío exitoso deja el fallo en nulo', async () => {
+    const { result } = await renderHook(() =>
+      useMensajesViaje('via_2', 'bol_1', 'pasajero', true),
+    );
+    await act(async () => {
+      await result.current.enviar('hola');
+    });
+    expect(result.current.fallo).toBeNull();
   });
 
   it('un mensaje vacío no se envía', async () => {

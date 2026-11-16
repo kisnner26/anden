@@ -1,7 +1,11 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-import { enviarMensajeCon, leerMensajesCon } from './mensajesSupabase';
+import {
+  enviarMensajeCon,
+  leerMensajesCon,
+  razonDelError,
+} from './mensajesSupabase';
 
 function cliente(resultado: { data?: unknown; error: Error | null }) {
   const insert = jest.fn<(fila: unknown) => Promise<{ error: Error | null }>>(
@@ -27,7 +31,7 @@ describe('enviarMensajeCon', () => {
       texto: 'ya estoy en la parada',
       viajeId: 'via_2',
     });
-    expect(enviado).toBe(true);
+    expect(enviado).toEqual({ ok: true });
     expect(insert).toHaveBeenCalledWith({
       de: 'pasajero',
       hilo: 'bol_1',
@@ -36,8 +40,10 @@ describe('enviarMensajeCon', () => {
     });
   });
 
-  it('dice falso si el servidor lo rechaza', async () => {
-    const { supabase } = cliente({ error: new Error('rls') });
+  it('si el servidor lo rechaza por permisos dice que el viaje no está en camino', async () => {
+    const { supabase } = cliente({
+      error: Object.assign(new Error('rls'), { code: '42501' }),
+    });
     expect(
       await enviarMensajeCon(supabase, {
         de: 'chofer',
@@ -45,7 +51,23 @@ describe('enviarMensajeCon', () => {
         texto: 'hola',
         viajeId: 'via_2',
       }),
-    ).toBe(false);
+    ).toEqual({ ok: false, razon: 'fuera-de-viaje' });
+  });
+});
+
+describe('razonDelError', () => {
+  it('un permiso negado es un viaje fuera de camino', () => {
+    expect(razonDelError({ code: '42501' })).toBe('fuera-de-viaje');
+  });
+
+  it('una tabla que no existe es un servidor sin preparar', () => {
+    expect(razonDelError({ code: '42P01' })).toBe('sin-tabla');
+    expect(razonDelError({ code: 'PGRST205' })).toBe('sin-tabla');
+  });
+
+  it('cualquier otro error se trata como falta de conexión', () => {
+    expect(razonDelError({})).toBe('sin-conexion');
+    expect(razonDelError({ code: '08006' })).toBe('sin-conexion');
   });
 });
 

@@ -4,6 +4,7 @@ import { obtenerCliente } from '@/servicios/supabase/cliente';
 import {
   enviarMensaje,
   leerMensajes,
+  type RazonFalloMensaje,
 } from '@/servicios/supabase/mensajesSupabase';
 import { useAppActiva } from '@/tema/useAppActiva';
 
@@ -22,6 +23,8 @@ export const SEGUNDOS_ENTRE_LECTURAS = 4;
 export interface ConversacionViaje {
   /** envía el texto; falso si estaba vacío, pasaba del máximo o el servidor lo rechazó */
   enviar: (texto: string) => Promise<boolean>;
+  /** por qué falló el último envío; nulo si salió bien o todavía no se envió nada */
+  fallo: RazonFalloMensaje | null;
   /** da por leído todo lo que hay hasta ahora */
   marcarVisto: () => void;
   mensajes: MensajeViaje[];
@@ -41,6 +44,7 @@ export function useMensajesViaje(
   const aLaVista = useAppActiva();
   const [mensajes, establecerMensajes] = useState<MensajeViaje[]>([]);
   const [visto, establecerVisto] = useState<string | null>(null);
+  const [fallo, establecerFallo] = useState<RazonFalloMensaje | null>(null);
 
   const leer = useCallback(async () => {
     const remotos = await leerMensajes(viajeId, hilo);
@@ -64,8 +68,9 @@ export function useMensajesViaje(
       const limpio = textoDeMensaje(texto);
       if (limpio === null || !activa) return false;
       const nuevo = { de: yo, hilo, texto: limpio, viajeId };
-      let enviado = await enviarMensaje(nuevo);
-      if (!enviado && obtenerCliente() === null) {
+      const resultado = await enviarMensaje(nuevo);
+      let enviado = resultado.ok;
+      if (!resultado.ok && obtenerCliente() === null) {
         guardarMensajeLocal({
           ...nuevo,
           enviadoEn: new Date().toISOString(),
@@ -73,6 +78,7 @@ export function useMensajesViaje(
         });
         enviado = true;
       }
+      establecerFallo(enviado || resultado.ok ? null : resultado.razon);
       if (enviado) await leer();
       return enviado;
     },
@@ -85,6 +91,7 @@ export function useMensajesViaje(
 
   return {
     enviar,
+    fallo,
     marcarVisto,
     mensajes,
     sinLeer: sinLeer(mensajes, yo, visto),
