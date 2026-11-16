@@ -18,4 +18,10 @@ describe('BrilloQueBarre', () => {
     const pantalla = await render(<BrilloQueBarre />);
     expect(pantalla.toJSON()).not.toBeNull();
   });
+
+  it('no se dibuja con movimiento reducido', async () => {
+    jest.mocked(useMovimientoReducido).mockReturnValue(true);
+    const pantalla = await render(<BrilloQueBarre />);
+    expect(pantalla.toJSON()).toBeNull();
+  });
 });
