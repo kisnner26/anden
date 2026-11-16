@@ -18,4 +18,8 @@ describe('sinTildes', () => {
   it('deja igual lo que no tiene tildes', () => {
     expect(sinTildes('boaco 12')).toBe('boaco 12');
   });
+
+  it('no recorta espacios', () => {
+    expect(sinTildes(' Sí ')).toBe(' si ');
+  });
 });
