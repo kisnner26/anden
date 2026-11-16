@@ -90,4 +90,16 @@ describe('AlternativasDeViaje', () => {
       await fireEvent.press(boton);
     expect(alElegir).not.toHaveBeenCalled();
   });
+
+  it('la salida a la que se está pasando muestra que está pasando', async () => {
+    const pantalla = await render(
+      <AlternativasDeViaje
+        alElegir={jest.fn()}
+        eligiendo="a"
+        salidas={[salida('a', 15), salida('b', 17)]}
+      />,
+    );
+    expect(pantalla.getAllByText(t('alternativas.pasando'))).toHaveLength(1);
+    expect(pantalla.getAllByText(t('alternativas.elegir'))).toHaveLength(1);
+  });
 });
