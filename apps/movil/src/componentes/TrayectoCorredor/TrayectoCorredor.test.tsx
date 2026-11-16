@@ -1,6 +1,8 @@
 import { describe, expect, it } from '@jest/globals';
 import { render } from '@testing-library/react-native';
 
+import { formatoDuracion } from '@/datos/formato';
+
 import { TrayectoCorredor } from './TrayectoCorredor';
 
 describe('TrayectoCorredor', () => {
@@ -42,5 +44,18 @@ describe('TrayectoCorredor', () => {
       />,
     );
     expect(pantalla.getAllByText('—')).toHaveLength(2);
+  });
+
+  it('muestra la duración con horas y minutos', async () => {
+    const pantalla = await render(
+      <TrayectoCorredor
+        destino="Boaco"
+        distanciaKm={80}
+        duracionMin={95}
+        origen="Managua"
+        recorrido="a"
+      />,
+    );
+    expect(pantalla.getByText(formatoDuracion(95))).toBeTruthy();
   });
 });
