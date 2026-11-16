@@ -221,6 +221,15 @@ export const textos = {
     retirando: 'Retirando…',
     nuevo: 'Publicar un viaje',
   },
+  panelChofer: {
+    viajesHoy: 'Viajes hoy',
+    pasajeros: 'Pasajeros',
+    cobrado: 'Cobrado',
+    sigue: 'Sigue',
+    sinProximo: 'No te quedan viajes por hacer hoy.',
+    abrir: 'Abrir el viaje a {destino}',
+    resumenDelDia: 'Tu día',
+  },
   conductorPasajeros: {
     segmentoPasajeros: 'Pasajeros',
     pestana: 'A bordo',
