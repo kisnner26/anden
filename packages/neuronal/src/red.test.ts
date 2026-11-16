@@ -52,3 +52,9 @@ describe('crearRed', () => {
     expect(Array.from(red.capas[0]!.sesgos).every((s) => s === 0)).toBe(true);
   });
 });
+
+describe('contarParametros', () => {
+  it('cuenta los pesos y los sesgos de todas las capas', () => {
+    expect(contarParametros(crearRed(4, [6], 3))).toBe(4 * 6 + 6 + 6 * 3 + 3);
+  });
+});
