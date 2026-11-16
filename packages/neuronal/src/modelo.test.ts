@@ -74,9 +74,18 @@ describe('leerModelo', () => {
     const m = aModelo(crearRed(4, [5], 3, 2), ['a', 'b', 'c'], 4, META);
     const sinMeta = { ...m, meta: undefined };
     expect(leerModelo(JSON.stringify(sinMeta))?.meta).toEqual({
+      aciertoReal: null,
       ejemplos: 0,
       entrenadoEn: '',
       precisionValidacion: null,
     });
+  });
+
+  it('conserva el acierto real medido con plantillas que la red no vio', () => {
+    const m = aModelo(crearRed(4, [5], 3, 2), ['a', 'b', 'c'], 4, {
+      ...META,
+      aciertoReal: 0.84,
+    });
+    expect(leerModelo(JSON.stringify(m))?.meta.aciertoReal).toBe(0.84);
   });
 });
