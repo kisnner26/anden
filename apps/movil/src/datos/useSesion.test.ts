@@ -9,4 +9,12 @@ describe('useSesion por defecto', () => {
     expect(result.current.sesion).toBeNull();
     expect(result.current.rol).toBe('pasajero');
   });
+
+  it('iniciar sesión responde que las credenciales no sirven', async () => {
+    const { result } = await renderHook(() => useSesion());
+    expect(await result.current.iniciar('ana', 'clave')).toEqual({
+      error: 'credenciales',
+      ok: false,
+    });
+  });
 });
