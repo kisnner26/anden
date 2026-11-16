@@ -9,6 +9,7 @@ import { Satelites } from './Satelites';
 import { coloresAura } from '@/tema/colores';
 import { movimiento } from '@/tema/movimiento';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
+import { useAppActiva } from '@/tema/useAppActiva';
 
 export type EstadoOrbe = 'escuchando' | 'hablando' | 'pensando' | 'reposo';
 
@@ -47,6 +48,7 @@ export function OrbeIA({
 }: PropiedadesOrbeIA) {
   const modo: EstadoOrbe = estado ?? (pensando ? 'pensando' : 'reposo');
   const reducir = useMovimientoReducido();
+  const activa = useAppActiva();
   const giro = useRef(new Animated.Value(0)).current;
   const aro = useRef(new Animated.Value(0)).current;
   const latido = useRef(new Animated.Value(0)).current;
@@ -57,7 +59,7 @@ export function OrbeIA({
   const ritmo = RITMO[modo];
 
   useEffect(() => {
-    if (reducir) return;
+    if (reducir || !activa) return;
     const girar = Animated.loop(
       Animated.timing(giro, {
         duration: movimiento.giroOrbe / ritmo,
@@ -82,11 +84,11 @@ export function OrbeIA({
       giro.setValue(0);
       aro.setValue(0);
     };
-  }, [aro, giro, reducir, ritmo]);
+  }, [activa, aro, giro, reducir, ritmo]);
 
   // el orbe respira despacio todo el tiempo, también en reposo
   useEffect(() => {
-    if (reducir) return;
+    if (reducir || !activa) return;
     const respiracion = Animated.loop(
       Animated.sequence([
         Animated.timing(respirar, {
@@ -105,11 +107,11 @@ export function OrbeIA({
     );
     respiracion.start();
     return () => respiracion.stop();
-  }, [reducir, respirar]);
+  }, [activa, reducir, respirar]);
 
   // al hablar el orbe late con un ritmo irregular, como una voz, no como un metrónomo
   useEffect(() => {
-    if (reducir || modo !== 'hablando') {
+    if (reducir || !activa || modo !== 'hablando') {
       latido.setValue(0);
       return;
     }
@@ -129,7 +131,7 @@ export function OrbeIA({
     );
     cadena.start();
     return () => cadena.stop();
-  }, [latido, modo, reducir]);
+  }, [activa, latido, modo, reducir]);
 
   function tocar() {
     if (!alPresionar) return;
