@@ -61,4 +61,10 @@ describe('intencionLocal', () => {
       'proximo_bus',
     );
   });
+
+  it('entiende una palabra mal escrita', () => {
+    expect(intencionLocal('cuanto cuesta ir a boacoo')?.etiqueta).toBe(
+      'precio',
+    );
+  });
 });
