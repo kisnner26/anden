@@ -167,3 +167,29 @@ export async function guardarReporte(
   ];
   await AsyncStorage.setItem(CLAVE_REPORTES, JSON.stringify(lista));
 }
+
+/**
+ * la opinión rápida del viaje en curso: una por boleto, así que si la persona vuelve a tocar las
+ * estrellas se cambia la de antes en vez de sumar otra
+ */
+export async function guardarOpinionDelViaje(
+  nueva: Pick<Opinion, 'boletoId' | 'choferId' | 'estrellas'>,
+  ahora: Date = new Date(),
+): Promise<Opinion[]> {
+  const existentes = await leerOpiniones();
+  const anterior = existentes.find(
+    (opinion) => opinion.boletoId === nueva.boletoId,
+  );
+  const opinion: Opinion = {
+    ...nueva,
+    comentario: anterior?.comentario ?? '',
+    creadaEn: ahora.toISOString(),
+    id: anterior?.id ?? `op_${ahora.getTime()}`,
+  };
+  const lista = [
+    ...existentes.filter((otra) => otra.boletoId !== nueva.boletoId),
+    opinion,
+  ];
+  await AsyncStorage.setItem(CLAVE_OPINIONES, JSON.stringify(lista));
+  return lista;
+}
