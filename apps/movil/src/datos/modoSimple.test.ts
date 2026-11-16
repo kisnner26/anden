@@ -28,4 +28,9 @@ describe('modoSimple', () => {
     await AsyncStorage.setItem(CLAVE_MODO_SIMPLE, '1');
     expect(await leerModoSimple()).toBe(true);
   });
+
+  it('cualquier valor distinto de 1 cuenta como apagado', async () => {
+    await AsyncStorage.setItem(CLAVE_MODO_SIMPLE, 'si');
+    expect(await leerModoSimple()).toBe(false);
+  });
 });
