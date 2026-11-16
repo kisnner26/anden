@@ -1,0 +1,41 @@
+import { describe, expect, it, jest } from '@jest/globals';
+import { fireEvent, render } from '@testing-library/react-native';
+
+import type { Salida } from '@/datos/salidas';
+import { rellenar } from '@/textos/rellenar';
+import { t } from '@/textos/t';
+
+import { AlternativasDeViaje } from './AlternativasDeViaje';
+
+function salida(id: string, hora: number, libres = 8): Salida {
+  return {
+    asientosLibres: libres,
+    choferId: 'cho_1',
+    codigoDestino: 'BOA',
+    destino: 'Boaco',
+    estado: 'programado',
+    minutosAtraso: 0,
+    origen: 'Managua',
+    placa: 'M 1',
+    puntoEncuentro: 'x',
+    rutaId: 'r',
+    salida: new Date(2026, 10, 13, hora, 0),
+    servicio: 'ordinario',
+    tarifa: 70,
+    ventaAbierta: true,
+    viajeId: id,
+  };
+}
+
+describe('AlternativasDeViaje', () => {
+  it('con salidas explica que el cambio no cuesta más', async () => {
+    const pantalla = await render(
+      <AlternativasDeViaje
+        alElegir={jest.fn()}
+        eligiendo={null}
+        salidas={[salida('a', 15)]}
+      />,
+    );
+    expect(pantalla.getByText(t('alternativas.detalle'))).toBeTruthy();
+  });
+});
