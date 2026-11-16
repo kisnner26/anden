@@ -19,7 +19,17 @@
     "bus a {c} esta noche",
     "me urge llegar a {c} hay bus",
     "proxima salida a {c}",
-    "tienen bus para {c} hoy"
+    "tienen bus para {c} hoy",
+    "tiene algun bus para {c} mas tarde",
+    "a que horas pasan buses a {c}",
+    "ocupo viajar a {c} que me recomienda",
+    "sale algo hacia {c} en la tarde",
+    "que hora es la ultima salida a {c}",
+    "y el bus de {c} cuando sale",
+    "hay transporte a {c} hoy",
+    "para {c} hay salida temprano",
+    "busco bus a {c} para maniana",
+    "dime los horarios hacia {c}"
   ],
   "precio": [
     "cuanto cuesta ir a {c}",
