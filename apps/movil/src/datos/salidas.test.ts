@@ -77,4 +77,10 @@ describe('salidasDeChofer', () => {
     expect(del.length).toBeGreaterThan(0);
     expect(del.every((s) => s.choferId === 'cho_2')).toBe(true);
   });
+
+  it('las ordena por hora de salida', () => {
+    const del = salidasDeChofer(crearMuestra(AHORA), AHORA, 'cho_2');
+    const horas = del.map((s) => s.salida.getTime());
+    expect(horas).toEqual([...horas].sort((a, b) => a - b));
+  });
 });
