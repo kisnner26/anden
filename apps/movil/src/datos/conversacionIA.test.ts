@@ -158,6 +158,10 @@ describe('instruccionesDeConversacion', () => {
     expect(texto).toContain('empezá por lo que se preguntó');
     expect(texto).toContain('un solo dato útil');
   });
+
+  it('pide decir si la hora es de hoy o de mañana', () => {
+    expect(instruccionesDeConversacion()).toContain('si es hoy o mañana');
+  });
 });
 
 describe('actividadDeHerramienta', () => {
