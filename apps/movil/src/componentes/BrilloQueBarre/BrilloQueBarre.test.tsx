@@ -24,4 +24,11 @@ describe('BrilloQueBarre', () => {
     const pantalla = await render(<BrilloQueBarre />);
     expect(pantalla.toJSON()).toBeNull();
   });
+
+  it('no recibe toques', async () => {
+    const pantalla = await render(<BrilloQueBarre />);
+    expect(JSON.stringify(pantalla.toJSON())).toContain(
+      '"pointerEvents":"none"',
+    );
+  });
 });
