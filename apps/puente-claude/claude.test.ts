@@ -57,4 +57,13 @@ describe('argumentosDeClaude', () => {
       argumentosDeClaude({ instrucciones: '', pregunta: 'hola' }),
     ).not.toContain('--system-prompt');
   });
+
+  it('agrega el modelo solo si se pidió', () => {
+    expect(
+      argumentosDeClaude({ instrucciones: '', pregunta: 'hola' }),
+    ).not.toContain('--model');
+    expect(
+      argumentosDeClaude({ instrucciones: '', pregunta: 'hola' }, 'sonnet'),
+    ).toEqual(expect.arrayContaining(['--model', 'sonnet']));
+  });
 });
