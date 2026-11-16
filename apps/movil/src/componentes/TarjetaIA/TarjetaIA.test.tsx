@@ -23,4 +23,13 @@ describe('TarjetaIA', () => {
     );
     expect(pantalla.getByText('respuesta')).toBeTruthy();
   });
+
+  it('funciona mientras la IA trabaja', async () => {
+    const pantalla = await render(
+      <TarjetaIA trabajando>
+        <Text>pensando</Text>
+      </TarjetaIA>,
+    );
+    expect(pantalla.getByText('pensando')).toBeTruthy();
+  });
 });
