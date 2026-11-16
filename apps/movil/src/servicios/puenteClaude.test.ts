@@ -24,4 +24,11 @@ describe('urlDelPuente', () => {
     expect(urlDelPuente('https://ejemplo.com:443')).toBeNull();
     expect(urlDelPuente('http://172.32.0.1:4780')).toBeNull();
   });
+
+  it('rechaza lo que no lleva puerto o no es una dirección', () => {
+    expect(urlDelPuente('http://192.168.1.52')).toBeNull();
+    expect(urlDelPuente('192.168.1.52:4780')).toBeNull();
+    expect(urlDelPuente('')).toBeNull();
+    expect(urlDelPuente('http://192.168.1.52:99999')).toBeNull();
+  });
 });
