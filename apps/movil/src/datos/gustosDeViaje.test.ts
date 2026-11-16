@@ -53,4 +53,13 @@ describe('gustosDeViaje', () => {
     expect(gustos.servicio).toBeNull();
   });
 
+  it('ignora los boletos cancelados', () => {
+    const gustos = gustosDeViaje([
+      boleto(6),
+      boleto(6),
+      boleto(22, 0, 'ordinario', 'cancelado'),
+    ]);
+    expect(gustos.horaPreferida).toBe(6 * 60);
+    expect(gustos.viajes).toBe(2);
+  });
 });
