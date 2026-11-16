@@ -1,3 +1,5 @@
+import type { CierreViaje } from '@/servicios/cierres';
+
 import { mismoDia } from './dias';
 import type { Salida } from './salidas';
 
@@ -35,4 +37,14 @@ export function proximoViaje(
       )
       .sort((a, b) => a.salida.getTime() - b.salida.getTime())[0] ?? null
   );
+}
+
+/** lo que el chofer cobró hoy: la suma de los cierres de sus viajes que se cerraron hoy */
+export function cobradoDeHoy(
+  cierres: readonly Pick<CierreViaje, 'cerradoEn' | 'cobrado'>[],
+  ahora: Date,
+): number {
+  return cierres
+    .filter((cierre) => mismoDia(new Date(cierre.cerradoEn), ahora))
+    .reduce((suma, cierre) => suma + cierre.cobrado, 0);
 }
