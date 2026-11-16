@@ -31,4 +31,9 @@ describe('validarFrase', () => {
     expect(validarFrase({ etiqueta: '../../etc', texto: 'hola' })).toBeNull();
     expect(validarFrase({ etiqueta: 'Saludo', texto: 'hola' })).toBeNull();
   });
+
+  it('rechaza campos que no son texto', () => {
+    expect(validarFrase({ etiqueta: 3, texto: 'hola' })).toBeNull();
+    expect(validarFrase({ etiqueta: 'saludo', texto: 4 })).toBeNull();
+  });
 });
