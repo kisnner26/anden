@@ -24,4 +24,17 @@ describe('BotonGigante', () => {
     );
     expect(pantalla.getByText('10:30 a. m.')).toBeTruthy();
   });
+
+  it('el lector de pantalla lee la etiqueta con el detalle', async () => {
+    const pantalla = await render(
+      <BotonGigante
+        alPresionar={jest.fn()}
+        detalle="10:30 a. m."
+        etiqueta="Boaco"
+      />,
+    );
+    expect(
+      pantalla.getByRole('button', { name: 'Boaco. 10:30 a. m.' }),
+    ).toBeTruthy();
+  });
 });
