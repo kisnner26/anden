@@ -2,6 +2,7 @@ import { describe, expect, it } from '@jest/globals';
 
 import {
   actividadDeHerramienta,
+  fichasParaElModelo,
   instruccionesDeConversacion,
   leerRespuestaRica,
 } from './conversacionIA';
@@ -166,5 +167,13 @@ describe('actividadDeHerramienta', () => {
     expect(actividadDeHerramienta('fichaDeCiudad')).toBe(
       'Consultando la ciudad',
     );
+  });
+});
+
+describe('fichasParaElModelo', () => {
+  it('manda una ficha por cada ciudad con ficha', () => {
+    const fichas = fichasParaElModelo();
+    expect(Object.keys(fichas)).toContain('Boaco');
+    expect(fichas.Boaco?.length).toBeGreaterThan(20);
   });
 });
