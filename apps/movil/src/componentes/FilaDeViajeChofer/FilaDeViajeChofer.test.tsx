@@ -94,4 +94,9 @@ describe('FilaDeViajeChofer', () => {
     expect(pantalla.getByText(t('conductor.enVivo'))).toBeTruthy();
     expect(pantalla.queryByText(t('nuevoViaje.retirar'))).toBeNull();
   });
+
+  it('sin pasajeros no pide el motivo', async () => {
+    const pantalla = await dibujar();
+    expect(pantalla.queryByText(t('nuevoViaje.motivoTitulo'))).toBeNull();
+  });
 });
