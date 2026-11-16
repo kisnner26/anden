@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { sinTildes } from './texto';
 
 export const CLAVE_MEMORIA_IA = 'anden.iaMemoria';
 export const CLAVE_MEMORIA_ACTIVA = 'anden.iaMemoriaActiva';
@@ -25,10 +26,6 @@ export const MEMORIA_VACIA: MemoriaIA = {
 
 export function claveMemoriaDe(cuenta: string | null): string {
   return cuenta ? `${CLAVE_MEMORIA_IA}.${cuenta}` : CLAVE_MEMORIA_IA;
-}
-
-function sinTildes(texto: string): string {
-  return texto.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 }
 
 /** lee lo guardado sin confiar en su forma */
