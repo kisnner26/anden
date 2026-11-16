@@ -51,6 +51,12 @@ describe('mejorSalida', () => {
     expect(mejorSalida([salida('a', 9)], { ahora: AHORA })).toBeNull();
   });
 
+  it('prefiere la que sale pronto entre salidas iguales', () => {
+    const elegida = mejorSalida([salida('tarde', 15), salida('pronto', 11)], {
+      ahora: AHORA,
+    });
+    expect(elegida?.salida.viajeId).toBe('pronto');
+  });
 
 
 
