@@ -186,4 +186,13 @@ describe('enlaces de contacto del destinatario', () => {
       'tel:+50588881234',
     );
   });
+
+  it('no hay enlace de llamada si el teléfono no es válido', () => {
+    expect(
+      urlLlamadaDestinatario({
+        ...nuevaEncomienda(DATOS),
+        telefonoDestinatario: '123;rm',
+      }),
+    ).toBeNull();
+  });
 });
