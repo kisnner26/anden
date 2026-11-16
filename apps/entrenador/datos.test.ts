@@ -14,4 +14,9 @@ describe('validarFrase', () => {
       validarFrase({ etiqueta: 'saludo', texto: '  hola   que   tal ' })?.texto,
     ).toBe('hola que tal');
   });
+
+  it('rechaza lo que no es un objeto', () => {
+    expect(validarFrase(null)).toBeNull();
+    expect(validarFrase('hola')).toBeNull();
+  });
 });
