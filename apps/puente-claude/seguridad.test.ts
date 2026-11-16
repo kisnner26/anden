@@ -56,3 +56,11 @@ describe('codigoValido', () => {
     expect(codigoValido(undefined, 'abc123')).toBe(false);
   });
 });
+
+describe('codigoDeCabecera', () => {
+  it('saca el código de una cabecera Bearer', () => {
+    expect(codigoDeCabecera('Bearer 0123456789abcdef0123')).toBe(
+      '0123456789abcdef0123',
+    );
+  });
+});
