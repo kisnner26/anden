@@ -5,6 +5,7 @@ import { leerEstadoDeBoletos } from '@/servicios/supabase/estadoBoletosSupabase'
 import { ContextoEstadoRemotoBoletos } from './useEstadoRemotoBoletos';
 import { useBoletos } from './useBoletos';
 import { useSesion } from './useSesion';
+import { iniciarSondeo } from './sondeo';
 
 const CADA_MS = 8000;
 
@@ -46,10 +47,10 @@ export function ProveedorEstadoBoletos({ children }: { children: ReactNode }) {
       });
     };
     traer();
-    const temporizador = setInterval(traer, CADA_MS);
+    const pararSondeo = iniciarSondeo(traer, CADA_MS);
     return () => {
       vigente = false;
-      clearInterval(temporizador);
+      pararSondeo();
     };
   }, [clave, hayCuenta]);
 
