@@ -4,6 +4,7 @@ import {
   leerAvisosDelViaje,
   type AvisoDelViaje,
 } from '@/servicios/supabase/comunicacionSupabase';
+import { iniciarSondeo } from './sondeo';
 
 const CADA_MS = 15000;
 
@@ -21,10 +22,10 @@ export function useAvisoDelViaje(viajeId: string | null): AvisoDelViaje | null {
       });
     };
     traer();
-    const temporizador = setInterval(traer, CADA_MS);
+    const pararSondeo = iniciarSondeo(traer, CADA_MS);
     return () => {
       vigente = false;
-      clearInterval(temporizador);
+      pararSondeo();
     };
   }, [viajeId]);
 
