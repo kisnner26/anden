@@ -1,0 +1,13 @@
+import { describe, expect, it } from '@jest/globals';
+import { renderHook } from '@testing-library/react-native';
+
+import { useAvisos } from './useAvisos';
+
+describe('useAvisos por defecto', () => {
+  it('no hay avisos ni sin leer', async () => {
+    const { result } = await renderHook(() => useAvisos());
+    expect(result.current.avisos).toEqual([]);
+    expect(result.current.noLeidos).toBe(0);
+    expect(result.current.leidos).toEqual([]);
+  });
+});
