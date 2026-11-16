@@ -29,4 +29,11 @@ describe('GaleriaLugares', () => {
       ).toBeTruthy();
     }
   });
+
+  it('lleva el título de la sección', async () => {
+    const pantalla = await render(
+      <GaleriaLugares lugares={lugaresDeCiudad('Boaco')} />,
+    );
+    expect(pantalla.getByText(t('galeriaLugares.titulo'))).toBeTruthy();
+  });
 });
