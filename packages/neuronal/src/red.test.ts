@@ -13,4 +13,10 @@ describe('softmax', () => {
     expect(p[1]!).toBeGreaterThan(p[0]!);
     expect(p[1]!).toBeGreaterThan(p[2]!);
   });
+
+  it('no se desborda con números muy grandes', () => {
+    const p = softmax(new Float32Array([1000, 1001]));
+    expect(Number.isFinite(p[0]!)).toBe(true);
+    expect(p[0]! + p[1]!).toBeCloseTo(1, 6);
+  });
 });
