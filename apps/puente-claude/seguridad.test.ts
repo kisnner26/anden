@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   codigoDeCabecera,
+  cabecerasCors,
   codigoValido,
   crearLimite,
   esRedLocal,
@@ -89,5 +90,25 @@ describe('crearLimite', () => {
     expect(permitido()).toBe(false);
     ahora = 1500;
     expect(permitido()).toBe(true);
+  });
+});
+
+describe('cabecerasCors', () => {
+  it('deja que la página mande el código en la cabecera de autorización', () => {
+    expect(cabecerasCors()['Access-Control-Allow-Headers']).toContain(
+      'authorization',
+    );
+  });
+
+  it('solo permite consultar y preguntar', () => {
+    expect(cabecerasCors()['Access-Control-Allow-Methods']).toBe(
+      'GET, POST, OPTIONS',
+    );
+  });
+
+  it('acepta el permiso de red privada que pide el navegador', () => {
+    expect(cabecerasCors()['Access-Control-Allow-Private-Network']).toBe(
+      'true',
+    );
   });
 });
