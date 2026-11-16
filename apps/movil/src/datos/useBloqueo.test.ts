@@ -9,4 +9,12 @@ describe('useBloqueo por defecto', () => {
     expect(result.current.bloqueado).toBe(false);
     expect(result.current.activo).toBe(false);
   });
+
+  it('la biometría figura como no disponible', async () => {
+    const { result } = await renderHook(() => useBloqueo());
+    expect(result.current.biometria).toEqual({
+      disponible: false,
+      tipo: 'ninguna',
+    });
+  });
 });
