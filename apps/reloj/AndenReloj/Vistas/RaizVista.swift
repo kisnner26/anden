@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RaizVista: View {
     @StateObject private var modelo = ModeloApp()
+    @Environment(\.scenePhase) private var fase
 
     var body: some View {
         Group {
@@ -24,8 +25,9 @@ struct RaizVista: View {
             }
         }
         .environmentObject(modelo)
-        .task(id: modelo.fase == .ingreso) {
-            if modelo.fase != .ingreso { await modelo.vigilar() }
+        // solo vigila con la app a la vista; al volver a la muñeca arranca de nuevo y lee al instante
+        .task(id: "\(modelo.fase == .ingreso)-\(fase == .active)") {
+            if modelo.fase != .ingreso && fase == .active { await modelo.vigilar() }
         }
     }
 }
