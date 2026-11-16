@@ -35,3 +35,9 @@ describe('entrenarClasificador', () => {
     expect(c.mejor('buenas noches', 0.5)?.etiqueta).toBe('saludo');
   });
 });
+
+describe('etiquetasDe', () => {
+  it('ordena las etiquetas y no repite', () => {
+    expect(etiquetasDe(FRASES)).toEqual(['precio', 'saludo']);
+  });
+});
