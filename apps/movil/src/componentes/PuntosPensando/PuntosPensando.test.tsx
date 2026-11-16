@@ -18,4 +18,11 @@ describe('PuntosPensando', () => {
     const pantalla = await render(<PuntosPensando />);
     expect(pantalla.toJSON()).not.toBeNull();
   });
+
+  it('no se lee en voz alta porque es solo decoración', async () => {
+    const pantalla = await render(<PuntosPensando />);
+    expect(JSON.stringify(pantalla.toJSON())).toContain(
+      '"accessibilityElementsHidden":true',
+    );
+  });
 });
