@@ -100,6 +100,13 @@ describe('leerMemoria', () => {
     expect(memoria.horas).toEqual(MEMORIA_VACIA.horas);
     expect(memoria.usos).toBe(2);
   });
+
+  it('descarta destinos con una cuenta que no es un número positivo', () => {
+    const memoria = leerMemoria(
+      JSON.stringify({ destinos: { Boaco: 3, Leon: 'x', Juigalpa: -1 } }),
+    );
+    expect(memoria.destinos).toEqual({ Boaco: 3 });
+  });
 });
 
 describe('claveMemoriaDe', () => {
