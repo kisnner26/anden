@@ -10,4 +10,9 @@ describe('usePerfil por defecto', () => {
     expect(result.current.perfil).toEqual(PERFIL_VACIO);
     expect(result.current.cargando).toBe(false);
   });
+
+  it('guardar no falla', async () => {
+    const { result } = await renderHook(() => usePerfil());
+    await expect(result.current.guardar({} as never)).resolves.toBeUndefined();
+  });
 });
