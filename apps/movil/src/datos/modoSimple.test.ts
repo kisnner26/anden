@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { renderHook, waitFor } from '@testing-library/react-native';
+import { act, renderHook, waitFor } from '@testing-library/react-native';
 
 import {
   CLAVE_MODO_SIMPLE,
@@ -46,5 +46,15 @@ describe('useModoSimple', () => {
   it('por defecto queda apagado una vez leído', async () => {
     const { result } = await renderHook(() => useModoSimple());
     await waitFor(() => expect(result.current.activo).toBe(false));
+  });
+
+  it('cambiar lo guarda y lo refleja al instante', async () => {
+    const { result } = await renderHook(() => useModoSimple());
+    await waitFor(() => expect(result.current.activo).toBe(false));
+    await act(async () => {
+      await result.current.cambiar(true);
+    });
+    expect(result.current.activo).toBe(true);
+    expect(await leerModoSimple()).toBe(true);
   });
 });
