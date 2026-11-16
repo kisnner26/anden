@@ -63,4 +63,20 @@ describe('SelectorSalida', () => {
     expect(alElegir).toHaveBeenCalledWith('b');
     expect(selectionAsync).toHaveBeenCalledTimes(1);
   });
+
+  it('marca como seleccionada solo la elegida', async () => {
+    const pantalla = await render(
+      <SelectorSalida
+        alElegir={jest.fn()}
+        elegida="b"
+        salidas={[salida('a', 9), salida('b', 15)]}
+      />,
+    );
+    expect(
+      pantalla.getByLabelText(/^3:00 p\. m\., /).props.accessibilityState,
+    ).toEqual(expect.objectContaining({ selected: true }));
+    expect(
+      pantalla.getByLabelText(/^9:00 a\. m\., /).props.accessibilityState,
+    ).toEqual(expect.objectContaining({ selected: false }));
+  });
 });
