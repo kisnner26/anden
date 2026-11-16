@@ -28,6 +28,10 @@ export interface PropiedadesMapaCorredor {
   etiquetaDestino?: string;
   /** modelo del bus; sin indicar se reparte por corredor, así cada camino tiene el suyo */
   variante?: IdVarianteBus;
+  /** el alto del mapa; por defecto el de una tarjeta. Con `sinMarco` el mapa puede ocupar una pantalla entera */
+  alto?: number;
+  /** sin borde ni esquinas redondeadas, para que el mapa llegue a los bordes de la pantalla */
+  sinMarco?: boolean;
 }
 
 function Terminal({ codigo }: { codigo: string }) {
@@ -43,8 +47,10 @@ function Terminal({ codigo }: { codigo: string }) {
 
 /** mapa del corredor: trazo entre las dos terminales y el bus simulado encima */
 export function MapaCorredor({
+  alto = ALTO_MAPA,
   etiquetaDestino,
   simulacion,
+  sinMarco = false,
   variante,
 }: PropiedadesMapaCorredor) {
   const { colores, modo } = useTema();
@@ -57,14 +63,17 @@ export function MapaCorredor({
     <View
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
-      style={[estilos.marco, { borderColor: colores.linea }]}
+      style={[
+        sinMarco ? estilos.sinMarco : estilos.marco,
+        sinMarco ? null : { borderColor: colores.linea },
+      ]}
       testID="mapa-corredor"
     >
       <MapView
         initialRegion={regionQueEncierraTrazo(trazo)}
         pitchEnabled={false}
         rotateEnabled={false}
-        style={estilos.mapa}
+        style={[estilos.mapa, { height: alto }]}
         toolbarEnabled={false}
         userInterfaceStyle={modo === 'oscuro' ? 'dark' : 'light'}
       >
@@ -148,6 +157,7 @@ const estilos = StyleSheet.create({
   },
   marcaDestino: { alignItems: 'center' },
   mapa: { height: ALTO_MAPA, width: '100%' },
+  sinMarco: { overflow: 'hidden' },
   marco: {
     borderRadius: radios.bloqueNegro,
     borderWidth: 1,
