@@ -81,4 +81,8 @@ describe('accionDeOrden', () => {
     });
   });
 
+  it('no confunde una pregunta con una acción', () => {
+    expect(accionDeOrden('cuánto cuesta ir a Boaco')).toBeNull();
+    expect(accionDeOrden('avisame cuando haya bus a Boaco')).toBeNull();
+  });
 });
