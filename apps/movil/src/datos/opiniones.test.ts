@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it } from '@jest/globals';
 import {
   boletoParaOpinar,
   guardarOpinion,
+  guardarOpinionDelViaje,
   guardarReporte,
   leerOpiniones,
   leerReportes,
@@ -172,5 +173,61 @@ describe('notaConOpiniones', () => {
       promedio: 4.5,
       total: 10,
     });
+  });
+});
+
+describe('guardarOpinionDelViaje', () => {
+  it('guarda la opinión del boleto con sus estrellas', async () => {
+    const lista = await guardarOpinionDelViaje({
+      boletoId: 'bol_1',
+      choferId: 'cho_2',
+      estrellas: 4,
+    });
+    expect(lista).toHaveLength(1);
+    expect(lista[0]).toMatchObject({ boletoId: 'bol_1', estrellas: 4 });
+  });
+
+  it('tocar otra vez cambia la opinión y no suma otra', async () => {
+    await guardarOpinionDelViaje({
+      boletoId: 'bol_1',
+      choferId: 'cho_2',
+      estrellas: 4,
+    });
+    const lista = await guardarOpinionDelViaje({
+      boletoId: 'bol_1',
+      choferId: 'cho_2',
+      estrellas: 2,
+    });
+    expect(lista).toHaveLength(1);
+    expect(lista[0]?.estrellas).toBe(2);
+  });
+
+  it('conserva el comentario que ya había dejado', async () => {
+    await guardarOpinion({
+      boletoId: 'bol_1',
+      choferId: 'cho_2',
+      comentario: 'Puntual',
+      estrellas: 5,
+    });
+    const lista = await guardarOpinionDelViaje({
+      boletoId: 'bol_1',
+      choferId: 'cho_2',
+      estrellas: 4,
+    });
+    expect(lista[0]?.comentario).toBe('Puntual');
+  });
+
+  it('no toca las opiniones de otros boletos', async () => {
+    await guardarOpinionDelViaje({
+      boletoId: 'bol_9',
+      choferId: 'cho_2',
+      estrellas: 3,
+    });
+    const lista = await guardarOpinionDelViaje({
+      boletoId: 'bol_1',
+      choferId: 'cho_2',
+      estrellas: 5,
+    });
+    expect(lista).toHaveLength(2);
   });
 });
