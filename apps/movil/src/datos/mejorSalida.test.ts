@@ -45,3 +45,16 @@ describe('esTomable', () => {
     );
   });
 });
+
+describe('mejorSalida', () => {
+  it('no elige nada si no hay una salida tomable', () => {
+    expect(mejorSalida([salida('a', 9)], { ahora: AHORA })).toBeNull();
+  });
+
+
+
+
+
+
+
+});
