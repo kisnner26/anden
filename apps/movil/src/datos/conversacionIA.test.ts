@@ -152,6 +152,12 @@ describe('instruccionesDeConversacion', () => {
     );
     expect(instruccionesDeConversacion()).not.toContain('es turista');
   });
+
+  it('pide empezar por lo que se preguntó y sumar un solo dato útil', () => {
+    const texto = instruccionesDeConversacion();
+    expect(texto).toContain('empezá por lo que se preguntó');
+    expect(texto).toContain('un solo dato útil');
+  });
 });
 
 describe('actividadDeHerramienta', () => {
