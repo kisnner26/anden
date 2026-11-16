@@ -12,17 +12,20 @@ export const MAXIMO_PASAJEROS = 6;
 export interface PropiedadesContadorPasajeros {
   alCambiar: (cantidad: number) => void;
   cantidad: number;
+  /** el tope de pasajeros; por defecto 6, y menos si la salida tiene menos asientos libres */
+  maximo?: number;
 }
 
 /** cuántos pasajeros viajan: menos y más a los lados y la cifra grande al centro */
 export function ContadorPasajeros({
   alCambiar,
   cantidad,
+  maximo = MAXIMO_PASAJEROS,
 }: PropiedadesContadorPasajeros) {
   const { colores } = useTema();
 
   function cambiar(nueva: number) {
-    if (nueva < 1 || nueva > MAXIMO_PASAJEROS) return;
+    if (nueva < 1 || nueva > maximo) return;
     void Haptics.selectionAsync().catch(() => undefined);
     alCambiar(nueva);
   }
@@ -57,13 +60,13 @@ export function ContadorPasajeros({
       <Pressable
         accessibilityLabel={t('rutas.masPasajeros')}
         accessibilityRole="button"
-        accessibilityState={{ disabled: cantidad >= MAXIMO_PASAJEROS }}
-        disabled={cantidad >= MAXIMO_PASAJEROS}
+        accessibilityState={{ disabled: cantidad >= maximo }}
+        disabled={cantidad >= maximo}
         onPress={() => cambiar(cantidad + 1)}
         style={[
           estilos.boton,
           { backgroundColor: colores.bloqueNegro },
-          cantidad >= MAXIMO_PASAJEROS && estilos.apagado,
+          cantidad >= maximo && estilos.apagado,
         ]}
       >
         <Text style={[tipografia.datoGrande, { color: colores.ambar }]}>+</Text>
