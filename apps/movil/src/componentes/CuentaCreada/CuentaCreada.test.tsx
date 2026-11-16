@@ -54,4 +54,13 @@ describe('CuentaCreada', () => {
     );
     expect(pantalla.getByText(t('cuenta.bienvenidaDetalle'))).toBeTruthy();
   });
+
+  it('se anuncia a quien usa lector de pantalla', async () => {
+    const pantalla = await render(
+      <CuentaCreada alTerminar={jest.fn()} nombre="Ana" />,
+    );
+    expect(
+      pantalla.getByTestId('cuenta-creada').props.accessibilityLiveRegion,
+    ).toBe('assertive');
+  });
 });
