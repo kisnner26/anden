@@ -96,4 +96,10 @@ describe('responderLocal', () => {
     const r = responderLocal('cuál es la salida más barata a Boaco', estado());
     expect(r.texto).toContain('C$ 70');
   });
+
+  it('sin boleto vigente lo dice', () => {
+    expect(responderLocal('cuándo sale mi boleto', estado()).texto).toContain(
+      'No tenés boletos',
+    );
+  });
 });
