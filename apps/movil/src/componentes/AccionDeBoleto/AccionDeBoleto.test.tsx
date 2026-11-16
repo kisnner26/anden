@@ -71,4 +71,15 @@ describe('AccionDeBoleto', () => {
       pantalla.getByRole('button', { name: 'Aviso' }).props.accessibilityState,
     ).toEqual(expect.objectContaining({ selected: true }));
   });
+
+  it('cada tipo tiene su propio identificador de prueba', async () => {
+    const pantalla = await render(
+      <AccionDeBoleto
+        alPresionar={jest.fn()}
+        etiqueta="Pantalla"
+        tipo="pantalla"
+      />,
+    );
+    expect(pantalla.getByTestId('accion-boleto-pantalla')).toBeTruthy();
+  });
 });
