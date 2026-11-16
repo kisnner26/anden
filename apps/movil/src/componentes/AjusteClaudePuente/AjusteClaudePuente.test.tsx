@@ -77,4 +77,24 @@ describe('AjusteClaudePuente', () => {
     ).toBeTruthy();
     expect(mockServicio.guardarPuente).not.toHaveBeenCalled();
   });
+
+  it('si responde guarda la dirección y el código y queda conectado', async () => {
+    const pantalla = await renderPantalla(<AjusteClaudePuente />);
+    await fireEvent.changeText(
+      pantalla.getByLabelText(t('claudePuente.direccion')),
+      'http://192.168.1.52:4780/',
+    );
+    await fireEvent.changeText(
+      pantalla.getByLabelText(t('claudePuente.codigo')),
+      CODIGO,
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: t('claudePuente.conectar') }),
+    );
+    expect(await pantalla.findByText(t('claudePuente.conectado'))).toBeTruthy();
+    expect(mockServicio.guardarPuente).toHaveBeenCalledWith({
+      codigo: CODIGO,
+      url: 'http://192.168.1.52:4780',
+    });
+  });
 });
