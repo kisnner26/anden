@@ -17,7 +17,8 @@ export interface PropiedadesBarraPreguntaIA {
   /** lleva la pregunta al asistente, que la responde con los datos reales */
   alPreguntar: (pregunta: string) => void;
   /** preguntas listas para tocar, armadas con lo que hay en pantalla */
-  sugerencias: readonly string[];
+  /** preguntas rápidas bajo el campo; sin ellas solo queda el campo para escribir */
+  sugerencias?: readonly string[];
 }
 
 /**
@@ -82,15 +83,17 @@ export function BarraPreguntaIA({
           />
         </Pressable>
       </Bloque>
-      <View style={estilos.sugerencias}>
-        {sugerencias.map((pregunta) => (
-          <Chip
-            alCambiar={() => enviar(pregunta)}
-            etiqueta={pregunta}
-            key={pregunta}
-          />
-        ))}
-      </View>
+      {sugerencias && sugerencias.length > 0 ? (
+        <View style={estilos.sugerencias}>
+          {sugerencias.map((pregunta) => (
+            <Chip
+              alCambiar={() => enviar(pregunta)}
+              etiqueta={pregunta}
+              key={pregunta}
+            />
+          ))}
+        </View>
+      ) : null}
     </View>
   );
 }
