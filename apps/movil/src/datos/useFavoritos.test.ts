@@ -8,4 +8,9 @@ describe('useFavoritos por defecto', () => {
     const { result } = await renderHook(() => useFavoritos());
     expect(result.current.favoritos).toEqual([]);
   });
+
+  it('nada es favorito', async () => {
+    const { result } = await renderHook(() => useFavoritos());
+    expect(result.current.esFavorito('via_1')).toBe(false);
+  });
 });
