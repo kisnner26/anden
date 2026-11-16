@@ -82,4 +82,14 @@ describe('HorariosSimple', () => {
     expect(pantalla.queryByText('Boaco')).toBeNull();
     expect(pantalla.getByText(t('pantallasSimples.horariosSin'))).toBeTruthy();
   });
+
+  it('muestra como máximo seis salidas', async () => {
+    mockLista = Array.from({ length: 9 }, (_, i) =>
+      salida(`s${i}`, 11 + (i % 8), { destino: `Ciudad ${i}` }),
+    );
+    const pantalla = await renderPantalla(
+      <HorariosSimple alAbrirViaje={jest.fn()} alSalir={jest.fn()} />,
+    );
+    expect(pantalla.getAllByText(/^Ciudad \d$/)).toHaveLength(6);
+  });
 });
