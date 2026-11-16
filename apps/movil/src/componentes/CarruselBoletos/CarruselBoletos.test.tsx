@@ -37,4 +37,11 @@ describe('CarruselBoletos', () => {
     );
     expect(pantalla.getAllByRole('button')).toHaveLength(2);
   });
+
+  it('sin boletos no dibuja tarjetas', async () => {
+    const pantalla = await render(
+      <CarruselBoletos ahora={AHORA} alAbrirBoleto={jest.fn()} boletos={[]} />,
+    );
+    expect(pantalla.queryAllByRole('button')).toHaveLength(0);
+  });
 });
