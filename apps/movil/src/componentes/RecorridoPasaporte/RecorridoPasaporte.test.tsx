@@ -25,4 +25,10 @@ describe('RecorridoPasaporte', () => {
     const pantalla = await render(<RecorridoPasaporte ciudades={HECHAS} />);
     expect(pantalla.getByLabelText(t('pasaporte.recorrido'))).toBeTruthy();
   });
+
+  it('sin ninguna ruta hecha se anuncia vacío', async () => {
+    const vacias = HECHAS.map((c) => ({ ...c, llegadas: 0, primera: null }));
+    const pantalla = await render(<RecorridoPasaporte ciudades={vacias} />);
+    expect(pantalla.getByLabelText(t('pasaporte.recorridoVacio'))).toBeTruthy();
+  });
 });
