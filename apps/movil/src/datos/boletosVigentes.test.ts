@@ -37,4 +37,14 @@ describe('boletosVigentes', () => {
   it('sin boletos devuelve una lista vacía', () => {
     expect(boletosVigentes([])).toEqual([]);
   });
+
+  it('deja fuera los cancelados', () => {
+    const cancelado = boletoDePrueba(
+      new Date(2026, 10, 20, 6, 0),
+      1,
+      'CCCC3333',
+    );
+    cancelado.boleto = { ...cancelado.boleto, estado: 'cancelado' };
+    expect(boletosVigentes([cancelado])).toEqual([]);
+  });
 });
