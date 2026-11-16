@@ -59,4 +59,13 @@ describe('BotonGigante', () => {
     );
     expect(pantalla.getByText('Tu boleto')).toBeTruthy();
   });
+
+  it('el destacado también se puede tocar', async () => {
+    const alPresionar = jest.fn();
+    const pantalla = await render(
+      <BotonGigante alPresionar={alPresionar} destacado etiqueta="Boaco" />,
+    );
+    await fireEvent.press(pantalla.getByRole('button'));
+    expect(alPresionar).toHaveBeenCalledTimes(1);
+  });
 });
