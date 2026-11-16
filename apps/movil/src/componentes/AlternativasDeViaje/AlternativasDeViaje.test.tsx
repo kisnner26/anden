@@ -62,4 +62,18 @@ describe('AlternativasDeViaje', () => {
       pantalla.getByText(rellenar(t('alternativas.libres'), { cantidad: 4 })),
     ).toBeTruthy();
   });
+
+  it('tocar una salida avisa cuál se eligió', async () => {
+    const alElegir = jest.fn();
+    const elegida = salida('a', 15);
+    const pantalla = await render(
+      <AlternativasDeViaje
+        alElegir={alElegir}
+        eligiendo={null}
+        salidas={[elegida]}
+      />,
+    );
+    await fireEvent.press(pantalla.getByRole('button'));
+    expect(alElegir).toHaveBeenCalledWith(elegida);
+  });
 });
