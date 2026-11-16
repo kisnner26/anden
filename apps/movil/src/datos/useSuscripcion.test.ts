@@ -8,4 +8,10 @@ describe('useSuscripcion por defecto', () => {
     const { result } = await renderHook(() => useSuscripcion());
     expect(result.current.plus).toBe(false);
   });
+
+  it('activar y cancelar no fallan', async () => {
+    const { result } = await renderHook(() => useSuscripcion());
+    await expect(result.current.activar()).resolves.toBeUndefined();
+    await expect(result.current.cancelar()).resolves.toBeUndefined();
+  });
 });
