@@ -121,4 +121,18 @@ describe('sugerencias por momento', () => {
       expect(lista.some((s) => s.includes('visitar'))).toBe(false);
     }
   });
+
+  it('de noche ofrece las salidas de esta noche', () => {
+    const noche = new Date(2026, 10, 12, 21, 0);
+    let vista = false;
+    for (let semilla = 0; semilla < 30; semilla += 1) {
+      if (
+        sugerenciasDelMomento({ ...BASE, ahora: noche, semilla }).includes(
+          '¿Hay salidas esta noche?',
+        )
+      )
+        vista = true;
+    }
+    expect(vista).toBe(true);
+  });
 });
