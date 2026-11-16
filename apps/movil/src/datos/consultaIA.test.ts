@@ -406,4 +406,11 @@ describe('lineaDeEncomienda', () => {
     expect(linea).toContain('para Luis Pérez');
     expect(linea).toContain('caja con repuestos');
   });
+
+  it('marca las encomiendas frágiles', () => {
+    expect(lineaDeEncomienda({ ...ENCOMIENDA, fragil: true })).toContain(
+      ', frágil',
+    );
+    expect(lineaDeEncomienda(ENCOMIENDA)).not.toContain('frágil');
+  });
 });
