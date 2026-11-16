@@ -190,4 +190,9 @@ describe('responder', () => {
     expect(r.response.outputSpeech.text).toBe('Buen viaje.');
     expect(r.response.shouldEndSession).toBe(true);
   });
+
+  it('una intención desconocida recibe la ayuda', async () => {
+    const r = await responder(pedido('AlgoRaro'), async () => [], AHORA);
+    expect(r.response.outputSpeech.text).toContain('No te entendí');
+  });
 });
