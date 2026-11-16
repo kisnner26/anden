@@ -21,4 +21,10 @@ describe('vectorizar', () => {
   it('tiene el largo pedido', () => {
     expect(vectorizar('bus a boaco', 128)).toHaveLength(128);
   });
+
+  it('queda de norma uno', () => {
+    const v = vectorizar('bus a boaco', 256);
+    const norma = Math.sqrt(Array.from(v).reduce((s, x) => s + x * x, 0));
+    expect(norma).toBeCloseTo(1, 5);
+  });
 });
