@@ -6,6 +6,8 @@ export type AutorMensaje = 'chofer' | 'pasajero';
 export interface MensajeViaje {
   de: AutorMensaje;
   enviadoEn: string;
+  /** el boleto de la persona: cada pasajero tiene su propia conversación con el chofer */
+  hilo: string;
   id: string;
   texto: string;
   viajeId: string;

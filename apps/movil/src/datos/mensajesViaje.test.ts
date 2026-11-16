@@ -14,7 +14,7 @@ function mensaje(
   enviadoEn: string,
   de: MensajeViaje['de'] = 'chofer',
 ): MensajeViaje {
-  return { de, enviadoEn, id, texto: id, viajeId: 'via_2' };
+  return { de, enviadoEn, hilo: 'bol_1', id, texto: id, viajeId: 'via_2' };
 }
 
 describe('textoDeMensaje', () => {
