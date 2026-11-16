@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { fireEvent, render } from '@testing-library/react-native';
 import { selectionAsync } from 'expo-haptics';
 
@@ -9,6 +9,10 @@ import { ContadorPasajeros, MAXIMO_PASAJEROS } from './ContadorPasajeros';
 jest.mock('expo-haptics', () => ({
   selectionAsync: jest.fn(() => Promise.resolve()),
 }));
+
+beforeEach(() => {
+  jest.clearAllMocks();
+});
 
 describe('ContadorPasajeros', () => {
   it('muestra la cantidad en singular con un pasajero', async () => {
@@ -74,5 +78,15 @@ describe('ContadorPasajeros', () => {
     );
     await fireEvent.press(mas);
     expect(alCambiar).not.toHaveBeenCalled();
+  });
+
+  it('cada cambio responde con una vibración suave', async () => {
+    const pantalla = await render(
+      <ContadorPasajeros alCambiar={jest.fn()} cantidad={2} />,
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: t('rutas.masPasajeros') }),
+    );
+    expect(selectionAsync).toHaveBeenCalledTimes(1);
   });
 });
