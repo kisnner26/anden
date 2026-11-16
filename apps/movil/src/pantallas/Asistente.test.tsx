@@ -518,4 +518,22 @@ describe('Asistente', () => {
     expect(snapshot.tarifas.length).toBeGreaterThan(0);
     expect(snapshot.personal[0]).toContain('usa la app como');
   });
+
+  it('una pregunta que llega por un enlace no ejecuta órdenes y solo se contesta', async () => {
+    const alAbrirPantalla = jest.fn();
+    const contexto = valor();
+    await renderPantalla(
+      <ContextoIA.Provider value={contexto}>
+        <ContextoVoz.Provider value={vozFalsa().voz}>
+          <Asistente
+            alAbrirPantalla={alAbrirPantalla}
+            alVolver={() => undefined}
+            preguntaInicial="Quiero enviar una encomienda"
+          />
+        </ContextoVoz.Provider>
+      </ContextoIA.Provider>,
+    );
+    await waitFor(() => expect(contexto.preguntar).toHaveBeenCalledTimes(1));
+    expect(alAbrirPantalla).not.toHaveBeenCalled();
+  });
 });
