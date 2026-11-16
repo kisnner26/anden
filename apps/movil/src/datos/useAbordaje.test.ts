@@ -8,4 +8,9 @@ describe('useAbordaje por defecto', () => {
     const { result } = await renderHook(() => useAbordaje());
     expect(result.current.registro).toEqual({});
   });
+
+  it('nadie ha abordado', async () => {
+    const { result } = await renderHook(() => useAbordaje());
+    expect(result.current.abordo('bol_1')).toBe(false);
+  });
 });
