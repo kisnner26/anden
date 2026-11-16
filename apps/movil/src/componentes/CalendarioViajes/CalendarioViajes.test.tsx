@@ -42,4 +42,18 @@ describe('CalendarioViajes', () => {
         .accessibilityState,
     ).toEqual(expect.objectContaining({ disabled: true }));
   });
+
+  it('el mes anterior muestra octubre', async () => {
+    const pantalla = await render(
+      <CalendarioViajes
+        ahora={AHORA}
+        alAbrirBoleto={jest.fn()}
+        boletos={BOLETOS}
+      />,
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: t('boletos.mesAnterior') }),
+    );
+    expect(pantalla.getByText('Octubre')).toBeTruthy();
+  });
 });
