@@ -128,4 +128,12 @@ describe('responderLocal', () => {
       'No te entendí',
     );
   });
+
+  it('no inventa un precio si no hay tarifas', () => {
+    const r = responderLocal(
+      'cuánto cuesta ir a Boaco',
+      estado({ salidas: [salida('a', 12, { tarifa: null })] }),
+    );
+    expect(r.texto).toContain('No tengo la tarifa');
+  });
 });
