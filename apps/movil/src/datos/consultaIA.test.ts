@@ -428,4 +428,11 @@ describe('contexto personal', () => {
     );
     expect(lineas).toContain('Tiene 1 encomienda(s) en curso.');
   });
+
+  it('sin encomiendas en curso no dice nada de ellas', () => {
+    const lineas = contextoPersonal(
+      estado({ encomiendas: [{ ...ENCOMIENDA, estado: 'entregada' }] }),
+    );
+    expect(lineas.some((l) => l.includes('encomienda(s)'))).toBe(false);
+  });
 });
