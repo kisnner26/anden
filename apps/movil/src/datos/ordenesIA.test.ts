@@ -117,6 +117,18 @@ describe('proximaSalidaA', () => {
     expect(proximaSalidaA(lista, 'Boaco', null, AHORA)?.viajeId).toBe('bien');
   });
 
+  it('con los gustos de la persona elige la que más le conviene y no la primera', () => {
+    const lista = [
+      { ...salida('cara', 1), tarifa: 120 },
+      { ...salida('barata', 2), tarifa: 60 },
+    ];
+    const gustos = { horaPreferida: null, servicio: null, viajes: 0 };
+    expect(
+      proximaSalidaA(lista, 'Boaco', null, AHORA, undefined, gustos)?.viajeId,
+    ).toBe('barata');
+    expect(proximaSalidaA(lista, 'Boaco', null, AHORA)?.viajeId).toBe('cara');
+  });
+
   it('respeta el origen y devuelve nulo si no hay', () => {
     expect(proximaSalidaA([salida('a', 1)], 'Boaco', 'León', AHORA)).toBeNull();
     expect(proximaSalidaA([], 'Boaco', null, AHORA)).toBeNull();
