@@ -32,4 +32,14 @@ describe('TarjetaIA', () => {
     );
     expect(pantalla.getByText('pensando')).toBeTruthy();
   });
+
+  it('con movimiento reducido sigue mostrando el contenido', async () => {
+    jest.mocked(useMovimientoReducido).mockReturnValue(true);
+    const pantalla = await render(
+      <TarjetaIA>
+        <Text>quieta</Text>
+      </TarjetaIA>,
+    );
+    expect(pantalla.getByText('quieta')).toBeTruthy();
+  });
 });
