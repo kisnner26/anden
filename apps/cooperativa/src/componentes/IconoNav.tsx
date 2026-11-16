@@ -1,6 +1,7 @@
 const TRAZOS: Record<string, string> = {
   actividad: 'M2 12h4l3-8 4 16 3-8h6',
   alertas: 'M12 3l10 18H2zM12 10v5M12 18v.5',
+  asistente: 'M4 5h16v11H9l-5 4zM8 9h8M8 12h5',
   conductores: 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c1-5 5-7 8-7s7 2 8 7',
   encomiendas: 'M3 8l9-5 9 5v8l-9 5-9-5zM3 8l9 5 9-5M12 13v8',
   envivo:
