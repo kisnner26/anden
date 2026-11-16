@@ -66,4 +66,8 @@ describe('formatoDiaCorto', () => {
   it('da el día de la semana y el número', () => {
     expect(formatoDiaCorto(new Date(2026, 10, 13))).toBe('vie 13');
   });
+
+  it('no pone cero adelante en los días de un dígito', () => {
+    expect(formatoDiaCorto(new Date(2026, 10, 2))).toBe('lun 2');
+  });
 });
