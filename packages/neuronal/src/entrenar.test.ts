@@ -52,4 +52,14 @@ describe('entrenar', () => {
     const historial = entrenar(red, dosGrupos(), { epocas: 7 });
     expect(historial.map((h) => h.epoca)).toEqual([1, 2, 3, 4, 5, 6, 7]);
   });
+
+  it('avisa al terminar cada época', () => {
+    const red = crearRed(2, [4], 2, 3);
+    const vistas: number[] = [];
+    entrenar(red, dosGrupos(), {
+      alEpoca: (i) => vistas.push(i.epoca),
+      epocas: 5,
+    });
+    expect(vistas).toEqual([1, 2, 3, 4, 5]);
+  });
 });
