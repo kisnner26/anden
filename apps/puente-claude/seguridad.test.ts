@@ -63,4 +63,11 @@ describe('codigoDeCabecera', () => {
       '0123456789abcdef0123',
     );
   });
+
+  it('rechaza cabeceras mal formadas', () => {
+    expect(codigoDeCabecera(undefined)).toBeUndefined();
+    expect(codigoDeCabecera('Basic 0123456789abcdef0123')).toBeUndefined();
+    expect(codigoDeCabecera('Bearer corto')).toBeUndefined();
+    expect(codigoDeCabecera('Bearer 0123456789abcdef0123; rm')).toBeUndefined();
+  });
 });
