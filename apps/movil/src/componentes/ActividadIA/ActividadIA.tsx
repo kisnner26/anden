@@ -6,6 +6,7 @@ import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import { useTema } from '@/tema/useTema';
+import { useAppActiva } from '@/tema/useAppActiva';
 
 export interface PropiedadesActividadIA {
   /** lo que está haciendo el modelo, por ejemplo "Buscando salidas" */
@@ -16,10 +17,11 @@ export interface PropiedadesActividadIA {
 export function ActividadIA({ actividad }: PropiedadesActividadIA) {
   const { colores } = useTema();
   const reducido = useMovimientoReducido();
+  const activa = useAppActiva();
   const pulso = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (reducido) return;
+    if (reducido || !activa) return;
     const bucle = Animated.loop(
       Animated.sequence([
         Animated.timing(pulso, {
@@ -38,7 +40,7 @@ export function ActividadIA({ actividad }: PropiedadesActividadIA) {
     );
     bucle.start();
     return () => bucle.stop();
-  }, [pulso, reducido]);
+  }, [activa, pulso, reducido]);
 
   return (
     <Bloque
