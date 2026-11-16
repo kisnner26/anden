@@ -10,6 +10,7 @@ import {
   habitualDeSalida,
   horaTexto,
   leerHabituales,
+  proximaDelGrupo,
   proximaDelHabitual,
   sinHabitual,
   type Habitual,
@@ -190,5 +191,21 @@ describe('agruparHabituales', () => {
       { ...base, hora: '18:00', id: 'c' },
     ];
     expect(sinHabitual(lista, ['a', 'b']).map((h) => h.id)).toEqual(['c']);
+  });
+});
+
+describe('proximaDelGrupo', () => {
+  it('toma la más cercana entre las horas del mismo trayecto', () => {
+    const tarde: Habitual = { ...HABITUAL, hora: '15:00', id: 'hab_tarde' };
+    const manana = salida({ viajeId: 'manana' });
+    const deTarde = salida({
+      salida: new Date(2026, 10, 16, 15, 0),
+      viajeId: 'tarde',
+    });
+    const [grupo] = agruparHabituales([tarde, HABITUAL]);
+    expect(
+      proximaDelGrupo(grupo!, [deTarde, manana], new Date(2026, 10, 15, 20, 0))
+        ?.viajeId,
+    ).toBe('manana');
   });
 });
