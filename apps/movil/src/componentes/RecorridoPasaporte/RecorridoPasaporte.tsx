@@ -1,10 +1,12 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
-import Svg, { Circle, G, Line, Rect, Text as TextoSvg } from 'react-native-svg';
+import Svg, { Circle, G, Path, Text as TextoSvg } from 'react-native-svg';
 
+import { MAPA_PUNTOS } from '@/datos/mapaPuntos';
 import { TERMINALES } from '@/datos/muestra';
 import type { SelloDeCiudad } from '@/datos/pasaporte';
 import { trazoEntre } from '@/datos/trazoCorredor';
+import { conAlfa } from '@/tema/alfa';
 import { paletaPasaporte as p } from '@/tema/colores';
 import { espacios } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
@@ -20,34 +22,80 @@ export interface PropiedadesRecorridoPasaporte {
   activo?: boolean;
 }
 
-const ANCHO = 300;
-const ALTO = 170;
-const MARGEN_X = 52;
-const MARGEN_Y = 36;
+const ANCHO = 320;
+/** el alto sale de la proporción del mapa para que los puntos no se estiren */
+const ALTO = Math.round(
+  (ANCHO * (MAPA_PUNTOS.lat1 - MAPA_PUNTOS.lat0)) /
+    (MAPA_PUNTOS.lon1 - MAPA_PUNTOS.lon0),
+);
+/** un punto cada tantas casillas de la cuadrícula: más junto se ve pesado y gasta más en el dibujo */
+const SALTO = 2;
 
-const LineaAnimada = Animated.createAnimatedComponent(Line);
+const TrazoAnimado = Animated.createAnimatedComponent(Path);
 
-/** dónde cae cada ciudad en el dibujo, a partir de sus coordenadas reales */
-function posiciones(): Record<string, { x: number; y: number }> {
-  const lats = TERMINALES.map((x) => x.coordenadas.lat);
-  const lngs = TERMINALES.map((x) => x.coordenadas.lng);
-  const [minLat, maxLat] = [Math.min(...lats), Math.max(...lats)];
-  const [minLng, maxLng] = [Math.min(...lngs), Math.max(...lngs)];
-  return Object.fromEntries(
-    TERMINALES.map((terminal) => [
-      terminal.ciudad,
-      {
-        x:
-          MARGEN_X +
-          ((terminal.coordenadas.lng - minLng) / (maxLng - minLng)) *
-            (ANCHO - 2 * MARGEN_X),
-        y:
-          MARGEN_Y +
-          (1 - (terminal.coordenadas.lat - minLat) / (maxLat - minLat)) *
-            (ALTO - 2 * MARGEN_Y),
-      },
-    ]),
-  );
+interface Punto {
+  x: number;
+  y: number;
+}
+
+/** dónde cae una coordenada real en el dibujo */
+function aPlano(lat: number, lng: number): Punto {
+  return {
+    x:
+      ((lng - MAPA_PUNTOS.lon0) / (MAPA_PUNTOS.lon1 - MAPA_PUNTOS.lon0)) *
+      ANCHO,
+    y:
+      ((MAPA_PUNTOS.lat1 - lat) / (MAPA_PUNTOS.lat1 - MAPA_PUNTOS.lat0)) * ALTO,
+  };
+}
+
+/** los puntos de tierra del mapa como dos trazos (Nicaragua y sus vecinos): un solo Path por color, no un círculo por punto */
+function puntosDelMapa(): { nicaragua: string; vecinos: string } {
+  let nicaragua = '';
+  let vecinos = '';
+  MAPA_PUNTOS.filas.forEach((fila, f) => {
+    if (f % SALTO !== 0) return;
+    for (let c = 0; c < fila.length; c += SALTO) {
+      const casilla = fila[c];
+      if (casilla === '0') continue;
+      const x = ((c + 0.5) / fila.length) * ANCHO;
+      const y = ((f + 0.5) / MAPA_PUNTOS.filas.length) * ALTO;
+      const punto = `M${x.toFixed(1)} ${y.toFixed(1)}h0`;
+      if (casilla === '2') nicaragua += punto;
+      else vecinos += punto;
+    }
+  });
+  return { nicaragua, vecinos };
+}
+
+/** un arco que sale de Managua y se curva hacia el norte, como las rutas de un mapa de vuelos */
+function arco(
+  desde: Punto,
+  hasta: Punto,
+): { d: string; largo: number; medio: Punto } {
+  const mx = (desde.x + hasta.x) / 2;
+  const my = (desde.y + hasta.y) / 2;
+  const distancia = Math.hypot(hasta.x - desde.x, hasta.y - desde.y);
+  const control = { x: mx, y: my - Math.max(18, distancia * 0.45) };
+  let largo = 0;
+  let anterior = desde;
+  for (let i = 1; i <= 24; i += 1) {
+    const t = i / 24;
+    const x =
+      (1 - t) ** 2 * desde.x + 2 * (1 - t) * t * control.x + t ** 2 * hasta.x;
+    const y =
+      (1 - t) ** 2 * desde.y + 2 * (1 - t) * t * control.y + t ** 2 * hasta.y;
+    largo += Math.hypot(x - anterior.x, y - anterior.y);
+    anterior = { x, y };
+  }
+  return {
+    d: `M${desde.x} ${desde.y}Q${control.x} ${control.y} ${hasta.x} ${hasta.y}`,
+    largo,
+    medio: {
+      x: 0.25 * desde.x + 0.5 * control.x + 0.25 * hasta.x,
+      y: 0.25 * desde.y + 0.5 * control.y + 0.25 * hasta.y,
+    },
+  };
 }
 
 /**
@@ -61,16 +109,24 @@ export function RecorridoPasaporte({
 }: PropiedadesRecorridoPasaporte) {
   const reducido = useMovimientoReducido();
   const trazo = useRef(new Animated.Value(reducido ? 1 : 0)).current;
-  const lugar = posiciones();
-  const managua = lugar.Managua!;
+  const mapa = useMemo(puntosDelMapa, []);
+  const managua = useMemo(() => {
+    const t = TERMINALES.find((x) => x.ciudad === 'Managua')!;
+    return aPlano(t.coordenadas.lat, t.coordenadas.lng);
+  }, []);
   const tramos = ciudades
     .filter((c) => c.ciudad !== 'Managua')
-    .map((c) => ({
-      km: trazoEntre('Managua', c.ciudad)?.distanciaKm ?? 0,
-      llegadas: c.llegadas,
-      nombre: c.ciudad,
-      pos: lugar[c.ciudad]!,
-    }));
+    .map((c) => {
+      const terminal = TERMINALES.find((x) => x.ciudad === c.ciudad)!;
+      const pos = aPlano(terminal.coordenadas.lat, terminal.coordenadas.lng);
+      return {
+        arco: arco(managua, pos),
+        km: trazoEntre('Managua', c.ciudad)?.distanciaKm ?? 0,
+        llegadas: c.llegadas,
+        nombre: c.ciudad,
+        pos,
+      };
+    });
   const algunaHecha = tramos.some((x) => x.llegadas > 0);
 
   useEffect(() => {
@@ -100,90 +156,108 @@ export function RecorridoPasaporte({
       testID="recorrido-pasaporte"
     >
       <Svg height={ALTO} viewBox={`0 0 ${ANCHO} ${ALTO}`} width="100%">
+        <Path
+          d={mapa.vecinos}
+          stroke={conAlfa(p.tintaHojaSuave, 0.22)}
+          strokeLinecap="round"
+          strokeWidth={3.2}
+        />
+        <Path
+          d={mapa.nicaragua}
+          stroke={conAlfa(p.tintaHoja, 0.42)}
+          strokeLinecap="round"
+          strokeWidth={3.6}
+        />
         {tramos.map((tramo) => {
-          const largo = Math.hypot(
-            tramo.pos.x - managua.x,
-            tramo.pos.y - managua.y,
-          );
           const hecho = tramo.llegadas > 0;
           return (
             <G key={tramo.nombre}>
-              <Line
-                stroke={p.guilloche}
-                strokeDasharray="3 6"
+              <Path
+                d={tramo.arco.d}
+                fill="none"
+                stroke={hecho ? conAlfa(p.tintaSello, 0.25) : p.tintaHojaSuave}
+                strokeDasharray="2 5"
                 strokeLinecap="round"
-                strokeWidth={2}
-                x1={managua.x}
-                x2={tramo.pos.x}
-                y1={managua.y}
-                y2={tramo.pos.y}
+                strokeWidth={1.6}
               />
               {hecho ? (
-                <LineaAnimada
+                <TrazoAnimado
+                  d={tramo.arco.d}
+                  fill="none"
                   stroke={p.tintaSello}
-                  strokeDasharray={`${largo} ${largo}`}
+                  strokeDasharray={`${tramo.arco.largo} ${tramo.arco.largo}`}
                   strokeDashoffset={trazo.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [largo, 0],
+                    outputRange: [tramo.arco.largo, 0],
                   })}
                   strokeLinecap="round"
                   strokeWidth={3}
-                  x1={managua.x}
-                  x2={tramo.pos.x}
-                  y1={managua.y}
-                  y2={tramo.pos.y}
                 />
               ) : null}
-              <Rect
-                fill={p.hoja}
-                height={15}
-                rx={4}
-                width={52}
-                x={(managua.x + tramo.pos.x) / 2 - 26}
-                y={(managua.y + tramo.pos.y) / 2 - 8}
-              />
-              <TextoSvg
-                fill={p.tintaHojaSuave}
-                fontSize={9}
-                fontWeight="700"
-                letterSpacing={1}
-                textAnchor="middle"
-                x={(managua.x + tramo.pos.x) / 2}
-                y={(managua.y + tramo.pos.y) / 2 + 3}
-              >
-                {rellenar(t('pasaporte.recorridoKm'), { km: tramo.km })}
-              </TextoSvg>
             </G>
           );
         })}
-        {[{ nombre: 'Managua', hecho: true, pos: managua }, ...tramos].map(
-          (c) => {
-            const hecho = 'llegadas' in c ? c.llegadas > 0 : true;
-            return (
-              <G key={c.nombre}>
+        {[
+          { nombre: 'Managua', hecho: true, llegadas: 0, pos: managua },
+          ...tramos,
+        ].map((c) => {
+          const hecho = c.nombre === 'Managua' ? true : c.llegadas > 0;
+          // el nombre va hacia afuera de la ruta para que no lo tapen los arcos ni los kilómetros
+          const aLaIzquierda = c.pos.x <= managua.x;
+          const arriba = c.pos.y < managua.y - 12;
+          const sinLugarALaDerecha = c.pos.x > ANCHO - 90;
+          const etiqueta = arriba
+            ? { ancla: 'middle' as const, x: c.pos.x, y: c.pos.y - 15 }
+            : sinLugarALaDerecha
+              ? { ancla: 'middle' as const, x: c.pos.x, y: c.pos.y + 25 }
+              : aLaIzquierda
+                ? { ancla: 'end' as const, x: c.pos.x - 15, y: c.pos.y + 4 }
+                : { ancla: 'start' as const, x: c.pos.x + 15, y: c.pos.y + 4 };
+          return (
+            <G key={c.nombre}>
+              {hecho ? (
                 <Circle
                   cx={c.pos.x}
                   cy={c.pos.y}
-                  fill={hecho ? p.tintaSello : p.hoja}
-                  r={hecho ? 8 : 7}
-                  stroke={hecho ? p.hoja : p.tintaHojaSuave}
-                  strokeWidth={hecho ? 3 : 1.6}
+                  fill={conAlfa(p.tintaSello, 0.16)}
+                  r={13}
                 />
+              ) : null}
+              <Circle
+                cx={c.pos.x}
+                cy={c.pos.y}
+                fill={hecho ? p.tintaSello : p.hoja}
+                r={hecho ? 6.5 : 5.5}
+                stroke={hecho ? p.hoja : p.tintaHojaSuave}
+                strokeWidth={hecho ? 2.4 : 1.6}
+              />
+              <TextoSvg
+                fill={p.tintaHoja}
+                fontSize={10}
+                fontWeight="800"
+                letterSpacing={1.2}
+                textAnchor={etiqueta.ancla}
+                x={etiqueta.x}
+                y={etiqueta.y}
+              >
+                {c.nombre.toUpperCase()}
+              </TextoSvg>
+              {'km' in c && c.km > 0 ? (
                 <TextoSvg
-                  fill={p.tintaHoja}
-                  fontSize={10}
-                  fontWeight="800"
-                  letterSpacing={1.2}
-                  textAnchor="middle"
-                  x={c.pos.x}
-                  y={c.pos.y + 24}
+                  fill={hecho ? p.tintaSello : p.tintaHojaSuave}
+                  fontSize={8.5}
+                  fontWeight="700"
+                  letterSpacing={0.8}
+                  textAnchor={etiqueta.ancla}
+                  x={etiqueta.x}
+                  y={etiqueta.y + 11}
                 >
-                  {c.nombre.toUpperCase()}
+                  {rellenar(t('pasaporte.recorridoKm'), { km: c.km })}
                 </TextoSvg>
-              </G>
-            );
-          },
-        )}
+              ) : null}
+            </G>
+          );
+        })}
       </Svg>
       {!algunaHecha ? (
         <Text style={[tipografia.pequeno, estilos.vacio]}>
