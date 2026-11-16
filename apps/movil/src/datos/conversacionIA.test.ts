@@ -162,6 +162,10 @@ describe('instruccionesDeConversacion', () => {
   it('pide decir si la hora es de hoy o de mañana', () => {
     expect(instruccionesDeConversacion()).toContain('si es hoy o mañana');
   });
+
+  it('prohíbe el relleno y repetir la pregunta', () => {
+    expect(instruccionesDeConversacion()).toContain('No repitas la pregunta');
+  });
 });
 
 describe('actividadDeHerramienta', () => {
