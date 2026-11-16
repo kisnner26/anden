@@ -31,17 +31,22 @@ export function CifraQueSube({
     const oyente = avance.addListener(({ value }) =>
       establecerMostrado(Math.round(value)),
     );
+    let animacion: Animated.CompositeAnimation | null = null;
     if (reducido) {
       avance.setValue(valor);
     } else {
-      Animated.timing(avance, {
+      animacion = Animated.timing(avance, {
         delay: retardo,
         duration: movimiento.conteoCifra,
         toValue: valor,
         useNativeDriver: false,
-      }).start();
+      });
+      animacion.start();
     }
-    return () => avance.removeListener(oyente);
+    return () => {
+      animacion?.stop();
+      avance.removeListener(oyente);
+    };
   }, [avance, reducido, retardo, valor]);
 
   return (
