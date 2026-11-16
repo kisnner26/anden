@@ -24,3 +24,9 @@ describe('IA activada', () => {
     expect(await leerIAActivada()).toBe(false);
   });
 });
+
+describe('modo turista', () => {
+  it('por defecto la persona no es turista', async () => {
+    expect(await leerTurista()).toBe(false);
+  });
+});
