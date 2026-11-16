@@ -93,4 +93,23 @@ describe('SelloDeCiudad', () => {
     );
     expect(pantalla.toJSON()).not.toBeNull();
   });
+
+  it('en espera no se estampa pero sigue accesible', async () => {
+    const pantalla = await render(
+      <SelloDeCiudad
+        activo={false}
+        ciudad="Boaco"
+        llegadas={2}
+        primera="2026-10-05T14:00:00.000Z"
+      />,
+    );
+    expect(
+      pantalla.getByLabelText(
+        rellenar(t('pasaporte.selloAccesible'), {
+          ciudad: 'Boaco',
+          llegadas: 2,
+        }),
+      ),
+    ).toBeTruthy();
+  });
 });
