@@ -258,6 +258,9 @@ importers:
       '@anden/dominio':
         specifier: workspace:*
         version: link:../../packages/dominio
+      '@anden/neuronal':
+        specifier: workspace:*
+        version: link:../../packages/neuronal
       '@bacons/apple-targets':
         specifier: 5.0.0
         version: 5.0.0(expo@58.0.22)(supports-color@8.1.1)(typescript@6.0.3)
@@ -429,6 +432,8 @@ importers:
       zod:
         specifier: ^4.6.7
         version: 4.6.7
+
+  packages/neuronal: {}
 
 packages:
 
