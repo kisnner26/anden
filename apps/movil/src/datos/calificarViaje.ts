@@ -46,9 +46,19 @@ export function boletoPorCalificar(
   viajesLlegados: ReadonlySet<string> = new Set(),
 ): BoletoGuardado | null {
   const calificados = new Set(opiniones.map((opinion) => opinion.boletoId));
+  // un viaje con varios boletos (pasajeros de la misma reserva) se califica una sola vez
+  const viajesCalificados = new Set(
+    boletos
+      .filter(({ boleto }) => calificados.has(boleto.id))
+      .map(({ boleto }) => boleto.viajeId),
+  );
   const pendientes = boletos
     .filter(({ boleto, resumen }) => {
-      if (boleto.estado === 'cancelado' || calificados.has(boleto.id)) {
+      if (
+        boleto.estado === 'cancelado' ||
+        calificados.has(boleto.id) ||
+        viajesCalificados.has(boleto.viajeId)
+      ) {
         return false;
       }
       const salio = new Date(resumen.salida).getTime();

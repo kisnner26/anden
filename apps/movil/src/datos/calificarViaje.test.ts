@@ -39,11 +39,13 @@ describe('comentarioDeCalificacion', () => {
 });
 
 describe('boletoPorCalificar', () => {
-  const hecho = boletoDePrueba(new Date(2026, 10, 13, 8, 0), 3, 'AAAA1111');
+  const base = boletoDePrueba(new Date(2026, 10, 13, 8, 0), 3, 'AAAA1111');
+  // otro viaje distinto del de los demás boletos de prueba
+  const hecho = { ...base, boleto: { ...base.boleto, viajeId: 'via_1' } };
   const reciente = boletoDePrueba(new Date(2026, 10, 14, 7, 0), 4, 'BBBB2222');
   const futuro = boletoDePrueba(new Date(2026, 10, 15, 7, 0), 5, 'CCCC3333');
 
-  const llegaron = new Set(['via_2']);
+  const llegaron = new Set(['via_1', 'via_2']);
 
   it('elige el viaje ya hecho más reciente que no tiene opinión', () => {
     expect(
@@ -78,6 +80,24 @@ describe('boletoPorCalificar', () => {
       boletoPorCalificar([hecho, reciente], [opinion], AHORA, llegaron)?.boleto
         .id,
     ).toBe('bol_AAAA1111');
+  });
+
+  it('calificar un boleto del viaje cubre a los demás boletos del mismo viaje', () => {
+    const hermano = {
+      ...reciente,
+      boleto: { ...reciente.boleto, id: 'bol_HERMANO' },
+    };
+    const opinion: Opinion = {
+      boletoId: 'bol_BBBB2222',
+      choferId: 'cho_2',
+      comentario: '',
+      creadaEn: AHORA.toISOString(),
+      estrellas: 5,
+      id: 'op_1',
+    };
+    expect(
+      boletoPorCalificar([reciente, hermano], [opinion], AHORA, llegaron),
+    ).toBeNull();
   });
 
   it('un boleto usado se puede calificar aunque la hora no haya pasado', () => {
