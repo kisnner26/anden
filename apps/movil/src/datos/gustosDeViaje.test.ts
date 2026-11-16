@@ -36,6 +36,14 @@ describe('gustosDeViaje', () => {
     );
   });
 
+  it('toma el servicio que gana con claridad', () => {
+    const gustos = gustosDeViaje([
+      boleto(6, 0, 'expreso'),
+      boleto(7, 0, 'expreso'),
+      boleto(8, 0, 'ordinario'),
+    ]);
+    expect(gustos.servicio).toBe('expreso');
+  });
 
 
 });
