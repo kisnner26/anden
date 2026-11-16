@@ -72,4 +72,10 @@ describe('FilaDeViajeChofer', () => {
     await fireEvent.press(pantalla.getByText(t('nuevoViaje.retirar')));
     expect(alRetirar).toHaveBeenCalledTimes(1);
   });
+
+  it('después de tocar retirar pide confirmar', async () => {
+    const pantalla = await dibujar({ confirmando: true });
+    expect(pantalla.getByText(t('nuevoViaje.retirarConfirmar'))).toBeTruthy();
+    expect(pantalla.queryByText(t('nuevoViaje.retirar'))).toBeNull();
+  });
 });
