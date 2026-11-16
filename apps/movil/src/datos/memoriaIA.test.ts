@@ -101,4 +101,8 @@ describe('claveMemoriaDe', () => {
     expect(claveMemoriaDe('ana')).toBe(`${CLAVE_MEMORIA_IA}.ana`);
     expect(claveMemoriaDe('ana')).not.toBe(claveMemoriaDe('luis'));
   });
+
+  it('sin cuenta usa la clave general', () => {
+    expect(claveMemoriaDe(null)).toBe(CLAVE_MEMORIA_IA);
+  });
 });
