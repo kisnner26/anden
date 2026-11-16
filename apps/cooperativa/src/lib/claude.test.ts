@@ -5,6 +5,7 @@ import {
   contextoDeCooperativa,
   direccionDelPuente,
   instruccionesDeCooperativa,
+  preguntarAClaude,
 } from './claude';
 
 const CODIGO = 'a'.repeat(48);
@@ -114,5 +115,64 @@ describe('instruccionesDeCooperativa', () => {
     const texto = instruccionesDeCooperativa('Viajes activos: 3.');
     expect(texto).toContain('Viajes activos: 3.');
     expect(texto).toContain('no inventes cifras');
+  });
+});
+
+describe('preguntarAClaude', () => {
+  const conexion = { codigo: CODIGO, direccion: 'http://127.0.0.1:4780' };
+
+  function respuesta(estado: number, cuerpo: unknown): typeof fetch {
+    return (async () =>
+      new Response(JSON.stringify(cuerpo), { status: estado })) as typeof fetch;
+  }
+
+  it('manda la pregunta con el código y devuelve el texto', async () => {
+    let visto: { url: string; init?: RequestInit } | undefined;
+    const pedir = (async (url: string, init?: RequestInit) => {
+      visto = { init, url };
+      return new Response(JSON.stringify({ texto: ' Cobraron C$ 1,200. ' }));
+    }) as unknown as typeof fetch;
+    const texto = await preguntarAClaude(conexion, 'reglas', '¿cuánto?', pedir);
+    expect(texto).toBe('Cobraron C$ 1,200.');
+    expect(visto?.url).toBe('http://127.0.0.1:4780/preguntar');
+    expect((visto?.init?.headers as Record<string, string>).Authorization).toBe(
+      `Bearer ${CODIGO}`,
+    );
+    expect(JSON.parse(visto?.init?.body as string)).toEqual({
+      instrucciones: 'reglas',
+      pregunta: '¿cuánto?',
+    });
+  });
+
+  it('un código incorrecto da un mensaje claro', async () => {
+    await expect(
+      preguntarAClaude(conexion, '', 'hola', respuesta(401, {})),
+    ).rejects.toThrow('código de emparejamiento');
+  });
+
+  it('una dirección fuera de la red local da un mensaje claro', async () => {
+    await expect(
+      preguntarAClaude(conexion, '', 'hola', respuesta(403, {})),
+    ).rejects.toThrow('red local');
+  });
+
+  it('muestra el error que da el puente', async () => {
+    await expect(
+      preguntarAClaude(
+        conexion,
+        '',
+        'hola',
+        respuesta(502, { error: 'Claude tardó demasiado en responder.' }),
+      ),
+    ).rejects.toThrow('Claude tardó demasiado');
+  });
+
+  it('si no hay conexión dice que revise el puente', async () => {
+    const caido = (async () => {
+      throw new TypeError('fallo');
+    }) as unknown as typeof fetch;
+    await expect(preguntarAClaude(conexion, '', 'hola', caido)).rejects.toThrow(
+      'No se pudo hablar con el puente',
+    );
   });
 });
