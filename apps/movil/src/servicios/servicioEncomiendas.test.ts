@@ -30,4 +30,19 @@ describe('encomiendas locales', () => {
     expect(await servicio.guardar(encomienda)).toBe(true);
     expect(await servicio.listar()).toEqual([encomienda]);
   });
+
+  it('actualizar cambia solo la encomienda indicada', async () => {
+    const servicio = crearEncomiendasLocal();
+    const a = nuevaEncomienda(DATOS, new Date(2026, 10, 13, 9, 0));
+    const b = nuevaEncomienda(
+      { ...DATOS, descripcion: 'sobre' },
+      new Date(2026, 10, 13, 9, 5),
+    );
+    await servicio.guardar(a);
+    await servicio.guardar(b);
+    await servicio.actualizar({ ...a, estado: 'aceptada' });
+    const lista = (await servicio.listar()) ?? [];
+    expect(lista.find((e) => e.id === a.id)?.estado).toBe('aceptada');
+    expect(lista.find((e) => e.id === b.id)?.estado).toBe(b.estado);
+  });
 });
