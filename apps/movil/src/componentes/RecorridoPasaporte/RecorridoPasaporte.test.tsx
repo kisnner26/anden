@@ -36,4 +36,10 @@ describe('RecorridoPasaporte', () => {
     const pantalla = await render(<RecorridoPasaporte ciudades={HECHAS} />);
     expect(pantalla.getByTestId('recorrido-pasaporte')).toBeTruthy();
   });
+
+  it('con movimiento reducido se dibuja igual', async () => {
+    jest.mocked(useMovimientoReducido).mockReturnValue(true);
+    const pantalla = await render(<RecorridoPasaporte ciudades={HECHAS} />);
+    expect(pantalla.getByTestId('recorrido-pasaporte')).toBeTruthy();
+  });
 });
