@@ -17,4 +17,17 @@ describe('TrayectoCorredor', () => {
     expect(pantalla.getByText('Managua')).toBeTruthy();
     expect(pantalla.getByText('Boaco')).toBeTruthy();
   });
+
+  it('redondea la distancia a kilómetros enteros', async () => {
+    const pantalla = await render(
+      <TrayectoCorredor
+        destino="Boaco"
+        distanciaKm={79.6}
+        duracionMin={95}
+        origen="Managua"
+        recorrido="a"
+      />,
+    );
+    expect(pantalla.getByText('80')).toBeTruthy();
+  });
 });
