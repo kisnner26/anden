@@ -37,4 +37,10 @@ describe('EsqueletoIA', () => {
     const caja = pantalla.toJSON() as { children: unknown[] };
     expect(caja.children).toHaveLength(5);
   });
+
+  it('con movimiento reducido sigue mostrando las líneas', async () => {
+    jest.mocked(useMovimientoReducido).mockReturnValue(true);
+    const pantalla = await render(<EsqueletoIA />);
+    expect(pantalla.toJSON()).not.toBeNull();
+  });
 });
