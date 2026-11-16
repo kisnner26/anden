@@ -80,6 +80,19 @@ describe('ContadorPasajeros', () => {
     expect(alCambiar).not.toHaveBeenCalled();
   });
 
+  it('con un tope propio menor, más se apaga al llegar a él', async () => {
+    const alCambiar = jest.fn();
+    const pantalla = await render(
+      <ContadorPasajeros alCambiar={alCambiar} cantidad={2} maximo={2} />,
+    );
+    const mas = pantalla.getByRole('button', { name: t('rutas.masPasajeros') });
+    expect(mas.props.accessibilityState).toEqual(
+      expect.objectContaining({ disabled: true }),
+    );
+    await fireEvent.press(mas);
+    expect(alCambiar).not.toHaveBeenCalled();
+  });
+
   it('cada cambio responde con una vibración suave', async () => {
     const pantalla = await render(
       <ContadorPasajeros alCambiar={jest.fn()} cantidad={2} />,
