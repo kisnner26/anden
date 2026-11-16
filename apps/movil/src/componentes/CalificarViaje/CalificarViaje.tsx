@@ -38,7 +38,7 @@ export interface PropiedadesCalificarViaje {
   alCalificar?: () => void;
 }
 
-const TRAZO_ESTRELLA =
+export const TRAZO_ESTRELLA =
   'M24 5L29.800 17.200L43 19L33.400 28.200L35.800 41.400L24 35.200L12.200 41.400L14.600 28.200L5 19L18.200 17.200Z';
 
 /** el agradecimiento: las estrellas elegidas saltan una tras otra, un anillo se expande y el texto sube */
