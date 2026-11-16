@@ -108,4 +108,12 @@ describe('leerContacto valida lo guardado', () => {
     );
     expect(await leerContacto()).toBeNull();
   });
+
+  it('descarta un nombre demasiado corto', async () => {
+    await AsyncStorage.setItem(
+      CLAVE_CONTACTO,
+      JSON.stringify({ nombre: 'M', telefono: '88881234' }),
+    );
+    expect(await leerContacto()).toBeNull();
+  });
 });
