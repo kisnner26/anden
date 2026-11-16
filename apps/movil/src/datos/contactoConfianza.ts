@@ -54,8 +54,9 @@ export async function leerContacto(): Promise<ContactoConfianza | null> {
     );
     if (typeof valor !== 'object' || valor === null) return null;
     const c = valor as Record<string, unknown>;
+    // lo guardado se vuelve a validar: un teléfono alterado no debe llegar a un enlace sms:
     return typeof c.nombre === 'string' && typeof c.telefono === 'string'
-      ? { nombre: c.nombre, telefono: c.telefono }
+      ? armarContacto(c.nombre, c.telefono)
       : null;
   } catch {
     return null;
