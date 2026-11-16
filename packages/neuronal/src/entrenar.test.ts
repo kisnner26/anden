@@ -96,4 +96,14 @@ describe('entrenar', () => {
     });
     expect(h.length).toBeLessThan(300);
   });
+
+  it('un castigo L2 grande mantiene los pesos más chicos', () => {
+    const libre = crearRed(2, [8], 2, 3);
+    const castigada = crearRed(2, [8], 2, 3);
+    entrenar(libre, dosGrupos(), { epocas: 40, l2: 0 });
+    entrenar(castigada, dosGrupos(), { epocas: 40, l2: 0.05 });
+    const norma = (r: typeof libre) =>
+      r.capas.reduce((s, c) => s + c.pesos.reduce((t, w) => t + w * w, 0), 0);
+    expect(norma(castigada)).toBeLessThan(norma(libre));
+  });
 });
