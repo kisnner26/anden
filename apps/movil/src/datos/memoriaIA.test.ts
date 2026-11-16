@@ -163,4 +163,11 @@ describe('permiso de la memoria', () => {
   it('por defecto la IA puede recordar', async () => {
     expect(await leerMemoriaActiva()).toBe(true);
   });
+
+  it('se puede apagar y volver a encender', async () => {
+    await guardarMemoriaActiva(false);
+    expect(await leerMemoriaActiva()).toBe(false);
+    await guardarMemoriaActiva(true);
+    expect(await leerMemoriaActiva()).toBe(true);
+  });
 });
