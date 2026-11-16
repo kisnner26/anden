@@ -114,4 +114,11 @@ describe('sugerencias por momento', () => {
       lista.some((s) => s.includes('visitar') || s.includes('se come')),
     ).toBe(true);
   });
+
+  it('sin turista no ofrece qué visitar', () => {
+    for (let semilla = 0; semilla < 15; semilla += 1) {
+      const lista = sugerenciasDelMomento({ ...BASE, semilla });
+      expect(lista.some((s) => s.includes('visitar'))).toBe(false);
+    }
+  });
 });
