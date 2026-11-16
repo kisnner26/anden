@@ -19,4 +19,13 @@ describe('aModelo y aRed', () => {
     for (let i = 0; i < 3; i += 1)
       expect(Math.abs(a[i]! - b[i]!)).toBeLessThan(0.01);
   });
+
+  it('redondea los pesos a cuatro decimales', () => {
+    const m = aModelo(crearRed(4, [5], 3, 2), ['a', 'b', 'c'], 4, META);
+    expect(
+      m.capas[0]!.pesos.every(
+        (p) => Math.abs(p * 10000 - Math.round(p * 10000)) < 1e-6,
+      ),
+    ).toBe(true);
+  });
 });
