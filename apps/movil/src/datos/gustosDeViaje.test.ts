@@ -23,6 +23,11 @@ describe('gustosDeViaje', () => {
     expect(gustosDeViaje([boleto(6)])).toEqual({ ...SIN_GUSTOS, viajes: 1 });
   });
 
+  it('saca la hora de salida habitual', () => {
+    const gustos = gustosDeViaje([boleto(6), boleto(6, 30), boleto(7)]);
+    expect(gustos.horaPreferida).toBe(6 * 60 + 30);
+    expect(gustos.viajes).toBe(3);
+  });
 
 
 
