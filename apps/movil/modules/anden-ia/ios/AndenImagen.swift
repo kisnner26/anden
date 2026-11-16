@@ -4,68 +4,96 @@ import UIKit
 import ImagePlayground
 #endif
 
-/// Crea ilustraciones con Image Playground, que corre en el teléfono. Solo se usa cuando la persona lo pide:
-/// la imagen queda en la caché de la app y se comparte desde la hoja del sistema.
+/// Crea ilustraciones con Image Playground, que corre en el teléfono. Se usa la hoja del sistema
+/// (ImagePlaygroundViewController): es lo que Apple pide desde iOS 27, y la persona ve y elige la imagen
+/// antes de compartirla. Queda en la caché de la app.
 enum AndenImagen {
-  #if canImport(ImagePlayground)
-  /// el motivo del error en una palabra que la app sabe explicar
-  @available(iOS 18.4, *)
-  static func motivo(_ error: Error) -> String {
-    if let fallo = error as? ImageCreator.Error {
-      switch fallo {
-      case .notSupported: return "no-compatible"
-      case .unavailable: return "no-lista"
-      case .unsupportedLanguage: return "idioma-no-soportado"
-      case .backgroundCreationForbidden: return "en-segundo-plano"
-      case .creationCancelled: return "cancelada"
-      default: return "fallo"
-      }
-    }
-    return "fallo"
-  }
-  #endif
-
-  /// "disponible" si el teléfono puede crear imágenes; cualquier otra cosa es el motivo
+  /// "disponible" si Image Playground se puede abrir ahora; si no, el motivo
   static func estado() async -> String {
     #if canImport(ImagePlayground)
-    if #available(iOS 18.4, *) {
-      do {
-        _ = try await ImageCreator()
-        return "disponible"
-      } catch {
-        return motivo(error)
+    if #available(iOS 18.1, *) {
+      return await MainActor.run {
+        ImagePlaygroundViewController.isAvailable ? "disponible" : "no-lista"
       }
     }
     #endif
     return "sistema-antiguo"
   }
 
-  /// una postal ilustrada de la ciudad; devuelve la ruta del PNG, o "error:" y el motivo si no se pudo crear
+  /// abre Image Playground con la ciudad ya escrita; devuelve la ruta del PNG elegido, o "error:" y el motivo
   static func crearPostal(ciudad: String, descripcion: String) async -> String {
     #if canImport(ImagePlayground)
-    if #available(iOS 18.4, *) {
-      do {
-        let creador = try await ImageCreator()
-        let estilo = creador.availableStyles.first(where: { $0 == .illustration }) ?? creador.availableStyles.first
-        guard let estilo else { return "error:no-lista" }
-        // los conceptos van en inglés: es el idioma con el que Image Playground rinde mejor en cualquier teléfono
-        let conceptos: [ImagePlaygroundConcept] = [
-          .text("illustrated travel postcard of \(ciudad), Nicaragua"),
-          .text(descripcion),
-        ]
-        for try await imagen in creador.images(for: conceptos, style: estilo, limit: 1) {
-          guard let datos = UIImage(cgImage: imagen.cgImage).pngData() else { return "error:fallo" }
-          let carpeta = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-          let archivo = carpeta.appendingPathComponent("postal-\(UUID().uuidString).png")
-          try datos.write(to: archivo)
-          return archivo.path
+    if #available(iOS 18.1, *) {
+      return await withCheckedContinuation { continuacion in
+        Task { @MainActor in
+          guard ImagePlaygroundViewController.isAvailable else {
+            continuacion.resume(returning: "error:no-lista")
+            return
+          }
+          guard let presentador = presentadorSuperior() else {
+            continuacion.resume(returning: "error:fallo")
+            return
+          }
+          let delegado = DelegadoPostal(continuacion: continuacion)
+          DelegadoPostal.activo = delegado
+          let hoja = ImagePlaygroundViewController()
+          // los conceptos van en inglés: es el idioma con el que Image Playground rinde mejor en cualquier teléfono
+          hoja.concepts = [
+            .text("illustrated travel postcard of \(ciudad), Nicaragua"),
+            .text(descripcion),
+          ]
+          hoja.delegate = delegado
+          presentador.present(hoja, animated: true)
         }
-        return "error:fallo"
-      } catch {
-        return "error:\(motivo(error))"
       }
     }
     #endif
     return "error:sistema-antiguo"
   }
+
+  /// la pantalla más arriba, desde la que se presenta la hoja
+  @MainActor
+  static func presentadorSuperior() -> UIViewController? {
+    let escena = UIApplication.shared.connectedScenes
+      .compactMap { $0 as? UIWindowScene }
+      .first { $0.activationState == .foregroundActive }
+    var actual = escena?.windows.first(where: { $0.isKeyWindow })?.rootViewController
+    while let presentada = actual?.presentedViewController { actual = presentada }
+    return actual
+  }
 }
+
+#if canImport(ImagePlayground)
+@available(iOS 18.1, *)
+@MainActor
+final class DelegadoPostal: NSObject, ImagePlaygroundViewController.Delegate {
+  /// el delegado de la hoja es débil: se guarda mientras la hoja está abierta
+  static var activo: DelegadoPostal?
+  private var continuacion: CheckedContinuation<String, Never>?
+
+  init(continuacion: CheckedContinuation<String, Never>) {
+    self.continuacion = continuacion
+  }
+
+  private func terminar(_ resultado: String) {
+    continuacion?.resume(returning: resultado)
+    continuacion = nil
+    DelegadoPostal.activo = nil
+  }
+
+  func imagePlaygroundViewController(_ imagePlaygroundViewController: ImagePlaygroundViewController, didCreateImageAt imageURL: URL) {
+    let carpeta = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+    let archivo = carpeta.appendingPathComponent("postal-\(UUID().uuidString).\(imageURL.pathExtension.isEmpty ? "png" : imageURL.pathExtension)")
+    do {
+      try FileManager.default.copyItem(at: imageURL, to: archivo)
+      imagePlaygroundViewController.dismiss(animated: true) { self.terminar(archivo.path) }
+    } catch {
+      imagePlaygroundViewController.dismiss(animated: true) { self.terminar("error:fallo") }
+    }
+  }
+
+  func imagePlaygroundViewControllerDidCancel(_ imagePlaygroundViewController: ImagePlaygroundViewController) {
+    imagePlaygroundViewController.dismiss(animated: true) { self.terminar("error:cancelada") }
+  }
+}
+#endif
