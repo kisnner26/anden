@@ -8,6 +8,7 @@ import { Ingreso } from './Ingreso';
 import { guardarAjustes, leerAjustes, type AjustesPanel } from './lib/ajustes';
 import { Actividad } from './paneles/Actividad';
 import { Alertas } from './paneles/Alertas';
+import { Asistente } from './paneles/Asistente';
 import { Conductores } from './paneles/Conductores';
 import { Encomiendas } from './paneles/Encomiendas';
 import { EnVivo } from './paneles/EnVivo';
@@ -73,6 +74,12 @@ const SECCIONES = [
     descripcion: 'Una línea de tiempo con todo lo que pasó en la red.',
     grupo: 'Análisis',
     titulo: 'Actividad',
+  },
+  {
+    clave: 'asistente',
+    descripcion: 'Preguntale a Claude Code sobre los números de la operación.',
+    grupo: 'Análisis',
+    titulo: 'Asistente',
   },
   {
     clave: 'alertas',
@@ -377,6 +384,7 @@ function Armazon({ alSalir }: { alSalir: () => void }) {
         {seccion === 'pasajeros' && <Pasajeros />}
         {seccion === 'finanzas' && <Finanzas />}
         {seccion === 'actividad' && <Actividad />}
+        {seccion === 'asistente' && <Asistente />}
         {seccion === 'alertas' && <Alertas />}
       </main>
       <Paleta
