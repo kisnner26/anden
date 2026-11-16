@@ -37,6 +37,11 @@ describe('leerAcciones', () => {
     ).toEqual([]);
   });
 
+  it('acepta abrir solo pantallas que existen', () => {
+    expect(leerAcciones([{ pantalla: 'boletos', tipo: 'abrir' }])).toEqual([
+      { pantalla: 'boletos', tipo: 'abrir' },
+    ]);
+  });
 
 
 });
