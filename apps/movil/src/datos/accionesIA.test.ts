@@ -59,3 +59,20 @@ describe('leerAcciones', () => {
     expect(leerAcciones({ tipo: 'compartir' })).toEqual([]);
   });
 });
+
+describe('accionDeOrden', () => {
+  it('entiende un aviso con minutos', () => {
+    expect(
+      accionDeOrden('avisame 30 minutos antes de que salga mi bus'),
+    ).toEqual({
+      minutos: 30,
+      tipo: 'avisar',
+    });
+    expect(accionDeOrden('recordame mi viaje una hora antes')).toEqual({
+      minutos: 60,
+      tipo: 'avisar',
+    });
+  });
+
+
+});
