@@ -33,4 +33,8 @@ describe('boletosVigentes', () => {
     boletosVigentes(lista);
     expect(lista).toEqual([tarde, temprano]);
   });
+
+  it('sin boletos devuelve una lista vacía', () => {
+    expect(boletosVigentes([])).toEqual([]);
+  });
 });
