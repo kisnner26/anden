@@ -1,4 +1,9 @@
-import { appendFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
+import {
+  appendFileSync,
+  existsSync,
+  readFileSync,
+  writeFileSync,
+} from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -49,12 +54,16 @@ export function agregarFrase(frase: Frase): void {
 /** quita una frase propia (la primera que coincida); falso si no estaba */
 export function quitarFrase(frase: Frase): boolean {
   const propias = leer(RUTA_PROPIAS, 'propia');
-  const indice = propias.findIndex((f) => f.etiqueta === frase.etiqueta && f.texto === frase.texto);
+  const indice = propias.findIndex(
+    (f) => f.etiqueta === frase.etiqueta && f.texto === frase.texto,
+  );
   if (indice < 0) return false;
   propias.splice(indice, 1);
   writeFileSync(
     RUTA_PROPIAS,
-    propias.map((f) => JSON.stringify({ etiqueta: f.etiqueta, texto: f.texto })).join('\n') + (propias.length > 0 ? '\n' : ''),
+    propias
+      .map((f) => JSON.stringify({ etiqueta: f.etiqueta, texto: f.texto }))
+      .join('\n') + (propias.length > 0 ? '\n' : ''),
   );
   return true;
 }

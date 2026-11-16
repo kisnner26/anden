@@ -1,7 +1,11 @@
 // corre el entrenamiento en un hilo aparte para que el panel siga respondiendo y muestre cada época en vivo
 import { parentPort, workerData } from 'node:worker_threads';
 
-import { entrenarClasificador, type Frase, type OpcionesClasificador } from '@anden/neuronal';
+import {
+  entrenarClasificador,
+  type Frase,
+  type OpcionesClasificador,
+} from '@anden/neuronal';
 
 interface Pedido {
   frases: Frase[];
