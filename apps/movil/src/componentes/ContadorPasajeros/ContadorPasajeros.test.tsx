@@ -25,4 +25,15 @@ describe('ContadorPasajeros', () => {
     );
     expect(pantalla.getByText(t('rutas.pasajeros'))).toBeTruthy();
   });
+
+  it('más sube la cantidad de a uno', async () => {
+    const alCambiar = jest.fn();
+    const pantalla = await render(
+      <ContadorPasajeros alCambiar={alCambiar} cantidad={2} />,
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: t('rutas.masPasajeros') }),
+    );
+    expect(alCambiar).toHaveBeenCalledWith(3);
+  });
 });
