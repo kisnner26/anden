@@ -11,6 +11,7 @@ import {
   leerEncomiendas,
   mensajeComprobante,
   nuevaEncomienda,
+  urlLlamadaDestinatario,
   urlSmsDestinatario,
   type DatosEncomienda,
 } from './encomiendas';
@@ -176,5 +177,13 @@ describe('estados de la encomienda', () => {
       viajeId: 'via_x',
     });
     expect(conViaje).toMatchObject({ choferId: 'cho_1', viajeId: 'via_x' });
+  });
+});
+
+describe('enlaces de contacto del destinatario', () => {
+  it('la llamada usa el teléfono validado con el prefijo del país', () => {
+    expect(urlLlamadaDestinatario(nuevaEncomienda(DATOS))).toBe(
+      'tel:+50588881234',
+    );
   });
 });
