@@ -1,6 +1,7 @@
 import { FICHAS, fichaDeCiudad } from './fichasCiudad';
 import { OPCIONES_MINUTOS, type MinutosAntes } from './recordatorios';
 import type { PantallaAbrible } from './ordenesIA';
+import { sinTildes } from './texto';
 
 /**
  * lo que el asistente puede hacer por la persona, además de contestar. El modelo solo elige la acción:
@@ -63,10 +64,6 @@ export function leerAcciones(valor: unknown): AccionIA[] {
     if (!repetida) acciones.push(accion);
   }
   return acciones.slice(0, 2);
-}
-
-function sinTildes(texto: string): string {
-  return texto.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 }
 
 /** "avisame 30 minutos antes", "compartí mi viaje": las órdenes que no necesitan al modelo, en cualquier teléfono */
