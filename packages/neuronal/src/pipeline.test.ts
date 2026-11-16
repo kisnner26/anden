@@ -44,6 +44,16 @@ describe('entrenarClasificador', () => {
     expect(r.modelo.etiquetas).toEqual(['precio', 'saludo']);
     expect(r.modelo.meta.ejemplos).toBe(12);
   });
+
+  it('devuelve la matriz de confusión con una fila por intención', () => {
+    const r = entrenarClasificador(FRASES, {
+      dimension: 64,
+      epocas: 3,
+      ocultas: [4],
+    });
+    expect(r.matriz).toHaveLength(2);
+    expect(r.matriz[0]).toHaveLength(2);
+  });
 });
 
 describe('etiquetasDe', () => {
