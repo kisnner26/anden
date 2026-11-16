@@ -5,7 +5,9 @@ import { fileURLToPath } from 'node:url';
 
 const CIUDADES = ['Managua', 'Boaco', 'Juigalpa'];
 const aqui = dirname(fileURLToPath(import.meta.url));
-const plantillas = JSON.parse(readFileSync(join(aqui, '..', 'datos', 'plantillas.json'), 'utf8')) as Record<string, string[]>;
+const plantillas = JSON.parse(
+  readFileSync(join(aqui, '..', 'datos', 'plantillas.json'), 'utf8'),
+) as Record<string, string[]>;
 
 const lineas: string[] = [];
 for (const [etiqueta, lista] of Object.entries(plantillas)) {
@@ -13,8 +15,12 @@ for (const [etiqueta, lista] of Object.entries(plantillas)) {
     const textos = plantilla.includes('{c}')
       ? CIUDADES.map((c) => plantilla.replace('{c}', c.toLowerCase()))
       : [plantilla];
-    for (const texto of textos) lineas.push(JSON.stringify({ etiqueta, plantilla: indice, texto }));
+    for (const texto of textos)
+      lineas.push(JSON.stringify({ etiqueta, plantilla: indice, texto }));
   }
 }
-writeFileSync(join(aqui, '..', 'datos', 'intenciones.jsonl'), `${lineas.join('\n')}\n`);
+writeFileSync(
+  join(aqui, '..', 'datos', 'intenciones.jsonl'),
+  `${lineas.join('\n')}\n`,
+);
 console.log(`listo: ${lineas.length} frases`);

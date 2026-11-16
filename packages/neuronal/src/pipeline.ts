@@ -1,4 +1,8 @@
-import { entrenar, type InfoEpoca, type OpcionesEntrenamiento } from './entrenar.ts';
+import {
+  entrenar,
+  type InfoEpoca,
+  type OpcionesEntrenamiento,
+} from './entrenar.ts';
 import { evaluar, matrizDeConfusion, precisionPorClase } from './evaluar.ts';
 import { aModelo, type Modelo } from './modelo.ts';
 import { contarParametros, crearRed, type Red } from './red.ts';
@@ -44,7 +48,12 @@ export function entrenarClasificador(
     clase: etiquetas.indexOf(f.etiqueta),
     entrada: vectorizar(f.texto, dimension),
   }));
-  const red = crearRed(dimension, ocultas, etiquetas.length, resto.semilla ?? 7);
+  const red = crearRed(
+    dimension,
+    ocultas,
+    etiquetas.length,
+    resto.semilla ?? 7,
+  );
   const historial = entrenar(red, ejemplos, { validacion: 0.2, ...resto });
   const total = evaluar(red, ejemplos);
   const matriz = matrizDeConfusion(red, ejemplos, etiquetas.length);

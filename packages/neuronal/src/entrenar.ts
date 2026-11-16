@@ -66,8 +66,12 @@ export function entrenar(
     vPesos: new Float32Array(capa.pesos.length),
     vSesgos: new Float32Array(capa.sesgos.length),
   }));
-  const gradPesos = red.capas.map((capa) => new Float32Array(capa.pesos.length));
-  const gradSesgos = red.capas.map((capa) => new Float32Array(capa.sesgos.length));
+  const gradPesos = red.capas.map(
+    (capa) => new Float32Array(capa.pesos.length),
+  );
+  const gradSesgos = red.capas.map(
+    (capa) => new Float32Array(capa.sesgos.length),
+  );
   const historial: InfoEpoca[] = [];
   let paso = 0;
   let mejor = Infinity;
@@ -90,8 +94,28 @@ export function entrenar(
       for (let c = 0; c < red.capas.length; c += 1) {
         const capa = red.capas[c]!;
         const m = momentos[c]!;
-        actualizar(capa.pesos, gradPesos[c]!, m.mPesos, m.vPesos, grupo.length, tasa, l2, correccion1, correccion2);
-        actualizar(capa.sesgos, gradSesgos[c]!, m.mSesgos, m.vSesgos, grupo.length, tasa, 0, correccion1, correccion2);
+        actualizar(
+          capa.pesos,
+          gradPesos[c]!,
+          m.mPesos,
+          m.vPesos,
+          grupo.length,
+          tasa,
+          l2,
+          correccion1,
+          correccion2,
+        );
+        actualizar(
+          capa.sesgos,
+          gradSesgos[c]!,
+          m.mSesgos,
+          m.vSesgos,
+          grupo.length,
+          tasa,
+          0,
+          correccion1,
+          correccion2,
+        );
       }
     }
     const propia = evaluar(red, propios);
@@ -147,7 +171,8 @@ function retropropagar(
         const d = delta[s] as number;
         const base = s * capa.entradas;
         for (let e = 0; e < capa.entradas; e += 1) {
-          anterior[e] = (anterior[e] as number) + (capa.pesos[base + e] as number) * d;
+          anterior[e] =
+            (anterior[e] as number) + (capa.pesos[base + e] as number) * d;
         }
       }
       // la derivada de ReLU: pasa el cambio solo donde la neurona estaba encendida
@@ -171,11 +196,14 @@ function actualizar(
   correccion2: number,
 ): void {
   for (let i = 0; i < valores.length; i += 1) {
-    const g = (gradiente[i] as number) / tamanoLote + l2 * (valores[i] as number);
+    const g =
+      (gradiente[i] as number) / tamanoLote + l2 * (valores[i] as number);
     const mi = BETA1 * (m[i] as number) + (1 - BETA1) * g;
     const vi = BETA2 * (v[i] as number) + (1 - BETA2) * g * g;
     m[i] = mi;
     v[i] = vi;
-    valores[i] = (valores[i] as number) - (tasa * (mi / correccion1)) / (Math.sqrt(vi / correccion2) + EPSILON);
+    valores[i] =
+      (valores[i] as number) -
+      (tasa * (mi / correccion1)) / (Math.sqrt(vi / correccion2) + EPSILON);
   }
 }

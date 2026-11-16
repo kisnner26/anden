@@ -31,7 +31,10 @@ export function evaluar(red: Red, ejemplos: readonly Ejemplo[]): Evaluacion {
     perdida -= Math.log(Math.max(p[ejemplo.clase] as number, 1e-12));
     if (indiceMayor(p) === ejemplo.clase) aciertos += 1;
   }
-  return { perdida: perdida / ejemplos.length, precision: aciertos / ejemplos.length };
+  return {
+    perdida: perdida / ejemplos.length,
+    precision: aciertos / ejemplos.length,
+  };
 }
 
 /** cuántas veces la red confundió cada clase real con cada clase predicha: filas = real, columnas = predicha */
@@ -40,7 +43,9 @@ export function matrizDeConfusion(
   ejemplos: readonly Ejemplo[],
   clases: number,
 ): number[][] {
-  const matriz = Array.from({ length: clases }, () => new Array<number>(clases).fill(0));
+  const matriz = Array.from({ length: clases }, () =>
+    new Array<number>(clases).fill(0),
+  );
   for (let i = 0; i < ejemplos.length; i += 1) {
     const ejemplo = ejemplos[i] as Ejemplo;
     const predicha = indiceMayor(avanzar(red, ejemplo.entrada).probabilidades);
@@ -51,7 +56,9 @@ export function matrizDeConfusion(
 }
 
 /** la precisión de cada clase: de los ejemplos reales de esa clase, cuántos acertó; nulo si no hay ninguno */
-export function precisionPorClase(matriz: readonly number[][]): (number | null)[] {
+export function precisionPorClase(
+  matriz: readonly number[][],
+): (number | null)[] {
   return matriz.map((fila, i) => {
     let total = 0;
     for (let j = 0; j < fila.length; j += 1) total += fila[j] as number;

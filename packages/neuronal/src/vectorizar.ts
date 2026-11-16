@@ -26,7 +26,8 @@ export function vectorizar(texto: string, dimension: number): Float32Array {
   for (let i = 0; i < dimension; i += 1) norma += (vector[i] as number) ** 2;
   norma = Math.sqrt(norma);
   if (norma > 0) {
-    for (let i = 0; i < dimension; i += 1) vector[i] = (vector[i] as number) / norma;
+    for (let i = 0; i < dimension; i += 1)
+      vector[i] = (vector[i] as number) / norma;
   }
   return vector;
 }

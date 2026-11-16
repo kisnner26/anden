@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { avanzar, contarParametros, crearRed, predecir, softmax } from './red.ts';
+import {
+  avanzar,
+  contarParametros,
+  crearRed,
+  predecir,
+  softmax,
+} from './red.ts';
 
 describe('softmax', () => {
   it('las probabilidades suman uno', () => {

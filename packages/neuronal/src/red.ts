@@ -38,7 +38,8 @@ export function crearRed(
 /** las probabilidades a partir de números cualquiera; resta el máximo para que no se desborde */
 export function softmax(valores: Float32Array): Float32Array {
   let maximo = -Infinity;
-  for (let i = 0; i < valores.length; i += 1) maximo = Math.max(maximo, valores[i] as number);
+  for (let i = 0; i < valores.length; i += 1)
+    maximo = Math.max(maximo, valores[i] as number);
   const salida = new Float32Array(valores.length);
   let suma = 0;
   for (let i = 0; i < valores.length; i += 1) {
@@ -46,7 +47,8 @@ export function softmax(valores: Float32Array): Float32Array {
     salida[i] = e;
     suma += e;
   }
-  for (let i = 0; i < salida.length; i += 1) salida[i] = (salida[i] as number) / suma;
+  for (let i = 0; i < salida.length; i += 1)
+    salida[i] = (salida[i] as number) / suma;
   return salida;
 }
 

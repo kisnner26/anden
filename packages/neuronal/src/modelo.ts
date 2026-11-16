@@ -6,9 +6,18 @@ export interface Modelo {
   dimension: number;
   /** el nombre de cada clase, en el orden de las salidas */
   etiquetas: string[];
-  capas: { entradas: number; pesos: number[]; salidas: number; sesgos: number[] }[];
+  capas: {
+    entradas: number;
+    pesos: number[];
+    salidas: number;
+    sesgos: number[];
+  }[];
   /** de cuándo es y con qué se entrenó; sirve para saber qué modelo se está usando */
-  meta: { ejemplos: number; entrenadoEn: string; precisionValidacion: number | null };
+  meta: {
+    ejemplos: number;
+    entrenadoEn: string;
+    precisionValidacion: number | null;
+  };
   version: 1;
 }
 
@@ -68,13 +77,29 @@ export function leerModelo(json: string): Modelo | null {
   }
   if (typeof crudo !== 'object' || crudo === null) return null;
   const m = crudo as Record<string, unknown>;
-  if (m.version !== 1 || typeof m.dimension !== 'number' || !Array.isArray(m.etiquetas)) return null;
-  if (!m.etiquetas.every((e) => typeof e === 'string') || !Array.isArray(m.capas) || m.capas.length === 0) return null;
+  if (
+    m.version !== 1 ||
+    typeof m.dimension !== 'number' ||
+    !Array.isArray(m.etiquetas)
+  )
+    return null;
+  if (
+    !m.etiquetas.every((e) => typeof e === 'string') ||
+    !Array.isArray(m.capas) ||
+    m.capas.length === 0
+  )
+    return null;
   let anterior = m.dimension;
   for (const capa of m.capas as Record<string, unknown>[]) {
     const { entradas, pesos, salidas, sesgos } = capa;
-    if (typeof entradas !== 'number' || typeof salidas !== 'number' || entradas !== anterior) return null;
-    if (!esNumeros(pesos, entradas * salidas) || !esNumeros(sesgos, salidas)) return null;
+    if (
+      typeof entradas !== 'number' ||
+      typeof salidas !== 'number' ||
+      entradas !== anterior
+    )
+      return null;
+    if (!esNumeros(pesos, entradas * salidas) || !esNumeros(sesgos, salidas))
+      return null;
     anterior = salidas;
   }
   if (anterior !== m.etiquetas.length) return null;
@@ -86,7 +111,10 @@ export function leerModelo(json: string): Modelo | null {
     meta: {
       ejemplos: typeof meta.ejemplos === 'number' ? meta.ejemplos : 0,
       entrenadoEn: typeof meta.entrenadoEn === 'string' ? meta.entrenadoEn : '',
-      precisionValidacion: typeof meta.precisionValidacion === 'number' ? meta.precisionValidacion : null,
+      precisionValidacion:
+        typeof meta.precisionValidacion === 'number'
+          ? meta.precisionValidacion
+          : null,
     },
     version: 1,
   };
