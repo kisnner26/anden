@@ -20,6 +20,8 @@ export interface PropiedadesHojaPasajero {
   alCerrar: () => void;
   /** llama al pasajero; solo se ofrece si el servidor lo permite en este momento */
   alLlamar?: (boletoId: string) => void;
+  /** abre el chat con el pasajero */
+  alEscribir?: (boletoId: string) => void;
   /** la llamada no se pudo hacer: no hay número o el viaje está fuera de la ventana */
   llamadaFallida?: boolean;
   /** con el viaje cerrado ya no se cambia nada */
@@ -57,6 +59,7 @@ export function HojaPasajero({
   alAlternarAbordaje,
   alAlternarPago,
   alCerrar,
+  alEscribir,
   alLlamar,
   bloqueada = false,
   llamadaFallida = false,
@@ -208,6 +211,20 @@ export function HojaPasajero({
               </Text>
             </Pressable>
           </View>
+          {alEscribir ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => alEscribir(pasajero.boletoId)}
+              style={[
+                estilos.accion,
+                { borderColor: colores.linea, borderWidth: 1 },
+              ]}
+            >
+              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                {t('chatViaje.escribir')}
+              </Text>
+            </Pressable>
+          ) : null}
           {alLlamar ? (
             <Pressable
               accessibilityRole="button"
