@@ -110,4 +110,18 @@ describe('responder', () => {
     );
     expect(r.response.shouldEndSession).toBe(true);
   });
+
+  it('dice el rango de precios del trayecto', async () => {
+    const r = await responder(
+      pedido('PrecioIntent', 'Boaco'),
+      async () => [
+        salida('a', 15, { tarifa: 66 }),
+        salida('b', 16, { tarifa: 90 }),
+      ],
+      AHORA,
+    );
+    expect(r.response.outputSpeech.text).toBe(
+      'Ir a Boaco cuesta desde 66 hasta 90 córdobas por persona.',
+    );
+  });
 });
