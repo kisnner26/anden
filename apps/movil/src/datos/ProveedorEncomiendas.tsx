@@ -20,6 +20,7 @@ import {
 } from './encomiendas';
 import { ContextoEncomiendas, type ValorEncomiendas } from './useEncomiendas';
 import { useSesion } from './useSesion';
+import { iniciarSondeo } from './sondeo';
 
 const CADA_MS = 8000;
 
@@ -55,8 +56,8 @@ export function ProveedorEncomiendas({
     establecerEncomiendas([]);
     establecerCargando(true);
     void recargar();
-    const temporizador = setInterval(() => void recargar(), CADA_MS);
-    return () => clearInterval(temporizador);
+    const pararSondeo = iniciarSondeo(() => void recargar(), CADA_MS);
+    return pararSondeo;
   }, [cuenta, recargar]);
 
   const enviar = useCallback(
