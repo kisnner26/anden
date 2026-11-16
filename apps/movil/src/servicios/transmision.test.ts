@@ -110,4 +110,11 @@ describe('transmisión compartida', () => {
     TRANSMISION.iniciar('via_9', 'cho_1');
     expect(TRANSMISION.activos()).toEqual(['via_9']);
   });
+
+  it('al configurar otra fábrica se descarta la anterior', () => {
+    const otra = crearTransmisionLocal();
+    otra.iniciar('via_otra', 'cho_2');
+    configurarTransmision(() => otra);
+    expect(TRANSMISION.activos()).toEqual(['via_otra']);
+  });
 });
