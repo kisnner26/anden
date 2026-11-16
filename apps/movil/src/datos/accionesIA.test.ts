@@ -25,6 +25,17 @@ describe('leerAcciones', () => {
     ).toEqual([{ minutos: 15, tipo: 'avisar' }, { tipo: 'compartir' }]);
   });
 
+  it('ignora lo que el modelo invente', () => {
+    expect(
+      leerAcciones([
+        { tipo: 'borrarCuenta' },
+        { pantalla: 'secreta', tipo: 'abrir' },
+        { tipo: 'mensaje', texto: 'hola' },
+        'compartir',
+        null,
+      ]),
+    ).toEqual([]);
+  });
 
 
 
