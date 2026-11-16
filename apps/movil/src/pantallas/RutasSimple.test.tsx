@@ -19,4 +19,15 @@ describe('RutasSimple', () => {
       expect(pantalla.getByText(viaje)).toBeTruthy();
     }
   });
+
+  it('tocar un viaje busca salidas hacia su destino', async () => {
+    const alBuscar = jest.fn();
+    const pantalla = await renderPantalla(
+      <RutasSimple alBuscar={alBuscar} alSalir={jest.fn()} />,
+    );
+    await fireEvent.press(pantalla.getByText('Managua a Boaco'));
+    expect(alBuscar).toHaveBeenCalledWith('Boaco');
+    await fireEvent.press(pantalla.getByText('Juigalpa a Managua'));
+    expect(alBuscar).toHaveBeenCalledWith('Managua');
+  });
 });
