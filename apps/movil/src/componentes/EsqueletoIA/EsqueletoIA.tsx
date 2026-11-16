@@ -13,6 +13,7 @@ import { espacios, radios } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import { useTema } from '@/tema/useTema';
+import { useAppActiva } from '@/tema/useAppActiva';
 
 const ANCHOS = ['92%', '78%', '56%'] as const;
 
@@ -20,11 +21,12 @@ const ANCHOS = ['92%', '78%', '56%'] as const;
 export function EsqueletoIA({ lineas = 3 }: { lineas?: number }) {
   const { colores } = useTema();
   const reducir = useMovimientoReducido();
+  const activa = useAppActiva();
   const barrido = useRef(new Animated.Value(0)).current;
   const [ancho, establecerAncho] = useState(0);
 
   useEffect(() => {
-    if (reducir) return;
+    if (reducir || !activa) return;
     const ciclo = Animated.loop(
       Animated.timing(barrido, {
         duration: movimiento.brilloEsqueleto,
@@ -35,7 +37,7 @@ export function EsqueletoIA({ lineas = 3 }: { lineas?: number }) {
     );
     ciclo.start();
     return () => ciclo.stop();
-  }, [barrido, reducir]);
+  }, [activa, barrido, reducir]);
 
   const alMedir = (evento: LayoutChangeEvent) =>
     establecerAncho(evento.nativeEvent.layout.width);
