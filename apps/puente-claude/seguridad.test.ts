@@ -36,4 +36,11 @@ describe('esRedLocal', () => {
     ])
       expect(esRedLocal(d)).toBe(false);
   });
+
+  it('rechaza lo que no es una dirección', () => {
+    expect(esRedLocal(undefined)).toBe(false);
+    expect(esRedLocal('')).toBe(false);
+    expect(esRedLocal('192.168.1')).toBe(false);
+    expect(esRedLocal('300.1.1.1')).toBe(false);
+  });
 });
