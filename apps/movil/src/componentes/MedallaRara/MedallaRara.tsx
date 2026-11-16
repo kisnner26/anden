@@ -95,13 +95,15 @@ export function MedallaRara({
       return;
     }
     if (!activo) return;
-    Animated.spring(salto, {
+    const animacion = Animated.spring(salto, {
       delay: indice * movimiento.escalon * 2,
       friction: 5,
       tension: 90,
       toValue: 1,
       useNativeDriver: true,
-    }).start();
+    });
+    animacion.start();
+    return () => animacion.stop();
   }, [activo, indice, reducido, salto]);
 
   return (
