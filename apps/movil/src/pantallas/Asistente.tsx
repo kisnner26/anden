@@ -628,6 +628,9 @@ export function Asistente({
       }
       if (!usable) {
         // sin Apple Intelligence ni Gemini contesta la red neuronal pequeña de la app
+        memoriaIA.recordarPregunta(limpia, [
+          ...new Set(salidas.map((s) => s.destino)),
+        ]);
         const rica = responderLocal(limpia, construirEstado());
         const id = contadorId.current++;
         establecerHistorial((previo) => [
