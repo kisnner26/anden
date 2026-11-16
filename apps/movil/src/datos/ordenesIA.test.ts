@@ -194,6 +194,12 @@ describe('entenderCuando', () => {
     expect(entenderCuando('de madrugada', ahora)?.franja).toBe('madrugada');
     expect(entenderCuando('esta noche', ahora)?.franja).toBe('noche');
   });
+
+  it('entiende una hora con pm', () => {
+    const ahora = new Date(2026, 10, 13, 10, 0);
+    expect(entenderCuando('a las 4 pm', ahora)?.hora).toBe(16);
+    expect(entenderCuando('a las 6 de la mañana', ahora)?.hora).toBe(6);
+  });
 });
 
 describe('reservar con cuándo', () => {
