@@ -57,4 +57,14 @@ describe('matrizDeConfusion', () => {
     const m = matrizDeConfusion(crearRed(2, [4], 2, 3), ejemplos, 2);
     expect(m.flat().reduce((s, x) => s + x, 0)).toBe(5);
   });
+
+  it('cada fila suma los ejemplos reales de su clase', () => {
+    const ejemplos: Ejemplo[] = [0, 1, 1, 0, 1].map((clase) => ({
+      clase,
+      entrada: new Float32Array([clase, 1 - clase]),
+    }));
+    const m = matrizDeConfusion(crearRed(2, [4], 2, 3), ejemplos, 2);
+    expect(m[0]!.reduce((s, x) => s + x, 0)).toBe(2);
+    expect(m[1]!.reduce((s, x) => s + x, 0)).toBe(3);
+  });
 });
