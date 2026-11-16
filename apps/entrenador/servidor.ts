@@ -108,8 +108,9 @@ function entrenar(url: URL, res: ServerResponse): void {
   });
   const enviar = (evento: string, datos: unknown) =>
     res.write(`event: ${evento}\ndata: ${JSON.stringify(datos)}\n\n`);
-  const frases = todasLasFrases().map(({ etiqueta, texto }) => ({
+  const frases = todasLasFrases().map(({ etiqueta, plantilla, texto }) => ({
     etiqueta,
+    ...(plantilla !== undefined ? { plantilla } : {}),
     texto,
   }));
   const hilo = new Worker(new URL('./trabajador.ts', import.meta.url), {
@@ -119,6 +120,7 @@ function entrenar(url: URL, res: ServerResponse): void {
     'message',
     (m: { info?: unknown; resultado?: Resultado; tipo: string }) => {
       if (m.tipo === 'epoca') enviar('epoca', m.info);
+      if (m.tipo === 'midiendo') enviar('midiendo', {});
       if (m.tipo === 'fin' && m.resultado) {
         ultimo = m.resultado;
         enviar('fin', {
