@@ -81,13 +81,15 @@ export function SelloDeCiudad({
     }
     if (!activo) return;
     golpe.setValue(0);
-    Animated.timing(golpe, {
+    const animacion = Animated.timing(golpe, {
       delay: retardo,
       duration: movimiento.estampaSello,
       easing: Easing.out(Easing.back(2.2)),
       toValue: 1,
       useNativeDriver: true,
-    }).start();
+    });
+    animacion.start();
+    return () => animacion.stop();
   }, [activo, golpe, reducido, retardo, tiene]);
 
   return (
