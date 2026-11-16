@@ -36,4 +36,14 @@ describe('evaluar', () => {
     expect(perdida).toBeGreaterThan(0.3);
     expect(perdida).toBeLessThan(2);
   });
+
+  it('la precisión está entre cero y uno', () => {
+    const ejemplos: Ejemplo[] = [
+      { clase: 0, entrada: new Float32Array([1, 0]) },
+      { clase: 1, entrada: new Float32Array([0, 1]) },
+    ];
+    const { precision } = evaluar(crearRed(2, [4], 2, 3), ejemplos);
+    expect(precision).toBeGreaterThanOrEqual(0);
+    expect(precision).toBeLessThanOrEqual(1);
+  });
 });
