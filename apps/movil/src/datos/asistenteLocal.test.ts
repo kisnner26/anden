@@ -122,4 +122,10 @@ describe('responderLocal', () => {
     expect(r.ciudad).toBe('Boaco');
     expect(r.texto).toContain('Boaco');
   });
+
+  it('con algo fuera de tema no se inventa una respuesta', () => {
+    expect(responderLocal('cuánto es dos más dos', estado()).texto).toContain(
+      'No te entendí',
+    );
+  });
 });
