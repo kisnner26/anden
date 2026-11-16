@@ -92,4 +92,18 @@ describe('HorariosSimple', () => {
     );
     expect(pantalla.getAllByText(/^Ciudad \d$/)).toHaveLength(6);
   });
+
+  it('las ordena de la más próxima a la más lejana', async () => {
+    mockLista = [
+      salida('tarde', 17, { destino: 'Tarde' }),
+      salida('pronto', 11, { destino: 'Pronto' }),
+    ];
+    const pantalla = await renderPantalla(
+      <HorariosSimple alAbrirViaje={jest.fn()} alSalir={jest.fn()} />,
+    );
+    const nombres = pantalla
+      .getAllByText(/^(Pronto|Tarde)$/)
+      .map((n) => n.props.children);
+    expect(nombres).toEqual(['Pronto', 'Tarde']);
+  });
 });
