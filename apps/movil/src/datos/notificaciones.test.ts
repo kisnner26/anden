@@ -132,6 +132,14 @@ describe('acciones del recordatorio', () => {
     alResponder?.({ actionIdentifier: 'ver-boleto' } as never);
     expect(scheduleNotificationAsync).not.toHaveBeenCalled();
   });
+
+  it('una acción desconocida no reprograma nada', () => {
+    mostrarAvisosConLaAppAbierta();
+    const alResponder = jest.mocked(addNotificationResponseReceivedListener)
+      .mock.calls[0]?.[0];
+    alResponder?.({ actionIdentifier: 'otra' } as never);
+    expect(scheduleNotificationAsync).not.toHaveBeenCalled();
+  });
 });
 
 describe('cancelarRecordatorio', () => {
