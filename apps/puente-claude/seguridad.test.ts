@@ -49,4 +49,10 @@ describe('codigoValido', () => {
   it('acepta el código correcto', () => {
     expect(codigoValido('abc123', 'abc123')).toBe(true);
   });
+
+  it('rechaza uno distinto, uno de otro largo y la falta de código', () => {
+    expect(codigoValido('abc124', 'abc123')).toBe(false);
+    expect(codigoValido('abc', 'abc123')).toBe(false);
+    expect(codigoValido(undefined, 'abc123')).toBe(false);
+  });
 });
