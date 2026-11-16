@@ -49,14 +49,26 @@ describe('solicitarAccesoUbicacion', () => {
 
   it('deja pendiente un permiso sin respuesta', async () => {
     jest.mocked(Location.hasServicesEnabledAsync).mockResolvedValue(true);
+    jest.mocked(Location.requestForegroundPermissionsAsync).mockResolvedValue({
+      canAskAgain: true,
+      status: Location.PermissionStatus.UNDETERMINED,
+    } as never);
+    await expect(solicitarAccesoUbicacion()).resolves.toEqual({
+      estado: 'pendiente',
+    });
+  });
+
+  it('si lo deniegan dice si todavía se puede volver a preguntar', async () => {
+    jest.mocked(Location.hasServicesEnabledAsync).mockResolvedValue(true);
     jest
       .mocked(Location.requestForegroundPermissionsAsync)
       .mockResolvedValue({
-        canAskAgain: true,
-        status: Location.PermissionStatus.UNDETERMINED,
+        canAskAgain: false,
+        status: Location.PermissionStatus.DENIED,
       } as never);
     await expect(solicitarAccesoUbicacion()).resolves.toEqual({
-      estado: 'pendiente',
+      estado: 'denegado',
+      puedePreguntar: false,
     });
   });
 });
