@@ -1,0 +1,11 @@
+import { describe, expect, it } from '@jest/globals';
+import { renderHook } from '@testing-library/react-native';
+
+import { useAbordaje } from './useAbordaje';
+
+describe('useAbordaje por defecto', () => {
+  it('empieza sin registros', async () => {
+    const { result } = await renderHook(() => useAbordaje());
+    expect(result.current.registro).toEqual({});
+  });
+});
