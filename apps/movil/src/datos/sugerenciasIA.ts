@@ -3,7 +3,12 @@ import { destinoHabitual, momentoDelDia, type MemoriaIA } from './memoriaIA';
 export interface FactoresSugerencia {
   ahora: Date;
   /** el boleto vigente que sale primero, si lo hay */
-  boletoProximo: { destino: string; minutosParaSalir: number } | null;
+  boletoProximo: {
+    /** el bus del boleto se atrasó o se canceló */
+    alterado?: boolean;
+    destino: string;
+    minutosParaSalir: number;
+  } | null;
   /** destinos con salidas por venir, los más frecuentes primero */
   destinos: readonly string[];
   memoria: MemoriaIA;
@@ -44,7 +49,10 @@ export function sugerenciasDelMomento(f: FactoresSugerencia): string[] {
     candidatas.push({ clave, peso, texto });
 
   if (f.boletoProximo) {
-    const { destino, minutosParaSalir } = f.boletoProximo;
+    const { alterado, destino, minutosParaSalir } = f.boletoProximo;
+    if (alterado) {
+      sumar('alterado', '¿Qué otra salida me conviene?', 14);
+    }
     if (minutosParaSalir <= 180) {
       sumar('anden', `¿Dónde me subo al bus a ${destino}?`, 11);
       sumar('falta', '¿Cuánto falta para que salga mi bus?', 10);

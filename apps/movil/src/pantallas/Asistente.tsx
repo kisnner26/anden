@@ -75,6 +75,7 @@ import {
   mensajeDeViaje,
   urlSms,
 } from '@/datos/contactoConfianza';
+import { ATRASO_QUE_SE_AVISA_MIN } from '@/datos/consejoDeViaje';
 import { armarDetalle } from '@/datos/detalle';
 import { gustosDeViaje } from '@/datos/gustosDeViaje';
 import { useRecordatorios } from '@/datos/useRecordatorios';
@@ -265,6 +266,12 @@ export function Asistente({
         ahora,
         boletoProximo: proximoBoleto
           ? {
+              alterado: salidas.some(
+                (s) =>
+                  s.viajeId === proximoBoleto.boleto.viajeId &&
+                  (s.estado === 'cancelado' ||
+                    s.minutosAtraso >= ATRASO_QUE_SE_AVISA_MIN),
+              ),
               destino: proximoBoleto.resumen.destino,
               minutosParaSalir: Math.round(
                 (new Date(proximoBoleto.resumen.salida).getTime() -
