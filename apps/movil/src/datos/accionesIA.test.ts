@@ -74,5 +74,11 @@ describe('accionDeOrden', () => {
     });
   });
 
+  it('entiende compartir el viaje', () => {
+    expect(accionDeOrden('compartí mi viaje')).toEqual({ tipo: 'compartir' });
+    expect(accionDeOrden('mandale mi viaje a mi mamá')).toEqual({
+      tipo: 'compartir',
+    });
+  });
 
 });
