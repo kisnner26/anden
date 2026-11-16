@@ -1344,3 +1344,59 @@ img.cedula {
   color: var(--acento);
   min-width: 56px;
 }
+
+/* asistente: Claude Code por el puente */
+.claude-panel {
+  max-width: 760px;
+}
+.claude-nota {
+  color: var(--suave);
+  margin-bottom: 12px;
+}
+.claude-form {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.claude-form label {
+  display: grid;
+  gap: 4px;
+}
+.claude-panel input {
+  height: var(--alto-fila);
+  padding: 0 10px;
+  border: 1px solid var(--linea);
+  border-radius: var(--r);
+  background: var(--capa2);
+  width: 100%;
+}
+.claude-problema {
+  color: var(--rojo);
+  margin-bottom: 12px;
+}
+.claude-sugerencias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.claude-historial {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.claude-pregunta {
+  font-weight: 600;
+}
+.claude-respuesta {
+  white-space: pre-wrap;
+  border-left: 2px solid var(--acento);
+  padding-left: 10px;
+  margin-top: 4px;
+}
+.claude-pedir {
+  display: flex;
+  gap: 8px;
+}
