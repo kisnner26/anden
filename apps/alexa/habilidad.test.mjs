@@ -180,4 +180,14 @@ describe('responder', () => {
     );
     expect(r.response.shouldEndSession).toBe(true);
   });
+
+  it('parar o cancelar cierra con una despedida', async () => {
+    const r = await responder(
+      pedido('AMAZON.StopIntent'),
+      async () => [],
+      AHORA,
+    );
+    expect(r.response.outputSpeech.text).toBe('Buen viaje.');
+    expect(r.response.shouldEndSession).toBe(true);
+  });
 });
