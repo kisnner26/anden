@@ -2,7 +2,7 @@
 
 Panel web de Andén para la cooperativa. Usa el mismo proyecto de Supabase que la app móvil, así que lo que publican los conductores y lo que reservan los pasajeros aparece acá al instante.
 
-Muestra: resumen del día (cobros, pasajeros, viajes, encomiendas), solicitudes de conductor con la cédula para aprobar o rechazar, conductores, viajes (con cancelación), encomiendas y alertas de seguridad.
+Muestra: resumen del día (cobros, pasajeros, viajes, encomiendas), solicitudes de conductor con la cédula para aprobar o rechazar, conductores, viajes (con cancelación), encomiendas y alertas de seguridad. La sección Asistente le pregunta a Claude Code (con tu suscripción, por `apps/puente-claude`) sobre los números de la operación.
 
 ## Primer uso
 
