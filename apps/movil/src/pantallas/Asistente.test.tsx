@@ -331,6 +331,26 @@ describe('Asistente', () => {
     expect(contexto.preguntar).not.toHaveBeenCalled();
   });
 
+  it('contesta que no hay boleto cuando le piden avisar sin tener uno', async () => {
+    const contexto = valor();
+    const pantalla = await renderPantalla(
+      <ContextoIA.Provider value={contexto}>
+        <ContextoVoz.Provider value={vozFalsa().voz}>
+          <Asistente alVolver={() => undefined} />
+        </ContextoVoz.Provider>
+      </ContextoIA.Provider>,
+    );
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Tu pregunta'),
+      'Avisame 30 minutos antes de que salga mi bus',
+    );
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Preguntar' }));
+    expect(
+      await pantalla.findByText(/No tenés un boleto vigente/),
+    ).toBeTruthy();
+    expect(contexto.preguntar).not.toHaveBeenCalled();
+  });
+
   describe('conversación con herramientas', () => {
     function conversacion(json: object, parciales: object[] = []) {
       return jest.fn<NonNullable<ValorIA['conversar']>>(async (pedido) => {
