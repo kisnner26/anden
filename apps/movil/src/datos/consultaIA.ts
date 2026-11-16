@@ -15,6 +15,7 @@ import { hechosDeLugares, lugaresParaPregunta } from './lugaresTuristicos';
 import { agruparPorDestino } from './historialViajes';
 import type { BoletoGuardado } from './reserva';
 import type { Salida } from './salidas';
+import { sinTildes } from './texto';
 
 /** todo lo que la app sabe de la persona y del momento; es lo que se le comparte al modelo */
 export interface EstadoApp {
@@ -325,10 +326,6 @@ export function armarDatosParaElModelo(
     })),
     tarifas: tarifasDeLasSalidas(estado.salidas),
   };
-}
-
-function sinTildes(texto: string): string {
-  return texto.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 }
 
 export type Intencion =
