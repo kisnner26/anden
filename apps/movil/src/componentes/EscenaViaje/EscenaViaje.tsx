@@ -75,6 +75,7 @@ export function EscenaViaje({
   const brillo = useRef(new Animated.Value(0)).current;
   const velo = useRef(new Animated.Value(reducido ? 1 : 0)).current;
   const terminada = useRef(false);
+  const salida = useRef<Animated.CompositeAnimation | null>(null);
   const duracion =
     duracionPropia ?? (tipo === 'salida' ? DURACION_SALIDA : DURACION_LLEGADA);
   const anchoBus = Math.min(width * 0.66, 320);
@@ -103,13 +104,17 @@ export function EscenaViaje({
       alTerminar();
       return;
     }
-    Animated.timing(velo, {
+    salida.current = Animated.timing(velo, {
       duration: SALIDA_DE_ESCENA,
       easing: Easing.in(Easing.quad),
       toValue: 0,
       useNativeDriver: true,
-    }).start(() => alTerminar());
+    });
+    salida.current.start(() => alTerminar());
   }
+
+  // al desmontar no queda corriendo el fundido de salida
+  useEffect(() => () => salida.current?.stop(), []);
 
   useEffect(() => {
     if (reducido) {
