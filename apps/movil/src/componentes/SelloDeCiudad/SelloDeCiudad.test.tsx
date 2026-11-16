@@ -81,4 +81,16 @@ describe('SelloDeCiudad', () => {
     );
     expect(a).not.toBe(b);
   });
+
+  it('con movimiento reducido se dibuja igual', async () => {
+    jest.mocked(useMovimientoReducido).mockReturnValue(true);
+    const pantalla = await render(
+      <SelloDeCiudad
+        ciudad="Boaco"
+        llegadas={2}
+        primera="2026-10-05T14:00:00.000Z"
+      />,
+    );
+    expect(pantalla.toJSON()).not.toBeNull();
+  });
 });
