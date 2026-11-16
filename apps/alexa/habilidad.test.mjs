@@ -70,3 +70,16 @@ describe('diaHablado', () => {
     expect(diaHablado(new Date(2026, 10, 17, 6), AHORA)).toBe('el martes');
   });
 });
+
+describe('proximaSalida', () => {
+  it('toma la más próxima con asientos y venta abierta que no salió', () => {
+    const lista = [
+      salida('pasada', 8),
+      salida('llena', 11, { asientosLibres: 0 }),
+      salida('cerrada', 11, { ventaAbierta: false }),
+      salida('tarde', 17),
+      salida('buena', 13),
+    ];
+    expect(proximaSalida(lista, AHORA).id).toBe('buena');
+  });
+});
