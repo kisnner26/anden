@@ -14,4 +14,8 @@ describe('normalizar', () => {
   it('cambia los signos por espacios', () => {
     expect(normalizar('hola,mundo!')).toBe('hola mundo');
   });
+
+  it('deja el texto vacío vacío', () => {
+    expect(normalizar('¿?!')).toBe('');
+  });
 });
