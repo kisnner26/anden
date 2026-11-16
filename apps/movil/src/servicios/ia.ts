@@ -2,16 +2,20 @@ import { Platform } from 'react-native';
 
 import {
   conversarConElModelo,
+  crearPostalDeCiudad,
   disponibilidadDelModelo,
   olvidarConversacion,
   precalentarModelo,
+  puedeCrearImagenes,
   responderConElModelo,
   sabeConversar,
+  sabeCrearImagenes,
   type DisponibilidadIA,
   type PedidoConversacion,
 } from '../../modules/anden-ia';
 
 export type { DisponibilidadIA, PedidoConversacion };
+export { crearPostalDeCiudad, puedeCrearImagenes, sabeCrearImagenes };
 
 /** el motor de IA del teléfono: Apple Intelligence en iPhone, Gemini en Android */
 export type ProveedorIA = 'apple' | 'gemini';

@@ -26,7 +26,9 @@ interface ModuloAndenIA {
     datosJson: string,
     pregunta: string,
   ): Promise<string>;
+  crearPostal?(ciudad: string, descripcion: string): Promise<string>;
   disponibilidad(): Promise<DisponibilidadIA>;
+  estadoImagenes?(): Promise<'disponible' | 'no-disponible' | 'sistema-antiguo'>;
   olvidar?(conversacion: string): Promise<boolean>;
   precalentar?(conversacion: string, instrucciones: string): Promise<boolean>;
   responder(instrucciones: string, pregunta: string): Promise<string>;
@@ -50,6 +52,31 @@ export async function responderConElModelo(
 ): Promise<string> {
   if (!modulo) throw new Error('sin-modulo');
   return modulo.responder(instrucciones, pregunta);
+}
+
+/** si el módulo instalado sabe crear imágenes (iOS con Image Playground) */
+export const sabeCrearImagenes = modulo?.crearPostal !== undefined;
+
+/** si este teléfono puede crear imágenes ahora mismo */
+export async function puedeCrearImagenes(): Promise<boolean> {
+  try {
+    return (await modulo?.estadoImagenes?.()) === 'disponible';
+  } catch {
+    return false;
+  }
+}
+
+/** una postal ilustrada de la ciudad, hecha en el teléfono; devuelve la ruta del archivo o nulo si no se pudo */
+export async function crearPostalDeCiudad(
+  ciudad: string,
+  descripcion: string,
+): Promise<string | null> {
+  try {
+    const ruta = await modulo?.crearPostal?.(ciudad, descripcion);
+    return ruta ? ruta : null;
+  } catch {
+    return null;
+  }
 }
 
 /** si el módulo instalado sabe conversar con herramientas (iOS con Foundation Models) */
