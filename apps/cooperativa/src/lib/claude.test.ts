@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { codigoDelPuente, direccionDelPuente } from './claude';
+import {
+  codigoDelPuente,
+  contextoDeCooperativa,
+  direccionDelPuente,
+  instruccionesDeCooperativa,
+} from './claude';
 
 const CODIGO = 'a'.repeat(48);
 
@@ -43,5 +48,71 @@ describe('codigoDelPuente', () => {
   it('con otro largo o con otros caracteres no sirve', () => {
     expect(codigoDelPuente('a'.repeat(47))).toBeNull();
     expect(codigoDelPuente('z'.repeat(48))).toBeNull();
+  });
+});
+
+describe('contextoDeCooperativa', () => {
+  const HOY = new Date(2026, 10, 16, 12, 0);
+  const datos = {
+    alertas: [
+      { atendida: false, creada_en: '2026-11-16T10:00:00Z', id: 'a1' },
+    ] as never,
+    boletos: [],
+    cierres: [
+      {
+        chofer_id: 'cho_2',
+        cerrado_en: new Date(2026, 10, 16, 9, 0).toISOString(),
+        cobrado: 1200,
+        pasajeros: 20,
+        pendiente: 100,
+        viaje_id: 'via_2',
+      },
+    ],
+    encomiendas: [],
+    viajes: [],
+  };
+
+  it('resume lo cobrado, lo pendiente y los pasajeros', () => {
+    const texto = contextoDeCooperativa(datos, HOY);
+    expect(texto).toContain('Pasajeros llevados: 20');
+    expect(texto).toContain('Alertas sin atender: 1');
+  });
+
+  it('nombra al conductor que más cobró por su clave', () => {
+    expect(contextoDeCooperativa(datos, HOY)).toContain('cho_2');
+  });
+
+  it('nunca incluye cédulas, teléfonos ni nombres de pasajeros', () => {
+    const texto = contextoDeCooperativa(
+      {
+        ...datos,
+        boletos: [
+          {
+            actualizado_en: '',
+            asiento: 1,
+            boleto_id: 'b',
+            contenido: { boleto: { pasajero: { nombre: 'Ana Ruiz' } } },
+            estado: 'vigente',
+            viaje_id: 'via_2',
+          },
+        ],
+      },
+      HOY,
+    );
+    expect(texto).not.toContain('Ana Ruiz');
+  });
+
+  it('sin cierres no inventa un ranking', () => {
+    expect(contextoDeCooperativa({ ...datos, cierres: [] }, HOY)).not.toContain(
+      'Conductores que más cobraron',
+    );
+  });
+});
+
+describe('instruccionesDeCooperativa', () => {
+  it('lleva los datos y pide no inventar cifras', () => {
+    const texto = instruccionesDeCooperativa('Viajes activos: 3.');
+    expect(texto).toContain('Viajes activos: 3.');
+    expect(texto).toContain('no inventes cifras');
   });
 });
