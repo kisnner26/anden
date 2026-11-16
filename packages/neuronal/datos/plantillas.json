@@ -70,7 +70,17 @@
     "disponibilidad de asientos a {c}",
     "hay campo en el bus de {c}",
     "todavia hay asientos",
-    "se llenaron los buses a {c}"
+    "se llenaron los buses a {c}",
+    "quedan lugares para {c}",
+    "tienen cupo en el bus a {c}",
+    "hay espacio para dos personas a {c}",
+    "queda algun asiento en la salida de {c}",
+    "ya no hay asientos a {c}",
+    "cuantos lugares libres tiene el bus a {c}",
+    "puedo reservar asiento para {c}",
+    "hay ventana libre a {c}",
+    "el bus a {c} va lleno",
+    "falta mucho para llenarse el bus de {c}"
   ],
   "mi_boleto": [
     "cuando sale mi boleto",
