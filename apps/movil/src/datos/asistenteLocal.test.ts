@@ -111,4 +111,9 @@ describe('responderLocal', () => {
     expect(r.texto).toContain('asiento 8');
     expect(r.mostrarBoletos).toBe(true);
   });
+
+  it('propone abrir encomiendas', () => {
+    const r = responderLocal('quiero enviar un paquete a Boaco', estado());
+    expect(r.acciones).toEqual([{ pantalla: 'encomienda', tipo: 'abrir' }]);
+  });
 });
