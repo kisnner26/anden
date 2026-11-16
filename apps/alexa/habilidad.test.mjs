@@ -62,3 +62,11 @@ describe('horaHablada', () => {
     expect(horaHablada(new Date(2026, 10, 13, 0, 0))).toBe('12 de la noche');
   });
 });
+
+describe('diaHablado', () => {
+  it('dice hoy, mañana o el día de la semana', () => {
+    expect(diaHablado(new Date(2026, 10, 13, 18), AHORA)).toBe('hoy');
+    expect(diaHablado(new Date(2026, 10, 14, 6), AHORA)).toBe('mañana');
+    expect(diaHablado(new Date(2026, 10, 17, 6), AHORA)).toBe('el martes');
+  });
+});
