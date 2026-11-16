@@ -3,6 +3,8 @@ import { antiguedadLegible } from './cacheViajes';
 import type { Encomienda } from './encomiendas';
 import { formatoFechaCorta, formatoHoraCompleta } from './formato';
 import { formatoDiasSemana } from './formato';
+import { gustosDeViaje } from './gustosDeViaje';
+import { esTomable, mejorSalida } from './mejorSalida';
 import type { Habitual } from './habituales';
 import { hechosDeLugares, lugaresParaPregunta } from './lugaresTuristicos';
 import { agruparPorDestino } from './historialViajes';
@@ -90,6 +92,8 @@ export function lineaDeSalidaNumerada(
   salida: Salida,
   ahora: Date,
   choferes: ReadonlyMap<string, string>,
+  /** por qué es la que más conviene en su trayecto; ausente si no lo es */
+  recomendada?: readonly string[],
 ): string {
   const chofer = choferes.get(salida.choferId);
   const atraso =
@@ -97,7 +101,32 @@ export function lineaDeSalidaNumerada(
   const venta = salida.ventaAbierta ? '' : ', venta cerrada';
   return `[${numero}] ${etiquetaDia(salida.salida, ahora)} ${formatoHoraCompleta(salida.salida)}, ${salida.origen} a ${salida.destino}, ${SERVICIO[salida.servicio] ?? salida.servicio}, ${
     salida.tarifa === null ? 'sin tarifa cargada' : `C$ ${salida.tarifa}`
-  }, ${salida.asientosLibres} asientos libres, punto de encuentro ${salida.puntoEncuentro || 'por confirmar'}, bus ${salida.placa}${chofer ? `, chofer ${chofer}` : ''}, ${ESTADO_SALIDA[salida.estado] ?? salida.estado}${atraso}${venta}`;
+  }, ${salida.asientosLibres} asientos libres, punto de encuentro ${salida.puntoEncuentro || 'por confirmar'}, bus ${salida.placa}${chofer ? `, chofer ${chofer}` : ''}, ${ESTADO_SALIDA[salida.estado] ?? salida.estado}${atraso}${venta}${
+    recomendada
+      ? `, LA QUE MÁS CONVIENE en este trayecto${recomendada.length > 0 ? ` (${recomendada.join(', ')})` : ''}`
+      : ''
+  }`;
+}
+
+/** de cada trayecto con varias salidas tomables, la que más conviene: así el modelo no tiene que comparar a ojo */
+export function recomendadasPorTrayecto(
+  salidas: readonly Salida[],
+  estado: Pick<EstadoApp, 'ahora' | 'boletos'>,
+): Map<string, readonly string[]> {
+  const gustos = gustosDeViaje(estado.boletos);
+  const trayectos = new Map<string, Salida[]>();
+  for (const salida of salidas) {
+    if (!esTomable(salida, estado.ahora)) continue;
+    const clave = `${salida.origen}|${salida.destino}`;
+    trayectos.set(clave, [...(trayectos.get(clave) ?? []), salida]);
+  }
+  const elegidas = new Map<string, readonly string[]>();
+  for (const grupo of trayectos.values()) {
+    if (grupo.length < 2) continue;
+    const mejor = mejorSalida(grupo, { ahora: estado.ahora, gustos });
+    if (mejor) elegidas.set(mejor.salida.viajeId, mejor.motivos);
+  }
+  return elegidas;
 }
 
 export function lineaDeBoletoRica(
@@ -255,6 +284,7 @@ export function armarDatosParaElModelo(
         new Date(b.resumen.salida).getTime(),
     )
     .slice(0, 4);
+  const recomendadas = recomendadasPorTrayecto(proximas, estado);
   return {
     boletos: vigentes.map((b) => lineaDeBoletoRica(b, ahora)),
     encomiendas: estado.encomiendas.slice(0, 5).map(lineaDeEncomienda),
@@ -265,7 +295,13 @@ export function armarDatosParaElModelo(
       id: salida.viajeId,
       inicio: salida.salida.getTime(),
       libres: salida.asientosLibres,
-      linea: lineaDeSalidaNumerada(i + 1, salida, ahora, estado.choferes),
+      linea: lineaDeSalidaNumerada(
+        i + 1,
+        salida,
+        ahora,
+        estado.choferes,
+        recomendadas.get(salida.viajeId),
+      ),
       origen: salida.origen,
       tarifa: salida.tarifa,
     })),
