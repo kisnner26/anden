@@ -81,6 +81,13 @@ describe('proximaSalida', () => {
     );
     expect(proximaSalida(salidas)?.viajeId).toBe(orden[0]?.viajeId);
   });
+
+  it('ignora las que ya salieron o llegaron', () => {
+    const salidas = armarSalidas(crearMuestra(AHORA), AHORA).filter(
+      (s) => s.estado === 'en-ruta' || s.estado === 'llego',
+    );
+    expect(proximaSalida(salidas)).toBeNull();
+  });
 });
 
 describe('salidasDeChofer', () => {
