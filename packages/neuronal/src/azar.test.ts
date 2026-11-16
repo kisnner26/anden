@@ -34,3 +34,11 @@ describe('normal', () => {
     expect(Math.abs(Math.sqrt(varianza) - 1)).toBeLessThan(0.1);
   });
 });
+
+describe('mezclar', () => {
+  it('conserva los mismos elementos', () => {
+    expect(mezclar([1, 2, 3, 4, 5], crearAzar(1)).sort()).toEqual([
+      1, 2, 3, 4, 5,
+    ]);
+  });
+});
