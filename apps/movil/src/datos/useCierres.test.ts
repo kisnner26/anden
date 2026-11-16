@@ -13,4 +13,9 @@ describe('useCierres por defecto', () => {
     const { result } = await renderHook(() => useCierres());
     expect(result.current.cierreDe('via_1')).toBeUndefined();
   });
+
+  it('cerrar no falla', async () => {
+    const { result } = await renderHook(() => useCierres());
+    await expect(result.current.cerrar({} as never)).resolves.toBeUndefined();
+  });
 });
