@@ -76,4 +76,9 @@ describe('formatoDiasSemana', () => {
   it('ordena los días de lunes a domingo aunque lleguen desordenados', () => {
     expect(formatoDiasSemana([5, 1, 3])).toBe('lun, mié, vie');
   });
+
+  it('ignora los números que no son un día', () => {
+    expect(formatoDiasSemana([9, 1])).toBe('lun');
+    expect(formatoDiasSemana([9])).toBe('');
+  });
 });
