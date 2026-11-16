@@ -44,4 +44,15 @@ describe('SelloDeCiudad', () => {
       ),
     ).toBeTruthy();
   });
+
+  it('es un solo elemento accesible', async () => {
+    const pantalla = await render(
+      <SelloDeCiudad
+        ciudad="Managua"
+        llegadas={1}
+        primera="2026-10-05T14:00:00.000Z"
+      />,
+    );
+    expect(pantalla.getAllByLabelText(/Managua/)).toHaveLength(1);
+  });
 });
