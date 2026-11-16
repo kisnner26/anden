@@ -47,4 +47,14 @@ describe('iniciarSondeo', () => {
     jest.advanceTimersByTime(5000);
     expect(tarea).not.toHaveBeenCalled();
   });
+
+  it('se pausa al pasar a segundo plano', () => {
+    const tarea = jest.fn();
+    const { cambiar, f } = fuente();
+    iniciarSondeo(tarea, 1000, f);
+    jest.advanceTimersByTime(2000);
+    cambiar('background');
+    jest.advanceTimersByTime(5000);
+    expect(tarea).toHaveBeenCalledTimes(2);
+  });
 });
