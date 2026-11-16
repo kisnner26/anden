@@ -44,4 +44,10 @@ describe('motivos de no disponibilidad', () => {
       'idioma',
     );
   });
+
+  it('si el teléfono no es compatible nombra el motor', () => {
+    expect(motivoNoDisponible('no-compatible', 'Gemini')).toBe(
+      'Este teléfono no es compatible con Gemini.',
+    );
+  });
 });
