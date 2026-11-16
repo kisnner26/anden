@@ -56,4 +56,9 @@ describe('horaHablada', () => {
       '7 y 15 de la noche',
     );
   });
+
+  it('distingue el mediodía y la medianoche', () => {
+    expect(horaHablada(new Date(2026, 10, 13, 12, 0))).toBe('12 del mediodía');
+    expect(horaHablada(new Date(2026, 10, 13, 0, 0))).toBe('12 de la noche');
+  });
 });
