@@ -5,6 +5,7 @@ import {
   CLAVE_MEMORIA_IA,
   MEMORIA_VACIA,
   claveMemoriaDe,
+  borrarMemoria,
   destinoHabitual,
   guardarMemoria,
   leerMemoriaGuardada,
@@ -147,5 +148,11 @@ describe('guardado de la memoria', () => {
   it('no mezcla la memoria de dos cuentas', async () => {
     await guardarMemoria('ana', registrarReserva(MEMORIA_VACIA, 'Boaco'));
     expect(await leerMemoriaGuardada('luis')).toEqual(MEMORIA_VACIA);
+  });
+
+  it('borrar la memoria la deja vacía', async () => {
+    await guardarMemoria('ana', registrarReserva(MEMORIA_VACIA, 'Boaco'));
+    await borrarMemoria('ana');
+    expect(await leerMemoriaGuardada('ana')).toEqual(MEMORIA_VACIA);
   });
 });
