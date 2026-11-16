@@ -148,4 +148,22 @@ describe('sugerencias por momento', () => {
     }
     expect(vista).toBe(true);
   });
+
+  it('repite la última pregunta cuando ya usó el asistente', () => {
+    const memoria = {
+      ...MEMORIA_VACIA,
+      preguntas: ['¿Hay bus a León hoy?'],
+      usos: 3,
+    };
+    let vista = false;
+    for (let semilla = 0; semilla < 40; semilla += 1) {
+      if (
+        sugerenciasDelMomento({ ...BASE, memoria, semilla }).includes(
+          '¿Hay bus a León hoy?',
+        )
+      )
+        vista = true;
+    }
+    expect(vista).toBe(true);
+  });
 });
