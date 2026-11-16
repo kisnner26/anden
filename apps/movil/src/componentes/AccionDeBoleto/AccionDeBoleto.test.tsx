@@ -33,4 +33,15 @@ describe('AccionDeBoleto', () => {
       }),
     ).toBeTruthy();
   });
+
+  it('sin etiqueta accesible lee la etiqueta visible', async () => {
+    const pantalla = await render(
+      <AccionDeBoleto
+        alPresionar={jest.fn()}
+        etiqueta="Pantalla"
+        tipo="pantalla"
+      />,
+    );
+    expect(pantalla.getByRole('button', { name: 'Pantalla' })).toBeTruthy();
+  });
 });
