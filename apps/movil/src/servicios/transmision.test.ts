@@ -117,4 +117,13 @@ describe('transmisión compartida', () => {
     configurarTransmision(() => otra);
     expect(TRANSMISION.activos()).toEqual(['via_otra']);
   });
+
+  it('decide el servicio la primera vez que se usa y lo reutiliza', () => {
+    const fabrica = jest.fn(() => crearTransmisionLocal());
+    configurarTransmision(fabrica);
+    expect(fabrica).not.toHaveBeenCalled();
+    TRANSMISION.version();
+    TRANSMISION.version();
+    expect(fabrica).toHaveBeenCalledTimes(1);
+  });
 });
