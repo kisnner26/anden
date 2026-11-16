@@ -1,3 +1,4 @@
+import { boletosVigentes } from './boletosVigentes';
 import { formatoFechaCorta, formatoHoraCompleta } from './formato';
 import type { BoletoGuardado } from './reserva';
 import type { Salida } from './salidas';
@@ -42,14 +43,7 @@ export function armarContexto(
     )
     .sort((a, b) => a.salida.getTime() - b.salida.getTime())
     .slice(0, MAXIMO_SALIDAS);
-  const vigentes = boletos
-    .filter(({ boleto }) => boleto.estado === 'vigente')
-    .sort(
-      (a, b) =>
-        new Date(a.resumen.salida).getTime() -
-        new Date(b.resumen.salida).getTime(),
-    )
-    .slice(0, MAXIMO_BOLETOS);
+  const vigentes = boletosVigentes(boletos).slice(0, MAXIMO_BOLETOS);
 
   return [
     `Ahora son las ${formatoHoraCompleta(ahora)} del ${formatoFechaCorta(ahora)}.`,
