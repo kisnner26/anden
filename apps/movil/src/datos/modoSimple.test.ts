@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { beforeEach, describe, expect, it } from '@jest/globals';
+import { renderHook, waitFor } from '@testing-library/react-native';
 
 import {
   CLAVE_MODO_SIMPLE,
@@ -32,5 +33,13 @@ describe('modoSimple', () => {
   it('cualquier valor distinto de 1 cuenta como apagado', async () => {
     await AsyncStorage.setItem(CLAVE_MODO_SIMPLE, 'si');
     expect(await leerModoSimple()).toBe(false);
+  });
+});
+
+describe('useModoSimple', () => {
+  it('empieza sin saber y luego lee lo guardado', async () => {
+    await AsyncStorage.setItem(CLAVE_MODO_SIMPLE, '1');
+    const { result } = await renderHook(() => useModoSimple());
+    await waitFor(() => expect(result.current.activo).toBe(true));
   });
 });
