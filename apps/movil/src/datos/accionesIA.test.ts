@@ -54,4 +54,8 @@ describe('leerAcciones', () => {
     ).toEqual([{ tipo: 'compartir' }, { minutos: 15, tipo: 'avisar' }]);
   });
 
+  it('devuelve vacío si no es una lista', () => {
+    expect(leerAcciones(undefined)).toEqual([]);
+    expect(leerAcciones({ tipo: 'compartir' })).toEqual([]);
+  });
 });
