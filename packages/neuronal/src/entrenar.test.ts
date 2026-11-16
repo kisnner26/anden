@@ -46,4 +46,10 @@ describe('entrenar', () => {
       historial[0]!.perdida,
     );
   });
+
+  it('devuelve una entrada por época', () => {
+    const red = crearRed(2, [4], 2, 3);
+    const historial = entrenar(red, dosGrupos(), { epocas: 7 });
+    expect(historial.map((h) => h.epoca)).toEqual([1, 2, 3, 4, 5, 6, 7]);
+  });
 });
