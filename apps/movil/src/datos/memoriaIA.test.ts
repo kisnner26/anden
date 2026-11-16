@@ -1,10 +1,13 @@
-import { describe, expect, it } from '@jest/globals';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { beforeEach, describe, expect, it } from '@jest/globals';
 
 import {
   CLAVE_MEMORIA_IA,
   MEMORIA_VACIA,
   claveMemoriaDe,
   destinoHabitual,
+  guardarMemoria,
+  leerMemoriaGuardada,
   leerMemoria,
   momentoDelDia,
   momentoHabitual,
@@ -12,6 +15,10 @@ import {
   registrarReserva,
   resumenParaModelo,
 } from './memoriaIA';
+
+beforeEach(async () => {
+  await AsyncStorage.clear();
+});
 
 const AHORA = new Date(2026, 10, 12, 8, 30);
 
@@ -122,5 +129,18 @@ describe('claveMemoriaDe', () => {
 
   it('sin cuenta usa la clave general', () => {
     expect(claveMemoriaDe(null)).toBe(CLAVE_MEMORIA_IA);
+  });
+});
+
+describe('guardado de la memoria', () => {
+  it('guarda y lee la memoria de una cuenta', async () => {
+    const memoria = registrarPregunta(
+      MEMORIA_VACIA,
+      'bus a Boaco',
+      ['Boaco'],
+      AHORA,
+    );
+    await guardarMemoria('ana', memoria);
+    expect(await leerMemoriaGuardada('ana')).toEqual(memoria);
   });
 });
