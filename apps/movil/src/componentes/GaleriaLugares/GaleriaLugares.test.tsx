@@ -11,4 +11,12 @@ describe('GaleriaLugares', () => {
     const pantalla = await render(<GaleriaLugares lugares={[]} />);
     expect(pantalla.toJSON()).toBeNull();
   });
+
+  it('muestra la ciudad y el nombre de cada lugar', async () => {
+    const lugares = lugaresDeCiudad('Boaco');
+    expect(lugares.length).toBeGreaterThan(0);
+    const pantalla = await render(<GaleriaLugares lugares={lugares} />);
+    expect(pantalla.getAllByText('Boaco').length).toBe(lugares.length);
+    expect(pantalla.getByText(lugares[0]!.titulo)).toBeTruthy();
+  });
 });
