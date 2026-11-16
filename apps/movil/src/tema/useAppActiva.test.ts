@@ -10,7 +10,7 @@ const original = AppState.currentState;
 
 afterEach(() => {
   jest.restoreAllMocks();
-  (AppState as { currentState: string }).currentState = original;
+  (AppState as { currentState: string }).currentState = original as string;
   oyente = null;
   remove.mockClear();
 });
