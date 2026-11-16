@@ -823,6 +823,22 @@ export const textos = {
     deVarias: 'Lugares para ver en Managua, Boaco y Juigalpa.',
     titulo: 'Lugares para ver',
   },
+  accionesIA: {
+    avisar: 'Avisarme {minutos} min antes',
+    avisoListo:
+      'Listo: te aviso {minutos} minutos antes de que salga tu bus a {destino}.',
+    avisoPermiso:
+      'Para avisarte necesito permiso de notificaciones. Activalo en los ajustes del teléfono y pedímelo de nuevo.',
+    avisoYaPaso:
+      'Ya falta menos que eso para que salga tu bus, no hay tiempo para avisarte con esa anticipación.',
+    compartir: 'Compartir mi viaje',
+    compartirListo:
+      'Abrí Mensajes con tu viaje listo para {nombre}. Revisalo y tocá enviar.',
+    fallo: 'No pude hacerlo ahora. Probá desde tus boletos.',
+    sinBoleto: 'No tenés un boleto vigente para esto. Reservá uno y te ayudo.',
+    sinContacto:
+      'Todavía no tenés un contacto de confianza. Decime, por ejemplo, "agregá a Mamá como contacto" y después compartimos tu viaje.',
+  },
   asistenteRico: {
     actividadDe: '{actividad}…',
     boletosTitulo: 'Tus boletos',
