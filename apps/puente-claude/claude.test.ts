@@ -22,4 +22,10 @@ describe('validarPedido', () => {
       validarPedido({ instrucciones: '', pregunta: 'a'.repeat(601) }),
     ).toBeNull();
   });
+
+  it('rechaza instrucciones demasiado largas', () => {
+    expect(
+      validarPedido({ instrucciones: 'a'.repeat(12_001), pregunta: 'hola' }),
+    ).toBeNull();
+  });
 });
