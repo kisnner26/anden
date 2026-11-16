@@ -27,4 +27,8 @@ describe('vectorizar', () => {
     const norma = Math.sqrt(Array.from(v).reduce((s, x) => s + x * x, 0));
     expect(norma).toBeCloseTo(1, 5);
   });
+
+  it('un texto sin palabras da un vector de ceros', () => {
+    expect(Array.from(vectorizar('¿?', 64)).every((x) => x === 0)).toBe(true);
+  });
 });
