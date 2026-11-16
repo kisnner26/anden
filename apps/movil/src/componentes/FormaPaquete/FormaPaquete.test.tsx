@@ -13,4 +13,9 @@ describe('FormaPaquete', () => {
     const pantalla = await render(<FormaPaquete tamano="pequeno" />);
     expect(pantalla.toJSON()).not.toBeNull();
   });
+
+  it('dibuja la caja grande', async () => {
+    const pantalla = await render(<FormaPaquete tamano="grande" />);
+    expect(pantalla.toJSON()).not.toBeNull();
+  });
 });
