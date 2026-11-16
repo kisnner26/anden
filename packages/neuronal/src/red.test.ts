@@ -38,4 +38,12 @@ describe('crearRed', () => {
       Array.from(b.capas[0]!.pesos),
     );
   });
+
+  it('con otra semilla crea otros pesos', () => {
+    const a = crearRed(4, [6], 3, 1);
+    const b = crearRed(4, [6], 3, 2);
+    expect(Array.from(a.capas[0]!.pesos)).not.toEqual(
+      Array.from(b.capas[0]!.pesos),
+    );
+  });
 });
