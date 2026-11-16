@@ -20,3 +20,14 @@ export function textoDeMensaje(texto: string): string | null {
   if (limpio === '' || limpio.length > MAXIMO_MENSAJE) return null;
   return limpio;
 }
+
+/** los mensajes de más viejo a más nuevo, sin repetir ninguno (un mismo id vale una sola vez) */
+export function ordenarMensajes(
+  mensajes: readonly MensajeViaje[],
+): MensajeViaje[] {
+  const vistos = new Map<string, MensajeViaje>();
+  for (const mensaje of mensajes) vistos.set(mensaje.id, mensaje);
+  return [...vistos.values()].sort((a, b) =>
+    a.enviadoEn.localeCompare(b.enviadoEn),
+  );
+}
