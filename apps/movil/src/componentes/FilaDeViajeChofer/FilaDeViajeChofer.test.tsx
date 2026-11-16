@@ -115,4 +115,12 @@ describe('FilaDeViajeChofer', () => {
     await fireEvent.press(pantalla.getByText(t('motivoCancelacion.clima')));
     expect(alElegirMotivo).toHaveBeenCalledWith('clima');
   });
+
+  it('el motivo elegido queda marcado', async () => {
+    const pantalla = await dibujar({ motivo: 'pocos', pideMotivo: true });
+    const fichas = pantalla
+      .getAllByRole('button')
+      .filter((b) => b.props.accessibilityState?.selected === true);
+    expect(fichas).toHaveLength(1);
+  });
 });
