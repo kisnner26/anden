@@ -42,4 +42,8 @@ describe('pedidoValido', () => {
       ),
     ).toBe(false);
   });
+
+  it('rechaza todo si no hay un id de habilidad configurado', () => {
+    expect(pedidoValido(pedido(), undefined, AHORA)).toBe(false);
+  });
 });
