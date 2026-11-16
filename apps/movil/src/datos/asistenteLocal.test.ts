@@ -51,4 +51,8 @@ describe('intencionLocal', () => {
   it('reconoce una pregunta de precio', () => {
     expect(intencionLocal('cuánto cuesta ir a Boaco')?.etiqueta).toBe('precio');
   });
+
+  it('reconoce un saludo', () => {
+    expect(intencionLocal('hola')?.etiqueta).toBe('saludo');
+  });
 });
