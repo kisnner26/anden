@@ -91,4 +91,9 @@ describe('responderLocal', () => {
     expect(r.texto).toContain('No encontré salidas');
     expect(r.salidas).toEqual([]);
   });
+
+  it('dice la salida más barata cuando se la piden', () => {
+    const r = responderLocal('cuál es la salida más barata a Boaco', estado());
+    expect(r.texto).toContain('C$ 70');
+  });
 });
