@@ -43,5 +43,15 @@ describe('leerAcciones', () => {
     ]);
   });
 
+  it('quita repetidas y se queda con dos como máximo', () => {
+    expect(
+      leerAcciones([
+        { tipo: 'compartir' },
+        { tipo: 'compartir' },
+        { minutos: 15, tipo: 'avisar' },
+        { pantalla: 'avisos', tipo: 'abrir' },
+      ]),
+    ).toEqual([{ tipo: 'compartir' }, { minutos: 15, tipo: 'avisar' }]);
+  });
 
 });
