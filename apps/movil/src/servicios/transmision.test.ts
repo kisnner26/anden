@@ -108,6 +108,12 @@ describe('sinSenal', () => {
       false,
     );
   });
+
+  it('acepta un límite propio en segundos', () => {
+    expect(sinSenal(POSICION, new Date('2026-11-12T18:00:20.000Z'), 10)).toBe(
+      true,
+    );
+  });
 });
 
 describe('transmisión compartida', () => {
