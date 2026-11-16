@@ -47,4 +47,11 @@ describe('BoletosSimple', () => {
     );
     expect(alBuscar).toHaveBeenCalledTimes(1);
   });
+
+  it('muestra un botón gigante por cada boleto vigente', async () => {
+    const a = boletoDePrueba(new Date(2099, 0, 5, 9, 0), 3, 'AAAA1111');
+    const pantalla = await dibujar([a]);
+    expect(pantalla.getByText('Boaco')).toBeTruthy();
+    expect(pantalla.getByText(/Asiento 3/)).toBeTruthy();
+  });
 });
