@@ -18,8 +18,11 @@ export default function RutaRutas() {
   }
   return (
     <Rutas
-      alElegirAsientos={(id) =>
-        router.push({ pathname: '/viaje/[id]/asientos', params: { id } })
+      alElegirAsientos={(id, pasajeros) =>
+        router.push({
+          params: { id, pasajeros: String(pasajeros) },
+          pathname: '/viaje/[id]/asientos',
+        })
       }
       alAbrirEncomiendas={() => router.push('/encomienda')}
       alAbrirRuta={(id) =>
