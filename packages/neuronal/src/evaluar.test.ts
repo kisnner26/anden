@@ -78,4 +78,13 @@ describe('precisionPorClase', () => {
       ]),
     ).toEqual([0.75, 1]);
   });
+
+  it('una clase sin ejemplos reales da nulo', () => {
+    expect(
+      precisionPorClase([
+        [0, 0],
+        [1, 3],
+      ]),
+    ).toEqual([null, 0.75]);
+  });
 });
