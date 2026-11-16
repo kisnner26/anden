@@ -18,4 +18,11 @@ describe('ContadorPasajeros', () => {
     expect(pantalla.getByText('1')).toBeTruthy();
     expect(pantalla.getByText(t('rutas.pasajero'))).toBeTruthy();
   });
+
+  it('muestra el plural con más de uno', async () => {
+    const pantalla = await render(
+      <ContadorPasajeros alCambiar={jest.fn()} cantidad={3} />,
+    );
+    expect(pantalla.getByText(t('rutas.pasajeros'))).toBeTruthy();
+  });
 });
