@@ -65,4 +65,11 @@ describe('useAppActiva', () => {
     const { result } = await renderHook(() => useAppActiva());
     expect(result.current).toBe(true);
   });
+
+  it('el estado inactivo cuenta como fuera de vista', async () => {
+    simular('active');
+    const { result } = await renderHook(() => useAppActiva());
+    await act(async () => oyente?.('inactive'));
+    expect(result.current).toBe(false);
+  });
 });
