@@ -42,4 +42,9 @@ describe('rasgos', () => {
       expect.arrayContaining(['b:bus_a', 'b:a_boaco']),
     );
   });
+
+  it('incluye trozos de tres letras con marca de inicio y fin', () => {
+    const lista = rasgos('bus');
+    expect(lista).toEqual(expect.arrayContaining(['c:^bu', 'c:bus', 'c:us$']));
+  });
 });
