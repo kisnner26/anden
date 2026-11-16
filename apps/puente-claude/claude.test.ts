@@ -43,4 +43,12 @@ describe('argumentosDeClaude', () => {
       ]),
     );
   });
+
+  it('manda las instrucciones como instrucciones del sistema', () => {
+    const a = argumentosDeClaude({
+      instrucciones: 'Sos el asistente',
+      pregunta: 'hola',
+    });
+    expect(a[a.indexOf('--system-prompt') + 1]).toBe('Sos el asistente');
+  });
 });
