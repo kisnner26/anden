@@ -71,3 +71,9 @@ describe('formatoDiaCorto', () => {
     expect(formatoDiaCorto(new Date(2026, 10, 2))).toBe('lun 2');
   });
 });
+
+describe('formatoDiasSemana', () => {
+  it('ordena los días de lunes a domingo aunque lleguen desordenados', () => {
+    expect(formatoDiasSemana([5, 1, 3])).toBe('lun, mié, vie');
+  });
+});
