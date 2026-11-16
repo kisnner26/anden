@@ -208,4 +208,11 @@ describe('proximaDelGrupo', () => {
         ?.viajeId,
     ).toBe('manana');
   });
+
+  it('devuelve nulo si ninguna hora del grupo tiene salida', () => {
+    const [grupo] = agruparHabituales([HABITUAL]);
+    expect(
+      proximaDelGrupo(grupo!, [], new Date(2026, 10, 15, 20, 0)),
+    ).toBeNull();
+  });
 });
