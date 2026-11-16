@@ -351,6 +351,24 @@ describe('Asistente', () => {
     expect(contexto.preguntar).not.toHaveBeenCalled();
   });
 
+  it('explica que no puede crear imágenes donde el teléfono no sabe', async () => {
+    const contexto = valor();
+    const pantalla = await renderPantalla(
+      <ContextoIA.Provider value={contexto}>
+        <ContextoVoz.Provider value={vozFalsa().voz}>
+          <Asistente alVolver={() => undefined} />
+        </ContextoVoz.Provider>
+      </ContextoIA.Provider>,
+    );
+    await fireEvent.changeText(
+      pantalla.getByLabelText('Tu pregunta'),
+      'Hacé una postal de Boaco',
+    );
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Preguntar' }));
+    expect(await pantalla.findByText(/no puede crear imágenes/)).toBeTruthy();
+    expect(contexto.preguntar).not.toHaveBeenCalled();
+  });
+
   describe('conversación con herramientas', () => {
     function conversacion(json: object, parciales: object[] = []) {
       return jest.fn<NonNullable<ValorIA['conversar']>>(async (pedido) => {

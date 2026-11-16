@@ -60,6 +60,27 @@ describe('leerAcciones', () => {
   });
 });
 
+describe('postal', () => {
+  it('acepta la postal de una ciudad con ficha', () => {
+    expect(leerAcciones([{ ciudad: 'boaco', tipo: 'postal' }])).toEqual([
+      { ciudad: 'Boaco', tipo: 'postal' },
+    ]);
+  });
+
+  it('descarta la postal de una ciudad que no existe', () => {
+    expect(leerAcciones([{ ciudad: 'Atlantis', tipo: 'postal' }])).toEqual([]);
+    expect(leerAcciones([{ tipo: 'postal' }])).toEqual([]);
+  });
+
+  it('entiende pedir una postal por orden', () => {
+    expect(accionDeOrden('hacé una postal de Juigalpa')).toEqual({
+      ciudad: 'Juigalpa',
+      tipo: 'postal',
+    });
+    expect(accionDeOrden('hacé una postal')).toBeNull();
+  });
+});
+
 describe('accionDeOrden', () => {
   it('entiende un aviso con minutos', () => {
     expect(

@@ -62,6 +62,30 @@ describe('leerRespuestaRica por número', () => {
   });
 });
 
+describe('acciones en la respuesta', () => {
+  it('deja solo las acciones válidas que propuso el modelo', () => {
+    const r = leerRespuestaRica(
+      JSON.stringify({
+        acciones: [
+          { minutos: 30, tipo: 'avisar' },
+          { tipo: 'formatearTelefono' },
+          { ciudad: 'Boaco', tipo: 'postal' },
+        ],
+        texto: 'Listo.',
+      }),
+      [],
+    );
+    expect(r.acciones).toEqual([
+      { minutos: 30, tipo: 'avisar' },
+      { ciudad: 'Boaco', tipo: 'postal' },
+    ]);
+  });
+
+  it('no trae acciones si el modelo no las mandó', () => {
+    expect(leerRespuestaRica('{"texto":"hola"}', []).acciones).toEqual([]);
+  });
+});
+
 describe('leerRespuestaRica', () => {
   const reales = [salida('via_a', 30), salida('via_b', 60)];
 
