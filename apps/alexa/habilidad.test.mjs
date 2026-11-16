@@ -135,4 +135,13 @@ describe('responder', () => {
       'No tengo cargada la tarifa',
     );
   });
+
+  it('dice cuántos asientos quedan', async () => {
+    const r = await responder(
+      pedido('AsientosIntent', 'Juigalpa'),
+      async () => [salida('a', 15, { asientosLibres: 4 })],
+      AHORA,
+    );
+    expect(r.response.outputSpeech.text).toContain('quedan 4 asientos');
+  });
 });
