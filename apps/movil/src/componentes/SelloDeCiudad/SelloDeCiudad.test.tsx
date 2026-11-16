@@ -33,4 +33,15 @@ describe('SelloDeCiudad', () => {
       ),
     ).toBeTruthy();
   });
+
+  it('sin viajes se anuncia vacío', async () => {
+    const pantalla = await render(
+      <SelloDeCiudad ciudad="Juigalpa" llegadas={0} primera={null} />,
+    );
+    expect(
+      pantalla.getByLabelText(
+        rellenar(t('pasaporte.selloVacio'), { ciudad: 'Juigalpa' }),
+      ),
+    ).toBeTruthy();
+  });
 });
