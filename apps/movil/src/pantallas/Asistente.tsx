@@ -231,7 +231,11 @@ export function Asistente({
   >(null);
   const dicho = useRef('');
   const enviarActual = useRef<
-    (pregunta: string, porVoz?: boolean) => Promise<void>
+    (
+      pregunta: string,
+      porVoz?: boolean,
+      soloPregunta?: boolean,
+    ) => Promise<void>
   >(async () => undefined);
   const hablarRespuesta = useRef(false);
 
@@ -602,13 +606,18 @@ export function Asistente({
     conversacionId.current = `conversacion-${Date.now()}`;
   }
 
-  async function enviar(pregunta: string, porVoz = false) {
+  async function enviar(
+    pregunta: string,
+    porVoz = false,
+    /** una pregunta que llega por un enlace no puede disparar acciones: solo se contesta */
+    soloPregunta = false,
+  ) {
     const limpia = pregunta.trim();
     if (limpia === '' || pensando) return;
     establecerPensando(true);
     establecerFallo(false);
     try {
-      const orden = await ejecutarOrden(limpia);
+      const orden = soloPregunta ? null : await ejecutarOrden(limpia);
       if (orden !== null) {
         responder(limpia, orden, porVoz);
         return;
@@ -744,7 +753,7 @@ export function Asistente({
   useEffect(() => {
     if (!preguntaInicial || preguntaEnviada.current) return;
     preguntaEnviada.current = true;
-    void enviarActual.current(preguntaInicial);
+    void enviarActual.current(preguntaInicial, false, true);
   }, [preguntaInicial]);
 
   const motivo = usable ? null : motivoNoDisponible(disponibilidad, nombre);
