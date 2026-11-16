@@ -106,3 +106,12 @@ describe('sugerenciasDelMomento', () => {
     expect([...sinModo].some((p) => p.includes('visitar'))).toBe(false);
   });
 });
+
+describe('sugerencias por momento', () => {
+  it('con el modo turista ofrece qué visitar y qué comer', () => {
+    const lista = sugerenciasDelMomento({ ...BASE, turista: true });
+    expect(
+      lista.some((s) => s.includes('visitar') || s.includes('se come')),
+    ).toBe(true);
+  });
+});
