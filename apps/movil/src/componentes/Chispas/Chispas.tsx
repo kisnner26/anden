@@ -4,6 +4,7 @@ import { Animated, Easing, StyleSheet, View } from 'react-native';
 import { coloresAura } from '@/tema/colores';
 import { movimiento } from '@/tema/movimiento';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
+import { useAppActiva } from '@/tema/useAppActiva';
 
 export interface PropiedadesChispas {
   /** cuántas estrellas titilan alrededor */
@@ -34,8 +35,9 @@ function Estrella({
 }) {
   const brillo = useRef(new Animated.Value(reducir ? 1 : 0)).current;
 
+  const activa = useAppActiva();
   useEffect(() => {
-    if (reducir) return;
+    if (reducir || !activa) return;
     const ciclo = Animated.loop(
       Animated.sequence([
         Animated.delay(demora),
@@ -55,7 +57,7 @@ function Estrella({
     );
     ciclo.start();
     return () => ciclo.stop();
-  }, [brillo, demora, reducir]);
+  }, [activa, brillo, demora, reducir]);
 
   const grosor = Math.max(2, tamano / 6);
   const escala = brillo.interpolate({
