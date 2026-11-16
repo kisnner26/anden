@@ -19,6 +19,11 @@ describe('nombreDeFoto', () => {
     expect(nombreDeFoto('x.jpg', 1001, 0.1)).not.toBe(a);
     expect(nombreDeFoto('x.jpg', 1000, 0.2)).not.toBe(a);
   });
+
+  it('reconoce heic y webp', () => {
+    expect(nombreDeFoto('file:///tmp/a.HEIC', 1, 0.5)).toMatch(/\.heic$/);
+    expect(nombreDeFoto('file:///tmp/a.webp', 1, 0.5)).toMatch(/\.webp$/);
+  });
 });
 
 describe('esReferenciaGuardada', () => {
