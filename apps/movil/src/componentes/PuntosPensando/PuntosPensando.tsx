@@ -4,12 +4,14 @@ import { Animated, Easing, StyleSheet, View } from 'react-native';
 import { coloresIA } from '@/tema/colores';
 import { movimiento } from '@/tema/movimiento';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
+import { useAppActiva } from '@/tema/useAppActiva';
 
 function Punto({ indice, reducir }: { indice: number; reducir: boolean }) {
   const valor = useRef(new Animated.Value(0)).current;
 
+  const activa = useAppActiva();
   useEffect(() => {
-    if (reducir) return;
+    if (reducir || !activa) return;
     const ciclo = Animated.loop(
       Animated.sequence([
         Animated.delay(indice * (movimiento.puntoPensando / 2)),
@@ -30,7 +32,7 @@ function Punto({ indice, reducir }: { indice: number; reducir: boolean }) {
     );
     ciclo.start();
     return () => ciclo.stop();
-  }, [indice, reducir, valor]);
+  }, [activa, indice, reducir, valor]);
 
   return (
     <Animated.View
