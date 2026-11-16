@@ -58,6 +58,36 @@
 {"etiqueta":"proximo_bus","plantilla":19,"texto":"tienen bus para managua hoy"}
 {"etiqueta":"proximo_bus","plantilla":19,"texto":"tienen bus para boaco hoy"}
 {"etiqueta":"proximo_bus","plantilla":19,"texto":"tienen bus para juigalpa hoy"}
+{"etiqueta":"proximo_bus","plantilla":20,"texto":"tiene algun bus para managua mas tarde"}
+{"etiqueta":"proximo_bus","plantilla":20,"texto":"tiene algun bus para boaco mas tarde"}
+{"etiqueta":"proximo_bus","plantilla":20,"texto":"tiene algun bus para juigalpa mas tarde"}
+{"etiqueta":"proximo_bus","plantilla":21,"texto":"a que horas pasan buses a managua"}
+{"etiqueta":"proximo_bus","plantilla":21,"texto":"a que horas pasan buses a boaco"}
+{"etiqueta":"proximo_bus","plantilla":21,"texto":"a que horas pasan buses a juigalpa"}
+{"etiqueta":"proximo_bus","plantilla":22,"texto":"ocupo viajar a managua que me recomienda"}
+{"etiqueta":"proximo_bus","plantilla":22,"texto":"ocupo viajar a boaco que me recomienda"}
+{"etiqueta":"proximo_bus","plantilla":22,"texto":"ocupo viajar a juigalpa que me recomienda"}
+{"etiqueta":"proximo_bus","plantilla":23,"texto":"sale algo hacia managua en la tarde"}
+{"etiqueta":"proximo_bus","plantilla":23,"texto":"sale algo hacia boaco en la tarde"}
+{"etiqueta":"proximo_bus","plantilla":23,"texto":"sale algo hacia juigalpa en la tarde"}
+{"etiqueta":"proximo_bus","plantilla":24,"texto":"que hora es la ultima salida a managua"}
+{"etiqueta":"proximo_bus","plantilla":24,"texto":"que hora es la ultima salida a boaco"}
+{"etiqueta":"proximo_bus","plantilla":24,"texto":"que hora es la ultima salida a juigalpa"}
+{"etiqueta":"proximo_bus","plantilla":25,"texto":"y el bus de managua cuando sale"}
+{"etiqueta":"proximo_bus","plantilla":25,"texto":"y el bus de boaco cuando sale"}
+{"etiqueta":"proximo_bus","plantilla":25,"texto":"y el bus de juigalpa cuando sale"}
+{"etiqueta":"proximo_bus","plantilla":26,"texto":"hay transporte a managua hoy"}
+{"etiqueta":"proximo_bus","plantilla":26,"texto":"hay transporte a boaco hoy"}
+{"etiqueta":"proximo_bus","plantilla":26,"texto":"hay transporte a juigalpa hoy"}
+{"etiqueta":"proximo_bus","plantilla":27,"texto":"para managua hay salida temprano"}
+{"etiqueta":"proximo_bus","plantilla":27,"texto":"para boaco hay salida temprano"}
+{"etiqueta":"proximo_bus","plantilla":27,"texto":"para juigalpa hay salida temprano"}
+{"etiqueta":"proximo_bus","plantilla":28,"texto":"busco bus a managua para maniana"}
+{"etiqueta":"proximo_bus","plantilla":28,"texto":"busco bus a boaco para maniana"}
+{"etiqueta":"proximo_bus","plantilla":28,"texto":"busco bus a juigalpa para maniana"}
+{"etiqueta":"proximo_bus","plantilla":29,"texto":"dime los horarios hacia managua"}
+{"etiqueta":"proximo_bus","plantilla":29,"texto":"dime los horarios hacia boaco"}
+{"etiqueta":"proximo_bus","plantilla":29,"texto":"dime los horarios hacia juigalpa"}
 {"etiqueta":"precio","plantilla":0,"texto":"cuanto cuesta ir a managua"}
 {"etiqueta":"precio","plantilla":0,"texto":"cuanto cuesta ir a boaco"}
 {"etiqueta":"precio","plantilla":0,"texto":"cuanto cuesta ir a juigalpa"}
@@ -101,6 +131,36 @@
 {"etiqueta":"precio","plantilla":13,"texto":"valor del boleto boaco"}
 {"etiqueta":"precio","plantilla":13,"texto":"valor del boleto juigalpa"}
 {"etiqueta":"precio","plantilla":14,"texto":"cuanto cuesta el bus"}
+{"etiqueta":"precio","plantilla":15,"texto":"en cuanto sale ir a managua"}
+{"etiqueta":"precio","plantilla":15,"texto":"en cuanto sale ir a boaco"}
+{"etiqueta":"precio","plantilla":15,"texto":"en cuanto sale ir a juigalpa"}
+{"etiqueta":"precio","plantilla":16,"texto":"cuanto hay que pagar a managua"}
+{"etiqueta":"precio","plantilla":16,"texto":"cuanto hay que pagar a boaco"}
+{"etiqueta":"precio","plantilla":16,"texto":"cuanto hay que pagar a juigalpa"}
+{"etiqueta":"precio","plantilla":17,"texto":"dame la tarifa del viaje a managua"}
+{"etiqueta":"precio","plantilla":17,"texto":"dame la tarifa del viaje a boaco"}
+{"etiqueta":"precio","plantilla":17,"texto":"dame la tarifa del viaje a juigalpa"}
+{"etiqueta":"precio","plantilla":18,"texto":"que precio tiene el boleto de managua"}
+{"etiqueta":"precio","plantilla":18,"texto":"que precio tiene el boleto de boaco"}
+{"etiqueta":"precio","plantilla":18,"texto":"que precio tiene el boleto de juigalpa"}
+{"etiqueta":"precio","plantilla":19,"texto":"cuanto me cuesta llegar a managua en bus"}
+{"etiqueta":"precio","plantilla":19,"texto":"cuanto me cuesta llegar a boaco en bus"}
+{"etiqueta":"precio","plantilla":19,"texto":"cuanto me cuesta llegar a juigalpa en bus"}
+{"etiqueta":"precio","plantilla":20,"texto":"cuanto es el pasaje de managua a managua"}
+{"etiqueta":"precio","plantilla":20,"texto":"cuanto es el pasaje de managua a boaco"}
+{"etiqueta":"precio","plantilla":20,"texto":"cuanto es el pasaje de managua a juigalpa"}
+{"etiqueta":"precio","plantilla":21,"texto":"a cuanto esta el boleto a managua"}
+{"etiqueta":"precio","plantilla":21,"texto":"a cuanto esta el boleto a boaco"}
+{"etiqueta":"precio","plantilla":21,"texto":"a cuanto esta el boleto a juigalpa"}
+{"etiqueta":"precio","plantilla":22,"texto":"precio expreso a managua"}
+{"etiqueta":"precio","plantilla":22,"texto":"precio expreso a boaco"}
+{"etiqueta":"precio","plantilla":22,"texto":"precio expreso a juigalpa"}
+{"etiqueta":"precio","plantilla":23,"texto":"cuanto me van a cobrar a managua"}
+{"etiqueta":"precio","plantilla":23,"texto":"cuanto me van a cobrar a boaco"}
+{"etiqueta":"precio","plantilla":23,"texto":"cuanto me van a cobrar a juigalpa"}
+{"etiqueta":"precio","plantilla":24,"texto":"me dices cuanto vale managua"}
+{"etiqueta":"precio","plantilla":24,"texto":"me dices cuanto vale boaco"}
+{"etiqueta":"precio","plantilla":24,"texto":"me dices cuanto vale juigalpa"}
 {"etiqueta":"asientos","plantilla":0,"texto":"quedan asientos a managua"}
 {"etiqueta":"asientos","plantilla":0,"texto":"quedan asientos a boaco"}
 {"etiqueta":"asientos","plantilla":0,"texto":"quedan asientos a juigalpa"}
@@ -133,6 +193,36 @@
 {"etiqueta":"asientos","plantilla":11,"texto":"se llenaron los buses a managua"}
 {"etiqueta":"asientos","plantilla":11,"texto":"se llenaron los buses a boaco"}
 {"etiqueta":"asientos","plantilla":11,"texto":"se llenaron los buses a juigalpa"}
+{"etiqueta":"asientos","plantilla":12,"texto":"quedan lugares para managua"}
+{"etiqueta":"asientos","plantilla":12,"texto":"quedan lugares para boaco"}
+{"etiqueta":"asientos","plantilla":12,"texto":"quedan lugares para juigalpa"}
+{"etiqueta":"asientos","plantilla":13,"texto":"tienen cupo en el bus a managua"}
+{"etiqueta":"asientos","plantilla":13,"texto":"tienen cupo en el bus a boaco"}
+{"etiqueta":"asientos","plantilla":13,"texto":"tienen cupo en el bus a juigalpa"}
+{"etiqueta":"asientos","plantilla":14,"texto":"hay espacio para dos personas a managua"}
+{"etiqueta":"asientos","plantilla":14,"texto":"hay espacio para dos personas a boaco"}
+{"etiqueta":"asientos","plantilla":14,"texto":"hay espacio para dos personas a juigalpa"}
+{"etiqueta":"asientos","plantilla":15,"texto":"queda algun asiento en la salida de managua"}
+{"etiqueta":"asientos","plantilla":15,"texto":"queda algun asiento en la salida de boaco"}
+{"etiqueta":"asientos","plantilla":15,"texto":"queda algun asiento en la salida de juigalpa"}
+{"etiqueta":"asientos","plantilla":16,"texto":"ya no hay asientos a managua"}
+{"etiqueta":"asientos","plantilla":16,"texto":"ya no hay asientos a boaco"}
+{"etiqueta":"asientos","plantilla":16,"texto":"ya no hay asientos a juigalpa"}
+{"etiqueta":"asientos","plantilla":17,"texto":"cuantos lugares libres tiene el bus a managua"}
+{"etiqueta":"asientos","plantilla":17,"texto":"cuantos lugares libres tiene el bus a boaco"}
+{"etiqueta":"asientos","plantilla":17,"texto":"cuantos lugares libres tiene el bus a juigalpa"}
+{"etiqueta":"asientos","plantilla":18,"texto":"puedo reservar asiento para managua"}
+{"etiqueta":"asientos","plantilla":18,"texto":"puedo reservar asiento para boaco"}
+{"etiqueta":"asientos","plantilla":18,"texto":"puedo reservar asiento para juigalpa"}
+{"etiqueta":"asientos","plantilla":19,"texto":"hay ventana libre a managua"}
+{"etiqueta":"asientos","plantilla":19,"texto":"hay ventana libre a boaco"}
+{"etiqueta":"asientos","plantilla":19,"texto":"hay ventana libre a juigalpa"}
+{"etiqueta":"asientos","plantilla":20,"texto":"el bus a managua va lleno"}
+{"etiqueta":"asientos","plantilla":20,"texto":"el bus a boaco va lleno"}
+{"etiqueta":"asientos","plantilla":20,"texto":"el bus a juigalpa va lleno"}
+{"etiqueta":"asientos","plantilla":21,"texto":"falta mucho para llenarse el bus de managua"}
+{"etiqueta":"asientos","plantilla":21,"texto":"falta mucho para llenarse el bus de boaco"}
+{"etiqueta":"asientos","plantilla":21,"texto":"falta mucho para llenarse el bus de juigalpa"}
 {"etiqueta":"mi_boleto","plantilla":0,"texto":"cuando sale mi boleto"}
 {"etiqueta":"mi_boleto","plantilla":1,"texto":"donde me subo al bus"}
 {"etiqueta":"mi_boleto","plantilla":2,"texto":"a que hora tengo que estar en el anden"}
@@ -153,6 +243,20 @@
 {"etiqueta":"mi_boleto","plantilla":13,"texto":"mi bus a juigalpa va atrasado"}
 {"etiqueta":"mi_boleto","plantilla":14,"texto":"tengo boleto para hoy"}
 {"etiqueta":"mi_boleto","plantilla":15,"texto":"donde esta mi bus"}
+{"etiqueta":"mi_boleto","plantilla":16,"texto":"donde queda mi punto de encuentro"}
+{"etiqueta":"mi_boleto","plantilla":17,"texto":"a que hora me presento para mi viaje"}
+{"etiqueta":"mi_boleto","plantilla":18,"texto":"mi asiento cual era"}
+{"etiqueta":"mi_boleto","plantilla":19,"texto":"mi boleto a managua a que hora sale"}
+{"etiqueta":"mi_boleto","plantilla":19,"texto":"mi boleto a boaco a que hora sale"}
+{"etiqueta":"mi_boleto","plantilla":19,"texto":"mi boleto a juigalpa a que hora sale"}
+{"etiqueta":"mi_boleto","plantilla":20,"texto":"cuanto falta para mi salida"}
+{"etiqueta":"mi_boleto","plantilla":21,"texto":"quiero ver mi boleto de managua"}
+{"etiqueta":"mi_boleto","plantilla":21,"texto":"quiero ver mi boleto de boaco"}
+{"etiqueta":"mi_boleto","plantilla":21,"texto":"quiero ver mi boleto de juigalpa"}
+{"etiqueta":"mi_boleto","plantilla":22,"texto":"necesito saber la placa de mi bus"}
+{"etiqueta":"mi_boleto","plantilla":23,"texto":"mi viaje de hoy a que hora es"}
+{"etiqueta":"mi_boleto","plantilla":24,"texto":"en cual anden me subo"}
+{"etiqueta":"mi_boleto","plantilla":25,"texto":"donde espero mi bus"}
 {"etiqueta":"barato","plantilla":0,"texto":"cual es la salida mas barata"}
 {"etiqueta":"barato","plantilla":1,"texto":"el bus mas economico a managua"}
 {"etiqueta":"barato","plantilla":1,"texto":"el bus mas economico a boaco"}
@@ -178,6 +282,36 @@
 {"etiqueta":"barato","plantilla":9,"texto":"el mejor bus para ir a boaco"}
 {"etiqueta":"barato","plantilla":9,"texto":"el mejor bus para ir a juigalpa"}
 {"etiqueta":"barato","plantilla":10,"texto":"que salida me conviene"}
+{"etiqueta":"barato","plantilla":11,"texto":"cual me sale mas barato a managua"}
+{"etiqueta":"barato","plantilla":11,"texto":"cual me sale mas barato a boaco"}
+{"etiqueta":"barato","plantilla":11,"texto":"cual me sale mas barato a juigalpa"}
+{"etiqueta":"barato","plantilla":12,"texto":"el mas economico para managua"}
+{"etiqueta":"barato","plantilla":12,"texto":"el mas economico para boaco"}
+{"etiqueta":"barato","plantilla":12,"texto":"el mas economico para juigalpa"}
+{"etiqueta":"barato","plantilla":13,"texto":"busco lo mas barato a managua"}
+{"etiqueta":"barato","plantilla":13,"texto":"busco lo mas barato a boaco"}
+{"etiqueta":"barato","plantilla":13,"texto":"busco lo mas barato a juigalpa"}
+{"etiqueta":"barato","plantilla":14,"texto":"hay algo mas barato para managua"}
+{"etiqueta":"barato","plantilla":14,"texto":"hay algo mas barato para boaco"}
+{"etiqueta":"barato","plantilla":14,"texto":"hay algo mas barato para juigalpa"}
+{"etiqueta":"barato","plantilla":15,"texto":"con que bus ahorro mas a managua"}
+{"etiqueta":"barato","plantilla":15,"texto":"con que bus ahorro mas a boaco"}
+{"etiqueta":"barato","plantilla":15,"texto":"con que bus ahorro mas a juigalpa"}
+{"etiqueta":"barato","plantilla":16,"texto":"cual es la mejor opcion para managua"}
+{"etiqueta":"barato","plantilla":16,"texto":"cual es la mejor opcion para boaco"}
+{"etiqueta":"barato","plantilla":16,"texto":"cual es la mejor opcion para juigalpa"}
+{"etiqueta":"barato","plantilla":17,"texto":"que bus me conviene para managua"}
+{"etiqueta":"barato","plantilla":17,"texto":"que bus me conviene para boaco"}
+{"etiqueta":"barato","plantilla":17,"texto":"que bus me conviene para juigalpa"}
+{"etiqueta":"barato","plantilla":18,"texto":"recomiendame una salida a managua"}
+{"etiqueta":"barato","plantilla":18,"texto":"recomiendame una salida a boaco"}
+{"etiqueta":"barato","plantilla":18,"texto":"recomiendame una salida a juigalpa"}
+{"etiqueta":"barato","plantilla":19,"texto":"cual me recomiendas tomar a managua"}
+{"etiqueta":"barato","plantilla":19,"texto":"cual me recomiendas tomar a boaco"}
+{"etiqueta":"barato","plantilla":19,"texto":"cual me recomiendas tomar a juigalpa"}
+{"etiqueta":"barato","plantilla":20,"texto":"el que mas me convenga a managua"}
+{"etiqueta":"barato","plantilla":20,"texto":"el que mas me convenga a boaco"}
+{"etiqueta":"barato","plantilla":20,"texto":"el que mas me convenga a juigalpa"}
 {"etiqueta":"encomienda","plantilla":0,"texto":"quiero enviar un paquete a managua"}
 {"etiqueta":"encomienda","plantilla":0,"texto":"quiero enviar un paquete a boaco"}
 {"etiqueta":"encomienda","plantilla":0,"texto":"quiero enviar un paquete a juigalpa"}
@@ -201,6 +335,30 @@
 {"etiqueta":"encomienda","plantilla":10,"texto":"envio de paquetes a managua"}
 {"etiqueta":"encomienda","plantilla":10,"texto":"envio de paquetes a boaco"}
 {"etiqueta":"encomienda","plantilla":10,"texto":"envio de paquetes a juigalpa"}
+{"etiqueta":"encomienda","plantilla":11,"texto":"necesito mandar una caja a managua"}
+{"etiqueta":"encomienda","plantilla":11,"texto":"necesito mandar una caja a boaco"}
+{"etiqueta":"encomienda","plantilla":11,"texto":"necesito mandar una caja a juigalpa"}
+{"etiqueta":"encomienda","plantilla":12,"texto":"como envio una encomienda a managua"}
+{"etiqueta":"encomienda","plantilla":12,"texto":"como envio una encomienda a boaco"}
+{"etiqueta":"encomienda","plantilla":12,"texto":"como envio una encomienda a juigalpa"}
+{"etiqueta":"encomienda","plantilla":13,"texto":"quiero despachar un paquete"}
+{"etiqueta":"encomienda","plantilla":14,"texto":"puedo enviar un sobre por bus a managua"}
+{"etiqueta":"encomienda","plantilla":14,"texto":"puedo enviar un sobre por bus a boaco"}
+{"etiqueta":"encomienda","plantilla":14,"texto":"puedo enviar un sobre por bus a juigalpa"}
+{"etiqueta":"encomienda","plantilla":15,"texto":"donde dejo un paquete para managua"}
+{"etiqueta":"encomienda","plantilla":15,"texto":"donde dejo un paquete para boaco"}
+{"etiqueta":"encomienda","plantilla":15,"texto":"donde dejo un paquete para juigalpa"}
+{"etiqueta":"encomienda","plantilla":16,"texto":"hacer un envio a managua"}
+{"etiqueta":"encomienda","plantilla":16,"texto":"hacer un envio a boaco"}
+{"etiqueta":"encomienda","plantilla":16,"texto":"hacer un envio a juigalpa"}
+{"etiqueta":"encomienda","plantilla":17,"texto":"como mando algo a managua por bus"}
+{"etiqueta":"encomienda","plantilla":17,"texto":"como mando algo a boaco por bus"}
+{"etiqueta":"encomienda","plantilla":17,"texto":"como mando algo a juigalpa por bus"}
+{"etiqueta":"encomienda","plantilla":18,"texto":"cuanto cobran por una encomienda a managua"}
+{"etiqueta":"encomienda","plantilla":18,"texto":"cuanto cobran por una encomienda a boaco"}
+{"etiqueta":"encomienda","plantilla":18,"texto":"cuanto cobran por una encomienda a juigalpa"}
+{"etiqueta":"encomienda","plantilla":19,"texto":"seguimiento de mi encomienda"}
+{"etiqueta":"encomienda","plantilla":20,"texto":"estado de mi paquete"}
 {"etiqueta":"visitar","plantilla":0,"texto":"que puedo visitar en managua"}
 {"etiqueta":"visitar","plantilla":0,"texto":"que puedo visitar en boaco"}
 {"etiqueta":"visitar","plantilla":0,"texto":"que puedo visitar en juigalpa"}
@@ -243,6 +401,36 @@
 {"etiqueta":"visitar","plantilla":13,"texto":"soy turista que me recomiendas de managua"}
 {"etiqueta":"visitar","plantilla":13,"texto":"soy turista que me recomiendas de boaco"}
 {"etiqueta":"visitar","plantilla":13,"texto":"soy turista que me recomiendas de juigalpa"}
+{"etiqueta":"visitar","plantilla":14,"texto":"que lugares conocer en managua"}
+{"etiqueta":"visitar","plantilla":14,"texto":"que lugares conocer en boaco"}
+{"etiqueta":"visitar","plantilla":14,"texto":"que lugares conocer en juigalpa"}
+{"etiqueta":"visitar","plantilla":15,"texto":"que comer en managua"}
+{"etiqueta":"visitar","plantilla":15,"texto":"que comer en boaco"}
+{"etiqueta":"visitar","plantilla":15,"texto":"que comer en juigalpa"}
+{"etiqueta":"visitar","plantilla":16,"texto":"que tiene managua para turistas"}
+{"etiqueta":"visitar","plantilla":16,"texto":"que tiene boaco para turistas"}
+{"etiqueta":"visitar","plantilla":16,"texto":"que tiene juigalpa para turistas"}
+{"etiqueta":"visitar","plantilla":17,"texto":"dime sitios bonitos de managua"}
+{"etiqueta":"visitar","plantilla":17,"texto":"dime sitios bonitos de boaco"}
+{"etiqueta":"visitar","plantilla":17,"texto":"dime sitios bonitos de juigalpa"}
+{"etiqueta":"visitar","plantilla":18,"texto":"que puedo hacer en managua un dia"}
+{"etiqueta":"visitar","plantilla":18,"texto":"que puedo hacer en boaco un dia"}
+{"etiqueta":"visitar","plantilla":18,"texto":"que puedo hacer en juigalpa un dia"}
+{"etiqueta":"visitar","plantilla":19,"texto":"platos tipicos de managua"}
+{"etiqueta":"visitar","plantilla":19,"texto":"platos tipicos de boaco"}
+{"etiqueta":"visitar","plantilla":19,"texto":"platos tipicos de juigalpa"}
+{"etiqueta":"visitar","plantilla":20,"texto":"que ver en managua"}
+{"etiqueta":"visitar","plantilla":20,"texto":"que ver en boaco"}
+{"etiqueta":"visitar","plantilla":20,"texto":"que ver en juigalpa"}
+{"etiqueta":"visitar","plantilla":21,"texto":"quiero conocer managua que me recomiendas"}
+{"etiqueta":"visitar","plantilla":21,"texto":"quiero conocer boaco que me recomiendas"}
+{"etiqueta":"visitar","plantilla":21,"texto":"quiero conocer juigalpa que me recomiendas"}
+{"etiqueta":"visitar","plantilla":22,"texto":"atracciones de managua"}
+{"etiqueta":"visitar","plantilla":22,"texto":"atracciones de boaco"}
+{"etiqueta":"visitar","plantilla":22,"texto":"atracciones de juigalpa"}
+{"etiqueta":"visitar","plantilla":23,"texto":"que es lo mas bonito de managua"}
+{"etiqueta":"visitar","plantilla":23,"texto":"que es lo mas bonito de boaco"}
+{"etiqueta":"visitar","plantilla":23,"texto":"que es lo mas bonito de juigalpa"}
 {"etiqueta":"avisar","plantilla":0,"texto":"avisame antes de que salga mi bus"}
 {"etiqueta":"avisar","plantilla":1,"texto":"recordame mi viaje"}
 {"etiqueta":"avisar","plantilla":2,"texto":"ponme una alarma para el bus"}
@@ -251,6 +439,14 @@
 {"etiqueta":"avisar","plantilla":5,"texto":"notificame cuando falte poco"}
 {"etiqueta":"avisar","plantilla":6,"texto":"avisame una hora antes de mi viaje"}
 {"etiqueta":"avisar","plantilla":7,"texto":"pon un aviso para mi boleto"}
+{"etiqueta":"avisar","plantilla":8,"texto":"recuerdame cuando falte media hora"}
+{"etiqueta":"avisar","plantilla":9,"texto":"avisame cuando sea hora de salir"}
+{"etiqueta":"avisar","plantilla":10,"texto":"ponme un recordatorio de mi boleto"}
+{"etiqueta":"avisar","plantilla":11,"texto":"quiero una notificacion antes del bus"}
+{"etiqueta":"avisar","plantilla":12,"texto":"alertame 15 minutos antes"}
+{"etiqueta":"avisar","plantilla":13,"texto":"avisame una hora antes de que salga"}
+{"etiqueta":"avisar","plantilla":14,"texto":"no quiero perder mi bus avisame"}
+{"etiqueta":"avisar","plantilla":15,"texto":"activar aviso de mi viaje"}
 {"etiqueta":"compartir","plantilla":0,"texto":"comparte mi viaje"}
 {"etiqueta":"compartir","plantilla":1,"texto":"mandale mi viaje a mi mama"}
 {"etiqueta":"compartir","plantilla":2,"texto":"quiero que mi familia vea por donde voy"}
@@ -259,6 +455,14 @@
 {"etiqueta":"compartir","plantilla":5,"texto":"pasame el enlace de mi viaje para compartir"}
 {"etiqueta":"compartir","plantilla":6,"texto":"que mi papa vea mi bus"}
 {"etiqueta":"compartir","plantilla":7,"texto":"comparte mi ruta con mi esposa"}
+{"etiqueta":"compartir","plantilla":8,"texto":"manda mi viaje a mi familia"}
+{"etiqueta":"compartir","plantilla":9,"texto":"compartir mi bus con mi mama"}
+{"etiqueta":"compartir","plantilla":10,"texto":"que mi esposa vea mi viaje"}
+{"etiqueta":"compartir","plantilla":11,"texto":"enviar mi viaje a mi contacto"}
+{"etiqueta":"compartir","plantilla":12,"texto":"pasale mi ruta a mi papa"}
+{"etiqueta":"compartir","plantilla":13,"texto":"comparte donde voy con mi familia"}
+{"etiqueta":"compartir","plantilla":14,"texto":"quiero que sepan donde voy"}
+{"etiqueta":"compartir","plantilla":15,"texto":"mandale el enlace de mi viaje a mi contacto"}
 {"etiqueta":"saludo","plantilla":0,"texto":"hola"}
 {"etiqueta":"saludo","plantilla":1,"texto":"buenas"}
 {"etiqueta":"saludo","plantilla":2,"texto":"buenos dias"}
@@ -269,6 +473,12 @@
 {"etiqueta":"saludo","plantilla":7,"texto":"saludos"}
 {"etiqueta":"saludo","plantilla":8,"texto":"hola como estas"}
 {"etiqueta":"saludo","plantilla":9,"texto":"ola"}
+{"etiqueta":"saludo","plantilla":10,"texto":"buen dia"}
+{"etiqueta":"saludo","plantilla":11,"texto":"hola buenas"}
+{"etiqueta":"saludo","plantilla":12,"texto":"hola que tal estas"}
+{"etiqueta":"saludo","plantilla":13,"texto":"muy buenas"}
+{"etiqueta":"saludo","plantilla":14,"texto":"buenas noches andén"}
+{"etiqueta":"saludo","plantilla":15,"texto":"hola andén"}
 {"etiqueta":"gracias","plantilla":0,"texto":"gracias"}
 {"etiqueta":"gracias","plantilla":1,"texto":"muchas gracias"}
 {"etiqueta":"gracias","plantilla":2,"texto":"te lo agradezco"}
@@ -277,6 +487,11 @@
 {"etiqueta":"gracias","plantilla":5,"texto":"perfecto gracias"}
 {"etiqueta":"gracias","plantilla":6,"texto":"genial muchas gracias"}
 {"etiqueta":"gracias","plantilla":7,"texto":"mil gracias"}
+{"etiqueta":"gracias","plantilla":8,"texto":"muchas gracias por la ayuda"}
+{"etiqueta":"gracias","plantilla":9,"texto":"gracias andén"}
+{"etiqueta":"gracias","plantilla":10,"texto":"te agradezco mucho"}
+{"etiqueta":"gracias","plantilla":11,"texto":"ok perfecto gracias"}
+{"etiqueta":"gracias","plantilla":12,"texto":"gracias por todo"}
 {"etiqueta":"ayuda","plantilla":0,"texto":"ayuda"}
 {"etiqueta":"ayuda","plantilla":1,"texto":"que puedes hacer"}
 {"etiqueta":"ayuda","plantilla":2,"texto":"como funciona esto"}
@@ -288,6 +503,13 @@
 {"etiqueta":"ayuda","plantilla":8,"texto":"como compro un pasaje"}
 {"etiqueta":"ayuda","plantilla":9,"texto":"como cancelo mi boleto"}
 {"etiqueta":"ayuda","plantilla":10,"texto":"como uso la app"}
+{"etiqueta":"ayuda","plantilla":11,"texto":"no se como usar la app"}
+{"etiqueta":"ayuda","plantilla":12,"texto":"me ayudas"}
+{"etiqueta":"ayuda","plantilla":13,"texto":"como se reserva"}
+{"etiqueta":"ayuda","plantilla":14,"texto":"que cosas sabes hacer"}
+{"etiqueta":"ayuda","plantilla":15,"texto":"como funciona andén"}
+{"etiqueta":"ayuda","plantilla":16,"texto":"dime que puedes hacer"}
+{"etiqueta":"ayuda","plantilla":17,"texto":"explicame como comprar un boleto"}
 {"etiqueta":"otro","plantilla":0,"texto":"cuanto es dos mas dos"}
 {"etiqueta":"otro","plantilla":1,"texto":"quien gano el partido"}
 {"etiqueta":"otro","plantilla":2,"texto":"cuentame un chiste"}
@@ -304,3 +526,13 @@
 {"etiqueta":"otro","plantilla":13,"texto":"recomiendame una pelicula"}
 {"etiqueta":"otro","plantilla":14,"texto":"como hago dinero rapido"}
 {"etiqueta":"otro","plantilla":15,"texto":"dime un numero al azar"}
+{"etiqueta":"otro","plantilla":16,"texto":"cuanto es diez por diez"}
+{"etiqueta":"otro","plantilla":17,"texto":"como esta el clima hoy"}
+{"etiqueta":"otro","plantilla":18,"texto":"pon musica"}
+{"etiqueta":"otro","plantilla":19,"texto":"quien es el presidente de estados unidos"}
+{"etiqueta":"otro","plantilla":20,"texto":"dime una adivinanza"}
+{"etiqueta":"otro","plantilla":21,"texto":"cual es tu color favorito"}
+{"etiqueta":"otro","plantilla":22,"texto":"cuanto mide el everest"}
+{"etiqueta":"otro","plantilla":23,"texto":"donde queda japon"}
+{"etiqueta":"otro","plantilla":24,"texto":"que dia es hoy en china"}
+{"etiqueta":"otro","plantilla":25,"texto":"ayudame con mi tarea de historia"}
