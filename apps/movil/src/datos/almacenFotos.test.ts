@@ -1,6 +1,11 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { esReferenciaGuardada, nombreDeFoto } from './almacenFotos';
+import {
+  borrarFoto,
+  esReferenciaGuardada,
+  nombreDeFoto,
+  resolverFoto,
+} from './almacenFotos';
 
 describe('nombreDeFoto', () => {
   it('conserva la extensión del original en minúscula', () => {
@@ -45,5 +50,13 @@ describe('esReferenciaGuardada', () => {
   it('una carpeta con otro nombre no cuenta como guardada', () => {
     expect(esReferenciaGuardada('fotos-viejas/abc.jpg')).toBe(false);
     expect(esReferenciaGuardada('')).toBe(false);
+  });
+});
+
+describe('resolverFoto', () => {
+  it('deja igual una ruta completa de una versión anterior', () => {
+    expect(resolverFoto('file:///var/mobile/abc.jpg')).toBe(
+      'file:///var/mobile/abc.jpg',
+    );
   });
 });
