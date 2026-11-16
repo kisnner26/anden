@@ -215,6 +215,13 @@ describe('agruparHabituales', () => {
     };
     expect(agruparHabituales([HABITUAL, vuelta])).toHaveLength(2);
   });
+
+  it('no repite una hora que ya estaba', () => {
+    const repetido: Habitual = { ...HABITUAL, dias: [2], id: 'hab_r' };
+    expect(agruparHabituales([HABITUAL, repetido])[0]?.horas).toEqual([
+      '06:00',
+    ]);
+  });
 });
 
 describe('proximaDelGrupo', () => {
