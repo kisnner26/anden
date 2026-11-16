@@ -44,4 +44,10 @@ describe('leerModelo', () => {
     const m = aModelo(crearRed(4, [5], 3, 2), ['a', 'b', 'c'], 4, META);
     expect(leerModelo(JSON.stringify({ ...m, version: 2 }))).toBeNull();
   });
+
+  it('rechaza capas que no encadenan', () => {
+    const m = aModelo(crearRed(4, [5], 3, 2), ['a', 'b', 'c'], 4, META);
+    const roto = { ...m, capas: [{ ...m.capas[0]!, salidas: 9 }, m.capas[1]!] };
+    expect(leerModelo(JSON.stringify(roto))).toBeNull();
+  });
 });
