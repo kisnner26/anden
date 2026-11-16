@@ -18,4 +18,11 @@ describe('EsqueletoIA', () => {
     const pantalla = await render(<EsqueletoIA />);
     expect(pantalla.toJSON()).not.toBeNull();
   });
+
+  it('no se lee en voz alta porque es solo decoración', async () => {
+    const pantalla = await render(<EsqueletoIA />);
+    expect(JSON.stringify(pantalla.toJSON())).toContain(
+      '"accessibilityElementsHidden":true',
+    );
+  });
 });
