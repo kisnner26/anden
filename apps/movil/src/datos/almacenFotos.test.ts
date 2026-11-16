@@ -41,4 +41,9 @@ describe('esReferenciaGuardada', () => {
     expect(esReferenciaGuardada('fotos/abc.jpg')).toBe(true);
     expect(esReferenciaGuardada('file:///var/mobile/tmp/abc.jpg')).toBe(false);
   });
+
+  it('una carpeta con otro nombre no cuenta como guardada', () => {
+    expect(esReferenciaGuardada('fotos-viejas/abc.jpg')).toBe(false);
+    expect(esReferenciaGuardada('')).toBe(false);
+  });
 });
