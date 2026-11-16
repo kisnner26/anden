@@ -87,4 +87,14 @@ describe('CuentaCreada', () => {
     });
     expect(alTerminar).toHaveBeenCalledTimes(1);
   });
+
+  it('con movimiento reducido termina antes', async () => {
+    jest.mocked(useMovimientoReducido).mockReturnValue(true);
+    const alTerminar = jest.fn();
+    await render(<CuentaCreada alTerminar={alTerminar} nombre="Ana" />);
+    await act(async () => {
+      jest.advanceTimersByTime(900);
+    });
+    expect(alTerminar).toHaveBeenCalledTimes(1);
+  });
 });
