@@ -98,5 +98,12 @@ describe('mejorSalida', () => {
     expect(elegida?.salida.viajeId).toBe('noche');
   });
 
+  it('elige entre todas si ninguna cumple lo pedido', () => {
+    const elegida = mejorSalida([salida('ahora', 11)], {
+      ahora: AHORA,
+      cuando: { dia: null, franja: 'madrugada', hora: null },
+    });
+    expect(elegida?.salida.viajeId).toBe('ahora');
+  });
 
 });
