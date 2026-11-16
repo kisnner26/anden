@@ -82,6 +82,13 @@ describe('mejorSalida', () => {
     expect(elegida?.motivos).toContain('sale a tiempo');
   });
 
+  it('desconfía de la que casi no tiene asientos', () => {
+    const elegida = mejorSalida(
+      [salida('justa', 11, { asientosLibres: 1 }), salida('holgada', 12)],
+      { ahora: AHORA },
+    );
+    expect(elegida?.salida.viajeId).toBe('holgada');
+  });
 
 
 
