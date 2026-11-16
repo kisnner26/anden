@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { hash, vectorizar } from './vectorizar';
+import { hash, vectorizar } from './vectorizar.ts';
 
 describe('hash', () => {
   it('da siempre el mismo número para el mismo texto', () => {

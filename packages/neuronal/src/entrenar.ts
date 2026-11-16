@@ -1,6 +1,6 @@
-import { crearAzar, mezclar } from './azar';
-import { evaluar, type Ejemplo } from './evaluar';
-import { avanzar, type Red } from './red';
+import { crearAzar, mezclar } from './azar.ts';
+import { evaluar, type Ejemplo } from './evaluar.ts';
+import { avanzar, type Red } from './red.ts';
 
 export interface OpcionesEntrenamiento {
   /** se llama al terminar cada época con cómo va; sirve para dibujar la curva */

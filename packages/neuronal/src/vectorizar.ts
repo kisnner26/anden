@@ -1,4 +1,4 @@
-import { rasgos } from './texto';
+import { rasgos } from './texto.ts';
 
 /** un número estable (0 a 2^32-1) para un texto: la misma palabra cae siempre en el mismo lugar */
 export function hash(texto: string): number {

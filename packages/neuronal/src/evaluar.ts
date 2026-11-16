@@ -1,4 +1,4 @@
-import { avanzar, type Red } from './red';
+import { avanzar, type Red } from './red.ts';
 
 /** un ejemplo para entrenar o evaluar: la entrada ya vectorizada y el número de su clase */
 export interface Ejemplo {

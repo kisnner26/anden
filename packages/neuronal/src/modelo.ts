@@ -1,4 +1,4 @@
-import type { Capa, Red } from './red';
+import type { Capa, Red } from './red.ts';
 
 /** un modelo ya entrenado, listo para guardarse en un archivo y cargarse en el teléfono */
 export interface Modelo {

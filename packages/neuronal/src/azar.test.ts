@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { crearAzar, mezclar, normal } from './azar';
+import { crearAzar, mezclar, normal } from './azar.ts';
 
 describe('crearAzar', () => {
   it('repite la misma serie con la misma semilla', () => {

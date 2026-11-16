@@ -6,8 +6,8 @@ import {
   matrizDeConfusion,
   precisionPorClase,
   type Ejemplo,
-} from './evaluar';
-import { crearRed } from './red';
+} from './evaluar.ts';
+import { crearRed } from './red.ts';
 
 describe('indiceMayor', () => {
   it('devuelve la posición del valor más alto', () => {

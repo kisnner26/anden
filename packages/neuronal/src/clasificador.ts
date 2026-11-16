@@ -1,6 +1,6 @@
-import { aRed, type Modelo } from './modelo';
-import { predecir, type Red } from './red';
-import { vectorizar } from './vectorizar';
+import { aRed, type Modelo } from './modelo.ts';
+import { predecir, type Red } from './red.ts';
+import { vectorizar } from './vectorizar.ts';
 
 export interface Prediccion {
   etiqueta: string;
@@ -9,9 +9,11 @@ export interface Prediccion {
 
 /** clasifica un texto con un modelo entrenado: devuelve las clases de la más a la menos probable */
 export class Clasificador {
+  private readonly modelo: Modelo;
   private readonly red: Red;
 
-  constructor(private readonly modelo: Modelo) {
+  constructor(modelo: Modelo) {
+    this.modelo = modelo;
     this.red = aRed(modelo);
   }
 

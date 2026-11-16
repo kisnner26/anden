@@ -1,4 +1,4 @@
-import { crearAzar, normal } from './azar';
+import { crearAzar, normal } from './azar.ts';
 
 /** una capa densa: cada salida es la suma de las entradas por sus pesos más un sesgo */
 export interface Capa {

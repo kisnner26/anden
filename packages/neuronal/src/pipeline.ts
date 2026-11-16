@@ -1,8 +1,8 @@
-import { entrenar, type InfoEpoca, type OpcionesEntrenamiento } from './entrenar';
-import { evaluar, matrizDeConfusion, precisionPorClase } from './evaluar';
-import { aModelo, type Modelo } from './modelo';
-import { contarParametros, crearRed, type Red } from './red';
-import { vectorizar } from './vectorizar';
+import { entrenar, type InfoEpoca, type OpcionesEntrenamiento } from './entrenar.ts';
+import { evaluar, matrizDeConfusion, precisionPorClase } from './evaluar.ts';
+import { aModelo, type Modelo } from './modelo.ts';
+import { contarParametros, crearRed, type Red } from './red.ts';
+import { vectorizar } from './vectorizar.ts';
 
 /** una frase con la clase a la que pertenece */
 export interface Frase {

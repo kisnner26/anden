@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Ejemplo } from './evaluar';
-import { evaluar } from './evaluar';
-import { entrenar } from './entrenar';
-import { crearRed } from './red';
+import type { Ejemplo } from './evaluar.ts';
+import { evaluar } from './evaluar.ts';
+import { entrenar } from './entrenar.ts';
+import { crearRed } from './red.ts';
 
 function dosGrupos(): Ejemplo[] {
   const lista: Ejemplo[] = [];
