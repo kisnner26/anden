@@ -18,14 +18,14 @@ public class AndenIAModule: Module {
       return AndenIAModule.estado()
     }
 
-    /// Si el teléfono puede crear imágenes con Image Playground: disponible, sistema-antiguo o no-disponible.
+    /// Si el teléfono puede crear imágenes con Image Playground: disponible o el motivo (sistema-antiguo, no-compatible, no-lista, idioma-no-soportado, fallo).
     AsyncFunction("estadoImagenes") { () async -> String in
       return await AndenImagen.estado()
     }
 
-    /// Crea una postal ilustrada de una ciudad y devuelve la ruta del archivo, o vacío si no se pudo.
+    /// Crea una postal ilustrada de una ciudad y devuelve la ruta del archivo, o "error:" y el motivo.
     AsyncFunction("crearPostal") { (ciudad: String, descripcion: String) async -> String in
-      return await AndenImagen.crearPostal(ciudad: ciudad, descripcion: descripcion) ?? ""
+      return await AndenImagen.crearPostal(ciudad: ciudad, descripcion: descripcion)
     }
 
     /// Deja lista la sesión (carga el modelo) para que la primera respuesta no tarde.
