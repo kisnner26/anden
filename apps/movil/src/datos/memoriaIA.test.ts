@@ -107,6 +107,11 @@ describe('leerMemoria', () => {
     );
     expect(memoria.destinos).toEqual({ Boaco: 3 });
   });
+
+  it('devuelve la memoria vacía si lo guardado no es un JSON', () => {
+    expect(leerMemoria('{roto')).toEqual(MEMORIA_VACIA);
+    expect(leerMemoria(null)).toEqual(MEMORIA_VACIA);
+  });
 });
 
 describe('claveMemoriaDe', () => {
