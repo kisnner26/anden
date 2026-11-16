@@ -21,4 +21,16 @@ describe('boletosVigentes', () => {
     );
     expect(boletosVigentes([tarde, temprano])).toEqual([temprano, tarde]);
   });
+
+  it('no cambia la lista que recibe', () => {
+    const tarde = boletoDePrueba(new Date(2026, 10, 20, 18, 0), 1, 'AAAA1111');
+    const temprano = boletoDePrueba(
+      new Date(2026, 10, 20, 6, 0),
+      2,
+      'BBBB2222',
+    );
+    const lista = [tarde, temprano];
+    boletosVigentes(lista);
+    expect(lista).toEqual([tarde, temprano]);
+  });
 });
