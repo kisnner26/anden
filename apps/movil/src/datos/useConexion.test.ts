@@ -9,4 +9,9 @@ describe('useConexion por defecto', () => {
     expect(result.current.enLinea).toBe(true);
     expect(result.current.recienVuelta).toBe(false);
   });
+
+  it('no tiene fecha de última sincronización', async () => {
+    const { result } = await renderHook(() => useConexion());
+    expect(result.current.ultimaSincronizacion).toBeNull();
+  });
 });
