@@ -68,3 +68,9 @@ describe('intencionLocal', () => {
     );
   });
 });
+
+describe('responderLocal', () => {
+  it('saluda por el nombre', () => {
+    expect(responderLocal('hola', estado()).texto).toContain('Kisnner');
+  });
+});
