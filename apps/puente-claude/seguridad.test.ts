@@ -71,3 +71,14 @@ describe('codigoDeCabecera', () => {
     expect(codigoDeCabecera('Bearer 0123456789abcdef0123; rm')).toBeUndefined();
   });
 });
+
+describe('crearLimite', () => {
+  it('deja pasar hasta el máximo de pedidos en la ventana', () => {
+    const permitido = crearLimite(2, 1000, () => 0);
+    expect([permitido(), permitido(), permitido()]).toEqual([
+      true,
+      true,
+      false,
+    ]);
+  });
+});
