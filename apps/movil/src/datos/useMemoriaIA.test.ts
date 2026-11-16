@@ -15,4 +15,11 @@ describe('useMemoriaIA por defecto', () => {
     const { result } = await renderHook(() => useMemoriaIA());
     expect(result.current.permitida).toBe(true);
   });
+
+  it('recordar una pregunta no hace nada', async () => {
+    const { result } = await renderHook(() => useMemoriaIA());
+    expect(
+      result.current.recordarPregunta('bus a Boaco', ['Boaco']),
+    ).toBeUndefined();
+  });
 });
