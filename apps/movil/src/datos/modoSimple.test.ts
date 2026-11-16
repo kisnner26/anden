@@ -57,4 +57,14 @@ describe('useModoSimple', () => {
     expect(result.current.activo).toBe(true);
     expect(await leerModoSimple()).toBe(true);
   });
+
+  it('dos pantallas con el hook ven el mismo cambio', async () => {
+    const a = await renderHook(() => useModoSimple());
+    const b = await renderHook(() => useModoSimple());
+    await waitFor(() => expect(b.result.current.activo).toBe(false));
+    await act(async () => {
+      await a.result.current.cambiar(true);
+    });
+    expect(b.result.current.activo).toBe(true);
+  });
 });
