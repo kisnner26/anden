@@ -144,7 +144,17 @@
     "mandar un sobre a {c}",
     "mi encomienda ya llego",
     "necesito despachar un paquete a {c}",
-    "envio de paquetes a {c}"
+    "envio de paquetes a {c}",
+    "necesito mandar una caja a {c}",
+    "como envio una encomienda a {c}",
+    "quiero despachar un paquete",
+    "puedo enviar un sobre por bus a {c}",
+    "donde dejo un paquete para {c}",
+    "hacer un envio a {c}",
+    "como mando algo a {c} por bus",
+    "cuanto cobran por una encomienda a {c}",
+    "seguimiento de mi encomienda",
+    "estado de mi paquete"
   ],
   "visitar": [
     "que puedo visitar en {c}",
