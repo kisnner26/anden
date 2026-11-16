@@ -836,6 +836,7 @@ export const textos = {
       'Abrí Mensajes con tu viaje listo para {nombre}. Revisalo y tocá enviar.',
     fallo: 'No pude hacerlo ahora. Probá desde tus boletos.',
     postal: 'Postal de {ciudad}',
+    postalCancelada: 'Listo, no hice la postal.',
     postalFallo: 'No pude crear la postal ahora. Probá de nuevo en un rato.',
     postalListo:
       'Listo, hice una postal de {ciudad} en tu teléfono. Elegí dónde mandarla.',

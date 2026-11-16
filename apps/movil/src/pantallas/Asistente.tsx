@@ -340,7 +340,11 @@ export function Asistente({
         accion.ciudad,
         'warm colorful illustration, like a travel notebook, no text',
       );
-      if ('motivo' in resultado) return textoDeMotivoImagen(resultado.motivo);
+      if ('motivo' in resultado) {
+        return resultado.motivo === 'cancelada'
+          ? t('accionesIA.postalCancelada')
+          : textoDeMotivoImagen(resultado.motivo);
+      }
       const { ruta } = resultado;
       await Share.share({ url: `file://${ruta}` }).catch(() => undefined);
       return rellenar(t('accionesIA.postalListo'), { ciudad: accion.ciudad });
