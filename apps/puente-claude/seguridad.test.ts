@@ -44,3 +44,9 @@ describe('esRedLocal', () => {
     expect(esRedLocal('300.1.1.1')).toBe(false);
   });
 });
+
+describe('codigoValido', () => {
+  it('acepta el código correcto', () => {
+    expect(codigoValido('abc123', 'abc123')).toBe(true);
+  });
+});
