@@ -52,4 +52,11 @@ describe('useAppActiva', () => {
     await act(async () => oyente?.('active'));
     expect(result.current).toBe(true);
   });
+
+  it('deja de escuchar al desmontarse', async () => {
+    simular('active');
+    const pantalla = await renderHook(() => useAppActiva());
+    await pantalla.unmount();
+    expect(remove).toHaveBeenCalledTimes(1);
+  });
 });
