@@ -99,4 +99,13 @@ describe('FilaDeViajeChofer', () => {
     const pantalla = await dibujar();
     expect(pantalla.queryByText(t('nuevoViaje.motivoTitulo'))).toBeNull();
   });
+
+  it('con pasajeros pide elegir el motivo entre cuatro', async () => {
+    const pantalla = await dibujar({ pideMotivo: true });
+    expect(pantalla.getByText(t('nuevoViaje.motivoTitulo'))).toBeTruthy();
+    expect(pantalla.getByText(t('motivoCancelacion.averia'))).toBeTruthy();
+    expect(pantalla.getByText(t('motivoCancelacion.clima'))).toBeTruthy();
+    expect(pantalla.getByText(t('motivoCancelacion.pocos'))).toBeTruthy();
+    expect(pantalla.getByText(t('motivoCancelacion.otro'))).toBeTruthy();
+  });
 });
