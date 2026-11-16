@@ -121,7 +121,17 @@
     "cual me conviene mas a {c}",
     "cual bus me recomiendan a {c}",
     "el mejor bus para ir a {c}",
-    "que salida me conviene"
+    "que salida me conviene",
+    "cual me sale mas barato a {c}",
+    "el mas economico para {c}",
+    "busco lo mas barato a {c}",
+    "hay algo mas barato para {c}",
+    "con que bus ahorro mas a {c}",
+    "cual es la mejor opcion para {c}",
+    "que bus me conviene para {c}",
+    "recomiendame una salida a {c}",
+    "cual me recomiendas tomar a {c}",
+    "el que mas me convenga a {c}"
   ],
   "encomienda": [
     "quiero enviar un paquete a {c}",
