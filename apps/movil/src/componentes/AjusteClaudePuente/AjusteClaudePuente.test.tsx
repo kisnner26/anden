@@ -8,7 +8,7 @@ import { AjusteClaudePuente } from './AjusteClaudePuente';
 
 const mockServicio = {
   borrarPuente: jest.fn(async () => undefined),
-  guardarPuente: jest.fn(async (_puente: unknown) => undefined),
+  guardarPuente: jest.fn(async (puente: unknown) => void puente),
   leerPuente: jest.fn(
     async (): Promise<{ codigo: string; url: string } | null> => null,
   ),
