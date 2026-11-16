@@ -31,4 +31,10 @@ describe('EsqueletoIA', () => {
     const caja = pantalla.toJSON() as { children: unknown[] };
     expect(caja.children).toHaveLength(3);
   });
+
+  it('dibuja las líneas que se pidan', async () => {
+    const pantalla = await render(<EsqueletoIA lineas={5} />);
+    const caja = pantalla.toJSON() as { children: unknown[] };
+    expect(caja.children).toHaveLength(5);
+  });
 });
