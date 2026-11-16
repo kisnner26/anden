@@ -21,4 +21,13 @@ describe('useAvisos por defecto', () => {
     const { result } = await renderHook(() => useAvisos());
     expect(await result.current.activar()).toBe(false);
   });
+
+  it('las demás acciones no fallan', async () => {
+    const { result } = await renderHook(() => useAvisos());
+    await expect(result.current.desactivar()).resolves.toBeUndefined();
+    await expect(result.current.eliminar('a')).resolves.toBeUndefined();
+    await expect(result.current.eliminarTodos()).resolves.toBeUndefined();
+    await expect(result.current.marcarLeido('a')).resolves.toBeUndefined();
+    await expect(result.current.marcarTodos()).resolves.toBeUndefined();
+  });
 });
