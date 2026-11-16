@@ -31,4 +31,9 @@ describe('RecorridoPasaporte', () => {
     const pantalla = await render(<RecorridoPasaporte ciudades={vacias} />);
     expect(pantalla.getByLabelText(t('pasaporte.recorridoVacio'))).toBeTruthy();
   });
+
+  it('tiene su identificador de prueba', async () => {
+    const pantalla = await render(<RecorridoPasaporte ciudades={HECHAS} />);
+    expect(pantalla.getByTestId('recorrido-pasaporte')).toBeTruthy();
+  });
 });
