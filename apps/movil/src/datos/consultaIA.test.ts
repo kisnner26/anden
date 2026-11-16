@@ -414,3 +414,18 @@ describe('lineaDeEncomienda', () => {
     expect(lineaDeEncomienda(ENCOMIENDA)).not.toContain('frágil');
   });
 });
+
+describe('contexto personal', () => {
+  it('cuenta las encomiendas en curso y no las entregadas', () => {
+    const lineas = contextoPersonal(
+      estado({
+        encomiendas: [
+          ENCOMIENDA,
+          { ...ENCOMIENDA, id: 'e2', estado: 'entregada' },
+          { ...ENCOMIENDA, id: 'e3', estado: 'cancelada' },
+        ],
+      }),
+    );
+    expect(lineas).toContain('Tiene 1 encomienda(s) en curso.');
+  });
+});
