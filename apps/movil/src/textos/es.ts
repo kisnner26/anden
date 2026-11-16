@@ -214,6 +214,13 @@ export const textos = {
     motivoTitulo: 'Decile a tus pasajeros por qué',
     retirarConfirmar:
       'Retirar este viaje. Los pasajeros que ya reservaron lo verán cancelado.',
+    retirarPregunta: '¿Retirar este viaje?',
+    retirarConPasajeros: 'Los pasajeros que ya reservaron lo verán cancelado.',
+    retirarSinPasajeros: 'Nadie lo reservó: el viaje se quita de la lista.',
+    retirarVolver: 'Volver',
+    retirarFallo:
+      'No se pudo retirar el viaje. Revisá tu conexión y probá de nuevo.',
+    retirando: 'Retirando…',
     nuevo: 'Publicar un viaje',
   },
   conductorPasajeros: {
