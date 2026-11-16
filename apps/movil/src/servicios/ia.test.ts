@@ -50,4 +50,10 @@ describe('motivos de no disponibilidad', () => {
       'Este teléfono no es compatible con Gemini.',
     );
   });
+
+  it('si el sistema es antiguo pide actualizar', () => {
+    expect(
+      motivoNoDisponible('sistema-antiguo', 'Apple Intelligence'),
+    ).toContain('versión más nueva');
+  });
 });
