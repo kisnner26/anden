@@ -1,3 +1,4 @@
+import { leerAcciones, type AccionIA } from './accionesIA';
 import { limpiarTexto } from './consultaIA';
 import { FICHAS, fichaDeCiudad, textoDeFicha } from './fichasCiudad';
 import { formatoFechaCorta, formatoHoraCompleta } from './formato';
@@ -41,6 +42,8 @@ export function instruccionesDeConversacion({
 
 /** lo que el modelo devolvió, ya validado contra los datos reales de la app */
 export interface RespuestaRica {
+  /** lo que el modelo propone hacer; la persona toca para ejecutarlo */
+  acciones: AccionIA[];
   /** la ciudad con ficha de la que habla la respuesta */
   ciudad: string | null;
   mostrarBoletos: boolean;
@@ -50,6 +53,7 @@ export interface RespuestaRica {
 }
 
 export const RESPUESTA_VACIA: RespuestaRica = {
+  acciones: [],
   ciudad: null,
   mostrarBoletos: false,
   salidas: [],
@@ -111,6 +115,7 @@ export function leerRespuestaRica(
       ? (fichaDeCiudad(crudo.ciudad)?.ciudad ?? null)
       : null;
   return {
+    acciones: leerAcciones(crudo.acciones),
     ciudad,
     mostrarBoletos: crudo.mostrarBoletos === true,
     salidas: reales,
