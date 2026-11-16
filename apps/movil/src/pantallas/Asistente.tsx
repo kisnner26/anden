@@ -482,6 +482,7 @@ export function Asistente({
         rol === 'conductor' && sesion
           ? salidas.filter((salida) => salida.choferId === sesion.choferId)
           : [],
+      terminales: datos.terminales,
     };
   }
 

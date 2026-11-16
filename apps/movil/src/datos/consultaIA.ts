@@ -3,6 +3,7 @@ import { antiguedadLegible } from './cacheViajes';
 import type { Encomienda } from './encomiendas';
 import { formatoFechaCorta, formatoHoraCompleta } from './formato';
 import { formatoDiasSemana } from './formato';
+import { consejoDeViaje, type TerminalConCoordenadas } from './consejoDeViaje';
 import { gustosDeViaje } from './gustosDeViaje';
 import { esTomable, mejorSalida } from './mejorSalida';
 import type { Habitual } from './habituales';
@@ -25,6 +26,8 @@ export interface EstadoApp {
   nombre: string;
   plus: boolean;
   rol: string;
+  /** las terminales con su ubicación, para decir de qué lado pega el sol */
+  terminales?: readonly TerminalConCoordenadas[];
   /** todas las salidas que conoce la app, de cualquier terminal */
   salidas: readonly Salida[];
   /** si es conductor, las salidas que él publicó */
@@ -225,6 +228,9 @@ export function contextoPersonal(estado: EstadoApp): string[] {
   }
   for (const boleto of proximos.slice(0, 3)) {
     lineas.push(lineaDeBoletoRica(boleto, ahora));
+  }
+  if (proximos[0]) {
+    lineas.push(...consejoDeViaje(proximos[0], estado.terminales ?? []));
   }
   if (estado.conexion && !estado.conexion.enLinea) {
     const hace = estado.conexion.ultimaSincronizacion
