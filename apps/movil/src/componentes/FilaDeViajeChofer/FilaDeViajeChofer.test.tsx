@@ -32,6 +32,8 @@ function dibujar(extra: Partial<PropiedadesFilaDeViajeChofer> = {}) {
   return render(
     <FilaDeViajeChofer
       alAbrir={jest.fn()}
+      alCancelarRetiro={jest.fn()}
+      alConfirmarRetiro={jest.fn()}
       alElegirMotivo={jest.fn()}
       alRetirar={jest.fn()}
       cobrado={null}
@@ -73,10 +75,86 @@ describe('FilaDeViajeChofer', () => {
     expect(alRetirar).toHaveBeenCalledTimes(1);
   });
 
-  it('después de tocar retirar pide confirmar', async () => {
+  it('después de tocar retirar pregunta y deja confirmar o volver', async () => {
     const pantalla = await dibujar({ confirmando: true });
-    expect(pantalla.getByText(t('nuevoViaje.retirarConfirmar'))).toBeTruthy();
-    expect(pantalla.queryByText(t('nuevoViaje.retirar'))).toBeNull();
+    expect(pantalla.getByText(t('nuevoViaje.retirarPregunta'))).toBeTruthy();
+    expect(pantalla.getByText(t('nuevoViaje.retirarVolver'))).toBeTruthy();
+    expect(
+      pantalla.getByRole('button', { name: t('nuevoViaje.retirar') }),
+    ).toBeTruthy();
+  });
+
+  it('sin pasajeros explica que el viaje se quita de la lista', async () => {
+    const pantalla = await dibujar({ confirmando: true });
+    expect(
+      pantalla.getByText(t('nuevoViaje.retirarSinPasajeros')),
+    ).toBeTruthy();
+  });
+
+  it('con pasajeros explica que lo verán cancelado', async () => {
+    const pantalla = await dibujar({ confirmando: true, pideMotivo: true });
+    expect(
+      pantalla.getByText(t('nuevoViaje.retirarConPasajeros')),
+    ).toBeTruthy();
+  });
+
+  it('confirmar avisa que se retire', async () => {
+    const alConfirmarRetiro = jest.fn();
+    const pantalla = await dibujar({ alConfirmarRetiro, confirmando: true });
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: t('nuevoViaje.retirar') }),
+    );
+    expect(alConfirmarRetiro).toHaveBeenCalledTimes(1);
+  });
+
+  it('volver cierra la confirmación sin retirar', async () => {
+    const alCancelarRetiro = jest.fn();
+    const alConfirmarRetiro = jest.fn();
+    const pantalla = await dibujar({
+      alCancelarRetiro,
+      alConfirmarRetiro,
+      confirmando: true,
+    });
+    await fireEvent.press(pantalla.getByText(t('nuevoViaje.retirarVolver')));
+    expect(alCancelarRetiro).toHaveBeenCalledTimes(1);
+    expect(alConfirmarRetiro).not.toHaveBeenCalled();
+  });
+
+  it('con pasajeros no deja retirar hasta elegir el motivo', async () => {
+    const alConfirmarRetiro = jest.fn();
+    const pantalla = await dibujar({
+      alConfirmarRetiro,
+      confirmando: true,
+      pideMotivo: true,
+    });
+    const boton = pantalla.getByRole('button', {
+      name: t('nuevoViaje.retirar'),
+    });
+    expect(boton.props.accessibilityState).toMatchObject({ disabled: true });
+    await fireEvent.press(boton);
+    expect(alConfirmarRetiro).not.toHaveBeenCalled();
+  });
+
+  it('con el motivo elegido ya deja retirar', async () => {
+    const pantalla = await dibujar({
+      confirmando: true,
+      motivo: 'clima',
+      pideMotivo: true,
+    });
+    expect(
+      pantalla.getByRole('button', { name: t('nuevoViaje.retirar') }).props
+        .accessibilityState,
+    ).toMatchObject({ disabled: false });
+  });
+
+  it('mientras se retira muestra el avance y no deja tocar otra vez', async () => {
+    const pantalla = await dibujar({ confirmando: true, enviandoRetiro: true });
+    expect(pantalla.getByText(t('nuevoViaje.retirando'))).toBeTruthy();
+  });
+
+  it('si no se pudo retirar lo dice dentro de la tarjeta', async () => {
+    const pantalla = await dibujar({ confirmando: true, falloRetiro: true });
+    expect(pantalla.getByText(t('nuevoViaje.retirarFallo'))).toBeTruthy();
   });
 
   it('un viaje cerrado muestra lo cobrado y no se puede retirar', async () => {
@@ -101,7 +179,7 @@ describe('FilaDeViajeChofer', () => {
   });
 
   it('con pasajeros pide elegir el motivo entre cuatro', async () => {
-    const pantalla = await dibujar({ pideMotivo: true });
+    const pantalla = await dibujar({ confirmando: true, pideMotivo: true });
     expect(pantalla.getByText(t('nuevoViaje.motivoTitulo'))).toBeTruthy();
     expect(pantalla.getByText(t('motivoCancelacion.averia'))).toBeTruthy();
     expect(pantalla.getByText(t('motivoCancelacion.clima'))).toBeTruthy();
@@ -111,13 +189,21 @@ describe('FilaDeViajeChofer', () => {
 
   it('elegir un motivo avisa cuál', async () => {
     const alElegirMotivo = jest.fn();
-    const pantalla = await dibujar({ alElegirMotivo, pideMotivo: true });
+    const pantalla = await dibujar({
+      alElegirMotivo,
+      confirmando: true,
+      pideMotivo: true,
+    });
     await fireEvent.press(pantalla.getByText(t('motivoCancelacion.clima')));
     expect(alElegirMotivo).toHaveBeenCalledWith('clima');
   });
 
   it('el motivo elegido queda marcado', async () => {
-    const pantalla = await dibujar({ motivo: 'pocos', pideMotivo: true });
+    const pantalla = await dibujar({
+      confirmando: true,
+      motivo: 'pocos',
+      pideMotivo: true,
+    });
     const fichas = pantalla
       .getAllByRole('button')
       .filter((b) => b.props.accessibilityState?.selected === true);

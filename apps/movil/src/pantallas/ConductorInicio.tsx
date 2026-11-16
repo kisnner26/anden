@@ -99,6 +99,8 @@ export function ConductorInicio({
   const [retirando, establecerRetirando] = useState<string | null>(null);
   const [motivo, establecerMotivo] = useState<MotivoCancelacion | null>(null);
   const [falloBusqueda, establecerFalloBusqueda] = useState(false);
+  const [falloRetiro, establecerFalloRetiro] = useState(false);
+  const [enviandoRetiro, establecerEnviandoRetiro] = useState(false);
 
   function hayPasajeros(viajeId: string): boolean {
     return obtenerMuestra().ocupaciones.some(
@@ -124,13 +126,35 @@ export function ConductorInicio({
     else establecerFalloBusqueda(true);
   }
 
-  async function retirar(viajeId: string) {
-    const conPasajeros = hayPasajeros(viajeId);
-    establecerRetirando(null);
-    const elegido = motivo ?? 'otro';
+  function empezarRetiro(viajeId: string) {
     establecerMotivo(null);
-    if (await retirarViaje(viajeId, conPasajeros, elegido))
-      await sincronizarViajes();
+    establecerFalloRetiro(false);
+    establecerRetirando(viajeId);
+  }
+
+  function cancelarRetiro() {
+    establecerMotivo(null);
+    establecerFalloRetiro(false);
+    establecerRetirando(null);
+  }
+
+  /** el viaje solo deja la lista si el servidor confirma; si falla, la confirmación sigue abierta con su aviso */
+  async function retirar(viajeId: string) {
+    if (enviandoRetiro) return;
+    establecerEnviandoRetiro(true);
+    establecerFalloRetiro(false);
+    const retirado = await retirarViaje(
+      viajeId,
+      hayPasajeros(viajeId),
+      motivo ?? 'otro',
+    );
+    establecerEnviandoRetiro(false);
+    if (!retirado) {
+      establecerFalloRetiro(true);
+      return;
+    }
+    cancelarRetiro();
+    await sincronizarViajes();
   }
 
   return (
@@ -244,14 +268,14 @@ export function ConductorInicio({
             <Aparece indice={indice} key={viaje.viajeId}>
               <FilaDeViajeChofer
                 alAbrir={() => alAbrirViaje(viaje.viajeId)}
+                alCancelarRetiro={cancelarRetiro}
+                alConfirmarRetiro={() => void retirar(viaje.viajeId)}
                 alElegirMotivo={establecerMotivo}
-                alRetirar={() =>
-                  retirando === viaje.viajeId
-                    ? void retirar(viaje.viajeId)
-                    : establecerRetirando(viaje.viajeId)
-                }
+                alRetirar={() => empezarRetiro(viaje.viajeId)}
                 cobrado={cierreDe(viaje.viajeId)?.cobrado ?? null}
                 confirmando={retirando === viaje.viajeId}
+                enviandoRetiro={enviandoRetiro}
+                falloRetiro={falloRetiro && retirando === viaje.viajeId}
                 motivo={motivo}
                 pideMotivo={
                   retirando === viaje.viajeId && hayPasajeros(viaje.viajeId)

@@ -20,13 +20,21 @@ import { t } from '@/textos/t';
 
 export interface PropiedadesFilaDeViajeChofer {
   alAbrir: () => void;
+  /** el chofer cambió de idea: se cierra la confirmación sin retirar nada */
+  alCancelarRetiro: () => void;
+  /** confirma el retiro; con pasajeros solo se puede después de elegir el motivo */
+  alConfirmarRetiro: () => void;
   alElegirMotivo: (motivo: MotivoCancelacion) => void;
-  /** toca retirar: la primera vez pide confirmar, la segunda retira */
+  /** toca retirar: abre la confirmación */
   alRetirar: () => void;
   /** lo cobrado, si el viaje ya se cerró */
   cobrado: number | null;
   /** el chofer ya tocó retirar y falta confirmar */
   confirmando: boolean;
+  /** el servidor está procesando el retiro */
+  enviandoRetiro?: boolean;
+  /** el último intento de retirar no se pudo hacer */
+  falloRetiro?: boolean;
   motivo: MotivoCancelacion | null;
   /** al retirar un viaje con pasajeros hay que decir por qué */
   pideMotivo: boolean;
@@ -40,10 +48,14 @@ export interface PropiedadesFilaDeViajeChofer {
  */
 export function FilaDeViajeChofer({
   alAbrir,
+  alCancelarRetiro,
+  alConfirmarRetiro,
   alElegirMotivo,
   alRetirar,
   cobrado,
   confirmando,
+  enviandoRetiro = false,
+  falloRetiro = false,
   motivo,
   pideMotivo,
   transmitiendo,
@@ -117,56 +129,124 @@ export function FilaDeViajeChofer({
         </View>
       </Pressable>
 
-      {pideMotivo ? (
+      {puedeRetirar && confirmando ? (
         <View
           style={[
-            estilos.motivos,
+            estilos.confirmacion,
             { borderColor: conAlfa(colores.tinta, 0.12) },
           ]}
+          testID="confirmar-retiro"
         >
-          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {t('nuevoViaje.motivoTitulo')}
-          </Text>
-          <View style={estilos.fichas}>
-            {MOTIVOS_CANCELACION.map((clave) => (
-              <Pressable
-                accessibilityRole="button"
-                accessibilityState={{ selected: motivo === clave }}
-                key={clave}
-                onPress={() => alElegirMotivo(clave)}
-                style={[
-                  estilos.ficha,
-                  {
-                    backgroundColor:
-                      motivo === clave
-                        ? conAlfa(colores.ambar, 0.2)
-                        : 'transparent',
-                    borderColor:
-                      motivo === clave
-                        ? colores.ambar
-                        : conAlfa(colores.tinta, 0.2),
-                  },
-                ]}
+          <View style={estilos.pregunta}>
+            <Text
+              accessibilityRole="header"
+              style={[tipografia.subtitulo, { color: colores.tinta }]}
+            >
+              {t('nuevoViaje.retirarPregunta')}
+            </Text>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {pideMotivo
+                ? t('nuevoViaje.retirarConPasajeros')
+                : t('nuevoViaje.retirarSinPasajeros')}
+            </Text>
+          </View>
+          {pideMotivo ? (
+            <View style={estilos.motivos}>
+              <Text
+                style={[tipografia.etiqueta, { color: colores.tintaSuave }]}
               >
-                <Text style={[tipografia.pequeno, { color: colores.tinta }]}>
-                  {t(`motivoCancelacion.${clave}`)}
-                </Text>
-              </Pressable>
-            ))}
+                {t('nuevoViaje.motivoTitulo')}
+              </Text>
+              <View style={estilos.fichas}>
+                {MOTIVOS_CANCELACION.map((clave) => (
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: motivo === clave }}
+                    key={clave}
+                    onPress={() => alElegirMotivo(clave)}
+                    style={[
+                      estilos.ficha,
+                      {
+                        backgroundColor:
+                          motivo === clave
+                            ? conAlfa(colores.ambar, 0.2)
+                            : 'transparent',
+                        borderColor:
+                          motivo === clave
+                            ? colores.ambar
+                            : conAlfa(colores.tinta, 0.2),
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[tipografia.pequeno, { color: colores.tinta }]}
+                    >
+                      {t(`motivoCancelacion.${clave}`)}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+          ) : null}
+          {falloRetiro ? (
+            <Text
+              accessibilityLiveRegion="polite"
+              style={[tipografia.pequeno, { color: colores.cancelado }]}
+            >
+              {t('nuevoViaje.retirarFallo')}
+            </Text>
+          ) : null}
+          <View style={estilos.botones}>
+            <Pressable
+              accessibilityRole="button"
+              disabled={enviandoRetiro}
+              onPress={alCancelarRetiro}
+              style={[
+                estilos.boton,
+                { borderColor: conAlfa(colores.tinta, 0.2) },
+              ]}
+            >
+              <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+                {t('nuevoViaje.retirarVolver')}
+              </Text>
+            </Pressable>
+            <Pressable
+              accessibilityLabel={t('nuevoViaje.retirar')}
+              accessibilityRole="button"
+              accessibilityState={{
+                disabled: enviandoRetiro || (pideMotivo && motivo === null),
+              }}
+              disabled={enviandoRetiro || (pideMotivo && motivo === null)}
+              onPress={alConfirmarRetiro}
+              style={[
+                estilos.boton,
+                {
+                  backgroundColor: conAlfa(colores.cancelado, 0.12),
+                  borderColor: colores.cancelado,
+                  opacity: pideMotivo && motivo === null ? 0.4 : 1,
+                },
+              ]}
+            >
+              <Text
+                style={[tipografia.subtitulo, { color: colores.cancelado }]}
+              >
+                {enviandoRetiro
+                  ? t('nuevoViaje.retirando')
+                  : t('nuevoViaje.retirar')}
+              </Text>
+            </Pressable>
           </View>
         </View>
       ) : null}
 
-      {puedeRetirar ? (
+      {puedeRetirar && !confirmando ? (
         <Pressable
           accessibilityRole="button"
           onPress={alRetirar}
           style={[estilos.pie, { borderColor: conAlfa(colores.tinta, 0.12) }]}
         >
           <Text style={[tipografia.etiqueta, { color: colores.cancelado }]}>
-            {confirmando
-              ? t('nuevoViaje.retirarConfirmar')
-              : t('nuevoViaje.retirar')}
+            {t('nuevoViaje.retirar')}
           </Text>
         </Pressable>
       ) : null}
@@ -175,6 +255,20 @@ export function FilaDeViajeChofer({
 }
 
 const estilos = StyleSheet.create({
+  boton: {
+    alignItems: 'center',
+    borderRadius: 999,
+    borderWidth: 1,
+    flex: 1,
+    justifyContent: 'center',
+    minHeight: tamanosControl.toqueMinimo,
+  },
+  botones: { flexDirection: 'row', gap: espacios.doce },
+  confirmacion: {
+    borderTopWidth: 1,
+    gap: espacios.doce,
+    padding: espacios.dieciseis,
+  },
   cuerpo: {
     alignItems: 'center',
     flexDirection: 'row',
@@ -199,11 +293,8 @@ const estilos = StyleSheet.create({
   },
   fichas: { flexDirection: 'row', flexWrap: 'wrap', gap: espacios.ocho },
   hora: { alignItems: 'flex-end' },
-  motivos: {
-    borderTopWidth: 1,
-    gap: espacios.ocho,
-    padding: espacios.dieciseis,
-  },
+  motivos: { gap: espacios.ocho },
+  pregunta: { gap: espacios.cuatro },
   pie: {
     alignItems: 'center',
     borderTopWidth: 1,
