@@ -85,4 +85,16 @@ describe('Clasificador', () => {
     expect(p[0]!.probabilidad).toBeGreaterThanOrEqual(p[1]!.probabilidad);
     expect(p).toHaveLength(2);
   });
+
+  it('calla si no está lo bastante seguro', () => {
+    const c = new Clasificador(
+      entrenarClasificador(FRASES, {
+        dimension: 64,
+        epocas: 1,
+        ocultas: [4],
+        validacion: 0,
+      }).modelo,
+    );
+    expect(c.mejor('xyzzy', 0.999)).toBeNull();
+  });
 });
