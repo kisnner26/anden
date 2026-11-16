@@ -9,11 +9,11 @@ const plantillas = JSON.parse(readFileSync(join(aqui, '..', 'datos', 'plantillas
 
 const lineas: string[] = [];
 for (const [etiqueta, lista] of Object.entries(plantillas)) {
-  for (const plantilla of lista) {
+  for (const [indice, plantilla] of lista.entries()) {
     const textos = plantilla.includes('{c}')
       ? CIUDADES.map((c) => plantilla.replace('{c}', c.toLowerCase()))
       : [plantilla];
-    for (const texto of textos) lineas.push(JSON.stringify({ etiqueta, texto }));
+    for (const texto of textos) lineas.push(JSON.stringify({ etiqueta, plantilla: indice, texto }));
   }
 }
 writeFileSync(join(aqui, '..', 'datos', 'intenciones.jsonl'), `${lineas.join('\n')}\n`);
