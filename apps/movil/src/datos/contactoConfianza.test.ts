@@ -100,4 +100,12 @@ describe('leerContacto valida lo guardado', () => {
     );
     expect(await leerContacto()).toBeNull();
   });
+
+  it('descarta un teléfono con un primer dígito que no existe', async () => {
+    await AsyncStorage.setItem(
+      CLAVE_CONTACTO,
+      JSON.stringify({ nombre: 'Mamá', telefono: '18881234' }),
+    );
+    expect(await leerContacto()).toBeNull();
+  });
 });
