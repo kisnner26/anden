@@ -83,4 +83,8 @@ describe('salidasDeChofer', () => {
     const horas = del.map((s) => s.salida.getTime());
     expect(horas).toEqual([...horas].sort((a, b) => a - b));
   });
+
+  it('un chofer que no existe no tiene salidas', () => {
+    expect(salidasDeChofer(crearMuestra(AHORA), AHORA, 'cho_999')).toEqual([]);
+  });
 });
