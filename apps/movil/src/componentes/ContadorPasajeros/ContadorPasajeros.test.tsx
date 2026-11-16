@@ -62,4 +62,17 @@ describe('ContadorPasajeros', () => {
     await fireEvent.press(menos);
     expect(alCambiar).not.toHaveBeenCalled();
   });
+
+  it('en el máximo el botón de más está apagado y no cambia nada', async () => {
+    const alCambiar = jest.fn();
+    const pantalla = await render(
+      <ContadorPasajeros alCambiar={alCambiar} cantidad={MAXIMO_PASAJEROS} />,
+    );
+    const mas = pantalla.getByRole('button', { name: t('rutas.masPasajeros') });
+    expect(mas.props.accessibilityState).toEqual(
+      expect.objectContaining({ disabled: true }),
+    );
+    await fireEvent.press(mas);
+    expect(alCambiar).not.toHaveBeenCalled();
+  });
 });
