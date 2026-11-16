@@ -51,4 +51,10 @@ describe('argumentosDeClaude', () => {
     });
     expect(a[a.indexOf('--system-prompt') + 1]).toBe('Sos el asistente');
   });
+
+  it('sin instrucciones no manda el parámetro', () => {
+    expect(
+      argumentosDeClaude({ instrucciones: '', pregunta: 'hola' }),
+    ).not.toContain('--system-prompt');
+  });
 });
