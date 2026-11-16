@@ -15,4 +15,14 @@ describe('pedidoValido', () => {
   it('acepta un pedido de la habilidad y reciente', () => {
     expect(pedidoValido(pedido(), 'amzn1.ask.skill.abc', AHORA)).toBe(true);
   });
+
+  it('rechaza un pedido de otra habilidad', () => {
+    expect(
+      pedidoValido(
+        pedido('amzn1.ask.skill.otra'),
+        'amzn1.ask.skill.abc',
+        AHORA,
+      ),
+    ).toBe(false);
+  });
 });
