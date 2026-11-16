@@ -43,4 +43,9 @@ describe('codigoDelPuente', () => {
     const c = 'ABCDEF0123456789'.repeat(3);
     expect(codigoDelPuente(` ${c} `)).toBe(c.toLowerCase());
   });
+
+  it('rechaza códigos cortos o con otros caracteres', () => {
+    expect(codigoDelPuente('abc')).toBeNull();
+    expect(codigoDelPuente('z'.repeat(48))).toBeNull();
+  });
 });
