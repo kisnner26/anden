@@ -12,4 +12,8 @@ describe('ciudadConocida', () => {
   it('usa la de siempre si la ciudad no existe', () => {
     expect(ciudadConocida('Atlantis', CIUDADES, 'Managua')).toBe('Managua');
   });
+
+  it('usa la de siempre si no llega nada', () => {
+    expect(ciudadConocida(undefined, CIUDADES, 'Managua')).toBe('Managua');
+  });
 });
