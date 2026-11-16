@@ -5,6 +5,7 @@ import {
   reclamarObjeto,
   type ObjetoPerdido,
 } from '@/servicios/supabase/objetosPerdidosSupabase';
+import { iniciarSondeo } from './sondeo';
 
 const CADA_MS = 30000;
 
@@ -24,8 +25,8 @@ export function useObjetosDelViaje(viajeId: string | null): {
 
   useEffect(() => {
     void traer();
-    const temporizador = setInterval(() => void traer(), CADA_MS);
-    return () => clearInterval(temporizador);
+    const pararSondeo = iniciarSondeo(() => void traer(), CADA_MS);
+    return pararSondeo;
   }, [traer]);
 
   const reclamar = useCallback(
