@@ -58,3 +58,11 @@ describe('contarParametros', () => {
     expect(contarParametros(crearRed(4, [6], 3))).toBe(4 * 6 + 6 + 6 * 3 + 3);
   });
 });
+
+describe('predecir', () => {
+  it('devuelve una probabilidad por clase que suma uno', () => {
+    const p = predecir(crearRed(4, [6], 3), new Float32Array([1, 0, 0, 1]));
+    expect(p).toHaveLength(3);
+    expect(p[0]! + p[1]! + p[2]!).toBeCloseTo(1, 5);
+  });
+});
