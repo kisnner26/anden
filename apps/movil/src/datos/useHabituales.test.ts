@@ -8,4 +8,10 @@ describe('useHabituales por defecto', () => {
     const { result } = await renderHook(() => useHabituales());
     expect(result.current.habituales).toEqual([]);
   });
+
+  it('agregar y quitar no fallan', async () => {
+    const { result } = await renderHook(() => useHabituales());
+    await expect(result.current.agregar({} as never)).resolves.toBeUndefined();
+    await expect(result.current.quitar('hab_1')).resolves.toBeUndefined();
+  });
 });
