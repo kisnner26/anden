@@ -57,4 +57,15 @@ describe('iniciarSondeo', () => {
     jest.advanceTimersByTime(5000);
     expect(tarea).toHaveBeenCalledTimes(2);
   });
+
+  it('al volver a la vista refresca al instante y sigue repitiendo', () => {
+    const tarea = jest.fn();
+    const { cambiar, f } = fuente();
+    iniciarSondeo(tarea, 1000, f);
+    cambiar('background');
+    cambiar('active');
+    expect(tarea).toHaveBeenCalledTimes(1);
+    jest.advanceTimersByTime(2000);
+    expect(tarea).toHaveBeenCalledTimes(3);
+  });
 });
