@@ -823,6 +823,38 @@ export const textos = {
     deVarias: 'Lugares para ver en Managua, Boaco y Juigalpa.',
     titulo: 'Lugares para ver',
   },
+  asistenteLocal: {
+    aviso:
+      'Respondo sin la IA del teléfono, con una red neuronal pequeña que corre aquí mismo.',
+    ayuda:
+      'Puedo decirte las próximas salidas, precios, asientos libres, la salida que más te conviene o la más barata, el estado de tu boleto, avisarte antes de que salga y contarte qué visitar.',
+    avisoListo: 'Tocá el botón para dejar el aviso antes de la salida.',
+    barata:
+      'La salida más barata {destino}es {cuando} a las {hora}: C$ {tarifa}, quedan {libres} asientos.',
+    boleto:
+      'Tu viaje a {destino} sale {cuando} a las {hora}, asiento {asiento}. Punto de encuentro {punto}.',
+    compartirListo:
+      'Tocá el botón para mandar tu viaje a tu contacto de confianza.',
+    conviene:
+      'Te conviene la de las {hora} {cuando}: C$ {tarifa}, quedan {libres} asientos{motivos}.',
+    encomienda: 'Para enviar un paquete te llevo a Encomiendas.',
+    gracias: 'Con gusto.',
+    noEntendi:
+      'No te entendí bien. Probá con algo como "próximo bus a Boaco" o "cuánto cuesta ir a Juigalpa".',
+    precio: 'Ir {destino}cuesta {rango} por pasajero.',
+    proxima:
+      'La próxima salida {destino}es {cuando} a las {hora}: {servicio}, C$ {tarifa}, quedan {libres} asientos. Punto de encuentro {punto}.',
+    queda: 'En la próxima salida {destino}({hora}) quedan {libres} asientos.',
+    saludo:
+      'Hola{nombre}. Preguntame por salidas, precios, asientos o tu boleto.',
+    sinBoleto: 'No tenés boletos vigentes por ahora.',
+    sinPrecio: 'No tengo la tarifa de ese trayecto cargada.',
+    sinSalidas:
+      'No encontré salidas {destino}por ahora. Revisá Horarios más tarde.',
+    visitar: 'Te cuento de {ciudad}: {resumen} Para visitar: {lugares}.',
+    visitarSinCiudad:
+      '¿De qué ciudad querés saber? Tengo Managua, Boaco y Juigalpa.',
+  },
   accionesIA: {
     avisar: 'Avisarme {minutos} min antes',
     avisoListo:
