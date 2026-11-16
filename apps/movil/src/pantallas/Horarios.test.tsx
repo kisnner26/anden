@@ -70,9 +70,7 @@ describe('Horarios', () => {
         name: 'La Cadena, Boaco',
       }),
     );
-    expect(
-      await pantalla.findByLabelText(/Sale desde La Cadena/),
-    ).toBeTruthy();
+    expect(await pantalla.findByLabelText(/Sale desde La Cadena/)).toBeTruthy();
   });
 
   it('filtra por servicio expreso', async () => {
