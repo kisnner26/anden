@@ -31,3 +31,24 @@ export function ordenarMensajes(
     a.enviadoEn.localeCompare(b.enviadoEn),
   );
 }
+
+/** cuántos mensajes de la otra persona llegaron después de lo último que se vio */
+export function sinLeer(
+  mensajes: readonly MensajeViaje[],
+  yo: AutorMensaje,
+  vistoHasta: string | null,
+): number {
+  return mensajes.filter(
+    (mensaje) =>
+      mensaje.de !== yo &&
+      (vistoHasta === null || mensaje.enviadoEn > vistoHasta),
+  ).length;
+}
+
+/** la conversación solo existe mientras el viaje va en camino o su unidad está compartiendo la ruta */
+export function chatDisponible(
+  estado: EstadoViaje,
+  transmitiendo: boolean,
+): boolean {
+  return estado === 'en-ruta' || transmitiendo;
+}
