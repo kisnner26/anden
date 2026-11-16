@@ -70,3 +70,19 @@ describe('etiquetasDe', () => {
     expect(etiquetasDe(FRASES)).toEqual(['precio', 'saludo']);
   });
 });
+
+describe('Clasificador', () => {
+  it('ordena las intenciones de la más a la menos probable', () => {
+    const c = new Clasificador(
+      entrenarClasificador(FRASES, {
+        dimension: 64,
+        epocas: 5,
+        ocultas: [4],
+        validacion: 0,
+      }).modelo,
+    );
+    const p = c.clasificar('hola');
+    expect(p[0]!.probabilidad).toBeGreaterThanOrEqual(p[1]!.probabilidad);
+    expect(p).toHaveLength(2);
+  });
+});
