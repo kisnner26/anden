@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Aparece } from '@/componentes/Aparece';
@@ -62,11 +62,13 @@ export function Rutas({
   const plan = usePlanificador(corredor);
   const { boletos } = useBoletos();
   // la salida que más conviene (hora, atraso, precio, asientos y sus gustos); si ninguna es tomable, la próxima
-  const salida =
-    mejorSalida(plan.salidas, {
-      ahora: plan.ahora,
-      gustos: gustosDeViaje(boletos),
-    })?.salida ?? plan.salidas[0];
+  const gustos = useMemo(() => gustosDeViaje(boletos), [boletos]);
+  const salida = useMemo(
+    () =>
+      mejorSalida(plan.salidas, { ahora: plan.ahora, gustos })?.salida ??
+      plan.salidas[0],
+    [gustos, plan.ahora, plan.salidas],
+  );
   const precio = salida
     ? totalReserva(obtenerMuestra(), salida.viajeId, cantidad)
     : null;
