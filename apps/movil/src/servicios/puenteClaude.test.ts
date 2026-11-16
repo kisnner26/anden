@@ -18,4 +18,10 @@ describe('urlDelPuente', () => {
       'http://mi-mac.local:4780',
     );
   });
+
+  it('rechaza direcciones de internet', () => {
+    expect(urlDelPuente('http://8.8.8.8:4780')).toBeNull();
+    expect(urlDelPuente('https://ejemplo.com:443')).toBeNull();
+    expect(urlDelPuente('http://172.32.0.1:4780')).toBeNull();
+  });
 });
