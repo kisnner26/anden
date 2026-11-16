@@ -6,3 +6,4 @@ coverage/
 dist/
 apps/movil/expo-env.d.ts
 packages/neuronal/src/modelos/
+apps/movil/src/datos/mapaPuntos.ts
