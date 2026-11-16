@@ -46,4 +46,15 @@ describe('pedidoValido', () => {
   it('rechaza todo si no hay un id de habilidad configurado', () => {
     expect(pedidoValido(pedido(), undefined, AHORA)).toBe(false);
   });
+
+  it('rechaza un pedido sin fecha o mal formado', () => {
+    expect(
+      pedidoValido(
+        { session: { application: { applicationId: 'amzn1.ask.skill.abc' } } },
+        'amzn1.ask.skill.abc',
+        AHORA,
+      ),
+    ).toBe(false);
+    expect(pedidoValido(null, 'amzn1.ask.skill.abc', AHORA)).toBe(false);
+  });
 });
