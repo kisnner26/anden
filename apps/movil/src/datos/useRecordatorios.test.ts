@@ -9,4 +9,11 @@ describe('useRecordatorios por defecto', () => {
     expect(result.current.recordatorios).toEqual([]);
     expect(result.current.de('via_1')).toBeUndefined();
   });
+
+  it('programar responde que falta el permiso', async () => {
+    const { result } = await renderHook(() => useRecordatorios());
+    expect(await result.current.programar({} as never, 30)).toBe(
+      'permiso-negado',
+    );
+  });
 });
