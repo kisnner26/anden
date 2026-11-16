@@ -1,4 +1,7 @@
 import type { Coordenada } from './geometria';
+import type { GustosDeViaje } from './gustosDeViaje';
+import { mejorSalida } from './mejorSalida';
+import type { Salida } from './salidas';
 import { formatoHoraCompleta } from './formato';
 import { MINUTOS_EN_EL_ANDEN } from './planViaje';
 import type { BoletoGuardado } from './reserva';
@@ -43,6 +46,46 @@ export function consejoDeViaje(
       lado === 'ninguno'
         ? 'En ese viaje el sol no molesta de un lado en particular.'
         : `En ese viaje el sol pega del lado ${lado === 'derecha' ? 'derecho' : 'izquierdo'} del bus: si quiere sombra, que elija asiento del otro lado.`,
+    );
+  }
+  return lineas;
+}
+
+/** a partir de cuántos minutos de atraso se avisa y se ofrece otra salida */
+export const ATRASO_QUE_SE_AVISA_MIN = 10;
+
+/**
+ * si el bus del boleto se atrasó o se canceló, lo dice y propone la salida que más conviene del mismo
+ * trayecto; vacío si el viaje va normal
+ */
+export function avisoDeAlteracion(
+  { boleto, resumen }: BoletoGuardado,
+  salidas: readonly Salida[],
+  ahora: Date,
+  gustos: GustosDeViaje | null,
+): string[] {
+  const propia = salidas.find((s) => s.viajeId === boleto.viajeId);
+  if (!propia) return [];
+  const cancelado = propia.estado === 'cancelado';
+  if (!cancelado && propia.minutosAtraso < ATRASO_QUE_SE_AVISA_MIN) return [];
+  const lineas = [
+    cancelado
+      ? `Atención: el bus de su boleto a ${resumen.destino} fue cancelado.`
+      : `Atención: el bus de su boleto a ${resumen.destino} lleva ${propia.minutosAtraso} minutos de atraso.`,
+  ];
+  const otras = salidas.filter(
+    (s) =>
+      s.viajeId !== propia.viajeId &&
+      s.origen === propia.origen &&
+      s.destino === propia.destino,
+  );
+  const alternativa = mejorSalida(otras, { ahora, gustos });
+  if (alternativa) {
+    const { salida, motivos } = alternativa;
+    lineas.push(
+      `La salida que más le conviene como alternativa: ${formatoHoraCompleta(salida.salida)}, ${
+        salida.tarifa === null ? 'sin tarifa cargada' : `C$ ${salida.tarifa}`
+      }, ${salida.asientosLibres} asientos libres${motivos.length > 0 ? ` (${motivos.join(', ')})` : ''}.`,
     );
   }
   return lineas;

@@ -3,7 +3,11 @@ import { antiguedadLegible } from './cacheViajes';
 import type { Encomienda } from './encomiendas';
 import { formatoFechaCorta, formatoHoraCompleta } from './formato';
 import { formatoDiasSemana } from './formato';
-import { consejoDeViaje, type TerminalConCoordenadas } from './consejoDeViaje';
+import {
+  avisoDeAlteracion,
+  consejoDeViaje,
+  type TerminalConCoordenadas,
+} from './consejoDeViaje';
 import { gustosDeViaje } from './gustosDeViaje';
 import { esTomable, mejorSalida } from './mejorSalida';
 import type { Habitual } from './habituales';
@@ -231,6 +235,14 @@ export function contextoPersonal(estado: EstadoApp): string[] {
   }
   if (proximos[0]) {
     lineas.push(...consejoDeViaje(proximos[0], estado.terminales ?? []));
+    lineas.push(
+      ...avisoDeAlteracion(
+        proximos[0],
+        estado.salidas,
+        ahora,
+        gustosDeViaje(estado.boletos),
+      ),
+    );
   }
   if (estado.conexion && !estado.conexion.enLinea) {
     const hace = estado.conexion.ultimaSincronizacion
