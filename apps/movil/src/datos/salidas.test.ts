@@ -1,7 +1,12 @@
 import { describe, expect, it } from '@jest/globals';
 
 import { crearMuestra, VIAJE_BOACO } from './muestra';
-import { armarSalidas, proximaSalida, salidasDelDia } from './salidas';
+import {
+  armarSalidas,
+  proximaSalida,
+  salidasDeChofer,
+  salidasDelDia,
+} from './salidas';
 
 const AHORA = new Date('2026-11-02T20:00:00.000Z');
 
@@ -62,5 +67,14 @@ describe('proximaSalida', () => {
 
   it('devuelve nulo si no queda ninguna pendiente', () => {
     expect(proximaSalida([])).toBeNull();
+  });
+});
+
+describe('salidasDeChofer', () => {
+  it('trae solo las salidas del chofer pedido', () => {
+    const datos = crearMuestra(AHORA);
+    const del = salidasDeChofer(datos, AHORA, 'cho_2');
+    expect(del.length).toBeGreaterThan(0);
+    expect(del.every((s) => s.choferId === 'cho_2')).toBe(true);
   });
 });
