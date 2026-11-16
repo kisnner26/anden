@@ -60,3 +60,9 @@ describe('resolverFoto', () => {
     );
   });
 });
+
+describe('borrarFoto', () => {
+  it('con una ruta antigua no hace nada ni falla', () => {
+    expect(() => borrarFoto('file:///var/mobile/abc.jpg')).not.toThrow();
+  });
+});
