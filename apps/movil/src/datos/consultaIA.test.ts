@@ -454,4 +454,13 @@ describe('contexto personal', () => {
       'Viaje habitual: Boaco a Managua, lun, mié, 06:00.',
     );
   });
+
+  it('el conductor ve los viajes que publicó', () => {
+    const lineas = contextoPersonal(
+      estado({ rol: 'conductor', salidasPropias: [salida('via_a', 0, 15)] }),
+    );
+    expect(lineas.some((l) => l.startsWith('Como conductor publicó'))).toBe(
+      true,
+    );
+  });
 });
