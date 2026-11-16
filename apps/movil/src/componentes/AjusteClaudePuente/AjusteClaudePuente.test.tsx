@@ -40,4 +40,21 @@ describe('AjusteClaudePuente', () => {
       pantalla.getByRole('button', { name: t('claudePuente.conectar') }),
     ).toBeTruthy();
   });
+
+  it('con datos inválidos avisa y no intenta conectar', async () => {
+    const pantalla = await renderPantalla(<AjusteClaudePuente />);
+    await fireEvent.changeText(
+      pantalla.getByLabelText(t('claudePuente.direccion')),
+      'http://8.8.8.8:4780',
+    );
+    await fireEvent.changeText(
+      pantalla.getByLabelText(t('claudePuente.codigo')),
+      'corto',
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: t('claudePuente.conectar') }),
+    );
+    expect(await pantalla.findByText(t('claudePuente.datosMal'))).toBeTruthy();
+    expect(mockServicio.probarPuente).not.toHaveBeenCalled();
+  });
 });
