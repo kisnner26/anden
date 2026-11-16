@@ -2,6 +2,7 @@ import { describe, expect, it } from '@jest/globals';
 
 import {
   actividadDeHerramienta,
+  cuandoSale,
   fichasParaElModelo,
   instruccionesDeConversacion,
   leerRespuestaRica,
@@ -175,5 +176,13 @@ describe('fichasParaElModelo', () => {
     const fichas = fichasParaElModelo();
     expect(Object.keys(fichas)).toContain('Boaco');
     expect(fichas.Boaco?.length).toBeGreaterThan(20);
+  });
+});
+
+describe('cuandoSale', () => {
+  it('junta la fecha corta y la hora', () => {
+    expect(cuandoSale(new Date(2026, 10, 13, 14, 40))).toBe(
+      'vie 13 nov · 2:40 p. m.',
+    );
   });
 });
