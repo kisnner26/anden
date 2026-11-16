@@ -85,4 +85,10 @@ describe('responderLocal', () => {
     const r = responderLocal('cuánto cuesta ir a Boaco', estado());
     expect(r.texto).toContain('desde C$ 70 hasta C$ 90');
   });
+
+  it('dice que no hay salidas cuando no encuentra ninguna', () => {
+    const r = responderLocal('hay bus a Juigalpa hoy', estado());
+    expect(r.texto).toContain('No encontré salidas');
+    expect(r.salidas).toEqual([]);
+  });
 });
