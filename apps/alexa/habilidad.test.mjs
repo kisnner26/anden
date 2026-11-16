@@ -45,3 +45,15 @@ describe('ciudadDe', () => {
     expect(ciudadDe(undefined)).toBeNull();
   });
 });
+
+describe('horaHablada', () => {
+  it('dice la hora como se habla', () => {
+    expect(horaHablada(new Date(2026, 10, 13, 15, 30))).toBe(
+      '3 y media de la tarde',
+    );
+    expect(horaHablada(new Date(2026, 10, 13, 6, 0))).toBe('6 de la mañana');
+    expect(horaHablada(new Date(2026, 10, 13, 19, 15))).toBe(
+      '7 y 15 de la noche',
+    );
+  });
+});
