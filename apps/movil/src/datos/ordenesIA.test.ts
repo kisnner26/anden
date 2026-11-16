@@ -182,6 +182,12 @@ describe('entenderCuando', () => {
     expect(r?.dia?.getDate()).toBe(13);
     expect(r?.franja).toBeNull();
   });
+
+  it('un día de la semana igual al de hoy cuenta como el de la semana que viene', () => {
+    const ahora = new Date(2026, 10, 13, 10, 0);
+    const r = entenderCuando('el viernes', ahora);
+    expect(r?.dia?.getDate()).toBe(20);
+  });
 });
 
 describe('reservar con cuándo', () => {
