@@ -27,3 +27,9 @@ describe('Gemini sin módulo nativo (pruebas, web)', () => {
     await expect(gemini.preguntar('a', 'b')).rejects.toThrow('sin-modulo');
   });
 });
+
+describe('motivos de no disponibilidad', () => {
+  it('si está apagada pide activarla en los ajustes', () => {
+    expect(motivoNoDisponible('apagada', 'Gemini')).toContain('Activá Gemini');
+  });
+});
