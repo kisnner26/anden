@@ -62,4 +62,12 @@ describe('BoletosSimple', () => {
     await fireEvent.press(pantalla.getByText('Boaco'));
     expect(alAbrirBoleto).toHaveBeenCalledWith(a.boleto.id);
   });
+
+  it('no muestra los boletos que no están vigentes', async () => {
+    const usado = boletoDePrueba(new Date(2099, 0, 5, 9, 0), 3, 'AAAA1111');
+    usado.boleto = { ...usado.boleto, estado: 'usado' };
+    const pantalla = await dibujar([usado]);
+    expect(pantalla.queryByText('Boaco')).toBeNull();
+    expect(pantalla.getByText(t('pantallasSimples.boletosSin'))).toBeTruthy();
+  });
 });
