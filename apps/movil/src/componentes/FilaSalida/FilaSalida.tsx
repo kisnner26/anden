@@ -70,74 +70,78 @@ export function FilaSalida({
         onPress={() => alPresionar?.(salida.viajeId)}
         style={estilos.principal}
       >
-        {fotoDeDestino(salida.destino) ? (
-          <FotoDestino
-            destino={salida.destino}
-            estilo={estilos.miniatura}
-            radio="loseta"
-            variante={salida.viajeId}
-          />
-        ) : (
-          <Loseta>
-            <IconoServicio servicio={salida.servicio} />
-          </Loseta>
-        )}
-        <View style={estilos.texto}>
-          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-            {salida.destino}
-          </Text>
-          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {`${servicio} · ${puntoEncuentro}`}
-          </Text>
-          {busqueda && salida.asientosLibres > 0 ? (
-            <Text
-              style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
-              testID="busca-pasajeros"
-            >
-              {busqueda.mensaje
-                ? `${t('buscarPasajeros.pasajero')} · ${busqueda.mensaje}`
-                : t('buscarPasajeros.pasajero')}
-            </Text>
-          ) : null}
-          {sugerida ? (
-            <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-              {sugerida}
-            </Text>
-          ) : null}
-          {mostrarDisponibilidad ? (
-            <Text
-              style={[
-                tipografia.etiqueta,
-                {
-                  color:
-                    nivel === 'hay' ? colores.tintaSuave : colores.ambarTexto,
-                },
-              ]}
-            >
-              {textoDisponibilidad}
-            </Text>
-          ) : null}
-        </View>
-        <View style={estilos.hora}>
-          <Text style={[tipografia.dato, { color: colores.ambarTexto }]}>
-            {formatoHora(salida.salida)}
-          </Text>
-          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-            {sufijoHora(salida.salida)}
-          </Text>
-          {mostrarDisponibilidad && llenado ? (
-            <SiluetaDeBus ancho={52} proporcion={llenado.proporcion} />
-          ) : null}
-        </View>
-        {conBoleto ? (
-          <Loseta tamano={44} variante="negra">
-            <Icono
-              color={colores.sobreNegro}
-              nombre="confirmar"
-              tamano="grande"
+        <View style={estilos.cuerpo}>
+          {fotoDeDestino(salida.destino) ? (
+            <FotoDestino
+              destino={salida.destino}
+              estilo={estilos.miniatura}
+              radio="loseta"
+              variante={salida.viajeId}
             />
-          </Loseta>
-        ) : null}
+          ) : (
+            <Loseta>
+              <IconoServicio servicio={salida.servicio} />
+            </Loseta>
+          )}
+          <View style={estilos.texto}>
+            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+              {salida.destino}
+            </Text>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {`${servicio} · ${puntoEncuentro}`}
+            </Text>
+            {busqueda && salida.asientosLibres > 0 ? (
+              <Text
+                style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
+                testID="busca-pasajeros"
+              >
+                {busqueda.mensaje
+                  ? `${t('buscarPasajeros.pasajero')} · ${busqueda.mensaje}`
+                  : t('buscarPasajeros.pasajero')}
+              </Text>
+            ) : null}
+            {sugerida ? (
+              <Text
+                style={[tipografia.etiqueta, { color: colores.ambarTexto }]}
+              >
+                {sugerida}
+              </Text>
+            ) : null}
+            {mostrarDisponibilidad ? (
+              <Text
+                style={[
+                  tipografia.etiqueta,
+                  {
+                    color:
+                      nivel === 'hay' ? colores.tintaSuave : colores.ambarTexto,
+                  },
+                ]}
+              >
+                {textoDisponibilidad}
+              </Text>
+            ) : null}
+          </View>
+          <View style={estilos.hora}>
+            <Text style={[tipografia.dato, { color: colores.ambarTexto }]}>
+              {formatoHora(salida.salida)}
+            </Text>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {sufijoHora(salida.salida)}
+            </Text>
+            {mostrarDisponibilidad && llenado ? (
+              <SiluetaDeBus ancho={52} proporcion={llenado.proporcion} />
+            ) : null}
+          </View>
+          {conBoleto ? (
+            <Loseta tamano={44} variante="negra">
+              <Icono
+                color={colores.sobreNegro}
+                nombre="confirmar"
+                tamano="grande"
+              />
+            </Loseta>
+          ) : null}
+        </View>
       </Presionable>
       {recordatorio ? (
         <BotonRecordatorio
@@ -159,13 +163,14 @@ const estilos = StyleSheet.create({
     paddingVertical: espacios.doce,
   },
   fila: { marginTop: espacios.doce },
-  hora: { alignItems: 'flex-end', gap: 4 },
-  miniatura: { height: 64, width: 64 },
-  principal: {
+  hora: { alignItems: 'flex-end', gap: 2, minWidth: 64 },
+  miniatura: { height: 72, width: 72 },
+  // el Presionable mete su contenido en una vista que apila en columna: la fila se arma acá, explícita
+  cuerpo: {
     alignItems: 'center',
-    flex: 1,
     flexDirection: 'row',
-    gap: espacios.doce,
+    gap: espacios.dieciseis,
   },
-  texto: { flex: 1 },
+  principal: { flex: 1 },
+  texto: { flex: 1, gap: 2 },
 });
