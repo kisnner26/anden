@@ -55,6 +55,7 @@ import {
   armarDatosParaElModelo,
   armarPrompt,
   hechosParaPregunta,
+  limpiarTexto,
   type EstadoApp,
 } from '@/datos/consultaIA';
 import {
@@ -70,6 +71,7 @@ import { mismoDia } from '@/datos/dias';
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
 import type { AccionIA } from '@/datos/accionesIA';
 import { responderLocal } from '@/datos/asistenteLocal';
+import { preguntarPorPuente, leerPuente } from '@/servicios/puenteClaude';
 import { boletosVigentes } from '@/datos/boletosVigentes';
 import {
   enlaceDeViaje,
@@ -627,6 +629,43 @@ export function Asistente({
         return;
       }
       if (!usable) {
+        const puente = await leerPuente();
+        if (puente) {
+          // con el puente conectado, Claude Code de la Mac contesta con los mismos datos de la app
+          try {
+            const estadoPuente = construirEstado();
+            const snapshotPuente = armarDatosParaElModelo(
+              estadoPuente,
+              fichasParaElModelo(),
+            );
+            const contexto = [
+              ...snapshotPuente.personal,
+              ...hechosParaPregunta(
+                limpia,
+                snapshotPuente,
+                estadoPuente.ciudades,
+                estadoPuente.ahora,
+              ),
+              armarContexto(salidas, boletos, new Date()),
+            ]
+              .filter((parte) => parte !== '')
+              .join('\n');
+            const texto = await preguntarPorPuente(
+              puente,
+              instruccionesDelAsistente(contexto, { turista }),
+              limpia,
+            );
+            const id = contadorId.current++;
+            establecerHistorial((previo) => [
+              ...previo,
+              { id, pregunta: limpia, respuesta: limpiarTexto(texto) },
+            ]);
+            establecerTexto('');
+            return;
+          } catch {
+            // si la Mac no responde se sigue con la red neuronal de la app
+          }
+        }
         // sin Apple Intelligence ni Gemini contesta la red neuronal pequeña de la app
         memoriaIA.recordarPregunta(limpia, [
           ...new Set(salidas.map((s) => s.destino)),
