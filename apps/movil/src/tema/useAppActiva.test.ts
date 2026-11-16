@@ -38,4 +38,11 @@ describe('useAppActiva', () => {
     const { result } = await renderHook(() => useAppActiva());
     expect(result.current).toBe(false);
   });
+
+  it('pasa a inactiva al irse a segundo plano', async () => {
+    simular('active');
+    const { result } = await renderHook(() => useAppActiva());
+    await act(async () => oyente?.('background'));
+    expect(result.current).toBe(false);
+  });
 });
