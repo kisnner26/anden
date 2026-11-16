@@ -1,0 +1,63 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "andén",
+      "intents": [
+        { "name": "AMAZON.HelpIntent", "samples": [] },
+        { "name": "AMAZON.StopIntent", "samples": [] },
+        { "name": "AMAZON.CancelIntent", "samples": [] },
+        { "name": "AMAZON.FallbackIntent", "samples": [] },
+        { "name": "AMAZON.NavigateHomeIntent", "samples": [] },
+        {
+          "name": "ProximoBusIntent",
+          "slots": [{ "name": "ciudad", "type": "CIUDAD" }],
+          "samples": [
+            "cuál es el próximo bus a {ciudad}",
+            "a qué hora sale el próximo bus a {ciudad}",
+            "hay bus a {ciudad}",
+            "cuándo sale el siguiente bus para {ciudad}",
+            "próxima salida a {ciudad}",
+            "quiero ir a {ciudad}",
+            "qué buses hay para {ciudad}",
+            "salidas a {ciudad}"
+          ]
+        },
+        {
+          "name": "PrecioIntent",
+          "slots": [{ "name": "ciudad", "type": "CIUDAD" }],
+          "samples": [
+            "cuánto cuesta ir a {ciudad}",
+            "cuánto vale el boleto a {ciudad}",
+            "cuál es el precio a {ciudad}",
+            "cuánto cuesta el pasaje a {ciudad}",
+            "tarifa a {ciudad}"
+          ]
+        },
+        {
+          "name": "AsientosIntent",
+          "slots": [{ "name": "ciudad", "type": "CIUDAD" }],
+          "samples": [
+            "quedan asientos a {ciudad}",
+            "hay lugar en el bus a {ciudad}",
+            "cuántos asientos quedan para {ciudad}",
+            "está lleno el bus a {ciudad}"
+          ]
+        },
+        {
+          "name": "AyudaIntent",
+          "samples": ["qué puedes hacer", "ayúdame", "cómo funciona"]
+        }
+      ],
+      "types": [
+        {
+          "name": "CIUDAD",
+          "values": [
+            { "name": { "value": "Managua" } },
+            { "name": { "value": "Boaco" } },
+            { "name": { "value": "Juigalpa" } }
+          ]
+        }
+      ]
+    }
+  }
+}
