@@ -31,6 +31,7 @@ export function instruccionesDeConversacion({
     'Nunca escribas identificadores internos ni números entre corchetes en el texto: los números [n] de las salidas solo van en el campo salidas, para mostrarlas como tarjetas.',
     'Para recomendar qué visitar usá la herramienta fichaDeCiudad y no agregues lugares que no estén en la ficha.',
     'En el campo ciudad poné la ciudad de la que habla la respuesta, y en seguimientos preguntas cortas que tengan sentido para esta persona.',
+    'Además de contestar podés proponer acciones en el campo acciones: avisar (un recordatorio antes de que salga su próximo bus), compartir (mandarle su viaje al contacto de confianza), abrir (llevarla a una pantalla) y postal (una ilustración de una ciudad). Proponé una solo cuando encaje con lo que pidió o con su viaje, nunca de relleno, y no digas que ya la hiciste: la persona la confirma con un toque.',
     'No des consejos médicos, legales ni financieros.',
     turista
       ? 'La persona es turista: recomendale qué visitar y cómo llegar en bus desde Andén, con ideas cortas.'

@@ -835,6 +835,12 @@ export const textos = {
     compartirListo:
       'Abrí Mensajes con tu viaje listo para {nombre}. Revisalo y tocá enviar.',
     fallo: 'No pude hacerlo ahora. Probá desde tus boletos.',
+    postal: 'Postal de {ciudad}',
+    postalFallo: 'No pude crear la postal ahora. Probá de nuevo en un rato.',
+    postalListo:
+      'Listo, hice una postal de {ciudad} en tu teléfono. Elegí dónde mandarla.',
+    postalNoPuedo:
+      'Este teléfono no puede crear imágenes. En un iPhone con Apple Intelligence sí puedo.',
     sinBoleto: 'No tenés un boleto vigente para esto. Reservá uno y te ayudo.',
     sinContacto:
       'Todavía no tenés un contacto de confianza. Decime, por ejemplo, "agregá a Mamá como contacto" y después compartimos tu viaje.',
