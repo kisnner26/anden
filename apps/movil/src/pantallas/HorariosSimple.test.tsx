@@ -69,4 +69,17 @@ describe('HorariosSimple', () => {
     await fireEvent.press(pantalla.getByText('Boaco'));
     expect(alAbrirViaje).toHaveBeenCalledWith('a');
   });
+
+  it('no muestra salidas que ya salieron, llenas ni con la venta cerrada', async () => {
+    mockLista = [
+      salida('pasada', 8),
+      salida('llena', 12, { asientosLibres: 0 }),
+      salida('cerrada', 13, { ventaAbierta: false }),
+    ];
+    const pantalla = await renderPantalla(
+      <HorariosSimple alAbrirViaje={jest.fn()} alSalir={jest.fn()} />,
+    );
+    expect(pantalla.queryByText('Boaco')).toBeNull();
+    expect(pantalla.getByText(t('pantallasSimples.horariosSin'))).toBeTruthy();
+  });
 });
