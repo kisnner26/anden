@@ -1,6 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 
 import {
+  cobradoDeHoy,
   pasajerosReservados,
   proximoViaje,
   viajesDeHoy,
@@ -91,5 +92,43 @@ describe('proximoViaje', () => {
 
   it('sin viajes no hay próximo', () => {
     expect(proximoViaje([], new Set(), AHORA)).toBeNull();
+  });
+});
+
+describe('cobradoDeHoy', () => {
+  it('suma lo cobrado en los cierres de hoy', () => {
+    expect(
+      cobradoDeHoy(
+        [
+          {
+            cerradoEn: new Date(2026, 10, 16, 9, 0).toISOString(),
+            cobrado: 300,
+          },
+          {
+            cerradoEn: new Date(2026, 10, 16, 12, 0).toISOString(),
+            cobrado: 150,
+          },
+        ],
+        AHORA,
+      ),
+    ).toBe(450);
+  });
+
+  it('no cuenta los cierres de otros días', () => {
+    expect(
+      cobradoDeHoy(
+        [
+          {
+            cerradoEn: new Date(2026, 10, 15, 9, 0).toISOString(),
+            cobrado: 300,
+          },
+        ],
+        AHORA,
+      ),
+    ).toBe(0);
+  });
+
+  it('sin cierres es cero', () => {
+    expect(cobradoDeHoy([], AHORA)).toBe(0);
   });
 });
