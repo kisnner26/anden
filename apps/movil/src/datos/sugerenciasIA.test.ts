@@ -14,6 +14,31 @@ const BASE: FactoresSugerencia = {
   semilla: 1,
 };
 
+describe('sugerencia por viaje alterado', () => {
+  it('pone primero preguntar por otra salida cuando el bus se atrasó', () => {
+    for (let semilla = 0; semilla < 20; semilla += 1) {
+      const lista = sugerenciasDelMomento({
+        ...BASE,
+        boletoProximo: {
+          alterado: true,
+          destino: 'Boaco',
+          minutosParaSalir: 90,
+        },
+        semilla,
+      });
+      expect(lista).toContain('¿Qué otra salida me conviene?');
+    }
+  });
+
+  it('no la ofrece si el viaje va normal', () => {
+    const lista = sugerenciasDelMomento({
+      ...BASE,
+      boletoProximo: { destino: 'Boaco', minutosParaSalir: 90 },
+    });
+    expect(lista).not.toContain('¿Qué otra salida me conviene?');
+  });
+});
+
 describe('sugerenciasDelMomento', () => {
   it('siempre da tres preguntas distintas', () => {
     for (let semilla = 0; semilla < 30; semilla += 1) {
