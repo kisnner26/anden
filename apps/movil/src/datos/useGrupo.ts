@@ -4,6 +4,7 @@ import {
   verGrupo,
   type EstadoDelGrupo,
 } from '@/servicios/supabase/grupoSupabase';
+import { iniciarSondeo } from './sondeo';
 
 const CADA_MS = 8000;
 
@@ -33,8 +34,8 @@ export function useGrupo(codigo: string | null): {
 
   useEffect(() => {
     void traer();
-    const temporizador = setInterval(() => void traer(), CADA_MS);
-    return () => clearInterval(temporizador);
+    const pararSondeo = iniciarSondeo(() => void traer(), CADA_MS);
+    return pararSondeo;
     // el temporizador se rearma solo cuando cambia el grupo
   }, [codigo]);
 
