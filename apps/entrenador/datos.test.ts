@@ -19,4 +19,11 @@ describe('validarFrase', () => {
     expect(validarFrase(null)).toBeNull();
     expect(validarFrase('hola')).toBeNull();
   });
+
+  it('rechaza una frase demasiado corta o demasiado larga', () => {
+    expect(validarFrase({ etiqueta: 'saludo', texto: 'h' })).toBeNull();
+    expect(
+      validarFrase({ etiqueta: 'saludo', texto: 'a'.repeat(161) }),
+    ).toBeNull();
+  });
 });
