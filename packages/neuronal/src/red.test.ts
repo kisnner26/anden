@@ -74,3 +74,12 @@ describe('predecir', () => {
     );
   });
 });
+
+describe('avanzar', () => {
+  it('guarda la entrada y la salida de cada capa', () => {
+    const red = crearRed(4, [6], 3);
+    const pasada = avanzar(red, new Float32Array([1, 1, 1, 1]));
+    expect(pasada.activaciones).toHaveLength(3);
+    expect(pasada.activaciones.map((a) => a.length)).toEqual([4, 6, 3]);
+  });
+});
