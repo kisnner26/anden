@@ -8,4 +8,8 @@ describe('crearAzar', () => {
     const b = crearAzar(5);
     expect([a(), a(), a()]).toEqual([b(), b(), b()]);
   });
+
+  it('con otra semilla da otra serie', () => {
+    expect(crearAzar(1)()).not.toBe(crearAzar(2)());
+  });
 });
