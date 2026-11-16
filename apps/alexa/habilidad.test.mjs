@@ -155,4 +155,15 @@ describe('responder', () => {
       'No encontré salidas a Boaco por ahora.',
     );
   });
+
+  it('si no entiende la ciudad la pregunta de nuevo y deja la sesión abierta', async () => {
+    const r = await responder(
+      pedido('ProximoBusIntent', 'Atlantis'),
+      async () => [],
+      AHORA,
+    );
+    expect(r.response.outputSpeech.text).toContain('¿A qué ciudad?');
+    expect(r.response.shouldEndSession).toBe(false);
+    expect(r.response.reprompt).toBeDefined();
+  });
 });
