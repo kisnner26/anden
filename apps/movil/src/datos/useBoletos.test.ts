@@ -17,4 +17,12 @@ describe('useBoletos por defecto', () => {
       ok: false,
     });
   });
+
+  it('agregar, quitar, cancelar y validar no fallan', async () => {
+    const { result } = await renderHook(() => useBoletos());
+    await expect(result.current.agregar({} as never)).resolves.toBeUndefined();
+    await expect(result.current.quitar('bol_1')).resolves.toBeUndefined();
+    await expect(result.current.cancelar('bol_1')).resolves.toBeUndefined();
+    await expect(result.current.validar('bol_1')).resolves.toBeUndefined();
+  });
 });
