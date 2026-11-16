@@ -59,4 +59,14 @@ describe('HorariosSimple', () => {
     );
     expect(pantalla.getByText('12:00 p. m. · C$ 66 · quedan 9')).toBeTruthy();
   });
+
+  it('tocar una salida abre el viaje', async () => {
+    mockLista = [salida('a', 12)];
+    const alAbrirViaje = jest.fn();
+    const pantalla = await renderPantalla(
+      <HorariosSimple alAbrirViaje={alAbrirViaje} alSalir={jest.fn()} />,
+    );
+    await fireEvent.press(pantalla.getByText('Boaco'));
+    expect(alAbrirViaje).toHaveBeenCalledWith('a');
+  });
 });
