@@ -114,4 +114,22 @@ describe('AlternativasDeViaje', () => {
     );
     expect(pantalla.getByText('No se pudo cambiar')).toBeTruthy();
   });
+
+  it('cada salida se anuncia con su día y su hora', async () => {
+    const pantalla = await render(
+      <AlternativasDeViaje
+        alElegir={jest.fn()}
+        eligiendo={null}
+        salidas={[salida('a', 15)]}
+      />,
+    );
+    expect(
+      pantalla.getByRole('button', {
+        name: rellenar(t('alternativas.pasarme'), {
+          dia: 'vie 13',
+          hora: '3:00 p. m.',
+        }),
+      }),
+    ).toBeTruthy();
+  });
 });
