@@ -69,6 +69,7 @@ import { FICHAS } from '@/datos/fichasCiudad';
 import { mismoDia } from '@/datos/dias';
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
 import type { AccionIA } from '@/datos/accionesIA';
+import { responderLocal } from '@/datos/asistenteLocal';
 import { boletosVigentes } from '@/datos/boletosVigentes';
 import {
   enlaceDeViaje,
@@ -616,6 +617,27 @@ export function Asistente({
         responder(limpia, textoDeFotos(lugaresParaPregunta(limpia)), porVoz);
         return;
       }
+      if (!usable) {
+        // sin Apple Intelligence ni Gemini contesta la red neuronal pequeña de la app
+        const rica = responderLocal(limpia, construirEstado());
+        const id = contadorId.current++;
+        establecerHistorial((previo) => [
+          ...previo,
+          { id, pregunta: limpia, respuesta: rica.texto, rica },
+        ]);
+        establecerTexto('');
+        if (porVoz || hablarRespuesta.current) {
+          void voz.hablar(rica.texto, {
+            alEstado: establecerHablando,
+            alProblema: (motivo) => {
+              establecerHablando(false);
+              establecerProblemaVoz(motivo);
+            },
+            enLinea: usarVozEnLinea.current,
+          });
+        }
+        return;
+      }
       const todosLosDestinos = [...new Set(salidas.map((s) => s.destino))];
       memoriaIA.recordarPregunta(limpia, todosLosDestinos);
       if (conversar && (await conversarConHerramientas(limpia, porVoz))) return;
@@ -720,10 +742,10 @@ export function Asistente({
 
   const preguntaEnviada = useRef(false);
   useEffect(() => {
-    if (!usable || !preguntaInicial || preguntaEnviada.current) return;
+    if (!preguntaInicial || preguntaEnviada.current) return;
     preguntaEnviada.current = true;
     void enviarActual.current(preguntaInicial);
-  }, [preguntaInicial, usable]);
+  }, [preguntaInicial]);
 
   const motivo = usable ? null : motivoNoDisponible(disponibilidad, nombre);
   const conversando = historial.length > 0;
@@ -833,16 +855,17 @@ export function Asistente({
           </View>
         )}
 
-        {!usable ? (
+        {!usable && (
           <Bloque estiloContenido={estilos.aviso}>
-            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-              {t('ia.sinUso')}
+            <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+              {t('asistenteLocal.aviso')}
             </Text>
-            <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
               {motivo ?? t('ia.activarEnAjustes')}
             </Text>
           </Bloque>
-        ) : (
+        )}
+        {
           <>
             {!conversando && (
               <>
@@ -1358,9 +1381,9 @@ export function Asistente({
               </>
             )}
           </>
-        )}
+        }
       </ScrollView>
-      {usable && (
+      {
         <View style={{ paddingBottom: margenes.bottom }}>
           <CompositorIA
             alCambiar={establecerTexto}
@@ -1373,7 +1396,7 @@ export function Asistente({
             texto={texto}
           />
         </View>
-      )}
+      }
     </KeyboardAvoidingView>
   );
 }
