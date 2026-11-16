@@ -207,5 +207,13 @@ export function mensajeComprobante(e: Encomienda): string {
 /** enlace para abrir Mensajes con el aviso a quien recibe ya escrito; la persona lo revisa y lo envía */
 export function urlSmsDestinatario(e: Encomienda): string {
   const mensaje = `Hola ${e.destinatario}, te mando una encomienda por bus de ${e.origen} a ${e.destino}. Código ${e.codigo}.`;
-  return `sms:+505${e.telefonoDestinatario}&body=${encodeURIComponent(mensaje)}`;
+  // el teléfono puede venir del servidor: se valida antes de armar el enlace; sin uno válido solo se abre el mensaje
+  const digitos = digitosTelefonoNi(e.telefonoDestinatario);
+  return `sms:${digitos ? `+505${digitos}` : ''}&body=${encodeURIComponent(mensaje)}`;
+}
+
+/** el enlace para llamar a quien recibe; nulo si el teléfono no es uno válido de Nicaragua */
+export function urlLlamadaDestinatario(e: Encomienda): string | null {
+  const digitos = digitosTelefonoNi(e.telefonoDestinatario);
+  return digitos ? `tel:+505${digitos}` : null;
 }
