@@ -195,4 +195,13 @@ describe('enlaces de contacto del destinatario', () => {
       }),
     ).toBeNull();
   });
+
+  it('el mensaje no lleva un teléfono inválido', () => {
+    const url = urlSmsDestinatario({
+      ...nuevaEncomienda(DATOS),
+      telefonoDestinatario: '8888&x=1',
+    });
+    expect(url.startsWith('sms:&body=')).toBe(true);
+    expect(url).not.toContain('8888&x=1');
+  });
 });
