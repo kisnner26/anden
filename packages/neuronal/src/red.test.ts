@@ -30,4 +30,12 @@ describe('crearRed', () => {
       [5, 3],
     ]);
   });
+
+  it('con la misma semilla crea los mismos pesos', () => {
+    const a = crearRed(4, [6], 3, 9);
+    const b = crearRed(4, [6], 3, 9);
+    expect(Array.from(a.capas[0]!.pesos)).toEqual(
+      Array.from(b.capas[0]!.pesos),
+    );
+  });
 });
