@@ -66,4 +66,12 @@ describe('argumentosDeClaude', () => {
       argumentosDeClaude({ instrucciones: '', pregunta: 'hola' }, 'sonnet'),
     ).toEqual(expect.arrayContaining(['--model', 'sonnet']));
   });
+
+  it('la pregunta nunca se une a otro argumento', () => {
+    const a = argumentosDeClaude({
+      instrucciones: '',
+      pregunta: '--tools bash',
+    });
+    expect(a[a.indexOf('-p') + 1]).toBe('--tools bash');
+  });
 });
