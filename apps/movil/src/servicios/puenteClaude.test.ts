@@ -12,4 +12,10 @@ describe('urlDelPuente', () => {
       'http://172.20.1.1:4780',
     );
   });
+
+  it('acepta un nombre .local de la Mac', () => {
+    expect(urlDelPuente('http://mi-mac.local:4780')).toBe(
+      'http://mi-mac.local:4780',
+    );
+  });
 });
