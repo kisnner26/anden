@@ -486,4 +486,15 @@ describe('hechos para la pregunta', () => {
     );
     expect(hechos).toContain('Encomiendas de la persona:');
   });
+
+  it('con intención de encomienda y sin ninguna lo dice', () => {
+    const datos = armarDatosParaElModelo(estado(), {});
+    const hechos = hechosParaPregunta(
+      '¿cómo va mi encomienda?',
+      datos,
+      CIUDADES,
+      AHORA,
+    );
+    expect(hechos).toContain('La persona no tiene encomiendas.');
+  });
 });
