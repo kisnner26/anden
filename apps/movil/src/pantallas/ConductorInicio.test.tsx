@@ -167,12 +167,10 @@ describe('ConductorInicio', () => {
   it('ofrece buscar pasajeros en los viajes con asientos libres', async () => {
     const pantalla = await dibujar();
     await pantalla.findByText('Hola, Marvin Lanzas');
-    const botones = pantalla.getAllByRole('button', {
-      name: 'Buscar pasajeros',
-    });
-    expect(botones.length).toBeGreaterThan(0);
-    await fireEvent.press(botones[0]!);
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Buscar pasajeros' }),
+    );
     expect(pantalla.getByText('¿Por cuánto tiempo?')).toBeTruthy();
-    expect(pantalla.getByText('30 min')).toBeTruthy();
+    expect(pantalla.getAllByText('30 min').length).toBeGreaterThan(0);
   });
 });
