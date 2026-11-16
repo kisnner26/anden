@@ -46,7 +46,17 @@
     "cuanto cuesta el ordinario a {c}",
     "me dice el precio a {c}",
     "valor del boleto {c}",
-    "cuanto cuesta el bus"
+    "cuanto cuesta el bus",
+    "en cuanto sale ir a {c}",
+    "cuanto hay que pagar a {c}",
+    "dame la tarifa del viaje a {c}",
+    "que precio tiene el boleto de {c}",
+    "cuanto me cuesta llegar a {c} en bus",
+    "cuanto es el pasaje de managua a {c}",
+    "a cuanto esta el boleto a {c}",
+    "precio expreso a {c}",
+    "cuanto me van a cobrar a {c}",
+    "me dices cuanto vale {c}"
   ],
   "asientos": [
     "quedan asientos a {c}",
