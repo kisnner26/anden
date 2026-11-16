@@ -56,6 +56,12 @@ describe('boletoEnCurso', () => {
     ).toBe('bol_ZZZZ9999');
   });
 
+  it('si la unidad comparte la ruta cuenta aunque la salida aún no figure en ruta', () => {
+    expect(
+      boletoEnCurso([base], [salida('via_2', 'abordando')], ['via_2']),
+    ).not.toBeNull();
+  });
+
   it('sin boletos no hay viaje en curso', () => {
     expect(boletoEnCurso([], [salida('via_2', 'en-ruta')])).toBeNull();
   });
