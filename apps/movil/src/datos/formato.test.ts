@@ -1,6 +1,8 @@
 import { describe, expect, it } from '@jest/globals';
 
 import {
+  formatoDiaCorto,
+  formatoDiasSemana,
   formatoDuracion,
   formatoFechaCorta,
   formatoHora,
@@ -57,5 +59,11 @@ describe('formatoFechaCorta', () => {
 
   it('muestra el sábado 31 de enero', () => {
     expect(formatoFechaCorta(new Date(2026, 0, 31))).toBe('sáb 31 ene');
+  });
+});
+
+describe('formatoDiaCorto', () => {
+  it('da el día de la semana y el número', () => {
+    expect(formatoDiaCorto(new Date(2026, 10, 13))).toBe('vie 13');
   });
 });
