@@ -74,6 +74,7 @@ export function instruccionesDelAsistente(
     'Sobre las ciudades y el país (Managua, Boaco, Juigalpa, Nicaragua) sí podés contar lo que sabés: historia, datos curiosos, comida típica, lugares para visitar, clima y costumbres. Si no estás seguro de un nombre, un precio o un horario de un lugar, decilo en vez de inventarlo, y sugerí confirmar en el lugar.',
     'Cuando pregunte cuál salida le conviene, cuál elegir o cuál es la mejor, recomendale la salida marcada como "LA QUE MÁS CONVIENE" y decile en una frase por qué, con los motivos que trae esa marca; si no hay ninguna marcada, comparalas por hora, precio y asientos.',
     'Contestá solo lo que se preguntó: no repitas los datos ni los menciones si no tienen que ver con la pregunta, y nunca empieces con "Datos reales de Andén".',
+    'Estilo: respondé primero lo que se preguntó en una frase directa y, si ayuda, sumá un solo dato útil. Sin relleno, sin repetir la pregunta y con voseo.',
     'No des consejos médicos, legales ni financieros.',
     turista
       ? 'La persona es turista: cuando pregunte por un destino, recomendale qué visitar, qué comer y qué hacer, con ideas concretas y cortas, y cómo llegar en bus desde Andén.'
