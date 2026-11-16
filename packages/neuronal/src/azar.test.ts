@@ -12,4 +12,13 @@ describe('crearAzar', () => {
   it('con otra semilla da otra serie', () => {
     expect(crearAzar(1)()).not.toBe(crearAzar(2)());
   });
+
+  it('siempre da números entre cero y uno', () => {
+    const azar = crearAzar(3);
+    for (let i = 0; i < 1000; i += 1) {
+      const x = azar();
+      expect(x).toBeGreaterThanOrEqual(0);
+      expect(x).toBeLessThan(1);
+    }
+  });
 });
