@@ -8,4 +8,11 @@ describe('validarPedido', () => {
       validarPedido({ instrucciones: 'Sos el asistente', pregunta: ' hola ' }),
     ).toEqual({ instrucciones: 'Sos el asistente', pregunta: 'hola' });
   });
+
+  it('rechaza lo que no es un objeto o no trae textos', () => {
+    expect(validarPedido(null)).toBeNull();
+    expect(validarPedido('hola')).toBeNull();
+    expect(validarPedido({ pregunta: 'hola' })).toBeNull();
+    expect(validarPedido({ instrucciones: 1, pregunta: 'hola' })).toBeNull();
+  });
 });
