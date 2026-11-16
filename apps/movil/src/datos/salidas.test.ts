@@ -87,4 +87,12 @@ describe('salidasDeChofer', () => {
   it('un chofer que no existe no tiene salidas', () => {
     expect(salidasDeChofer(crearMuestra(AHORA), AHORA, 'cho_999')).toEqual([]);
   });
+
+  it('junta las salidas de todas las terminales', () => {
+    const datos = crearMuestra(AHORA);
+    const total = datos.terminales
+      .flatMap((t) => armarSalidas(datos, AHORA, t.id))
+      .filter((s) => s.choferId === 'cho_1');
+    expect(salidasDeChofer(datos, AHORA, 'cho_1')).toHaveLength(total.length);
+  });
 });
