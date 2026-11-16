@@ -38,4 +38,10 @@ describe('motivos de no disponibilidad', () => {
       'Probá en unos minutos',
     );
   });
+
+  it('si el idioma no se soporta lo dice', () => {
+    expect(motivoNoDisponible('idioma-no-soportado', 'Gemini')).toContain(
+      'idioma',
+    );
+  });
 });
