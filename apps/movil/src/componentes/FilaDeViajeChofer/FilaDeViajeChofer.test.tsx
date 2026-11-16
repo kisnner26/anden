@@ -88,4 +88,10 @@ describe('FilaDeViajeChofer', () => {
     ).toBeTruthy();
     expect(pantalla.queryByText(t('nuevoViaje.retirar'))).toBeNull();
   });
+
+  it('un viaje en vivo lo indica y no se puede retirar', async () => {
+    const pantalla = await dibujar({ transmitiendo: true });
+    expect(pantalla.getByText(t('conductor.enVivo'))).toBeTruthy();
+    expect(pantalla.queryByText(t('nuevoViaje.retirar'))).toBeNull();
+  });
 });
