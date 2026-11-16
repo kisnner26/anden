@@ -144,4 +144,15 @@ describe('responder', () => {
     );
     expect(r.response.outputSpeech.text).toContain('quedan 4 asientos');
   });
+
+  it('si no encuentra salidas lo dice', async () => {
+    const r = await responder(
+      pedido('ProximoBusIntent', 'Boaco'),
+      async () => [],
+      AHORA,
+    );
+    expect(r.response.outputSpeech.text).toBe(
+      'No encontré salidas a Boaco por ahora.',
+    );
+  });
 });
