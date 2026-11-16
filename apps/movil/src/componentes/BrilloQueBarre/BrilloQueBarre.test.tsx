@@ -31,4 +31,9 @@ describe('BrilloQueBarre', () => {
       '"pointerEvents":"none"',
     );
   });
+
+  it('acepta pausa y retardo propios', async () => {
+    const pantalla = await render(<BrilloQueBarre pausa={500} retardo={200} />);
+    expect(pantalla.toJSON()).not.toBeNull();
+  });
 });
