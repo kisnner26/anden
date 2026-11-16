@@ -102,4 +102,13 @@ describe('responderLocal', () => {
       'No tenés boletos',
     );
   });
+
+  it('con boleto da su hora, su asiento y el punto', () => {
+    const r = responderLocal(
+      'cuándo sale mi boleto',
+      estado({ boletos: [boletoDePrueba(new Date(2026, 10, 13, 15, 0), 8)] }),
+    );
+    expect(r.texto).toContain('asiento 8');
+    expect(r.mostrarBoletos).toBe(true);
+  });
 });
