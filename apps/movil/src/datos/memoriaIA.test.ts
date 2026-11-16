@@ -1,7 +1,9 @@
 import { describe, expect, it } from '@jest/globals';
 
 import {
+  CLAVE_MEMORIA_IA,
   MEMORIA_VACIA,
+  claveMemoriaDe,
   destinoHabitual,
   leerMemoria,
   momentoDelDia,
@@ -91,5 +93,12 @@ describe('leerMemoria', () => {
     expect(memoria.horas).toHaveLength(24);
     expect(memoria.preguntas).toEqual(['a']);
     expect(memoria.usos).toBe(0);
+  });
+});
+
+describe('claveMemoriaDe', () => {
+  it('separa la memoria por cuenta', () => {
+    expect(claveMemoriaDe('ana')).toBe(`${CLAVE_MEMORIA_IA}.ana`);
+    expect(claveMemoriaDe('ana')).not.toBe(claveMemoriaDe('luis'));
   });
 });
