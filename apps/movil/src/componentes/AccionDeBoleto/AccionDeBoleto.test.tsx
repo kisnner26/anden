@@ -44,4 +44,17 @@ describe('AccionDeBoleto', () => {
     );
     expect(pantalla.getByRole('button', { name: 'Pantalla' })).toBeTruthy();
   });
+
+  it('por defecto no está activa', async () => {
+    const pantalla = await render(
+      <AccionDeBoleto
+        alPresionar={jest.fn()}
+        etiqueta="Aviso"
+        tipo="recordatorio"
+      />,
+    );
+    expect(
+      pantalla.getByRole('button', { name: 'Aviso' }).props.accessibilityState,
+    ).toEqual(expect.objectContaining({ selected: false }));
+  });
 });
