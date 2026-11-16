@@ -87,4 +87,13 @@ describe('iniciarSondeo', () => {
     expect(tarea).not.toHaveBeenCalled();
     expect(remove).toHaveBeenCalledTimes(1);
   });
+
+  it('la app en segundo plano que vuelve a la vista arranca el sondeo', () => {
+    const tarea = jest.fn();
+    const { cambiar, f } = fuente('background');
+    iniciarSondeo(tarea, 1000, f);
+    cambiar('active');
+    jest.advanceTimersByTime(1000);
+    expect(tarea).toHaveBeenCalledTimes(2);
+  });
 });
