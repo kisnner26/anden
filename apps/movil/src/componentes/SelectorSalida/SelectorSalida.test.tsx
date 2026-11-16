@@ -90,4 +90,15 @@ describe('SelectorSalida', () => {
     );
     expect(pantalla.getByText(t('horarios.agotado'))).toBeTruthy();
   });
+
+  it('dice cuántos asientos libres quedan', async () => {
+    const pantalla = await render(
+      <SelectorSalida
+        alElegir={jest.fn()}
+        elegida={null}
+        salidas={[salida('a', 9, { asientosLibres: 7 })]}
+      />,
+    );
+    expect(pantalla.getByText(`7 ${t('horarios.libres')}`)).toBeTruthy();
+  });
 });
