@@ -36,4 +36,9 @@ describe('modo turista', () => {
     await guardarTurista(false);
     expect(await leerTurista()).toBe(false);
   });
+
+  it('no cambia el interruptor de la IA', async () => {
+    await guardarTurista(true);
+    expect(await leerIAActivada()).toBe(false);
+  });
 });
