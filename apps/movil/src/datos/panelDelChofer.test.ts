@@ -1,6 +1,10 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { pasajerosReservados, viajesDeHoy } from './panelDelChofer';
+import {
+  pasajerosReservados,
+  proximoViaje,
+  viajesDeHoy,
+} from './panelDelChofer';
 import type { Salida } from './salidas';
 
 const AHORA = new Date(2026, 10, 16, 14, 0);
@@ -50,5 +54,42 @@ describe('viajesDeHoy', () => {
       AHORA,
     );
     expect(lista).toEqual([]);
+  });
+});
+
+describe('proximoViaje', () => {
+  const lista = [
+    viaje('a', new Date(2026, 10, 16, 9, 0)),
+    viaje('b', new Date(2026, 10, 16, 15, 0)),
+    viaje('c', new Date(2026, 10, 16, 18, 0)),
+  ];
+
+  it('elige el primero que todavía no sale', () => {
+    expect(proximoViaje(lista, new Set(), AHORA)?.viajeId).toBe('b');
+  });
+
+  it('salta los viajes ya cerrados', () => {
+    expect(proximoViaje(lista, new Set(['b']), AHORA)?.viajeId).toBe('c');
+  });
+
+  it('un viaje que salió hace poco todavía cuenta, uno viejo no', () => {
+    const reciente = [viaje('r', new Date(2026, 10, 16, 13, 45))];
+    expect(proximoViaje(reciente, new Set(), AHORA)?.viajeId).toBe('r');
+    const viejo = [viaje('v', new Date(2026, 10, 16, 13, 0))];
+    expect(proximoViaje(viejo, new Set(), AHORA)).toBeNull();
+  });
+
+  it('un viaje cancelado no es el próximo', () => {
+    expect(
+      proximoViaje(
+        [viaje('x', new Date(2026, 10, 16, 15, 0), 'cancelado')],
+        new Set(),
+        AHORA,
+      ),
+    ).toBeNull();
+  });
+
+  it('sin viajes no hay próximo', () => {
+    expect(proximoViaje([], new Set(), AHORA)).toBeNull();
   });
 });
