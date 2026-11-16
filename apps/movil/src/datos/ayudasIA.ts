@@ -1,8 +1,5 @@
 import type { Salida } from './salidas';
-
-function sinTildes(texto: string): string {
-  return texto.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
-}
+import { sinTildes } from './texto';
 
 /** las salidas cuyo destino aparece en el texto, las más próximas primero; sirve para mostrar tarjetas junto a la respuesta */
 export function salidasRelacionadas(
