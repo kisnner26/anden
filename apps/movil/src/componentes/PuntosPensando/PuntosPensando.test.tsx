@@ -31,4 +31,10 @@ describe('PuntosPensando', () => {
     const fila = pantalla.toJSON() as { children: unknown[] };
     expect(fila.children).toHaveLength(3);
   });
+
+  it('con movimiento reducido sigue mostrando los puntos quietos', async () => {
+    jest.mocked(useMovimientoReducido).mockReturnValue(true);
+    const pantalla = await render(<PuntosPensando />);
+    expect(pantalla.toJSON()).not.toBeNull();
+  });
 });
