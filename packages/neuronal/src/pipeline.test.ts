@@ -54,6 +54,15 @@ describe('entrenarClasificador', () => {
     expect(r.matriz).toHaveLength(2);
     expect(r.matriz[0]).toHaveLength(2);
   });
+
+  it('cuenta los parámetros de la red', () => {
+    const r = entrenarClasificador(FRASES, {
+      dimension: 64,
+      epocas: 1,
+      ocultas: [4],
+    });
+    expect(r.parametros).toBe(64 * 4 + 4 + 4 * 2 + 2);
+  });
 });
 
 describe('etiquetasDe', () => {
