@@ -76,6 +76,7 @@ export function EscenaViaje({
   const velo = useRef(new Animated.Value(reducido ? 1 : 0)).current;
   const terminada = useRef(false);
   const salida = useRef<Animated.CompositeAnimation | null>(null);
+  const montada = useRef(true);
   const duracion =
     duracionPropia ?? (tipo === 'salida' ? DURACION_SALIDA : DURACION_LLEGADA);
   const anchoBus = Math.min(width * 0.66, 320);
@@ -98,7 +99,8 @@ export function EscenaViaje({
   }, [colores.ambar, colores.bloqueNegro, colores.bloqueNegroClaro]);
 
   function cerrar() {
-    if (terminada.current) return;
+    // una animación que termina cuando la escena ya se cerró no debe arrancar otra ni avisar
+    if (terminada.current || !montada.current) return;
     terminada.current = true;
     if (reducido) {
       alTerminar();
@@ -114,7 +116,13 @@ export function EscenaViaje({
   }
 
   // al desmontar no queda corriendo el fundido de salida
-  useEffect(() => () => salida.current?.stop(), []);
+  useEffect(
+    () => () => {
+      montada.current = false;
+      salida.current?.stop();
+    },
+    [],
+  );
 
   useEffect(() => {
     if (reducido) {
