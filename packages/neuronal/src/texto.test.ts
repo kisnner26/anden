@@ -29,3 +29,11 @@ describe('palabras', () => {
     expect(palabras('   ')).toEqual([]);
   });
 });
+
+describe('rasgos', () => {
+  it('incluye cada palabra', () => {
+    expect(rasgos('bus boaco')).toEqual(
+      expect.arrayContaining(['p:bus', 'p:boaco']),
+    );
+  });
+});
