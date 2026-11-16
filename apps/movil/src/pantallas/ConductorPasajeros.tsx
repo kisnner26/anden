@@ -11,9 +11,11 @@ import { Avatar } from '@/componentes/Avatar';
 import { Autobus, type IdVarianteBus } from '@/componentes/Autobus';
 import { CabeceraPantalla } from '@/componentes/CabeceraPantalla';
 import { Bloque } from '@/componentes/Bloque';
+import { HojaConversacion } from '@/componentes/HojaConversacion';
 import { HojaPasajero } from '@/componentes/HojaPasajero';
 import type { IdVehiculoPlus } from '@/componentes/VehiculoPlus';
 import { formatoHora } from '@/datos/formato';
+import { chatDisponible } from '@/datos/mensajesViaje';
 import { iniciales, nombrePropio } from '@/datos/perfil';
 import { salidasDeChofer, salidasDelDia, type Salida } from '@/datos/salidas';
 import { unirBoletos, useBoletosDelViaje } from '@/datos/useBoletosDelViaje';
@@ -23,6 +25,7 @@ import { useBoletos } from '@/datos/useBoletos';
 import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
 import { usePagos } from '@/datos/usePagos';
 import { useSesion } from '@/datos/useSesion';
+import { useTransmision } from '@/datos/useTransmision';
 import { resumenDeCobro } from '@/servicios/pagos';
 import { conAlfa } from '@/tema/alfa';
 import { espacios, radios, tamanosControl } from '@/tema/espacios';
@@ -139,6 +142,8 @@ function SeccionViaje({
   const llamar = useLlamar();
   const { sesion } = useSesion();
   const [abierto, establecerAbierto] = useState<string | null>(null);
+  const [escribiendo, establecerEscribiendo] = useState<string | null>(null);
+  const enCamino = useTransmision(viaje.viajeId).activa;
   const pasajeros = unirBoletos(locales, remotos)
     .filter(
       ({ boleto }) =>
@@ -154,6 +159,9 @@ function SeccionViaje({
     registro,
   );
   const ficha = pasajeros.find(({ boleto }) => boleto.id === abierto);
+  const escribiendoA = pasajeros.find(
+    ({ boleto }) => boleto.id === escribiendo,
+  );
   const abordaron = pasajeros.filter(({ boleto }) => abordo(boleto.id)).length;
   const avance = pasajeros.length === 0 ? 0 : abordaron / pasajeros.length;
 
@@ -297,6 +305,10 @@ function SeccionViaje({
       )}
       <HojaPasajero
         abierta={ficha !== undefined}
+        alEscribir={(id) => {
+          establecerAbierto(null);
+          establecerEscribiendo(id);
+        }}
         alLlamar={(id) => void llamar.alPasajero(id)}
         llamadaFallida={llamar.fallo}
         abordo={ficha ? abordo(ficha.boleto.id) : false}
@@ -323,6 +335,20 @@ function SeccionViaje({
               }
             : null
         }
+      />
+      <HojaConversacion
+        abierta={escribiendoA !== undefined}
+        alCerrar={() => establecerEscribiendo(null)}
+        boletoId={escribiendoA?.boleto.id ?? ''}
+        disponible={chatDisponible(viaje.estado, enCamino)}
+        nombre={
+          escribiendoA
+            ? (nombrePropio(escribiendoA.boleto.pasajero.nombre).split(
+                ' ',
+              )[0] ?? '')
+            : ''
+        }
+        viajeId={viaje.viajeId}
       />
     </Bloque>
   );
