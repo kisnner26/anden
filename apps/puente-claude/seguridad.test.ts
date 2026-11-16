@@ -25,4 +25,15 @@ describe('esRedLocal', () => {
     expect(esRedLocal('fe80::1')).toBe(true);
     expect(esRedLocal('::1')).toBe(true);
   });
+
+  it('rechaza direcciones públicas', () => {
+    for (const d of [
+      '8.8.8.8',
+      '172.32.0.1',
+      '172.15.0.1',
+      '192.169.1.1',
+      '200.1.2.3',
+    ])
+      expect(esRedLocal(d)).toBe(false);
+  });
 });
