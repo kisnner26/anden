@@ -1,0 +1,32 @@
+{
+  "manifest": {
+    "publishingInformation": {
+      "locales": {
+        "es-MX": {
+          "name": "Andén",
+          "summary": "Pregunta por las salidas de buses de Managua, Boaco y Juigalpa.",
+          "description": "Con Andén le preguntás a Alexa cuál es el próximo bus, cuánto cuesta el boleto y si quedan asientos entre Managua, Boaco y Juigalpa.",
+          "examplePhrases": [
+            "Alexa, abre Andén",
+            "Alexa, pregúntale a Andén cuál es el próximo bus a Boaco",
+            "Alexa, pregúntale a Andén cuánto cuesta ir a Juigalpa"
+          ],
+          "keywords": ["bus", "transporte", "Nicaragua"]
+        }
+      },
+      "isAvailableWorldwide": false,
+      "testingInstructions": "Probar con las frases de ejemplo. Las salidas salen de la API de Andén.",
+      "category": "TRAVEL_AND_TRANSPORTATION",
+      "distributionCountries": ["NI"]
+    },
+    "apis": {
+      "custom": {
+        "endpoint": {
+          "sourceDir": ".",
+          "uri": "REEMPLAZAR_POR_EL_ARN_DE_LA_LAMBDA"
+        }
+      }
+    },
+    "manifestVersion": "1.0"
+  }
+}
