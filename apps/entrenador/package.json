@@ -1,0 +1,13 @@
+{
+  "name": "@anden/entrenador",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Panel local para ver, entrenar y probar la red neuronal del asistente sin IA del teléfono",
+  "scripts": {
+    "iniciar": "node servidor.ts"
+  },
+  "dependencies": {
+    "@anden/neuronal": "workspace:*"
+  }
+}
