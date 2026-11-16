@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { leerBoletosDelViaje } from '@/servicios/supabase/boletosCompartidos';
 
 import type { BoletoGuardado } from './reserva';
+import { iniciarSondeo } from './sondeo';
 
 const CADA_MS = 8000;
 
@@ -37,10 +38,10 @@ export function useBoletosDeViajes(viajeIds: readonly string[]): {
       });
     };
     traer();
-    const temporizador = setInterval(traer, CADA_MS);
+    const pararSondeo = iniciarSondeo(traer, CADA_MS);
     return () => {
       vigente = false;
-      clearInterval(temporizador);
+      pararSondeo();
     };
   }, [clave]);
 
