@@ -132,14 +132,26 @@ describe('consultarAccesoUbicacion', () => {
 
   it('con permiso concedido responde otorgado', async () => {
     jest.mocked(Location.hasServicesEnabledAsync).mockResolvedValue(true);
+    jest.mocked(Location.getForegroundPermissionsAsync).mockResolvedValue({
+      canAskAgain: true,
+      status: Location.PermissionStatus.GRANTED,
+    } as never);
+    await expect(consultarAccesoUbicacion()).resolves.toEqual({
+      estado: 'otorgado',
+    });
+  });
+
+  it('con permiso denegado dice si se puede volver a preguntar', async () => {
+    jest.mocked(Location.hasServicesEnabledAsync).mockResolvedValue(true);
     jest
       .mocked(Location.getForegroundPermissionsAsync)
       .mockResolvedValue({
         canAskAgain: true,
-        status: Location.PermissionStatus.GRANTED,
+        status: Location.PermissionStatus.DENIED,
       } as never);
     await expect(consultarAccesoUbicacion()).resolves.toEqual({
-      estado: 'otorgado',
+      estado: 'denegado',
+      puedePreguntar: true,
     });
   });
 });
