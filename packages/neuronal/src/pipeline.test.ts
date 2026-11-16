@@ -97,4 +97,12 @@ describe('Clasificador', () => {
     );
     expect(c.mejor('xyzzy', 0.999)).toBeNull();
   });
+
+  it('expone sus etiquetas', () => {
+    const c = new Clasificador(
+      entrenarClasificador(FRASES, { dimension: 64, epocas: 1, ocultas: [4] })
+        .modelo,
+    );
+    expect(c.etiquetas).toEqual(['precio', 'saludo']);
+  });
 });
