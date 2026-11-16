@@ -1,0 +1,11 @@
+{
+  "name": "@anden/puente-claude",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Puente para usar Claude Code, con tu suscripción, desde la app de Andén en la misma red",
+  "scripts": {
+    "iniciar": "node servidor.ts",
+    "test": "pnpm --workspace-root exec vitest run apps/puente-claude --no-fsModuleCache"
+  }
+}
