@@ -30,4 +30,14 @@ describe('OndaDeVoz', () => {
       '"accessibilityElementsHidden":true',
     );
   });
+
+  it('escuchar y hablar se ven con colores distintos', async () => {
+    const a = JSON.stringify(
+      (await render(<OndaDeVoz tono="escucha" />)).toJSON(),
+    );
+    const b = JSON.stringify(
+      (await render(<OndaDeVoz tono="habla" />)).toJSON(),
+    );
+    expect(a).not.toBe(b);
+  });
 });
