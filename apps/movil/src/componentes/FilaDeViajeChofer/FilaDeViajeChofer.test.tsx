@@ -54,4 +54,15 @@ describe('FilaDeViajeChofer', () => {
     ).toBeTruthy();
     expect(pantalla.getByText('3:30')).toBeTruthy();
   });
+
+  it('tocar la tarjeta abre el viaje', async () => {
+    const alAbrir = jest.fn();
+    const pantalla = await dibujar({ alAbrir });
+    await fireEvent.press(
+      pantalla.getByRole('button', {
+        name: rellenar(t('conductor.abrirViaje'), { destino: 'Boaco' }),
+      }),
+    );
+    expect(alAbrir).toHaveBeenCalledTimes(1);
+  });
 });
