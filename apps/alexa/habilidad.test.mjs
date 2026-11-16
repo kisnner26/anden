@@ -98,4 +98,16 @@ describe('responder', () => {
     expect(r.response.outputSpeech.text).toContain('Hola, soy Andén');
     expect(r.response.shouldEndSession).toBe(false);
   });
+
+  it('da el próximo bus con día, hora, precio y asientos', async () => {
+    const r = await responder(
+      pedido('ProximoBusIntent', 'Boaco'),
+      async () => [salida('a', 15)],
+      AHORA,
+    );
+    expect(r.response.outputSpeech.text).toBe(
+      'El próximo bus a Boaco sale hoy a las 3 de la tarde. Cuesta 66 córdobas. Quedan 12 asientos.',
+    );
+    expect(r.response.shouldEndSession).toBe(true);
+  });
 });
