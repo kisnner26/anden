@@ -34,6 +34,16 @@ describe('entrenarClasificador', () => {
     expect(c.mejor('cuanto cuesta el pasaje', 0.5)?.etiqueta).toBe('precio');
     expect(c.mejor('buenas noches', 0.5)?.etiqueta).toBe('saludo');
   });
+
+  it('devuelve el modelo con las etiquetas y la cantidad de ejemplos', () => {
+    const r = entrenarClasificador(FRASES, {
+      dimension: 64,
+      epocas: 3,
+      ocultas: [4],
+    });
+    expect(r.modelo.etiquetas).toEqual(['precio', 'saludo']);
+    expect(r.modelo.meta.ejemplos).toBe(12);
+  });
 });
 
 describe('etiquetasDe', () => {
