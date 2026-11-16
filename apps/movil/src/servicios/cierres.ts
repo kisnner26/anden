@@ -21,6 +21,8 @@ export interface CierreViaje {
   pendiente: number;
   sinPagar: PasajeroCierre[];
   total: number;
+  /** de dónde a dónde iba el viaje, guardado al cerrar porque el viaje deja de estar en la lista; falta en cierres viejos */
+  trayecto?: { destino: string; origen: string };
   viajeId: string;
 }
 
@@ -30,6 +32,7 @@ export function armarCierre(
   viajeId: string,
   choferId: string,
   ahora: Date = new Date(),
+  trayecto?: { destino: string; origen: string },
 ): CierreViaje {
   const cobro = resumenDeCobro(
     pasajeros.map((pasajero) => ({
@@ -48,6 +51,7 @@ export function armarCierre(
         (pasajero) => estadoDePago(pagos, pasajero.boletoId) === 'pendiente',
       )
       .sort((a, b) => a.asiento - b.asiento),
+    ...(trayecto ? { trayecto } : {}),
     viajeId,
   };
 }
