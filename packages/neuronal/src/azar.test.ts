@@ -22,3 +22,15 @@ describe('crearAzar', () => {
     }
   });
 });
+
+describe('normal', () => {
+  it('tiene media cercana a cero y desviación cercana a uno', () => {
+    const azar = crearAzar(8);
+    const muestras = Array.from({ length: 4000 }, () => normal(azar));
+    const media = muestras.reduce((s, x) => s + x, 0) / muestras.length;
+    const varianza =
+      muestras.reduce((s, x) => s + (x - media) ** 2, 0) / muestras.length;
+    expect(Math.abs(media)).toBeLessThan(0.1);
+    expect(Math.abs(Math.sqrt(varianza) - 1)).toBeLessThan(0.1);
+  });
+});
