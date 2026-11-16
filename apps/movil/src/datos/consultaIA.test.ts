@@ -463,4 +463,11 @@ describe('contexto personal', () => {
       true,
     );
   });
+
+  it('el pasajero no ve viajes publicados aunque existan', () => {
+    const lineas = contextoPersonal(
+      estado({ salidasPropias: [salida('via_a', 0, 15)] }),
+    );
+    expect(lineas.some((l) => l.startsWith('Como conductor'))).toBe(false);
+  });
 });
