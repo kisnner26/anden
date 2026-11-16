@@ -11,4 +11,9 @@ describe('minutosValidos', () => {
     expect(minutosValidos(600)).toBe(60);
   });
 
+  it('usa 30 si no dijo un número claro', () => {
+    expect(minutosValidos(undefined)).toBe(30);
+    expect(minutosValidos(-5)).toBe(30);
+    expect(minutosValidos('mucho')).toBe(30);
+  });
 });
