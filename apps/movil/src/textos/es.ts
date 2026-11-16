@@ -855,6 +855,24 @@ export const textos = {
     visitarSinCiudad:
       '¿De qué ciudad querés saber? Tengo Managua, Boaco y Juigalpa.',
   },
+  claudePuente: {
+    codigo: 'Código de emparejamiento',
+    conectado: 'Conectado a tu Mac.',
+    conectar: 'Conectar',
+    datosMal:
+      'Revisá la dirección (debe ser de tu red, con el puerto) y el código de 48 letras y números.',
+    desconectar: 'Desconectar',
+    detalle:
+      'Usá tu suscripción de Claude: tu Mac contesta las preguntas del asistente cuando este teléfono no tiene Apple Intelligence ni Gemini. Solo funciona dentro de tu red.',
+    direccion: 'Dirección de tu Mac',
+    ejemploDireccion: 'http://192.168.1.52:4780',
+    noResponde:
+      'No respondió. Revisá que el puente esté corriendo en tu Mac y que estén en la misma red.',
+    pasos: 'En tu Mac corré: pnpm --filter @anden/puente-claude iniciar',
+    respondioLocal:
+      'Tu Mac no respondió, así que contesto con lo que sé sin conexión.',
+    titulo: 'Claude desde tu Mac',
+  },
   accionesIA: {
     avisar: 'Avisarme {minutos} min antes',
     avisoListo:
