@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { validarFrase } from './datos.ts';
+import { todasLasFrases, validarFrase } from './datos.ts';
 
 describe('validarFrase', () => {
   it('acepta una frase con su intención', () => {
@@ -35,5 +35,15 @@ describe('validarFrase', () => {
   it('rechaza campos que no son texto', () => {
     expect(validarFrase({ etiqueta: 3, texto: 'hola' })).toBeNull();
     expect(validarFrase({ etiqueta: 'saludo', texto: 4 })).toBeNull();
+  });
+});
+
+describe('todasLasFrases', () => {
+  it('trae las frases de plantilla marcadas como base', () => {
+    const frases = todasLasFrases();
+    expect(frases.length).toBeGreaterThan(100);
+    expect(frases.filter((f) => f.origen === 'base').length).toBeGreaterThan(
+      100,
+    );
   });
 });
