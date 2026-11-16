@@ -37,3 +37,10 @@ describe('urlDelPuente', () => {
     expect(urlDelPuente('http://user@192.168.1.52:4780')).toBeNull();
   });
 });
+
+describe('codigoDelPuente', () => {
+  it('acepta el código de 48 caracteres y lo pasa a minúscula', () => {
+    const c = 'ABCDEF0123456789'.repeat(3);
+    expect(codigoDelPuente(` ${c} `)).toBe(c.toLowerCase());
+  });
+});
