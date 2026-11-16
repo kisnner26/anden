@@ -68,4 +68,13 @@ describe('iniciarSondeo', () => {
     jest.advanceTimersByTime(2000);
     expect(tarea).toHaveBeenCalledTimes(3);
   });
+
+  it('volver a la vista sin haberse pausado no duplica el temporizador', () => {
+    const tarea = jest.fn();
+    const { cambiar, f } = fuente();
+    iniciarSondeo(tarea, 1000, f);
+    cambiar('active');
+    jest.advanceTimersByTime(1000);
+    expect(tarea).toHaveBeenCalledTimes(1);
+  });
 });
