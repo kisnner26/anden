@@ -47,4 +47,10 @@ describe('mezclar', () => {
     mezclar(original, crearAzar(1));
     expect(original).toEqual([1, 2, 3, 4]);
   });
+
+  it('con la misma semilla da el mismo orden', () => {
+    expect(mezclar([1, 2, 3, 4, 5, 6], crearAzar(4))).toEqual(
+      mezclar([1, 2, 3, 4, 5, 6], crearAzar(4)),
+    );
+  });
 });
