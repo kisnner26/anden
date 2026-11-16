@@ -3,6 +3,7 @@ import { Animated, Easing, StyleSheet, View } from 'react-native';
 
 import { coloresAura } from '@/tema/colores';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
+import { useAppActiva } from '@/tema/useAppActiva';
 
 interface Satelite {
   /** cuánto tarda en dar una vuelta, en milisegundos, a ritmo 1 */
@@ -35,10 +36,11 @@ function Orbita({
   tamano: number;
 }) {
   const reducido = useMovimientoReducido();
+  const activa = useAppActiva();
   const vuelta = useRef(new Animated.Value(satelite.fase)).current;
 
   useEffect(() => {
-    if (reducido) return;
+    if (reducido || !activa) return;
     vuelta.setValue(satelite.fase);
     const bucle = Animated.loop(
       Animated.timing(vuelta, {
@@ -50,7 +52,7 @@ function Orbita({
     );
     bucle.start();
     return () => bucle.stop();
-  }, [reducido, ritmo, satelite, vuelta]);
+  }, [activa, reducido, ritmo, satelite, vuelta]);
 
   const diametro = tamano * satelite.grosor;
   const lado = tamano * satelite.radio * 2;
