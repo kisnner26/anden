@@ -7,12 +7,18 @@ import {
   it,
   jest,
 } from '@jest/globals';
-import { fireEvent } from '@testing-library/react-native';
+import { fireEvent, within } from '@testing-library/react-native';
+
+jest.mock('@/servicios/supabase/viajesSupabase', () => ({
+  ...(jest.requireActual('@/servicios/supabase/viajesSupabase') as object),
+  retirarViaje: jest.fn(),
+}));
 
 import { ProveedorCierres } from '@/datos/ProveedorCierres';
 import { ProveedorSesion } from '@/datos/ProveedorSesion';
 import { obtenerMuestra, reiniciarMuestra } from '@/datos/useSalidas';
 import { renderPantalla } from '@/pruebas/render';
+import { retirarViaje } from '@/servicios/supabase/viajesSupabase';
 import { TRANSMISION } from '@/servicios/transmision';
 
 import { ConductorInicio } from './ConductorInicio';
@@ -32,6 +38,10 @@ beforeEach(async () => {
       rol: 'conductor',
     }),
   );
+});
+
+beforeEach(() => {
+  jest.mocked(retirarViaje).mockReset();
 });
 
 afterEach(() => {
@@ -162,6 +172,74 @@ describe('ConductorInicio', () => {
       pantalla.getByRole('button', { name: 'Clima o estado del camino' }).props
         .accessibilityState?.selected,
     ).toBe(true);
+  });
+
+  describe('retirar un viaje', () => {
+    /** abre la confirmación del primer viaje que pide motivo (el que ya tiene pasajeros) */
+    async function abrirConMotivo(
+      pantalla: Awaited<ReturnType<typeof dibujar>>,
+    ) {
+      for (const boton of pantalla.getAllByRole('button', {
+        name: 'Retirar viaje',
+      })) {
+        await fireEvent.press(boton);
+        if (pantalla.queryByText('Decile a tus pasajeros por qué')) return;
+      }
+      throw new Error('ningún viaje pidió motivo');
+    }
+
+    it('elegir el motivo no retira: hace falta confirmar', async () => {
+      jest.mocked(retirarViaje).mockResolvedValue(true);
+      const pantalla = await dibujar();
+      await pantalla.findByText('Hola, Marvin Lanzas');
+      await abrirConMotivo(pantalla);
+      await fireEvent.press(pantalla.getByText('Clima o estado del camino'));
+      expect(retirarViaje).not.toHaveBeenCalled();
+    });
+
+    it('confirmar con el motivo elegido retira el viaje con ese motivo', async () => {
+      jest.mocked(retirarViaje).mockResolvedValue(true);
+      const pantalla = await dibujar();
+      await pantalla.findByText('Hola, Marvin Lanzas');
+      await abrirConMotivo(pantalla);
+      await fireEvent.press(pantalla.getByText('Clima o estado del camino'));
+      await fireEvent.press(
+        within(pantalla.getByTestId('confirmar-retiro')).getByRole('button', {
+          name: 'Retirar viaje',
+        }),
+      );
+      expect(retirarViaje).toHaveBeenCalledWith(
+        expect.stringMatching(/^via_/),
+        true,
+        'clima',
+      );
+    });
+
+    it('si el servidor no lo retira avisa y deja la confirmación abierta', async () => {
+      jest.mocked(retirarViaje).mockResolvedValue(false);
+      const pantalla = await dibujar();
+      await pantalla.findByText('Hola, Marvin Lanzas');
+      await abrirConMotivo(pantalla);
+      await fireEvent.press(pantalla.getByText('Clima o estado del camino'));
+      await fireEvent.press(
+        within(pantalla.getByTestId('confirmar-retiro')).getByRole('button', {
+          name: 'Retirar viaje',
+        }),
+      );
+      expect(
+        await pantalla.findByText(/No se pudo retirar el viaje/),
+      ).toBeTruthy();
+      expect(pantalla.getByText('¿Retirar este viaje?')).toBeTruthy();
+    });
+
+    it('volver cierra la confirmación sin tocar el servidor', async () => {
+      const pantalla = await dibujar();
+      await pantalla.findByText('Hola, Marvin Lanzas');
+      await abrirConMotivo(pantalla);
+      await fireEvent.press(pantalla.getByText('Volver'));
+      expect(pantalla.queryByText('¿Retirar este viaje?')).toBeNull();
+      expect(retirarViaje).not.toHaveBeenCalled();
+    });
   });
 
   it('ofrece buscar pasajeros en los viajes con asientos libres', async () => {
