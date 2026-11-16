@@ -45,4 +45,11 @@ describe('useAppActiva', () => {
     await act(async () => oyente?.('background'));
     expect(result.current).toBe(false);
   });
+
+  it('vuelve a activa al regresar', async () => {
+    simular('background');
+    const { result } = await renderHook(() => useAppActiva());
+    await act(async () => oyente?.('active'));
+    expect(result.current).toBe(true);
+  });
 });
