@@ -19,6 +19,7 @@ import { tipografia } from '@/tema/tipografia';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import { rellenar } from '@/textos/rellenar';
 import { t } from '@/textos/t';
+import { useAppActiva } from '@/tema/useAppActiva';
 
 export type FaseAlerta =
   | { tipo: 'ninguna' }
@@ -42,10 +43,11 @@ export function AlertaChoque({
 }: PropiedadesAlertaChoque) {
   const margenes = useSafeAreaInsets();
   const reducir = useMovimientoReducido();
+  const activa = useAppActiva();
   const pulso = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (reducir || fase.tipo !== 'pregunta') return;
+    if (reducir || !activa || fase.tipo !== 'pregunta') return;
     const animacion = Animated.loop(
       Animated.sequence([
         Animated.timing(pulso, {
@@ -64,7 +66,7 @@ export function AlertaChoque({
     );
     animacion.start();
     return () => animacion.stop();
-  }, [fase.tipo, pulso, reducir]);
+  }, [activa, fase.tipo, pulso, reducir]);
 
   if (fase.tipo === 'ninguna') return null;
   const restantes = fase.tipo === 'pregunta' ? fase.restantes : 0;
