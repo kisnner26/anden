@@ -22,4 +22,8 @@ describe('sinTildes', () => {
   it('no recorta espacios', () => {
     expect(sinTildes(' Sí ')).toBe(' si ');
   });
+
+  it('funciona con el texto vacío', () => {
+    expect(sinTildes('')).toBe('');
+  });
 });
