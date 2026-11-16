@@ -5,6 +5,7 @@ import { mismoDia, sumarDias } from './dias';
 import type { GustosDeViaje } from './gustosDeViaje';
 import { mejorSalida } from './mejorSalida';
 import type { Salida } from './salidas';
+import { sinTildes } from './texto';
 
 /** lo que la persona le pide hacer a Andén dentro de la app, en vez de solo preguntarle */
 export type PantallaAbrible =
@@ -106,10 +107,6 @@ export function entenderCuando(
   }
 
   return dia || franja || hora !== null ? { dia, franja, hora } : null;
-}
-
-function sinTildes(texto: string): string {
-  return texto.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 }
 
 /** la ciudad que aparece en el texto, de las que existen en la app; nula si no hay ninguna */
