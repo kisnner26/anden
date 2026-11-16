@@ -52,4 +52,11 @@ describe('encomiendas locales', () => {
     await servicio.actualizar(fantasma);
     expect(await servicio.listar()).toEqual([]);
   });
+
+  it('guardar y actualizar siempre responden que salió bien', async () => {
+    const servicio = crearEncomiendasLocal();
+    const encomienda = nuevaEncomienda(DATOS, new Date(2026, 10, 13, 9, 0));
+    expect(await servicio.guardar(encomienda)).toBe(true);
+    expect(await servicio.actualizar(encomienda)).toBe(true);
+  });
 });
