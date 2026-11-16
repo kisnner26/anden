@@ -38,6 +38,14 @@ describe('solicitarAccesoUbicacion', () => {
     });
     expect(Location.getCurrentPositionAsync).not.toHaveBeenCalled();
   });
+
+  it('avisa si los servicios de ubicación están apagados sin pedir permiso', async () => {
+    jest.mocked(Location.hasServicesEnabledAsync).mockResolvedValue(false);
+    await expect(solicitarAccesoUbicacion()).resolves.toEqual({
+      estado: 'desactivado',
+    });
+    expect(Location.requestForegroundPermissionsAsync).not.toHaveBeenCalled();
+  });
 });
 
 describe('consultarAccesoUbicacion', () => {
