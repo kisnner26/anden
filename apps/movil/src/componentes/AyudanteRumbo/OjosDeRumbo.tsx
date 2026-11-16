@@ -6,6 +6,7 @@ import { conAlfa } from '@/tema/alfa';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
+import { useAppActiva } from '@/tema/useAppActiva';
 
 /** lo que se ve de la cabeza fuera del borde de la pantalla */
 export const ANCHO_OJOS = 60;
@@ -36,6 +37,7 @@ const PUNTOS_DE_MIRADA = [
 export function OjosDeRumbo({ alToque, estado, y }: PropiedadesOjosDeRumbo) {
   const { colores } = useTema();
   const reducido = useMovimientoReducido();
+  const activa = useAppActiva();
   const entrada = useRef(new Animated.Value(reducido ? 1 : 0)).current;
   const respiro = useRef(new Animated.Value(0)).current;
   const [mirada, establecerMirada] = useState(PUNTOS_DE_MIRADA[0]!);
@@ -54,7 +56,7 @@ export function OjosDeRumbo({ alToque, estado, y }: PropiedadesOjosDeRumbo) {
 
   // respira: la cabeza se asoma y se recoge un poco, sin parar
   useEffect(() => {
-    if (reducido) return;
+    if (reducido || !activa) return;
     const vaiven = Animated.loop(
       Animated.sequence([
         Animated.timing(respiro, {
@@ -71,7 +73,7 @@ export function OjosDeRumbo({ alToque, estado, y }: PropiedadesOjosDeRumbo) {
     );
     vaiven.start();
     return () => vaiven.stop();
-  }, [reducido, respiro]);
+  }, [activa, reducido, respiro]);
 
   // mira de un lado a otro y parpadea sin ritmo fijo; pensando, las pupilas dan vueltas
   useEffect(() => {
