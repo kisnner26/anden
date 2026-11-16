@@ -97,4 +97,13 @@ describe('AjusteClaudePuente', () => {
       url: 'http://192.168.1.52:4780',
     });
   });
+
+  it('si ya había un puente guardado arranca conectado', async () => {
+    mockServicio.leerPuente.mockResolvedValue({
+      codigo: CODIGO,
+      url: 'http://192.168.1.52:4780',
+    });
+    const pantalla = await renderPantalla(<AjusteClaudePuente />);
+    expect(await pantalla.findByText(t('claudePuente.conectado'))).toBeTruthy();
+  });
 });
