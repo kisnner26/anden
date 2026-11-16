@@ -73,4 +73,11 @@ describe('responderLocal', () => {
   it('saluda por el nombre', () => {
     expect(responderLocal('hola', estado()).texto).toContain('Kisnner');
   });
+
+  it('da el próximo bus con su hora y su tarifa', () => {
+    const r = responderLocal('cuál es el próximo bus a Boaco', estado());
+    expect(r.texto).toContain('12:00');
+    expect(r.texto).toContain('C$ 70');
+    expect(r.salidas).toHaveLength(2);
+  });
 });
