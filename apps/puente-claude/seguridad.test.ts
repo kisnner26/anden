@@ -81,4 +81,13 @@ describe('crearLimite', () => {
       false,
     ]);
   });
+
+  it('vuelve a dejar pasar cuando termina la ventana', () => {
+    let ahora = 0;
+    const permitido = crearLimite(1, 1000, () => ahora);
+    expect(permitido()).toBe(true);
+    expect(permitido()).toBe(false);
+    ahora = 1500;
+    expect(permitido()).toBe(true);
+  });
 });
