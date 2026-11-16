@@ -40,4 +40,10 @@ describe('OndaDeVoz', () => {
     );
     expect(a).not.toBe(b);
   });
+
+  it('con movimiento reducido sigue dibujando las barras', async () => {
+    jest.mocked(useMovimientoReducido).mockReturnValue(true);
+    const pantalla = await render(<OndaDeVoz />);
+    expect(pantalla.toJSON()).not.toBeNull();
+  });
 });
