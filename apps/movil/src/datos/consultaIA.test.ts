@@ -435,4 +435,23 @@ describe('contexto personal', () => {
     );
     expect(lineas.some((l) => l.includes('encomienda(s)'))).toBe(false);
   });
+
+  it('nombra el viaje habitual con sus días y su hora', () => {
+    const lineas = contextoPersonal(
+      estado({
+        habituales: [
+          {
+            destino: 'Managua',
+            dias: [1, 3],
+            hora: '06:00',
+            id: 'h1',
+            origen: 'Boaco',
+          },
+        ],
+      }),
+    );
+    expect(lineas).toContain(
+      'Viaje habitual: Boaco a Managua, lun, mié, 06:00.',
+    );
+  });
 });
