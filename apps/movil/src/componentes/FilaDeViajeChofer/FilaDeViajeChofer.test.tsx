@@ -65,4 +65,11 @@ describe('FilaDeViajeChofer', () => {
     );
     expect(alAbrir).toHaveBeenCalledTimes(1);
   });
+
+  it('un viaje sin cerrar ni transmitir ofrece retirarlo', async () => {
+    const alRetirar = jest.fn();
+    const pantalla = await dibujar({ alRetirar });
+    await fireEvent.press(pantalla.getByText(t('nuevoViaje.retirar')));
+    expect(alRetirar).toHaveBeenCalledTimes(1);
+  });
 });
