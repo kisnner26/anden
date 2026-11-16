@@ -1,0 +1,15 @@
+import { describe, expect, it } from '@jest/globals';
+
+import { codigoDelPuente, urlDelPuente } from './puenteClaude';
+
+describe('urlDelPuente', () => {
+  it('acepta una dirección de la red local con puerto', () => {
+    expect(urlDelPuente('http://192.168.1.52:4780')).toBe(
+      'http://192.168.1.52:4780',
+    );
+    expect(urlDelPuente('http://10.0.0.8:4780/')).toBe('http://10.0.0.8:4780');
+    expect(urlDelPuente('http://172.20.1.1:4780')).toBe(
+      'http://172.20.1.1:4780',
+    );
+  });
+});
