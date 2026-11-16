@@ -48,4 +48,15 @@ describe('BotonGigante', () => {
     );
     expect(pantalla.getByRole('button', { name: 'Ir a Boaco' })).toBeTruthy();
   });
+
+  it('muestra la palabra pequeña de arriba cuando la hay', async () => {
+    const pantalla = await render(
+      <BotonGigante
+        alPresionar={jest.fn()}
+        etiqueta="Boaco"
+        sobretitulo="Tu boleto"
+      />,
+    );
+    expect(pantalla.getByText('Tu boleto')).toBeTruthy();
+  });
 });
