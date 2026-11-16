@@ -115,7 +115,12 @@ function estructuraDeLaRed(modelo: Modelo) {
       for (let e = 0; e < capa.entradas; e += 1) suma += Math.abs(capa.pesos[s * capa.entradas + e] as number);
       fuerza.push(suma / capa.entradas);
     }
-    return { entradas: capa.entradas, fuerza, salidas: capa.salidas };
+    // la última capa se manda completa (pocas conexiones) para dibujar cada línea con su peso
+    const pesos =
+      capa.entradas <= 64 && capa.salidas <= 40
+        ? Array.from({ length: capa.salidas }, (_, s) => capa.pesos.slice(s * capa.entradas, (s + 1) * capa.entradas))
+        : null;
+    return { entradas: capa.entradas, fuerza, pesos, salidas: capa.salidas };
   });
   return { capas, dimension: modelo.dimension, etiquetas: modelo.etiquetas, meta: modelo.meta };
 }
