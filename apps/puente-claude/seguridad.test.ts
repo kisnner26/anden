@@ -18,4 +18,11 @@ describe('esRedLocal', () => {
     ])
       expect(esRedLocal(d)).toBe(true);
   });
+
+  it('acepta direcciones IPv4 mapeadas y las de enlace local', () => {
+    expect(esRedLocal('::ffff:192.168.0.20')).toBe(true);
+    expect(esRedLocal('169.254.10.1')).toBe(true);
+    expect(esRedLocal('fe80::1')).toBe(true);
+    expect(esRedLocal('::1')).toBe(true);
+  });
 });
