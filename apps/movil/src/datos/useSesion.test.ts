@@ -23,4 +23,9 @@ describe('useSesion por defecto', () => {
     const resultado = await result.current.registrar({} as never);
     expect(resultado).toEqual({ error: 'conexion', ok: false });
   });
+
+  it('cerrar no falla', async () => {
+    const { result } = await renderHook(() => useSesion());
+    await expect(result.current.cerrar()).resolves.toBeUndefined();
+  });
 });
