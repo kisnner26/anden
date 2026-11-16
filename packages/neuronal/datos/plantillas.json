@@ -98,7 +98,17 @@
     "ya salio mi bus",
     "mi bus a {c} va atrasado",
     "tengo boleto para hoy",
-    "donde esta mi bus"
+    "donde esta mi bus",
+    "donde queda mi punto de encuentro",
+    "a que hora me presento para mi viaje",
+    "mi asiento cual era",
+    "mi boleto a {c} a que hora sale",
+    "cuanto falta para mi salida",
+    "quiero ver mi boleto de {c}",
+    "necesito saber la placa de mi bus",
+    "mi viaje de hoy a que hora es",
+    "en cual anden me subo",
+    "donde espero mi bus"
   ],
   "barato": [
     "cual es la salida mas barata",
