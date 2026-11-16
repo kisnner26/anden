@@ -68,7 +68,7 @@ export async function estadoDeImagenes(): Promise<string> {
   }
 }
 
-/** una postal ilustrada de la ciudad, hecha en el teléfono: la ruta del archivo o el motivo por el que no se pudo */
+/** una postal ilustrada de la ciudad, hecha en el teléfono: la ruta del archivo o el motivo por el que no se pudo (cancelada si la persona cerró la hoja) */
 export async function crearPostalDeCiudad(
   ciudad: string,
   descripcion: string,
