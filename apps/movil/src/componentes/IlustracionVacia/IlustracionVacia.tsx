@@ -233,32 +233,135 @@ function DibujoError({ tamano }: { tamano: number }) {
   );
 }
 
-/** el camino con rayas que corren y un bus esperando */
+/** una "z" que sube y se desvanece: el bus que ya terminó su día descansa */
+function Zeta({
+  demora,
+  derecha,
+  tamanoLetra,
+}: {
+  demora: number;
+  derecha: number;
+  tamanoLetra: number;
+}) {
+  const { colores } = useTema();
+  const reducido = useMovimientoReducido();
+  const activa = useAppActiva();
+  const vuelo = useRef(new Animated.Value(reducido ? 0.5 : 0)).current;
+
+  useEffect(() => {
+    if (reducido || !activa) return;
+    vuelo.setValue(0);
+    const bucle = Animated.loop(
+      Animated.sequence([
+        Animated.delay(demora),
+        Animated.timing(vuelo, {
+          duration: 2200,
+          easing: Easing.out(Easing.quad),
+          toValue: 1,
+          useNativeDriver: true,
+        }),
+        Animated.delay(600),
+      ]),
+    );
+    bucle.start();
+    return () => bucle.stop();
+  }, [activa, demora, reducido, vuelo]);
+
+  return (
+    <Animated.Text
+      pointerEvents="none"
+      style={{
+        color: colores.ambarTexto,
+        fontSize: tamanoLetra,
+        fontWeight: '800',
+        opacity: vuelo.interpolate({
+          inputRange: [0, 0.2, 0.8, 1],
+          outputRange: [0, 1, 0.8, 0],
+        }),
+        position: 'absolute',
+        right: derecha,
+        top: 0,
+        transform: [
+          {
+            translateY: vuelo.interpolate({
+              inputRange: [0, 1],
+              outputRange: [18, -14],
+            }),
+          },
+          {
+            translateX: vuelo.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, 8],
+            }),
+          },
+        ],
+      }}
+    >
+      z
+    </Animated.Text>
+  );
+}
+
+/**
+ * el bus que termina su día: llega por el camino frenando (las rayas se van aquietando), queda con un pequeño
+ * rebote y se duerme; las "z" suben mientras tanto. Quieto si se pidió reducir el movimiento
+ */
 function DibujoSalidas({ tamano }: { tamano: number }) {
   const { colores } = useTema();
   const reducido = useMovimientoReducido();
   const camino = useRef(new Animated.Value(0)).current;
+  const llegada = useRef(new Animated.Value(reducido ? 1 : 0)).current;
 
   const activa = useAppActiva();
   useEffect(() => {
-    if (reducido || !activa) return;
-    const bucle = Animated.loop(
-      Animated.timing(camino, {
-        duration: 1400,
-        easing: Easing.linear,
+    if (reducido) return;
+    // el bus entra desde la izquierda y frena; las rayas van al ritmo de su avance y se quedan quietas al parar
+    Animated.parallel([
+      Animated.spring(llegada, {
+        friction: 7,
+        tension: 34,
         toValue: 1,
         useNativeDriver: true,
       }),
-    );
-    bucle.start();
-    return () => bucle.stop();
-  }, [activa, camino, reducido]);
+      Animated.timing(camino, {
+        duration: 1500,
+        easing: Easing.out(Easing.cubic),
+        toValue: 3,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [camino, llegada, reducido]);
 
   return (
     <View
       style={{ alignItems: 'center', height: tamano * 0.75, width: tamano }}
     >
-      <Autobus ancho={tamano * 0.62} />
+      <Animated.View
+        style={{
+          opacity: llegada.interpolate({
+            inputRange: [0, 0.25, 1],
+            outputRange: [0, 1, 1],
+          }),
+          transform: [
+            {
+              translateX: llegada.interpolate({
+                inputRange: [0, 1],
+                outputRange: [-tamano * 0.9, 0],
+              }),
+            },
+          ],
+        }}
+      >
+        <Autobus ancho={tamano * 0.62} />
+      </Animated.View>
+      <Zeta demora={1500} derecha={tamano * 0.14} tamanoLetra={tamano * 0.14} />
+      {activa ? (
+        <Zeta
+          demora={2300}
+          derecha={tamano * 0.04}
+          tamanoLetra={tamano * 0.1}
+        />
+      ) : null}
       <View
         style={[
           estilos.camino,
@@ -272,8 +375,8 @@ function DibujoSalidas({ tamano }: { tamano: number }) {
               transform: [
                 {
                   translateX: camino.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, -28],
+                    inputRange: [0, 3],
+                    outputRange: [0, -84],
                   }),
                 },
               ],
