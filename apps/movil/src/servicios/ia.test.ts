@@ -64,4 +64,11 @@ describe('motores de IA', () => {
     expect(ia.nombre).toBe('Apple Intelligence');
     expect(ia.proveedor).toBe('apple');
   });
+
+  it('el de Android se llama Gemini y no sabe conversar', () => {
+    const ia = crearIAGemini();
+    expect(ia.nombre).toBe('Gemini');
+    expect(ia.proveedor).toBe('gemini');
+    expect(ia.conversar).toBeUndefined();
+  });
 });
