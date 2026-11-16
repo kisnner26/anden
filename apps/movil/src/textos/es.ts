@@ -1357,6 +1357,22 @@ export const textos = {
     titulo: 'Hola. ¿A dónde vamos?',
     tuBoleto: 'Tu boleto',
   },
+  pantallasSimples: {
+    boletosIndicacion: 'Tocá un boleto para verlo.',
+    boletosSin: 'No tenés boletos todavía.',
+    boletosTitulo: 'Tus boletos',
+    boletosBuscar: 'Buscar un viaje',
+    boletosDetalle: '{dia}, {hora} · Asiento {asiento}',
+    horariosDetalle: '{hora} · C$ {tarifa} · quedan {libres}',
+    horariosProxima: 'La próxima',
+    horariosIndicacion: 'Tocá una salida para elegir tu asiento.',
+    horariosSin: 'Ya no quedan salidas por hoy.',
+    horariosTitulo: 'Salidas de hoy',
+    rutasDetalle: '{km} km · unas {duracion}',
+    rutasIndicacion: 'Tocá el viaje que querés hacer.',
+    rutasTitulo: 'Adónde se puede ir',
+    rutasViaje: '{origen} a {destino}',
+  },
   modoSimple: {
     detalle:
       'Un inicio con botones muy grandes y pocas palabras, para quien usa poco el teléfono.',
