@@ -116,4 +116,10 @@ describe('responderLocal', () => {
     const r = responderLocal('quiero enviar un paquete a Boaco', estado());
     expect(r.acciones).toEqual([{ pantalla: 'encomienda', tipo: 'abrir' }]);
   });
+
+  it('cuenta qué visitar de la ciudad pedida', () => {
+    const r = responderLocal('qué puedo visitar en Boaco', estado());
+    expect(r.ciudad).toBe('Boaco');
+    expect(r.texto).toContain('Boaco');
+  });
 });
