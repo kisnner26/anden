@@ -18,6 +18,8 @@ export const RUTA_MODELO = join(carpeta, 'src', 'modelos', 'intenciones.ts');
 export interface FraseDelPanel extends Frase {
   /** viene del conjunto generado (no se borra desde el panel) o la agregó la persona */
   origen: 'base' | 'propia';
+  /** de qué plantilla viene la frase generada; sirve para apartar plantillas completas al medir */
+  plantilla?: number;
 }
 
 function leer(ruta: string, origen: FraseDelPanel['origen']): FraseDelPanel[] {
@@ -26,8 +28,13 @@ function leer(ruta: string, origen: FraseDelPanel['origen']): FraseDelPanel[] {
     .split('\n')
     .filter((l) => l.trim() !== '')
     .map((l) => {
-      const f = JSON.parse(l) as Frase;
-      return { etiqueta: f.etiqueta, origen, texto: f.texto };
+      const f = JSON.parse(l) as Frase & { plantilla?: number };
+      return {
+        etiqueta: f.etiqueta,
+        origen,
+        ...(typeof f.plantilla === 'number' ? { plantilla: f.plantilla } : {}),
+        texto: f.texto,
+      };
     });
 }
 
