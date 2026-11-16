@@ -175,6 +175,13 @@ describe('entenderCuando', () => {
     expect(r?.dia?.getDate()).toBe(13);
     expect(r?.franja).toBe('manana');
   });
+
+  it('entiende hoy sin franja', () => {
+    const ahora = new Date(2026, 10, 13, 10, 0);
+    const r = entenderCuando('un bus hoy', ahora);
+    expect(r?.dia?.getDate()).toBe(13);
+    expect(r?.franja).toBeNull();
+  });
 });
 
 describe('reservar con cuándo', () => {
