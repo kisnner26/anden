@@ -50,4 +50,16 @@ describe('leerModelo', () => {
     const roto = { ...m, capas: [{ ...m.capas[0]!, salidas: 9 }, m.capas[1]!] };
     expect(leerModelo(JSON.stringify(roto))).toBeNull();
   });
+
+  it('rechaza pesos que no son números', () => {
+    const m = aModelo(crearRed(4, [5], 3, 2), ['a', 'b', 'c'], 4, META);
+    const roto = {
+      ...m,
+      capas: [
+        { ...m.capas[0]!, pesos: m.capas[0]!.pesos.map(() => 'x') },
+        m.capas[1]!,
+      ],
+    };
+    expect(leerModelo(JSON.stringify(roto))).toBeNull();
+  });
 });
