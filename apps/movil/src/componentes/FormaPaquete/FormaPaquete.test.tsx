@@ -28,4 +28,11 @@ describe('FormaPaquete', () => {
     );
     expect(a).not.toBe(b);
   });
+
+  it('usa el color pedido para el trazo', async () => {
+    const pantalla = await render(
+      <FormaPaquete color="#ff00aa" tamano="sobre" />,
+    );
+    expect(JSON.stringify(pantalla.toJSON())).toContain('4294901930');
+  });
 });
