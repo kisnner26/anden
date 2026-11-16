@@ -53,4 +53,14 @@ export default tseslint.config(
       },
     },
   },
+  {
+    files: ['apps/alexa/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        AbortSignal: 'readonly',
+        fetch: 'readonly',
+        process: 'readonly',
+      },
+    },
+  },
 );
