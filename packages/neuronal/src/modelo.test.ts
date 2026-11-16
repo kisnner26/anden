@@ -39,4 +39,9 @@ describe('leerModelo', () => {
   it('rechaza un texto que no es JSON', () => {
     expect(leerModelo('{roto')).toBeNull();
   });
+
+  it('rechaza una versión desconocida', () => {
+    const m = aModelo(crearRed(4, [5], 3, 2), ['a', 'b', 'c'], 4, META);
+    expect(leerModelo(JSON.stringify({ ...m, version: 2 }))).toBeNull();
+  });
 });
