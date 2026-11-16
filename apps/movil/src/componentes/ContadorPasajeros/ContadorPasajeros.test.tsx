@@ -36,4 +36,15 @@ describe('ContadorPasajeros', () => {
     );
     expect(alCambiar).toHaveBeenCalledWith(3);
   });
+
+  it('menos baja la cantidad de a uno', async () => {
+    const alCambiar = jest.fn();
+    const pantalla = await render(
+      <ContadorPasajeros alCambiar={alCambiar} cantidad={2} />,
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: t('rutas.menosPasajeros') }),
+    );
+    expect(alCambiar).toHaveBeenCalledWith(1);
+  });
 });
