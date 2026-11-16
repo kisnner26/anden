@@ -113,4 +113,15 @@ describe('SelectorSalida', () => {
     );
     expect(pantalla.getByText('vie 13 nov')).toBeTruthy();
   });
+
+  it('sin el día pedido no muestra la fecha', async () => {
+    const pantalla = await render(
+      <SelectorSalida
+        alElegir={jest.fn()}
+        elegida={null}
+        salidas={[salida('a', 9)]}
+      />,
+    );
+    expect(pantalla.queryByText('vie 13 nov')).toBeNull();
+  });
 });
