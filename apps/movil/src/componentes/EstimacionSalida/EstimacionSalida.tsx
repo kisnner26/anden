@@ -43,12 +43,14 @@ export function EstimacionSalida({ viajeId }: PropiedadesEstimacionSalida) {
       avance.setValue(llenado);
       return;
     }
-    Animated.timing(avance, {
+    const animacion = Animated.timing(avance, {
       duration: movimiento.crecimientoBarra,
       easing: Easing.out(Easing.cubic),
       toValue: llenado,
       useNativeDriver: false,
-    }).start();
+    });
+    animacion.start();
+    return () => animacion.stop();
   }, [avance, llenado, reducir]);
 
   if (!viaje || !bus) return null;
