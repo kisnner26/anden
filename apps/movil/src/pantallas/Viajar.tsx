@@ -10,7 +10,9 @@ import { destinoHabitual } from '@/datos/memoriaIA';
 import { lineaDelMomento } from '@/datos/lineaDelMomento';
 import { useBoletos } from '@/datos/useBoletos';
 import { useMemoriaIA } from '@/datos/useMemoriaIA';
+import { AvisoViajeEnCurso } from '@/componentes/AvisoViajeEnCurso';
 import { CalificarViaje } from '@/componentes/CalificarViaje';
+import { useBoletoEnCurso } from '@/datos/useBoletoEnCurso';
 import { useBoletoPorCalificar } from '@/datos/useBoletoPorCalificar';
 import { EstadoVacio } from '@/componentes/EstadoVacio';
 import { EtiquetaMuestra } from '@/componentes/EtiquetaMuestra';
@@ -45,6 +47,8 @@ export interface PropiedadesViajar {
   alAbrirAjustes?: () => void;
   alAbrirAvisos?: () => void;
   alAbrirViaje: (viajeId: string) => void;
+  /** abre el viaje en curso, con el mapa y el chat con el chofer; el parámetro es el boleto */
+  alSeguirViaje?: (boletoId: string) => void;
   alElegirAsiento: (viajeId: string) => void;
   /** lleva a Horarios, donde se elige otro día */
   alReservarOtroDia?: () => void;
@@ -63,6 +67,7 @@ export function Viajar({
   alAbrirAjustes,
   alAbrirAvisos,
   alAbrirViaje,
+  alSeguirViaje,
   alElegirAsiento,
   alReservarOtroDia,
   alAbrirDondeViene,
@@ -73,6 +78,7 @@ export function Viajar({
   const memoriaIA = useMemoriaIA();
   const { boletos } = useBoletos();
   const porCalificar = useBoletoPorCalificar();
+  const enCurso = useBoletoEnCurso();
   const { colores } = useTema();
   const { perfil } = usePerfil();
   const [origenId, establecerOrigenId] = useState('ter_may');
@@ -189,6 +195,12 @@ export function Viajar({
       </View>
 
       <View style={estilos.cuerpo}>
+        {enCurso && (
+          <AvisoViajeEnCurso
+            alSeguir={() => alSeguirViaje?.(enCurso.boleto.id)}
+            destino={enCurso.resumen.destino}
+          />
+        )}
         {porCalificar && <CalificarViaje guardado={porCalificar} />}
         {proxima ? (
           <TarjetaProximoViaje
