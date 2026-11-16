@@ -63,4 +63,10 @@ describe('CuentaCreada', () => {
       pantalla.getByTestId('cuenta-creada').props.accessibilityLiveRegion,
     ).toBe('assertive');
   });
+
+  it('vibra y suena al aparecer', async () => {
+    await render(<CuentaCreada alTerminar={jest.fn()} nombre="Ana" />);
+    expect(notificationAsync).toHaveBeenCalledTimes(1);
+    expect(reproducirSonido).toHaveBeenCalledWith('bienvenida');
+  });
 });
