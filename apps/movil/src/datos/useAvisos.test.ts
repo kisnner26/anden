@@ -10,4 +10,10 @@ describe('useAvisos por defecto', () => {
     expect(result.current.noLeidos).toBe(0);
     expect(result.current.leidos).toEqual([]);
   });
+
+  it('las notificaciones empiezan apagadas y sin preguntar', async () => {
+    const { result } = await renderHook(() => useAvisos());
+    expect(result.current.activadas).toBe(false);
+    expect(result.current.permiso).toBe('sin-preguntar');
+  });
 });
