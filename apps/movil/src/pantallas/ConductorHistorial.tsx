@@ -18,6 +18,7 @@ import { useCierres } from '@/datos/useCierres';
 import { useDetalleViaje } from '@/datos/useDetalleViaje';
 import { useAhora } from '@/datos/useSalidas';
 import { useSesion } from '@/datos/useSesion';
+import type { CierreViaje } from '@/servicios/cierres';
 import { espacios } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -26,13 +27,23 @@ import { t } from '@/textos/t';
 
 const PERIODOS: readonly PeriodoAnalitica[] = [7, 30, 90];
 
-/** el destino del viaje cerrado; si ya no está disponible, queda el identificador */
-function DestinoDelCierre({ viajeId }: { viajeId: string }) {
+/**
+ * el trayecto del viaje cerrado: el que se guardó al cerrarlo, o el de la lista si todavía está; nunca el código interno
+ * del viaje, que no le dice nada a nadie
+ */
+function DestinoDelCierre({ cierre }: { cierre: CierreViaje }) {
   const { colores } = useTema();
-  const detalle = useDetalleViaje(viajeId);
+  const detalle = useDetalleViaje(cierre.viajeId);
+  const trayecto =
+    cierre.trayecto ??
+    (detalle
+      ? { destino: detalle.salida.destino, origen: detalle.salida.origen }
+      : undefined);
   return (
     <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-      {detalle?.salida.destino ?? viajeId}
+      {trayecto
+        ? `${trayecto.origen} → ${trayecto.destino}`
+        : t('conductorHistorial.viajeCerrado')}
     </Text>
   );
 }
@@ -200,7 +211,7 @@ export function ConductorHistorial() {
               <Aparece indice={indice} key={cierre.viajeId}>
                 <Bloque estiloContenido={estilos.fila}>
                   <View style={estilos.texto}>
-                    <DestinoDelCierre viajeId={cierre.viajeId} />
+                    <DestinoDelCierre cierre={cierre} />
                     <Text
                       style={[
                         tipografia.pequeno,

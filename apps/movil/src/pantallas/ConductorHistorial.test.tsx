@@ -79,4 +79,22 @@ describe('ConductorHistorial', () => {
     await fireEvent.press(await pantalla.findByText('30 días'));
     expect((await pantalla.findAllByText('C$ 80')).length).toBeGreaterThan(0);
   });
+
+  it('muestra el trayecto guardado y nunca el código interno del viaje', async () => {
+    await AsyncStorage.setItem(
+      CLAVE_CIERRES,
+      JSON.stringify([
+        {
+          ...cierre('MWFX0BZXZJHW', 'cho_2', 100),
+          trayecto: { destino: 'Boaco', origen: 'Managua' },
+        },
+        cierre('ZZZZ9YYYY8XX', 'cho_2', 80),
+      ]),
+    );
+    const pantalla = await dibujar();
+    expect(await pantalla.findByText('Managua → Boaco')).toBeTruthy();
+    expect(pantalla.getByText('Viaje cerrado')).toBeTruthy();
+    expect(pantalla.queryByText('MWFX0BZXZJHW')).toBeNull();
+    expect(pantalla.queryByText('ZZZZ9YYYY8XX')).toBeNull();
+  });
 });
