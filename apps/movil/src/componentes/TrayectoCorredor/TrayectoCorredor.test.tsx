@@ -30,4 +30,17 @@ describe('TrayectoCorredor', () => {
     );
     expect(pantalla.getByText('80')).toBeTruthy();
   });
+
+  it('muestra una raya cuando no se conoce la distancia ni la duración', async () => {
+    const pantalla = await render(
+      <TrayectoCorredor
+        destino="Boaco"
+        distanciaKm={null}
+        duracionMin={null}
+        origen="Managua"
+        recorrido="a"
+      />,
+    );
+    expect(pantalla.getAllByText('—')).toHaveLength(2);
+  });
 });
