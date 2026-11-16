@@ -418,6 +418,58 @@ export const textos = {
     notaPrueba:
       'Por ahora Plus se activa sin cobro: el pago dentro de la app llega antes de publicarla.',
   },
+  viajeEnCurso: {
+    titulo: 'Tu viaje en camino',
+    llegasA: 'Llegás a las ~{hora}',
+    llegasAProximo: 'Llegás en unos {minutos} min',
+    faltan: 'Faltan {km} km · {minutos} min',
+    sinSenal: 'Sin señal del bus: la hora es la prevista de la salida.',
+    enCamino: 'El bus ya salió',
+    unidad: '{servicio} · {cooperativa}',
+    placa: 'Placa',
+    hablar: 'Hablar con el chofer',
+    seguridad: 'Seguridad',
+    calificaTitulo: 'Calificá a tu chofer',
+    calificaAnonima: 'Tu opinión es anónima. La podés cambiar cuando quieras.',
+    calificaGuardada: 'Gracias, tu opinión quedó guardada.',
+    estrella: '{n} de 5 estrellas',
+    volver: 'Volver',
+    verBoleto: 'Ver mi boleto',
+    mapaDescripcion: 'Mapa con el recorrido del bus hacia {destino}',
+    aviso: 'Tu bus a {destino} ya salió. Seguilo en el mapa.',
+    seguirViaje: 'Seguir mi viaje',
+  },
+  chatViaje: {
+    titulo: 'Chat con {chofer}',
+    marcador: 'Escribile a {chofer}',
+    enviar: 'Enviar mensaje',
+    campo: 'Tu mensaje',
+    vacio:
+      'Todavía no hay mensajes. Escribile al chofer si necesitás algo en el camino.',
+    soloEnViaje:
+      'Podés escribirle al chofer solo mientras el viaje va en camino.',
+    fallo: 'No se pudo enviar. Probá de nuevo.',
+    yo: 'Vos',
+    cerrar: 'Cerrar el chat',
+    rapidas: {
+      parada: 'Ya estoy en la parada',
+      llegando: 'Voy llegando',
+      cuanto: '¿Cuánto falta?',
+    },
+  },
+  seguridadViaje: {
+    titulo: 'Seguridad en tu viaje',
+    detalle: 'Todo esto es solo para vos y para quien elijas.',
+    avisar: 'Avisar a mi contacto de confianza',
+    avisarDetalle:
+      'Abre Mensajes con tu viaje, la unidad y la hora de llegada.',
+    sinContacto:
+      'Guardá un contacto de confianza desde tu boleto para avisarle.',
+    llamarChofer: 'Llamar al chofer',
+    llamarChoferFallo: 'No se pudo llamar al chofer ahora.',
+    emergencia: 'Llamar a emergencias (118)',
+    cerrar: 'Cerrar seguridad',
+  },
   seguridad: {
     titulo: 'Detección de choques',
     detalle:
