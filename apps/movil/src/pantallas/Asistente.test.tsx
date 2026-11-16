@@ -56,15 +56,17 @@ beforeEach(async () => {
 });
 
 describe('Asistente', () => {
-  it('sin la IA usable explica por qué y no deja preguntar', async () => {
-    const pantalla = await abrir(
-      valor({ disponibilidad: 'no-compatible', usable: false }),
-    );
-    expect(pantalla.getByText('El asistente no está activado.')).toBeTruthy();
+  it('sin la IA usable avisa por qué y responde con la red neuronal local', async () => {
+    const contexto = valor({ disponibilidad: 'no-compatible', usable: false });
+    const pantalla = await abrir(contexto);
+    expect(pantalla.getByText(/red neuronal pequeña/)).toBeTruthy();
     expect(
       pantalla.getByText(/no es compatible con Apple Intelligence/),
     ).toBeTruthy();
-    expect(pantalla.queryByRole('button', { name: 'Preguntar' })).toBeNull();
+    await fireEvent.changeText(pantalla.getByLabelText('Tu pregunta'), 'hola');
+    await fireEvent.press(pantalla.getByRole('button', { name: 'Preguntar' }));
+    expect(await pantalla.findByText(/Preguntame por salidas/)).toBeTruthy();
+    expect(contexto.preguntar).not.toHaveBeenCalled();
   });
 
   it('manda la pregunta con los datos de la app y muestra la respuesta', async () => {
