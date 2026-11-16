@@ -6,7 +6,7 @@ struct ViajeVista: View {
 
     var body: some View {
         if let r = modelo.proxima {
-            TimelineView(.periodic(from: .now, by: 15)) { contexto in
+            TimelineView(.everyMinute) { contexto in
                 contenido(r, ahora: contexto.date)
             }
         } else {
