@@ -60,6 +60,13 @@ describe('transmisión local', () => {
     servicio.detener('via_x');
     expect(oyente).not.toHaveBeenCalled();
   });
+
+  it('cada servicio local guarda lo suyo y no comparte viajes con otro', () => {
+    const a = crearTransmisionLocal();
+    const b = crearTransmisionLocal();
+    a.iniciar('via_1', 'cho_1');
+    expect(b.activos()).toEqual([]);
+  });
 });
 
 describe('sinSenal', () => {
