@@ -19,3 +19,9 @@ describe('normalizar', () => {
     expect(normalizar('¿?!')).toBe('');
   });
 });
+
+describe('palabras', () => {
+  it('separa las palabras', () => {
+    expect(palabras('Quiero ir a León')).toEqual(['quiero', 'ir', 'a', 'leon']);
+  });
+});
