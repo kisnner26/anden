@@ -85,4 +85,15 @@ describe('entrenar', () => {
     const h = entrenar(red, dosGrupos(), { epocas: 3 });
     expect(h[0]!.perdidaValidacion).toBeNull();
   });
+
+  it('para antes si la validación deja de mejorar', () => {
+    const red = crearRed(2, [6], 2, 4);
+    const h = entrenar(red, dosGrupos(), {
+      epocas: 300,
+      paciencia: 3,
+      tasa: 0.05,
+      validacion: 0.25,
+    });
+    expect(h.length).toBeLessThan(300);
+  });
 });
