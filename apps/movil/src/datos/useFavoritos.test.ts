@@ -13,4 +13,9 @@ describe('useFavoritos por defecto', () => {
     const { result } = await renderHook(() => useFavoritos());
     expect(result.current.esFavorito('via_1')).toBe(false);
   });
+
+  it('alternar no falla aunque no haya proveedor', async () => {
+    const { result } = await renderHook(() => useFavoritos());
+    await expect(result.current.alternar('via_1')).resolves.toBeUndefined();
+  });
 });
