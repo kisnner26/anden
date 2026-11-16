@@ -49,4 +49,18 @@ describe('SelectorSalida', () => {
     expect(pantalla.getByLabelText(/^9:00 a\. m\., /)).toBeTruthy();
     expect(pantalla.getByLabelText(/^3:00 p\. m\., /)).toBeTruthy();
   });
+
+  it('tocar una salida la elige y vibra suave', async () => {
+    const alElegir = jest.fn();
+    const pantalla = await render(
+      <SelectorSalida
+        alElegir={alElegir}
+        elegida={null}
+        salidas={[salida('a', 9), salida('b', 15)]}
+      />,
+    );
+    await fireEvent.press(pantalla.getByLabelText(/^3:00 p\. m\., /));
+    expect(alElegir).toHaveBeenCalledWith('b');
+    expect(selectionAsync).toHaveBeenCalledTimes(1);
+  });
 });
