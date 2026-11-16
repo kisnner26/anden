@@ -29,3 +29,18 @@ describe('validarPedido', () => {
     ).toBeNull();
   });
 });
+
+describe('argumentosDeClaude', () => {
+  it('corre sin herramientas y sin guardar la sesión', () => {
+    const a = argumentosDeClaude({ instrucciones: '', pregunta: 'hola' });
+    expect(a).toEqual(
+      expect.arrayContaining([
+        '-p',
+        'hola',
+        '--tools',
+        '',
+        '--no-session-persistence',
+      ]),
+    );
+  });
+});
