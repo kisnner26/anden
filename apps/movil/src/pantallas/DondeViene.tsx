@@ -1,3 +1,4 @@
+import { ciudadConocida } from '@/datos/ciudadConocida';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -37,7 +38,14 @@ export function DondeViene({
   const { colores } = useTema();
   const margenes = useSafeAreaInsets();
   const { datos, salidas } = useSalidas();
-  const [ciudad, establecerCiudad] = useState(ciudadInicial);
+  // el parámetro puede venir de un enlace: solo se acepta una ciudad que la app conoce
+  const [ciudad, establecerCiudad] = useState(() =>
+    ciudadConocida(
+      ciudadInicial,
+      datos.terminales.map((terminal) => terminal.ciudad),
+      'Managua',
+    ),
+  );
   const [elegido, establecerElegido] = useState<string | null>(null);
   const { ahora, buses } = useBusesEnCamino(ciudad);
   const terminal = datos.terminales.find((x) => x.ciudad === ciudad);
