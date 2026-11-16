@@ -4,6 +4,7 @@ import { Animated, Easing, StyleSheet, View } from 'react-native';
 import { coloresAura, coloresOro } from '@/tema/colores';
 import { movimiento } from '@/tema/movimiento';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
+import { useAppActiva } from '@/tema/useAppActiva';
 
 export interface PropiedadesOndaDeVoz {
   /** dorada mientras Andén habla, con el aura mientras escucha */
@@ -35,8 +36,9 @@ function Barra({
 }) {
   const escala = useRef(new Animated.Value(0.25)).current;
 
+  const activa = useAppActiva();
   useEffect(() => {
-    if (reducir) {
+    if (reducir || !activa) {
       escala.setValue(tope);
       return;
     }
@@ -59,7 +61,7 @@ function Barra({
     );
     ciclo.start();
     return () => ciclo.stop();
-  }, [demora, escala, reducir, tope]);
+  }, [activa, demora, escala, reducir, tope]);
 
   return (
     <Animated.View
