@@ -36,4 +36,10 @@ describe('rasgos', () => {
       expect.arrayContaining(['p:bus', 'p:boaco']),
     );
   });
+
+  it('incluye los pares de palabras seguidas', () => {
+    expect(rasgos('bus a boaco')).toEqual(
+      expect.arrayContaining(['b:bus_a', 'b:a_boaco']),
+    );
+  });
 });
