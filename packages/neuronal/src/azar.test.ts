@@ -41,4 +41,10 @@ describe('mezclar', () => {
       1, 2, 3, 4, 5,
     ]);
   });
+
+  it('no cambia la lista original', () => {
+    const original = [1, 2, 3, 4];
+    mezclar(original, crearAzar(1));
+    expect(original).toEqual([1, 2, 3, 4]);
+  });
 });
