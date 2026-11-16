@@ -19,4 +19,9 @@ describe('useEncomiendas por defecto', () => {
     const { result } = await renderHook(() => useEncomiendas());
     expect(await result.current.cambiarEstado('enc_1', 'aceptada')).toBe(false);
   });
+
+  it('recargar no falla', async () => {
+    const { result } = await renderHook(() => useEncomiendas());
+    await expect(result.current.recargar()).resolves.toBeUndefined();
+  });
 });
