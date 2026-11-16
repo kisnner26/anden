@@ -4,6 +4,7 @@ import Foundation
 final class ClienteAnden {
     private let sesionURL = URLSession(configuration: .ephemeral)
     private(set) var sesion: SesionGuardada?
+    private static let formatoDesde = ISO8601DateFormatter()
 
     init() {
         if let datos = Llavero.leer(cuenta: "sesion"), let s = try? JSONDecoder().decode(SesionGuardada.self, from: datos) {
@@ -77,7 +78,7 @@ final class ClienteAnden {
     /// las próximas salidas de todas las rutas que todavía esperan pasajeros
     func salidas() async throws -> [Viaje] {
         try await renovarSiHaceFalta()
-        let desde = ISO8601DateFormatter().string(from: Date().addingTimeInterval(-600))
+        let desde = Self.formatoDesde.string(from: Date().addingTimeInterval(-600))
         return try await tabla(
             "viajes",
             [("select", "id,ruta_id,servicio,placa,punto_encuentro,salida,estado,salio_en"), ("salida", "gte.\(desde)"),
