@@ -6,4 +6,8 @@ describe('normalizar', () => {
   it('quita tildes y pasa a minúsculas', () => {
     expect(normalizar('¿Cuánto CUESTA?')).toBe('cuanto cuesta');
   });
+
+  it('junta los espacios repetidos y recorta', () => {
+    expect(normalizar('  bus   a    Boaco  ')).toBe('bus a boaco');
+  });
 });
