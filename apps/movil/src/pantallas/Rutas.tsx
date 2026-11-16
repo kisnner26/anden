@@ -16,6 +16,8 @@ import { Icono } from '@/componentes/Icono';
 import { MarcoPestana } from '@/componentes/MarcoPestana';
 import { TrayectoCorredor } from '@/componentes/TrayectoCorredor';
 import { formatoHora, sufijoHora } from '@/datos/formato';
+import { gustosDeViaje } from '@/datos/gustosDeViaje';
+import { mejorSalida } from '@/datos/mejorSalida';
 import { contextoDelDia } from '@/datos/resumenDelDia';
 import { llegadaEstimada } from '@/datos/planificador';
 import {
@@ -25,6 +27,7 @@ import {
   type SentidoRed,
 } from '@/datos/redRutas';
 import { totalReserva } from '@/datos/reserva';
+import { useBoletos } from '@/datos/useBoletos';
 import { usePlanificador } from '@/datos/usePlanificador';
 import { obtenerMuestra } from '@/datos/useSalidas';
 import { espacios } from '@/tema/espacios';
@@ -57,7 +60,13 @@ export function Rutas({
   const [cantidad, establecerCantidad] = useState(1);
   const corredor = corredorDe({ ciudad, sentido });
   const plan = usePlanificador(corredor);
-  const salida = plan.salidas[0];
+  const { boletos } = useBoletos();
+  // la salida que más conviene (hora, atraso, precio, asientos y sus gustos); si ninguna es tomable, la próxima
+  const salida =
+    mejorSalida(plan.salidas, {
+      ahora: plan.ahora,
+      gustos: gustosDeViaje(boletos),
+    })?.salida ?? plan.salidas[0];
   const precio = salida
     ? totalReserva(obtenerMuestra(), salida.viajeId, cantidad)
     : null;
