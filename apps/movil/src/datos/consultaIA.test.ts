@@ -471,3 +471,19 @@ describe('contexto personal', () => {
     expect(lineas.some((l) => l.startsWith('Como conductor'))).toBe(false);
   });
 });
+
+describe('hechos para la pregunta', () => {
+  it('con intención de encomienda lista las de la persona', () => {
+    const datos = armarDatosParaElModelo(
+      estado({ encomiendas: [ENCOMIENDA] }),
+      {},
+    );
+    const hechos = hechosParaPregunta(
+      '¿cómo va mi encomienda?',
+      datos,
+      CIUDADES,
+      AHORA,
+    );
+    expect(hechos).toContain('Encomiendas de la persona:');
+  });
+});
