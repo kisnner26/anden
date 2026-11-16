@@ -24,4 +24,22 @@ describe('CalendarioViajes', () => {
     expect(pantalla.getByText('Noviembre')).toBeTruthy();
     expect(pantalla.getByText('2026')).toBeTruthy();
   });
+
+  it('permite ir atrás pero no adelante desde el último mes', async () => {
+    const pantalla = await render(
+      <CalendarioViajes
+        ahora={AHORA}
+        alAbrirBoleto={jest.fn()}
+        boletos={BOLETOS}
+      />,
+    );
+    expect(
+      pantalla.getByRole('button', { name: t('boletos.mesAnterior') }).props
+        .accessibilityState,
+    ).toEqual(expect.objectContaining({ disabled: false }));
+    expect(
+      pantalla.getByRole('button', { name: t('boletos.mesSiguiente') }).props
+        .accessibilityState,
+    ).toEqual(expect.objectContaining({ disabled: true }));
+  });
 });
