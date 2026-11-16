@@ -10,4 +10,9 @@ describe('hash', () => {
   it('da números distintos para textos distintos', () => {
     expect(hash('boaco')).not.toBe(hash('managua'));
   });
+
+  it('nunca es negativo', () => {
+    for (const t of ['a', 'bus', 'cuanto cuesta', 'ñandú'])
+      expect(hash(t)).toBeGreaterThanOrEqual(0);
+  });
 });
