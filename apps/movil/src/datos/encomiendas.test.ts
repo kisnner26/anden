@@ -204,4 +204,13 @@ describe('enlaces de contacto del destinatario', () => {
     expect(url.startsWith('sms:&body=')).toBe(true);
     expect(url).not.toContain('8888&x=1');
   });
+
+  it('acepta el teléfono con prefijo y espacios', () => {
+    expect(
+      urlLlamadaDestinatario({
+        ...nuevaEncomienda(DATOS),
+        telefonoDestinatario: '+505 8888 1234',
+      }),
+    ).toBe('tel:+50588881234');
+  });
 });
