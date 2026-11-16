@@ -42,4 +42,18 @@ describe('TarjetaIA', () => {
     );
     expect(pantalla.getByText('quieta')).toBeTruthy();
   });
+
+  it('cambiar entre trabajando y en reposo no pierde el contenido', async () => {
+    const pantalla = await render(
+      <TarjetaIA>
+        <Text>estable</Text>
+      </TarjetaIA>,
+    );
+    await pantalla.rerender(
+      <TarjetaIA trabajando>
+        <Text>estable</Text>
+      </TarjetaIA>,
+    );
+    expect(pantalla.getByText('estable')).toBeTruthy();
+  });
 });
