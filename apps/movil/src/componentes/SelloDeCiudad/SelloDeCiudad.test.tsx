@@ -55,4 +55,30 @@ describe('SelloDeCiudad', () => {
     );
     expect(pantalla.getAllByLabelText(/Managua/)).toHaveLength(1);
   });
+
+  it('cada ciudad se dibuja distinta', async () => {
+    const a = JSON.stringify(
+      (
+        await render(
+          <SelloDeCiudad
+            ciudad="Managua"
+            llegadas={1}
+            primera="2026-10-05T14:00:00.000Z"
+          />,
+        )
+      ).toJSON(),
+    );
+    const b = JSON.stringify(
+      (
+        await render(
+          <SelloDeCiudad
+            ciudad="Boaco"
+            llegadas={1}
+            primera="2026-10-05T14:00:00.000Z"
+          />,
+        )
+      ).toJSON(),
+    );
+    expect(a).not.toBe(b);
+  });
 });
