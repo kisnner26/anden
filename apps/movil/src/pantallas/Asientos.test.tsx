@@ -38,6 +38,22 @@ describe('Asientos', () => {
     expect(pantalla.getByText('C$ 0')).toBeTruthy();
   });
 
+  it('con varios pasajeros dichos en Rutas, el pie pide los asientos y cuenta los que faltan', async () => {
+    const pantalla = await renderPantalla(
+      <Asientos
+        alSeguir={() => undefined}
+        alVolver={() => undefined}
+        pasajeros={3}
+        viajeId={VIAJE_BOACO}
+      />,
+    );
+    expect(pantalla.getByText('Elegí 3 asientos')).toBeTruthy();
+    await fireEvent.press(
+      pantalla.getByLabelText(/^Asiento 8, pasillo, libre/),
+    );
+    expect(pantalla.getByText(/1 asiento · 8 · faltan 2/)).toBeTruthy();
+  });
+
   it('suma la tarifa de muestra por cada asiento elegido', async () => {
     const pantalla = await renderPantalla(
       <Asientos
