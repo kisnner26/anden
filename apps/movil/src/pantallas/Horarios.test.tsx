@@ -314,21 +314,32 @@ describe('Horarios', () => {
       usable: true,
     };
 
-    it('ofrece preguntas sugeridas y las lleva al asistente', async () => {
+    it('muestra solo el campo para escribir, sin preguntas rápidas', async () => {
+      const pantalla = await renderPantalla(
+        <ContextoIA.Provider value={ia}>
+          <Horarios alPreguntar={() => undefined} />
+        </ContextoIA.Provider>,
+      );
+      expect(pantalla.getByLabelText('Tu pregunta al asistente')).toBeTruthy();
+      expect(pantalla.queryByText('¿Cuál me conviene?')).toBeNull();
+      expect(pantalla.queryByText('¿Cuál es la salida más barata?')).toBeNull();
+    });
+
+    it('lo que se escribe en el campo llega al asistente', async () => {
       const alPreguntar = jest.fn();
       const pantalla = await renderPantalla(
         <ContextoIA.Provider value={ia}>
           <Horarios alPreguntar={alPreguntar} />
         </ContextoIA.Provider>,
       );
+      await fireEvent.changeText(
+        pantalla.getByLabelText('Tu pregunta al asistente'),
+        'Algo barato a Boaco',
+      );
       await fireEvent.press(
-        pantalla.getByRole('button', {
-          name: '¿Cuál es la salida más barata?',
-        }),
+        pantalla.getByRole('button', { name: 'Preguntar al asistente' }),
       );
-      expect(alPreguntar).toHaveBeenCalledWith(
-        '¿Cuál es la salida más barata?',
-      );
+      expect(alPreguntar).toHaveBeenCalledWith('Algo barato a Boaco');
     });
 
     it('sin la IA lista no muestra la barra', async () => {

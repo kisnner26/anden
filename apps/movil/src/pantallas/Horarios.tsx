@@ -184,15 +184,41 @@ export function Horarios({
         <Text style={[tipografia.display, { color: colores.tinta }]}>
           {t('horarios.titulo')}.
         </Text>
-        <Pressable
-          accessibilityLabel={t('horarios.buscar')}
-          accessibilityRole="button"
-          onPress={alAbrirBuscador}
-        >
-          <Bloque estiloContenido={estilos.buscar} radio="pildora">
-            <Icono nombre="lupa" tamano="ilustracion" />
-          </Bloque>
-        </Pressable>
+        <View style={estilos.acciones}>
+          <Pressable
+            accessibilityLabel={
+              activos > 0
+                ? `${t('horarios.filtros')}, ${activos}`
+                : t('horarios.filtros')
+            }
+            accessibilityRole="button"
+            onPress={() => establecerFiltrando(true)}
+          >
+            <Bloque estiloContenido={estilos.buscar} radio="pildora">
+              <Icono nombre="filtro" tamano="grande" />
+            </Bloque>
+            {activos > 0 && (
+              <View
+                style={[estilos.cuenta, { backgroundColor: colores.ambar }]}
+              >
+                <Text
+                  style={[tipografia.etiqueta, { color: colores.sobreAmbar }]}
+                >
+                  {activos}
+                </Text>
+              </View>
+            )}
+          </Pressable>
+          <Pressable
+            accessibilityLabel={t('horarios.buscar')}
+            accessibilityRole="button"
+            onPress={alAbrirBuscador}
+          >
+            <Bloque estiloContenido={estilos.buscar} radio="pildora">
+              <Icono nombre="lupa" tamano="ilustracion" />
+            </Bloque>
+          </Pressable>
+        </View>
       </View>
 
       <Pressable
@@ -287,14 +313,7 @@ export function Horarios({
 
       {alPreguntar && (
         <View style={estilos.terminal}>
-          <BarraPreguntaIA
-            alPreguntar={alPreguntar}
-            sugerencias={[
-              t('preguntaIA.horarios.conviene'),
-              t('preguntaIA.horarios.barata'),
-              t('preguntaIA.horarios.tarde'),
-            ]}
-          />
+          <BarraPreguntaIA alPreguntar={alPreguntar} />
         </View>
       )}
 
@@ -323,45 +342,17 @@ export function Horarios({
         dias={dias}
         seleccionado={dia}
       />
-      <View style={estilos.barraFiltros}>
+      {activos > 0 && (
         <Pressable
-          accessibilityLabel={
-            activos > 0
-              ? `${t('horarios.filtros')}, ${activos}`
-              : t('horarios.filtros')
-          }
           accessibilityRole="button"
-          onPress={() => establecerFiltrando(true)}
+          onPress={limpiarFiltros}
+          style={estilos.limpiar}
         >
-          <Bloque estiloContenido={estilos.botonFiltros} radio="pildora">
-            <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
-              {t('horarios.filtros')}
-            </Text>
-            {activos > 0 && (
-              <View
-                style={[estilos.cuenta, { backgroundColor: colores.ambar }]}
-              >
-                <Text
-                  style={[tipografia.etiqueta, { color: colores.sobreAmbar }]}
-                >
-                  {activos}
-                </Text>
-              </View>
-            )}
-          </Bloque>
+          <Text style={[tipografia.pequeno, { color: colores.ambarTexto }]}>
+            {t('horarios.quitarFiltros')}
+          </Text>
         </Pressable>
-        {activos > 0 && (
-          <Pressable
-            accessibilityRole="button"
-            onPress={limpiarFiltros}
-            style={estilos.limpiar}
-          >
-            <Text style={[tipografia.pequeno, { color: colores.ambarTexto }]}>
-              {t('horarios.quitarFiltros')}
-            </Text>
-          </Pressable>
-        )}
-      </View>
+      )}
       <Hoja
         abierta={filtrando}
         alCerrar={() => establecerFiltrando(false)}
@@ -580,23 +571,19 @@ const estilos = StyleSheet.create({
     padding: espacios.dieciseis,
   },
   otraTerminalTexto: { flex: 1 },
-  barraFiltros: {
+  acciones: {
     alignItems: 'center',
     flexDirection: 'row',
     gap: espacios.doce,
   },
-  botonFiltros: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: espacios.ocho,
-    paddingHorizontal: espacios.dieciseis,
-    paddingVertical: espacios.ocho,
-  },
   cuenta: {
     alignItems: 'center',
     borderRadius: radios.pildora,
-    minWidth: 24,
-    paddingHorizontal: espacios.ocho,
+    minWidth: 20,
+    paddingHorizontal: espacios.cuatro,
+    position: 'absolute',
+    right: -2,
+    top: -2,
   },
   hojaFiltros: {
     gap: espacios.doce,

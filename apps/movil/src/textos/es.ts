@@ -661,11 +661,6 @@ export const textos = {
   preguntaIA: {
     campo: 'Tu pregunta al asistente',
     enviar: 'Preguntar al asistente',
-    horarios: {
-      barata: '¿Cuál es la salida más barata?',
-      conviene: '¿Cuál me conviene?',
-      tarde: '¿Hay salidas después de las 3 p. m.?',
-    },
     marcador: 'Escribí lo que buscás',
     titulo: 'Preguntale a Andén con {nombre}',
   },
