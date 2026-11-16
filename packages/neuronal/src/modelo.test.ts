@@ -29,3 +29,10 @@ describe('aModelo y aRed', () => {
     ).toBe(true);
   });
 });
+
+describe('leerModelo', () => {
+  it('lee un modelo guardado', () => {
+    const m = aModelo(crearRed(4, [5], 3, 2), ['a', 'b', 'c'], 4, META);
+    expect(leerModelo(JSON.stringify(m))?.etiquetas).toEqual(['a', 'b', 'c']);
+  });
+});
