@@ -10,4 +10,8 @@ describe('sinTildes', () => {
   it('pasa a minúsculas', () => {
     expect(sinTildes('MANAGUA')).toBe('managua');
   });
+
+  it('conserva la ñ como n', () => {
+    expect(sinTildes('Año')).toBe('ano');
+  });
 });
