@@ -21,4 +21,13 @@ describe('CarruselBoletos', () => {
       'accessibilityElementsHidden',
     );
   });
+
+  it('con varios boletos muestra un punto por cada uno, ocultos al lector de pantalla', async () => {
+    const pantalla = await render(
+      <CarruselBoletos ahora={AHORA} alAbrirBoleto={jest.fn()} boletos={DOS} />,
+    );
+    expect(JSON.stringify(pantalla.toJSON())).toContain(
+      '"accessibilityElementsHidden":true',
+    );
+  });
 });
