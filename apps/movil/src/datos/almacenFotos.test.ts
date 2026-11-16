@@ -24,6 +24,10 @@ describe('nombreDeFoto', () => {
     expect(nombreDeFoto('file:///tmp/a.HEIC', 1, 0.5)).toMatch(/\.heic$/);
     expect(nombreDeFoto('file:///tmp/a.webp', 1, 0.5)).toMatch(/\.webp$/);
   });
+
+  it('no toma como extensión algo que está en medio del nombre', () => {
+    expect(nombreDeFoto('file:///tmp/foto.png.bak', 1, 0.5)).toMatch(/\.jpg$/);
+  });
 });
 
 describe('esReferenciaGuardada', () => {
