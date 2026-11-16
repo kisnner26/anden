@@ -31,4 +31,15 @@ describe('PantallaSimple', () => {
     expect(pantalla.getByText('hijo')).toBeTruthy();
     expect(pantalla.getByText('Tocá un boleto')).toBeTruthy();
   });
+
+  it('ofrece volver al inicio de siempre', async () => {
+    const alSalir = jest.fn();
+    const pantalla = await renderPantalla(
+      <PantallaSimple alSalir={alSalir} titulo="Tus boletos">
+        <Text>hijo</Text>
+      </PantallaSimple>,
+    );
+    await fireEvent.press(pantalla.getByText(t('inicioSimple.salir')));
+    expect(alSalir).toHaveBeenCalledTimes(1);
+  });
 });
