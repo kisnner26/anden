@@ -47,3 +47,14 @@ describe('evaluar', () => {
     expect(precision).toBeLessThanOrEqual(1);
   });
 });
+
+describe('matrizDeConfusion', () => {
+  it('suma tantos ejemplos como se evaluaron', () => {
+    const ejemplos: Ejemplo[] = [0, 1, 1, 0, 1].map((clase) => ({
+      clase,
+      entrada: new Float32Array([clase, 1 - clase]),
+    }));
+    const m = matrizDeConfusion(crearRed(2, [4], 2, 3), ejemplos, 2);
+    expect(m.flat().reduce((s, x) => s + x, 0)).toBe(5);
+  });
+});
