@@ -456,6 +456,12 @@ export const textos = {
       llegando: 'Voy llegando',
       cuanto: '¿Cuánto falta?',
     },
+    escribir: 'Escribirle por el chat',
+    rapidasChofer: {
+      llegando: 'Ya estoy llegando a la parada',
+      esperando: 'Te espero aquí unos minutos',
+      subir: 'Ya podés subir',
+    },
   },
   seguridadViaje: {
     titulo: 'Seguridad en tu viaje',
