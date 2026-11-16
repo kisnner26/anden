@@ -8,4 +8,9 @@ describe('FormaPaquete', () => {
     const pantalla = await render(<FormaPaquete tamano="sobre" />);
     expect(pantalla.toJSON()).not.toBeNull();
   });
+
+  it('dibuja la caja chica', async () => {
+    const pantalla = await render(<FormaPaquete tamano="pequeno" />);
+    expect(pantalla.toJSON()).not.toBeNull();
+  });
 });
