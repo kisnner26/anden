@@ -80,3 +80,16 @@ describe('guardado', () => {
     expect(await leerContacto()).toBeNull();
   });
 });
+
+describe('leerContacto valida lo guardado', () => {
+  it('lee un contacto bien guardado', async () => {
+    await AsyncStorage.setItem(
+      CLAVE_CONTACTO,
+      JSON.stringify({ nombre: 'Mamá', telefono: '88881234' }),
+    );
+    expect(await leerContacto()).toEqual({
+      nombre: 'Mamá',
+      telefono: '88881234',
+    });
+  });
+});
