@@ -81,4 +81,10 @@ describe('formatoDiasSemana', () => {
     expect(formatoDiasSemana([9, 1])).toBe('lun');
     expect(formatoDiasSemana([9])).toBe('');
   });
+
+  it('no cambia la lista que recibe', () => {
+    const dias = [5, 1];
+    formatoDiasSemana(dias);
+    expect(dias).toEqual([5, 1]);
+  });
 });
