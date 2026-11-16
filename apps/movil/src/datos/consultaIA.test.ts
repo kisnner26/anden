@@ -129,6 +129,17 @@ describe('entenderPregunta', () => {
   });
 });
 
+describe('consejo del viaje en el contexto personal', () => {
+  it('suma cuándo estar en el punto de encuentro del próximo boleto', () => {
+    const lineas = contextoPersonal(
+      estado({ boletos: [boletoDePrueba(new Date(2026, 10, 13, 15, 0))] }),
+    );
+    expect(lineas.some((l) => l.includes('punto de encuentro a las'))).toBe(
+      true,
+    );
+  });
+});
+
 describe('recomendadasPorTrayecto', () => {
   it('marca la que más conviene entre varias del mismo trayecto', () => {
     const datos = armarDatosParaElModelo(
