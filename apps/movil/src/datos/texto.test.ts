@@ -14,4 +14,8 @@ describe('sinTildes', () => {
   it('conserva la ñ como n', () => {
     expect(sinTildes('Año')).toBe('ano');
   });
+
+  it('deja igual lo que no tiene tildes', () => {
+    expect(sinTildes('boaco 12')).toBe('boaco 12');
+  });
 });
