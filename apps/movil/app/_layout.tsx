@@ -41,6 +41,7 @@ import { ProveedorConexion } from '@/datos/ProveedorConexion';
 import { ProveedorViajes } from '@/datos/ProveedorViajes';
 import { AvisoConexion } from '@/componentes/AvisoConexion';
 import { BarraDeEstado } from '@/componentes/BarraDeEstado';
+import { AbridorViajeEnCurso } from '@/componentes/AbridorViajeEnCurso';
 import { AyudanteRumbo, VigiaDeToques } from '@/componentes/AyudanteRumbo';
 import { ProveedorRecordatorios } from '@/datos/ProveedorRecordatorios';
 import { ProveedorPerfil } from '@/datos/ProveedorPerfil';
@@ -107,6 +108,7 @@ export default function DisenoRaiz() {
                                                             <BarraDeEstado />
                                                             <AvisoConexion />
                                                             <AyudanteRumbo />
+                                                            <AbridorViajeEnCurso />
                                                             <VigiaDeToques>
                                                               <Stack
                                                                 screenOptions={{
