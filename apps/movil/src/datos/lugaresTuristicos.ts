@@ -5,6 +5,7 @@ import {
 } from './fotosDestino';
 import { rellenar } from '@/textos/rellenar';
 import { t } from '@/textos/t';
+import { sinTildes } from './texto';
 
 export interface LugarTuristico extends FotoDeCiudad {
   ciudad: string;
@@ -15,10 +16,6 @@ const NOMBRE: Readonly<Record<string, string>> = {
   juigalpa: 'Juigalpa',
   managua: 'Managua',
 };
-
-function sinTildes(texto: string): string {
-  return texto.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
-}
 
 /** la persona quiere ver o conocer lugares, no solo saber de buses */
 const PIDE_LUGARES =
