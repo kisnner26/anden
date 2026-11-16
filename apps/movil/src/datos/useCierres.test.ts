@@ -8,4 +8,9 @@ describe('useCierres por defecto', () => {
     const { result } = await renderHook(() => useCierres());
     expect(result.current.cierres).toEqual([]);
   });
+
+  it('ningún viaje figura como cerrado', async () => {
+    const { result } = await renderHook(() => useCierres());
+    expect(result.current.cierreDe('via_1')).toBeUndefined();
+  });
 });
