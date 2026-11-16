@@ -49,4 +49,17 @@ describe('AlternativasDeViaje', () => {
     );
     expect(pantalla.getByText(t('alternativas.ninguna'))).toBeTruthy();
   });
+
+  it('muestra cuántos asientos quedan en cada salida', async () => {
+    const pantalla = await render(
+      <AlternativasDeViaje
+        alElegir={jest.fn()}
+        eligiendo={null}
+        salidas={[salida('a', 15, 4)]}
+      />,
+    );
+    expect(
+      pantalla.getByText(rellenar(t('alternativas.libres'), { cantidad: 4 })),
+    ).toBeTruthy();
+  });
 });
