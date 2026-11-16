@@ -79,3 +79,42 @@ export function instruccionesDeCooperativa(contexto: string): string {
     contexto,
   ].join('\n');
 }
+
+/** el tiempo que se espera la respuesta: el puente da hasta 90 segundos, esto le deja un margen */
+export const ESPERA_MAXIMA_MS = 100_000;
+
+/** le pregunta a Claude Code por el puente; falla con un mensaje corto que se puede mostrar tal cual */
+export async function preguntarAClaude(
+  conexion: ConexionClaude,
+  instrucciones: string,
+  pregunta: string,
+  pedir: typeof fetch = fetch,
+): Promise<string> {
+  let respuesta: Response;
+  try {
+    respuesta = await pedir(`${conexion.direccion}/preguntar`, {
+      body: JSON.stringify({ instrucciones, pregunta }),
+      headers: {
+        Authorization: `Bearer ${conexion.codigo}`,
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      signal: AbortSignal.timeout(ESPERA_MAXIMA_MS),
+    });
+  } catch {
+    throw new Error(
+      'No se pudo hablar con el puente. Revisá que esté encendido y que la dirección sea la correcta.',
+    );
+  }
+  if (respuesta.status === 401)
+    throw new Error('El código de emparejamiento no es el correcto.');
+  if (respuesta.status === 403)
+    throw new Error('El puente solo atiende a equipos de tu red local.');
+  const cuerpo = (await respuesta.json().catch(() => null)) as {
+    error?: string;
+    texto?: string;
+  } | null;
+  if (!respuesta.ok || typeof cuerpo?.texto !== 'string')
+    throw new Error(cuerpo?.error ?? 'Claude no pudo responder ahora.');
+  return cuerpo.texto.trim();
+}
