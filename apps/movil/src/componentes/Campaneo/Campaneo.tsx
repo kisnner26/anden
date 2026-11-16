@@ -3,6 +3,7 @@ import { Animated } from 'react-native';
 
 import { movimiento } from '@/tema/movimiento';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
+import { useAppActiva } from '@/tema/useAppActiva';
 
 export interface PropiedadesCampaneo {
   /** mientras es true el contenido se balancea como una campana */
@@ -15,8 +16,9 @@ export function Campaneo({ activo, children }: PropiedadesCampaneo) {
   const reducido = useMovimientoReducido();
   const giro = useRef(new Animated.Value(0)).current;
 
+  const activa = useAppActiva();
   useEffect(() => {
-    if (!activo || reducido) {
+    if (!activo || reducido || !activa) {
       giro.setValue(0);
       return;
     }
@@ -39,7 +41,7 @@ export function Campaneo({ activo, children }: PropiedadesCampaneo) {
     );
     animacion.start();
     return () => animacion.stop();
-  }, [activo, giro, reducido]);
+  }, [activa, activo, giro, reducido]);
 
   return (
     <Animated.View
