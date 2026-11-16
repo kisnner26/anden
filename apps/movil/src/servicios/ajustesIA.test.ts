@@ -29,4 +29,11 @@ describe('modo turista', () => {
   it('por defecto la persona no es turista', async () => {
     expect(await leerTurista()).toBe(false);
   });
+
+  it('se activa y se desactiva', async () => {
+    await guardarTurista(true);
+    expect(await leerTurista()).toBe(true);
+    await guardarTurista(false);
+    expect(await leerTurista()).toBe(false);
+  });
 });
