@@ -188,6 +188,12 @@ describe('entenderCuando', () => {
     const r = entenderCuando('el viernes', ahora);
     expect(r?.dia?.getDate()).toBe(20);
   });
+
+  it('entiende madrugada y noche como franjas', () => {
+    const ahora = new Date(2026, 10, 13, 10, 0);
+    expect(entenderCuando('de madrugada', ahora)?.franja).toBe('madrugada');
+    expect(entenderCuando('esta noche', ahora)?.franja).toBe('noche');
+  });
 });
 
 describe('reservar con cuándo', () => {
