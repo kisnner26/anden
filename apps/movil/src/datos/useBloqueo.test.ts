@@ -17,4 +17,11 @@ describe('useBloqueo por defecto', () => {
       tipo: 'ninguna',
     });
   });
+
+  it('desbloquear deja pasar y activar o desactivar no hacen nada', async () => {
+    const { result } = await renderHook(() => useBloqueo());
+    expect(await result.current.desbloquear()).toBe(true);
+    expect(await result.current.activar()).toBe(false);
+    expect(await result.current.desactivar()).toBe(false);
+  });
 });
