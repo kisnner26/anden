@@ -69,4 +69,13 @@ describe('CuentaCreada', () => {
     expect(notificationAsync).toHaveBeenCalledTimes(1);
     expect(reproducirSonido).toHaveBeenCalledWith('bienvenida');
   });
+
+  it('no termina antes de tiempo', async () => {
+    const alTerminar = jest.fn();
+    await render(<CuentaCreada alTerminar={alTerminar} nombre="Ana" />);
+    await act(async () => {
+      jest.advanceTimersByTime(2000);
+    });
+    expect(alTerminar).not.toHaveBeenCalled();
+  });
 });
