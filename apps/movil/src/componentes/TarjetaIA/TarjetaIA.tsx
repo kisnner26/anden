@@ -7,6 +7,7 @@ import { radios } from '@/tema/espacios';
 import { movimiento } from '@/tema/movimiento';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import { useTema } from '@/tema/useTema';
+import { useAppActiva } from '@/tema/useAppActiva';
 
 export interface PropiedadesTarjetaIA {
   children: ReactNode;
@@ -21,10 +22,11 @@ export function TarjetaIA({
 }: PropiedadesTarjetaIA) {
   const { colores } = useTema();
   const reducir = useMovimientoReducido();
+  const activa = useAppActiva();
   const giro = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (reducir) return;
+    if (reducir || !activa) return;
     const vuelta = Animated.loop(
       Animated.timing(giro, {
         duration: movimiento.giroOrbe * (trabajando ? 1 : 2),
@@ -35,7 +37,7 @@ export function TarjetaIA({
     );
     vuelta.start();
     return () => vuelta.stop();
-  }, [giro, reducir, trabajando]);
+  }, [activa, giro, reducir, trabajando]);
 
   const rotar = giro.interpolate({
     inputRange: [0, 1],
