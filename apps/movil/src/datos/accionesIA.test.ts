@@ -86,3 +86,14 @@ describe('accionDeOrden', () => {
     expect(accionDeOrden('avisame cuando haya bus a Boaco')).toBeNull();
   });
 });
+
+describe('interpretarOrden con acciones', () => {
+  const ciudades = ['Managua', 'Boaco', 'Juigalpa'];
+
+  it('devuelve la acción antes de buscar una ciudad', () => {
+    expect(
+      interpretarOrden('avisame 15 minutos antes de mi bus a Boaco', ciudades),
+    ).toEqual({ accion: { minutos: 15, tipo: 'avisar' }, tipo: 'accion' });
+  });
+
+});
