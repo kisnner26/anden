@@ -18,4 +18,9 @@ describe('OndaDeVoz', () => {
     const pantalla = await render(<OndaDeVoz tono="escucha" />);
     expect(pantalla.toJSON()).not.toBeNull();
   });
+
+  it('se dibuja al hablar', async () => {
+    const pantalla = await render(<OndaDeVoz tono="habla" />);
+    expect(pantalla.toJSON()).not.toBeNull();
+  });
 });
