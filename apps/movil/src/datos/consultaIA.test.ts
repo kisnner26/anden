@@ -8,12 +8,30 @@ import {
   etiquetaDia,
   hechosParaPregunta,
   limpiarTexto,
+  lineaDeEncomienda,
   lineaDeHistorial,
   lineaDeSalidaNumerada,
   tarifasDeLasSalidas,
   type EstadoApp,
 } from './consultaIA';
+import type { Encomienda } from './encomiendas';
 import type { Salida } from './salidas';
+
+const ENCOMIENDA: Encomienda = {
+  actualizadaEn: '2026-11-13T09:00:00.000Z',
+  codigo: 'ENC-1',
+  creadaEn: '2026-11-13T08:00:00.000Z',
+  descripcion: 'caja con repuestos',
+  destinatario: 'Luis Pérez',
+  destino: 'Managua',
+  estado: 'aceptada',
+  fragil: false,
+  id: 'enc_1',
+  origen: 'Boaco',
+  remitente: 'Ana Ruiz',
+  tamano: 'pequeno',
+  telefonoDestinatario: '88881234',
+};
 import { boletoDePrueba } from '@/pruebas/boletos';
 
 // viernes 13 de noviembre de 2026, 10:00
@@ -377,5 +395,15 @@ describe('contexto sin internet', () => {
       estado({ conexion: { enLinea: true, ultimaSincronizacion: AHORA } }),
     ).join('\n');
     expect(texto).not.toContain('No hay internet');
+  });
+});
+
+describe('lineaDeEncomienda', () => {
+  it('dice el estado, el destinatario y la descripción', () => {
+    const linea = lineaDeEncomienda(ENCOMIENDA);
+    expect(linea).toContain('Boaco a Managua');
+    expect(linea).toContain('confirmada por el chofer');
+    expect(linea).toContain('para Luis Pérez');
+    expect(linea).toContain('caja con repuestos');
   });
 });
