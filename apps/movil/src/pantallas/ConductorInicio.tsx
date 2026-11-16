@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -85,11 +85,17 @@ export function ConductorInicio({
   const { cierres } = useCierres();
   const nombre = nombrePropio(nombreCompleto(perfil) || (sesion?.nombre ?? ''));
   // todos sus viajes de hoy en adelante: los que él mismo publicó
-  const viajes = sesion?.choferId
-    ? salidasDeChofer(obtenerMuestra(), ahora, sesion.choferId).filter(
-        (salida) => salida.salida.getTime() >= inicioDelDia(ahora).getTime(),
-      )
-    : [];
+  const choferId = sesion?.choferId;
+  const viajes = useMemo(
+    () =>
+      choferId
+        ? salidasDeChofer(obtenerMuestra(), ahora, choferId).filter(
+            (salida) =>
+              salida.salida.getTime() >= inicioDelDia(ahora).getTime(),
+          )
+        : [],
+    [ahora, choferId],
+  );
   const [retirando, establecerRetirando] = useState<string | null>(null);
   const [motivo, establecerMotivo] = useState<MotivoCancelacion | null>(null);
   const [falloBusqueda, establecerFalloBusqueda] = useState(false);
