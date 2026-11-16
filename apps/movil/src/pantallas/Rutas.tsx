@@ -5,7 +5,10 @@ import { Aparece } from '@/componentes/Aparece';
 import { Bloque } from '@/componentes/Bloque';
 import { BloqueNegro } from '@/componentes/BloqueNegro';
 import { BotonAccion } from '@/componentes/BotonAccion';
-import { ContadorPasajeros } from '@/componentes/ContadorPasajeros';
+import {
+  ContadorPasajeros,
+  MAXIMO_PASAJEROS,
+} from '@/componentes/ContadorPasajeros';
 import { ControlSegmentado } from '@/componentes/ControlSegmentado';
 import { EstadoVacio } from '@/componentes/EstadoVacio';
 import { FichaCiudadIA } from '@/componentes/FichaCiudadIA';
@@ -42,7 +45,7 @@ export interface PropiedadesRutas {
   /** abre la solicitud de una encomienda */
   alAbrirEncomiendas?: () => void;
   /** lleva a elegir los asientos de la salida escogida */
-  alElegirAsientos?: (viajeId: string) => void;
+  alElegirAsientos?: (viajeId: string, pasajeros: number) => void;
 }
 
 /**
@@ -69,8 +72,13 @@ export function Rutas({
       plan.salidas[0],
     [gustos, plan.ahora, plan.salidas],
   );
+  // no se piden más pasajeros que asientos libres, y siempre uno para poder seguir
+  const tope = salida
+    ? Math.max(1, Math.min(MAXIMO_PASAJEROS, salida.asientosLibres))
+    : MAXIMO_PASAJEROS;
+  const pasajeros = Math.min(cantidad, tope);
   const precio = salida
-    ? totalReserva(obtenerMuestra(), salida.viajeId, cantidad)
+    ? totalReserva(obtenerMuestra(), salida.viajeId, pasajeros)
     : null;
   const llegada =
     salida && plan.duracionMin !== null
@@ -153,7 +161,8 @@ export function Rutas({
         <>
           <ContadorPasajeros
             alCambiar={establecerCantidad}
-            cantidad={cantidad}
+            cantidad={pasajeros}
+            maximo={tope}
           />
 
           <Aparece indice={2}>
@@ -246,7 +255,9 @@ export function Rutas({
               </View>
 
               <BotonAccion
-                alPresionar={() => alElegirAsientos?.(salida.viajeId)}
+                alPresionar={() =>
+                  alElegirAsientos?.(salida.viajeId, pasajeros)
+                }
                 deshabilitado={salida.asientosLibres === 0}
                 etiqueta={t('rutas.elegirAsientos')}
                 icono="boleto"
