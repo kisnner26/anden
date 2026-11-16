@@ -45,6 +45,7 @@ export function HojaConversacion({
           disponible={disponible}
           mensajes={conversacion.mensajes}
           nombre={nombre}
+          razonFallo={conversacion.fallo}
           rapidas={[
             t('chatViaje.rapidasChofer.llegando'),
             t('chatViaje.rapidasChofer.esperando'),

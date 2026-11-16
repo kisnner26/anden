@@ -454,6 +454,11 @@ export const textos = {
     soloEnViaje:
       'Podés escribirle al chofer solo mientras el viaje va en camino.',
     fallo: 'No se pudo enviar. Probá de nuevo.',
+    falloFuera:
+      'El servidor todavía no ve este viaje en camino: el chofer tiene que registrar la salida, o tu boleto aún no se sincronizó.',
+    falloTabla:
+      'El chat todavía no está listo en el servidor. Avisale a quien administra Andén.',
+    falloRed: 'No se pudo enviar. Revisá tu conexión y probá de nuevo.',
     yo: 'Vos',
     cerrar: 'Cerrar el chat',
     rapidas: {

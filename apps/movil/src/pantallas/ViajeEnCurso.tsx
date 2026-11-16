@@ -459,6 +459,7 @@ export function ViajeEnCurso({
             disponible={chatDisponible(salida.estado, transmision.activa)}
             mensajes={conversacion.mensajes}
             nombre={primerNombre}
+            razonFallo={conversacion.fallo}
             rapidas={[
               t('chatViaje.rapidas.parada'),
               t('chatViaje.rapidas.llegando'),

@@ -11,6 +11,7 @@ import {
 
 import { Chip } from '@/componentes/Chip';
 import { Icono } from '@/componentes/Icono';
+import type { RazonFalloMensaje } from '@/servicios/supabase/mensajesSupabase';
 import {
   MAXIMO_MENSAJE,
   type AutorMensaje,
@@ -23,6 +24,12 @@ import { useTema } from '@/tema/useTema';
 import { rellenar } from '@/textos/rellenar';
 import { t } from '@/textos/t';
 
+const TEXTO_DE_FALLO = {
+  'fuera-de-viaje': 'chatViaje.falloFuera',
+  'sin-conexion': 'chatViaje.falloRed',
+  'sin-tabla': 'chatViaje.falloTabla',
+} as const;
+
 export interface PropiedadesChatViaje {
   /** envía el texto; devuelve falso si no se pudo */
   alEnviar: (texto: string) => Promise<boolean>;
@@ -31,6 +38,8 @@ export interface PropiedadesChatViaje {
   /** falso cuando el viaje no va en camino: se ve la conversación pero no se escribe */
   disponible: boolean;
   mensajes: readonly MensajeViaje[];
+  /** por qué falló el último envío, para explicarlo; sin dato se dice algo general */
+  razonFallo?: RazonFalloMensaje | null;
   /** quién es la persona de este teléfono */
   yo: AutorMensaje;
   /** frases que se mandan con un toque; solo se ofrecen si la conversación está vacía */
@@ -44,6 +53,7 @@ export function ChatViaje({
   mensajes,
   nombre,
   rapidas = [],
+  razonFallo = null,
   yo,
 }: PropiedadesChatViaje) {
   const { colores } = useTema();
@@ -140,7 +150,9 @@ export function ChatViaje({
               accessibilityLiveRegion="polite"
               style={[tipografia.pequeno, { color: colores.cancelado }]}
             >
-              {t('chatViaje.fallo')}
+              {razonFallo
+                ? t(TEXTO_DE_FALLO[razonFallo])
+                : t('chatViaje.fallo')}
             </Text>
           )}
           <View
