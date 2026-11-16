@@ -62,4 +62,14 @@ describe('entrenar', () => {
     });
     expect(vistas).toEqual([1, 2, 3, 4, 5]);
   });
+
+  it('con la misma semilla da el mismo resultado', () => {
+    const a = crearRed(2, [6], 2, 4);
+    const b = crearRed(2, [6], 2, 4);
+    entrenar(a, dosGrupos(), { epocas: 10, semilla: 11 });
+    entrenar(b, dosGrupos(), { epocas: 10, semilla: 11 });
+    expect(Array.from(a.capas[0]!.pesos)).toEqual(
+      Array.from(b.capas[0]!.pesos),
+    );
+  });
 });
