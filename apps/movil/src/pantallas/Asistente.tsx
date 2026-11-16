@@ -69,6 +69,7 @@ import { FICHAS } from '@/datos/fichasCiudad';
 import { mismoDia } from '@/datos/dias';
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
 import type { AccionIA } from '@/datos/accionesIA';
+import { boletosVigentes } from '@/datos/boletosVigentes';
 import {
   enlaceDeViaje,
   leerContacto,
@@ -262,16 +263,9 @@ export function Asistente({
     () => salidaMasBarata(salidas, ahora),
     [ahora, salidas],
   );
-  const proximoBoleto = boletos
-    .filter(
-      ({ boleto, resumen }) =>
-        boleto.estado === 'vigente' && new Date(resumen.salida) >= ahora,
-    )
-    .sort(
-      (a, b) =>
-        new Date(a.resumen.salida).getTime() -
-        new Date(b.resumen.salida).getTime(),
-    )[0];
+  const proximoBoleto = boletosVigentes(boletos).find(
+    ({ resumen }) => new Date(resumen.salida) >= ahora,
+  );
 
   // lo que recuerda más lo que ya reservó: una reserva dice más que una pregunta
   const memoriaEfectiva = boletos.reduce(
