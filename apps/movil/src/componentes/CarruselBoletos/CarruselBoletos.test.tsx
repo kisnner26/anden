@@ -30,4 +30,11 @@ describe('CarruselBoletos', () => {
       '"accessibilityElementsHidden":true',
     );
   });
+
+  it('dibuja una tarjeta por boleto', async () => {
+    const pantalla = await render(
+      <CarruselBoletos ahora={AHORA} alAbrirBoleto={jest.fn()} boletos={DOS} />,
+    );
+    expect(pantalla.getAllByRole('button')).toHaveLength(2);
+  });
 });
