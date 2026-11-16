@@ -57,4 +57,18 @@ describe('AccionDeBoleto', () => {
       pantalla.getByRole('button', { name: 'Aviso' }).props.accessibilityState,
     ).toEqual(expect.objectContaining({ selected: false }));
   });
+
+  it('cuando está puesta se anuncia como seleccionada', async () => {
+    const pantalla = await render(
+      <AccionDeBoleto
+        activa
+        alPresionar={jest.fn()}
+        etiqueta="Aviso"
+        tipo="recordatorio"
+      />,
+    );
+    expect(
+      pantalla.getByRole('button', { name: 'Aviso' }).props.accessibilityState,
+    ).toEqual(expect.objectContaining({ selected: true }));
+  });
 });
