@@ -9,4 +9,9 @@ describe('useEncomiendas por defecto', () => {
     expect(result.current.encomiendas).toEqual([]);
     expect(result.current.cargando).toBe(false);
   });
+
+  it('enviar responde nulo porque no se pudo enviar', async () => {
+    const { result } = await renderHook(() => useEncomiendas());
+    expect(await result.current.enviar({} as never)).toBeNull();
+  });
 });
