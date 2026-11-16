@@ -29,3 +29,53 @@ export function codigoDelPuente(texto: string): string | null {
   const limpio = texto.trim().toLowerCase();
   return /^[0-9a-f]{48}$/.test(limpio) ? limpio : null;
 }
+
+type DatosParaClaude = Pick<
+  Datos,
+  'alertas' | 'boletos' | 'cierres' | 'encomiendas' | 'viajes'
+>;
+
+/**
+ * un resumen en texto de la operación para que Claude conteste con datos reales; solo números y claves de
+ * viajes y conductores: nunca nombres de pasajeros, cédulas, teléfonos ni fotos
+ */
+export function contextoDeCooperativa(
+  d: DatosParaClaude,
+  hoy: Date = new Date(),
+): string {
+  const r = resumir(d);
+  const dias = cobradoPorDia(d.cierres, 7, hoy)
+    .map(({ dia, total }) => `${dia}: ${dinero(total)}`)
+    .join('; ');
+  const ranking = rankingDeConductores(d.cierres)
+    .slice(0, 5)
+    .map(
+      (c) =>
+        `${c.chofer}: ${dinero(c.cobrado)} en ${c.viajes} viajes con ${c.pasajeros} pasajeros`,
+    )
+    .join('; ');
+  return [
+    `Hoy es ${hoy.toDateString()}.`,
+    `Viajes activos: ${r.viajesActivos}. Viajes cerrados: ${r.viajesCerrados}.`,
+    `Cobrado en total: ${dinero(r.cobrado)}. Por cobrar: ${dinero(r.porCobrar)}. Pasajeros llevados: ${r.pasajeros}.`,
+    `Ocupación media de los viajes activos: ${Math.round(r.ocupacionMedia * 100)} %.`,
+    `Encomiendas abiertas: ${r.encomiendasAbiertas}. Alertas sin atender: ${r.alertasPendientes}.`,
+    `Cobrado por día (últimos 7): ${dias}.`,
+    ranking === '' ? '' : `Conductores que más cobraron: ${ranking}.`,
+  ]
+    .filter((linea) => linea !== '')
+    .join('\n');
+}
+
+/** las reglas con las que Claude contesta en el panel: breve, en español y solo con lo que se le da */
+export function instruccionesDeCooperativa(contexto: string): string {
+  return [
+    'Sos el asistente del panel de la cooperativa de buses interlocales Andén, en Nicaragua.',
+    'Respondé en español, con voseo, directo y breve: primero la respuesta y, si ayuda, un dato más.',
+    'Usá solo los datos de abajo. Si algo no está ahí, decí que no lo sabés; no inventes cifras.',
+    'Los montos son córdobas (C$).',
+    '',
+    'Datos de la operación:',
+    contexto,
+  ].join('\n');
+}
