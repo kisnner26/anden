@@ -32,4 +32,10 @@ describe('motivos de no disponibilidad', () => {
   it('si está apagada pide activarla en los ajustes', () => {
     expect(motivoNoDisponible('apagada', 'Gemini')).toContain('Activá Gemini');
   });
+
+  it('si no está lista pide esperar unos minutos', () => {
+    expect(motivoNoDisponible('no-lista', 'Apple Intelligence')).toContain(
+      'Probá en unos minutos',
+    );
+  });
 });
