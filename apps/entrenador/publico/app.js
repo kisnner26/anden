@@ -1,363 +1,796 @@
 const $ = (id) => document.getElementById(id);
-const COLORES = {
-  ambar: '#f2b632',
-  azul: '#2966ed',
-  linea: '#2b2d37',
-  rojo: '#e6213f',
-  suave: '#8c90a0',
-  verde: '#33cc5c',
+const css = (nombre) =>
+  getComputedStyle(document.documentElement).getPropertyValue(nombre).trim();
+const CLAVE_OPCIONES = 'anden.entrenador.opciones';
+const OPCIONES_DE_SIEMPRE = {
+  dimension: 512,
+  epocas: 80,
+  oculta: 32,
+  semilla: 7,
+  tasa: 0.01,
 };
-let historial = [];
-let estado = null;
+const UMBRAL = 0.45;
+const EJEMPLOS = [
+  'cuánto cuesta ir a Boaco',
+  'próximo bus a Juigalpa',
+  'quedan asientos mañana',
+  'qué se come en Boaco',
+  'avisame 30 minutos antes',
+  'comparte mi viaje',
+  'hola',
+  'cuánto es dos más dos',
+];
+const MAXIMO_RENGLONES = 120;
 
+let estado = null;
+let frases = [];
+let historial = [];
+let filtro = '';
+let busqueda = '';
+let mostrarTodas = false;
+let entrenando = false;
+let confirmandoGuardar = null;
+
+/* ---------- utilidades ---------- */
 async function api(ruta, opciones) {
-  const r = await fetch(ruta, opciones);
-  if (!r.ok)
-    throw new Error(
-      (await r.json().catch(() => ({}))).error ?? `error ${r.status}`,
+  let respuesta;
+  try {
+    respuesta = await fetch(ruta, opciones);
+  } catch {
+    throw new Error('sin-conexion');
+  }
+  if (!respuesta.ok) {
+    const cuerpo = await respuesta.json().catch(() => ({}));
+    throw new Error(cuerpo.error ?? `error ${respuesta.status}`);
+  }
+  return respuesta.json();
+}
+
+function json(metodo, cuerpo) {
+  return {
+    body: JSON.stringify(cuerpo),
+    headers: { 'Content-Type': 'application/json' },
+    method: metodo,
+  };
+}
+
+function aviso(mensaje) {
+  const caja = $('aviso-global');
+  caja.hidden = mensaje === null;
+  caja.textContent = mensaje ?? '';
+}
+
+function toast(mensaje, tipo = 'listo') {
+  const nodo = document.createElement('div');
+  nodo.className = `toast ${tipo}`;
+  nodo.textContent = mensaje;
+  $('toasts').append(nodo);
+  setTimeout(() => nodo.remove(), 4200);
+}
+
+function rgba(color, alfa) {
+  const hex = color.replace('#', '');
+  const n = parseInt(hex.length === 3 ? hex.replace(/./g, '$&$&') : hex, 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alfa})`;
+}
+
+function preparar(canvas) {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const ancho = canvas.clientWidth || canvas.width;
+  const proporcion = canvas.height / canvas.width;
+  canvas.width = Math.round(ancho * dpr);
+  canvas.height = Math.round(ancho * proporcion * dpr);
+  const g = canvas.getContext('2d');
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { g, ancho, alto: ancho * proporcion };
+}
+
+function porcentaje(valor) {
+  return valor === null || valor === undefined
+    ? '--%'
+    : `${Math.round(valor * 100)}%`;
+}
+
+/* ---------- tablero ---------- */
+function pintarTablero() {
+  if (!estado) return;
+  const meta = estado.modelo.meta;
+  $('t-frases').textContent = String(estado.frases);
+  $('t-intenciones').textContent = String(estado.modelo.etiquetas.length);
+  const parametros =
+    estado.parametros ??
+    estado.modelo.capas.reduce(
+      (s, c) => s + c.entradas * c.salidas + c.salidas,
+      0,
     );
-  return r.json();
+  $('t-parametros').textContent = parametros.toLocaleString('es');
+  $('t-acierto').textContent = porcentaje(meta.aciertoReal);
+  if (!entrenando) {
+    const fecha = meta.entrenadoEn
+      ? meta.entrenadoEn.slice(0, 10)
+      : 'sin fecha';
+    $('t-pie').textContent =
+      `Modelo del ${fecha}${meta.ejemplos ? ` · entrenado con ${meta.ejemplos} frases` : ''}. El acierto real se mide con plantillas que la red nunca vio.`;
+  }
 }
 
 /* ---------- curvas ---------- */
 function dibujarCurvas() {
-  const c = $('curvas');
-  const g = c.getContext('2d');
-  g.clearRect(0, 0, c.width, c.height);
-  g.strokeStyle = COLORES.linea;
+  const { g, ancho, alto } = preparar($('curvas'));
+  g.clearRect(0, 0, ancho, alto);
+  const izq = 40;
+  const sup = 14;
+  const inf = alto - 26;
+  g.strokeStyle = css('--linea');
   g.lineWidth = 1;
+  g.fillStyle = css('--tinta-suave');
+  g.font = '500 11px JetBrains Mono, ui-monospace, monospace';
   for (let i = 0; i <= 4; i += 1) {
-    const y = 16 + (i * (c.height - 36)) / 4;
+    const y = sup + (i * (inf - sup)) / 4;
     g.beginPath();
-    g.moveTo(36, y);
-    g.lineTo(c.width - 8, y);
+    g.moveTo(izq, y);
+    g.lineTo(ancho - 8, y);
     g.stroke();
   }
-  if (historial.length < 2) return;
+  if (historial.length < 2) {
+    g.textAlign = 'center';
+    g.fillText('Las curvas aparecen cuando entrenes', ancho / 2, alto / 2);
+    g.textAlign = 'left';
+    return;
+  }
   const maxPerdida = Math.max(
     ...historial.map((h) => Math.max(h.perdida, h.perdidaValidacion ?? 0)),
     0.1,
   );
-  const x = (i) => 36 + (i * (c.width - 48)) / (historial.length - 1);
-  const yP = (v) => 16 + (1 - v / maxPerdida) * (c.height - 36);
-  const yA = (v) => 16 + (1 - v) * (c.height - 36);
-  const linea = (color, valores, escala) => {
+  const x = (i) => izq + (i * (ancho - izq - 12)) / (historial.length - 1);
+  const yP = (v) => sup + (1 - v / maxPerdida) * (inf - sup);
+  const yA = (v) => sup + (1 - v) * (inf - sup);
+  const trazar = (color, valores, escala) => {
     g.strokeStyle = color;
-    g.lineWidth = 2;
+    g.lineWidth = 2.5;
+    g.lineJoin = 'round';
     g.beginPath();
     let empezo = false;
     valores.forEach((v, i) => {
-      if (v === null) return;
+      if (v === null || v === undefined) return;
       if (empezo) g.lineTo(x(i), escala(v));
       else g.moveTo(x(i), escala(v));
       empezo = true;
     });
     g.stroke();
   };
-  linea(
-    COLORES.ambar,
+  trazar(
+    css('--ambar-titular'),
     historial.map((h) => h.perdida),
     yP,
   );
-  linea(
-    COLORES.rojo,
+  trazar(
+    css('--cancelado'),
     historial.map((h) => h.perdidaValidacion),
     yP,
   );
-  linea(
-    COLORES.verde,
+  trazar(
+    css('--a-tiempo'),
     historial.map((h) => h.precisionValidacion),
     yA,
   );
-  g.fillStyle = COLORES.suave;
-  g.font = '11px ui-monospace, monospace';
-  g.fillText(maxPerdida.toFixed(2), 2, 24);
-  g.fillText('0', 22, c.height - 18);
-  g.fillText(`época ${historial.length}`, c.width - 80, c.height - 4);
+  g.fillStyle = css('--tinta-suave');
+  g.fillText(maxPerdida.toFixed(2), 4, sup + 10);
+  g.fillText('0', 24, inf + 4);
+  g.textAlign = 'right';
+  g.fillText(`época ${historial.length}`, ancho - 8, alto - 6);
+  g.textAlign = 'left';
 }
 
-/* ---------- la red ---------- */
+/* ---------- la red, sobre el tablero negro ---------- */
 function dibujarRed() {
-  const c = $('red');
-  const g = c.getContext('2d');
-  g.clearRect(0, 0, c.width, c.height);
   if (!estado) return;
+  const canvas = $('red-canvas');
+  const { g, ancho, alto } = preparar(canvas);
+  g.clearRect(0, 0, ancho, alto);
   const { capas, etiquetas, dimension } = estado.modelo;
   const ocultas = capas[0];
   const salida = capas[capas.length - 1];
-  const nOcultas = Math.min(ocultas.salidas, 24);
-  const colX = [90, c.width / 2, c.width - 150];
-  const alto = c.height - 30;
-  const yOculta = (i) => 15 + ((i + 0.5) * alto) / nOcultas;
-  const ySalida = (i) => 15 + ((i + 0.5) * alto) / salida.salidas;
-  const maxPeso = Math.max(
-    ...(salida.pesos ?? [[1]]).flat().map(Math.abs),
-    0.001,
-  );
-  // líneas de la última capa: azul si empuja a favor y rojo si empuja en contra
+  const nOcultas = Math.min(ocultas.salidas, 26);
+  const ambar = '#ffb21e';
+  const rojo = '#ff5a6e';
+  const verde = '#5fd39a';
+  const claro = '#f2efe8';
+  const colX = [ancho * 0.11, ancho * 0.5, ancho * 0.78];
+  const margen = 34;
+  const yOculta = (i) => margen + ((i + 0.5) * (alto - margen - 18)) / nOcultas;
+  const ySalida = (i) =>
+    margen + ((i + 0.5) * (alto - margen - 18)) / salida.salidas;
+
+  // casillas de entrada: una rejilla de puntos que representa el vector de la frase
+  const columnas = 14;
+  const filas = 22;
+  const bx = colX[0] - 52;
+  const by = margen + 6;
+  const celda = Math.min(7.4, (alto - margen - 40) / filas);
+  for (let f = 0; f < filas; f += 1) {
+    for (let c = 0; c < columnas; c += 1) {
+      const azar = Math.abs(Math.sin((f * 31 + c * 17) * 12.9898)) % 1;
+      g.fillStyle = rgba(claro, azar > 0.82 ? 0.55 : 0.1);
+      g.beginPath();
+      g.arc(
+        bx + c * (celda + 0.6) + celda / 2,
+        by + f * (celda + 0.6) + celda / 2,
+        celda * 0.34,
+        0,
+        Math.PI * 2,
+      );
+      g.fill();
+    }
+  }
+  g.fillStyle = rgba(claro, 0.6);
+  g.font = '600 10px JetBrains Mono, ui-monospace, monospace';
+  g.textAlign = 'center';
+  g.fillText(`${dimension} casillas`, colX[0], alto - 8);
+
+  for (let h = 0; h < nOcultas; h += 1) {
+    g.strokeStyle = rgba(claro, 0.07);
+    g.lineWidth = 1;
+    g.beginPath();
+    g.moveTo(bx + columnas * (celda + 0.6) + 4, alto / 2);
+    g.lineTo(colX[1] - 9, yOculta(h));
+    g.stroke();
+  }
+
+  // conexiones de la última capa, con su peso
   if (salida.pesos) {
+    const maximo = Math.max(...salida.pesos.flat().map(Math.abs), 0.001);
     for (let s = 0; s < salida.salidas; s += 1) {
       for (let h = 0; h < nOcultas; h += 1) {
         const w = salida.pesos[s][h];
-        const a = Math.min(0.55, (Math.abs(w) / maxPeso) * 0.7);
-        if (a < 0.04) continue;
-        g.strokeStyle =
-          w > 0 ? `rgba(41,102,237,${a})` : `rgba(230,33,63,${a})`;
+        const a = Math.min(0.6, (Math.abs(w) / maximo) * 0.75);
+        if (a < 0.05) continue;
+        g.strokeStyle = rgba(w > 0 ? ambar : rojo, a);
         g.lineWidth = 1;
         g.beginPath();
-        g.moveTo(colX[1] + 8, yOculta(h));
-        g.lineTo(colX[2] - 8, ySalida(s));
+        g.moveTo(colX[1] + 9, yOculta(h));
+        g.lineTo(colX[2] - 9, ySalida(s));
         g.stroke();
       }
     }
   }
-  // entrada: un bloque
-  g.fillStyle = '#101116';
-  g.strokeStyle = COLORES.linea;
-  g.beginPath();
-  g.roundRect(colX[0] - 44, 40, 88, alto - 50, 16);
-  g.fill();
-  g.stroke();
-  g.fillStyle = COLORES.suave;
-  g.font = '11px ui-monospace, monospace';
-  g.textAlign = 'center';
-  g.fillText(`${dimension}`, colX[0], alto / 2 - 4);
-  g.fillText('casillas', colX[0], alto / 2 + 12);
+
+  const fuerzaMaxima = Math.max(...ocultas.fuerza, 0.0001);
   for (let h = 0; h < nOcultas; h += 1) {
-    g.strokeStyle = 'rgba(140,144,160,0.10)';
+    const intensidad = 0.3 + 0.7 * (ocultas.fuerza[h] / fuerzaMaxima);
+    g.fillStyle = rgba(ambar, intensidad);
+    g.shadowColor = rgba(ambar, 0.6 * intensidad);
+    g.shadowBlur = 8;
     g.beginPath();
-    g.moveTo(colX[0] + 44, alto / 2);
-    g.lineTo(colX[1] - 8, yOculta(h));
-    g.stroke();
-  }
-  // ocultas: más claras las que más pesan
-  const maxF = Math.max(...ocultas.fuerza, 0.0001);
-  for (let h = 0; h < nOcultas; h += 1) {
-    g.fillStyle = `rgba(242,182,50,${0.25 + 0.75 * (ocultas.fuerza[h] / maxF)})`;
-    g.beginPath();
-    g.arc(colX[1], yOculta(h), 7, 0, Math.PI * 2);
+    g.arc(colX[1], yOculta(h), 6.5, 0, Math.PI * 2);
     g.fill();
   }
-  // salidas con su nombre
+  g.shadowBlur = 0;
+
   g.textAlign = 'left';
   for (let s = 0; s < salida.salidas; s += 1) {
-    g.fillStyle = COLORES.verde;
+    g.fillStyle = verde;
     g.beginPath();
-    g.arc(colX[2], ySalida(s), 6, 0, Math.PI * 2);
+    g.arc(colX[2], ySalida(s), 5.5, 0, Math.PI * 2);
     g.fill();
-    g.fillStyle = '#f1f2f6';
-    g.font = '12px -apple-system, system-ui, sans-serif';
-    g.fillText(etiquetas[s], colX[2] + 14, ySalida(s) + 4);
+    g.fillStyle = claro;
+    g.font = '600 12px JetBrains Mono, ui-monospace, monospace';
+    g.fillText(etiquetas[s].replace('_', ' '), colX[2] + 14, ySalida(s) + 4);
   }
-  g.fillStyle = COLORES.suave;
-  g.font = '10px ui-monospace, monospace';
+
+  g.fillStyle = rgba(claro, 0.6);
+  g.font = '600 10px JetBrains Mono, ui-monospace, monospace';
   g.textAlign = 'center';
-  g.fillText('ENTRADA', colX[0], 12);
+  g.fillText('ENTRADA', colX[0], 18);
   g.fillText(
-    `OCULTA (${ocultas.salidas}${ocultas.salidas > nOcultas ? `, se ven ${nOcultas}` : ''})`,
+    `OCULTA · ${ocultas.salidas}${ocultas.salidas > nOcultas ? ` (se ven ${nOcultas})` : ''}`,
     colX[1],
-    12,
+    18,
   );
-  g.fillText('INTENCIÓN', colX[2] + 30, 12);
+  g.textAlign = 'left';
+  g.fillText('INTENCIÓN', colX[2] - 4, 18);
+
   const total = capas.reduce(
-    (s, k) => s + k.entradas * k.salidas + k.salidas,
+    (suma, k) => suma + k.entradas * k.salidas + k.salidas,
     0,
   );
   $('nota-red').textContent =
-    `${total.toLocaleString('es')} parámetros: caben en ${((total * 4) / 1024).toFixed(0)} KB de memoria. Azul: la neurona empuja hacia esa intención; rojo: en contra. Más claro, más peso.`;
+    `${total.toLocaleString('es')} parámetros: ocupan unos ${((total * 4) / 1024).toFixed(0)} KB y calculan una respuesta en menos de un milisegundo.`;
 }
 
-/* ---------- matriz ---------- */
+/* ---------- matriz de confusión ---------- */
 function dibujarMatriz() {
-  const c = $('matriz');
-  const g = c.getContext('2d');
-  g.clearRect(0, 0, c.width, c.height);
+  const lienzo = $('matriz');
+  const { g, ancho, alto } = preparar(lienzo);
+  g.clearRect(0, 0, ancho, alto);
+  const contenedor = $('precision-clases');
+  contenedor.replaceChildren();
   const m = estado?.matriz;
-  const cont = $('precision-clases');
-  cont.innerHTML = '';
-  if (!m) return;
+  if (!m) {
+    g.fillStyle = css('--tinta-suave');
+    g.font = '500 13px Archivo, sans-serif';
+    g.textAlign = 'center';
+    g.fillText('Sin datos todavía', ancho / 2, alto / 2);
+    contenedor.append(
+      Object.assign(document.createElement('p'), {
+        className: 'nota',
+        textContent: 'Entrená un modelo para medir cada intención.',
+      }),
+    );
+    return;
+  }
   $('nota-matriz').textContent =
-    'Filas: lo que era. Columnas: lo que la red dijo. La diagonal es lo que acertó.';
-  const n = m.length;
-  const lado = Math.min((c.width - 110) / n, (c.height - 80) / n);
+    'Cada celda cuenta cuántas frases de esa fila la red puso en esa columna.';
   const etiquetas = estado.modelo.etiquetas;
+  const n = m.length;
+  const izq = 108;
+  const sup = 92;
+  const lado = Math.min((ancho - izq - 8) / n, (alto - sup - 8) / n);
+  const verde = css('--a-tiempo');
+  const rojo = css('--cancelado');
   m.forEach((fila, i) => {
     const total = fila.reduce((s, v) => s + v, 0) || 1;
     fila.forEach((v, j) => {
       const a = v / total;
       g.fillStyle =
         i === j
-          ? `rgba(51,204,92,${0.1 + 0.9 * a})`
-          : `rgba(230,33,63,${a === 0 ? 0.03 : 0.2 + 0.8 * a})`;
-      g.fillRect(100 + j * lado, 60 + i * lado, lado - 2, lado - 2);
+          ? rgba(verde, 0.12 + 0.88 * a)
+          : rgba(rojo, v === 0 ? 0.05 : 0.25 + 0.75 * a);
+      g.beginPath();
+      g.roundRect(
+        izq + j * lado + 1,
+        sup + i * lado + 1,
+        lado - 2,
+        lado - 2,
+        4,
+      );
+      g.fill();
+      if (v > 0 && lado > 22) {
+        g.fillStyle = a > 0.55 && i === j ? '#fff' : css('--tinta');
+        g.font = '600 10px JetBrains Mono, ui-monospace, monospace';
+        g.textAlign = 'center';
+        g.fillText(
+          String(v),
+          izq + j * lado + lado / 2,
+          sup + i * lado + lado / 2 + 3,
+        );
+      }
     });
-    g.fillStyle = '#f1f2f6';
-    g.font = '10px ui-monospace, monospace';
+    g.fillStyle = css('--tinta');
+    g.font = '500 11px JetBrains Mono, ui-monospace, monospace';
     g.textAlign = 'right';
-    g.fillText(etiquetas[i].slice(0, 12), 94, 60 + i * lado + lado / 2 + 3);
+    g.fillText(
+      etiquetas[i].replace('_', ' '),
+      izq - 8,
+      sup + i * lado + lado / 2 + 4,
+    );
     g.save();
-    g.translate(100 + i * lado + lado / 2, 54);
-    g.rotate(-Math.PI / 4);
+    g.translate(izq + i * lado + lado / 2, sup - 8);
+    g.rotate(-Math.PI / 3.2);
     g.textAlign = 'left';
-    g.fillText(etiquetas[i].slice(0, 12), 0, 0);
+    g.fillText(etiquetas[i].replace('_', ' '), 0, 0);
     g.restore();
   });
   estado.precisionPorClase.forEach((p, i) => {
-    cont.append(
-      barra(
-        etiquetas[i],
-        p ?? 0,
-        p === null ? 'sin datos' : `${Math.round(p * 100)}%`,
-      ),
-    );
+    const nombre = etiquetas[i].replace('_', ' ');
+    const nivel = p === null ? '' : p >= 0.9 ? '' : p >= 0.7 ? 'media' : 'baja';
+    const fila = document.createElement('div');
+    fila.className = 'barra';
+    const a = Object.assign(document.createElement('span'), {
+      textContent: nombre,
+    });
+    const pista = document.createElement('div');
+    pista.className = 'pista';
+    const relleno = document.createElement('div');
+    relleno.className = `relleno ${nivel}`;
+    relleno.style.width = `${Math.round((p ?? 0) * 100)}%`;
+    pista.append(relleno);
+    const valor = Object.assign(document.createElement('span'), {
+      className: 'valor',
+      textContent: p === null ? 'sin datos' : porcentaje(p),
+    });
+    fila.append(a, pista, valor);
+    contenedor.append(fila);
   });
 }
 
-function barra(nombre, fraccion, texto) {
-  const d = document.createElement('div');
-  d.className = 'barra';
-  d.innerHTML =
-    '<span></span><div class="pista"><div class="relleno"></div></div><span class="valor"></span>';
-  d.children[0].textContent = nombre;
-  d.querySelector('.relleno').style.width = `${Math.round(fraccion * 100)}%`;
-  d.querySelector('.valor').textContent = texto;
-  return d;
+/* ---------- frases ---------- */
+function pintarChips() {
+  const caja = $('chips-intenciones');
+  caja.replaceChildren();
+  const porEtiqueta = estado?.porEtiqueta ?? {};
+  const total = Object.values(porEtiqueta).reduce((s, v) => s + v, 0);
+  const crear = (valor, texto) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip';
+    b.textContent = texto;
+    b.setAttribute('aria-pressed', String(filtro === valor));
+    b.onclick = () => {
+      filtro = valor;
+      mostrarTodas = false;
+      pintarChips();
+      pintarTabla();
+    };
+    caja.append(b);
+  };
+  crear('', `todas · ${total}`);
+  for (const etiqueta of estado?.modelo.etiquetas ?? [])
+    crear(
+      etiqueta,
+      `${etiqueta.replace('_', ' ')} · ${porEtiqueta[etiqueta] ?? 0}`,
+    );
 }
 
-/* ---------- estado, frases, pruebas ---------- */
-async function cargarEstado() {
-  estado = await api('/api/estado');
-  const m = estado.modelo.meta;
-  $('estado').textContent =
-    `${estado.frases} frases · ${estado.modelo.etiquetas.length} intenciones${m.entrenadoEn ? ` · modelo del ${m.entrenadoEn.slice(0, 10)}` : ''}${m.precisionValidacion !== null ? ` · ${Math.round(m.precisionValidacion * 100)}% en validación` : ''}`;
-  const opciones = estado.modelo.etiquetas
-    .map(
-      (e) =>
-        `<option value="${e}">${e} (${estado.porEtiqueta[e] ?? 0})</option>`,
-    )
-    .join('');
-  $('etiqueta-frase').innerHTML = opciones;
-  const filtro = $('filtro-etiqueta');
-  const actual = filtro.value;
-  filtro.innerHTML = `<option value="">todas las intenciones</option>${opciones}`;
-  filtro.value = actual;
-  $('boton-exportar').disabled = !estado.sinExportar;
-  dibujarRed();
-  dibujarMatriz();
-}
-
-async function cargarFrases() {
-  const frases = await api('/api/frases');
-  const f = $('filtro-etiqueta').value;
-  const visibles = frases.filter((x) => f === '' || x.etiqueta === f);
-  $('conteo-frases').textContent = `${visibles.length} de ${frases.length}`;
+function pintarTabla() {
   const tabla = $('tabla-frases');
-  tabla.innerHTML = '';
-  for (const frase of visibles.slice(0, 400)) {
+  tabla.replaceChildren();
+  const texto = busqueda.trim().toLowerCase();
+  const visibles = frases.filter(
+    (f) =>
+      (filtro === '' || f.etiqueta === filtro) &&
+      (texto === '' || f.texto.toLowerCase().includes(texto)),
+  );
+  if (visibles.length === 0) {
+    tabla.append(
+      Object.assign(document.createElement('p'), {
+        className: 'vacio-tabla',
+        textContent: 'No hay frases con ese filtro.',
+      }),
+    );
+  }
+  const lista = mostrarTodas ? visibles : visibles.slice(0, MAXIMO_RENGLONES);
+  for (const frase of lista) {
     const fila = document.createElement('div');
     fila.className = 'renglon';
-    const e = document.createElement('span');
-    e.className = 'etiqueta';
-    e.textContent = frase.etiqueta;
-    const t = document.createElement('span');
-    t.textContent = frase.texto;
-    fila.append(e, t);
+    fila.append(
+      Object.assign(document.createElement('span'), {
+        className: 'etiqueta',
+        textContent: frase.etiqueta.replace('_', ' '),
+      }),
+      Object.assign(document.createElement('span'), {
+        textContent: frase.texto,
+      }),
+    );
     if (frase.origen === 'propia') {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.textContent = 'Quitar';
-      b.onclick = async () => {
-        await api('/api/frases', {
-          body: JSON.stringify({
-            etiqueta: frase.etiqueta,
-            texto: frase.texto,
-          }),
-          headers: { 'Content-Type': 'application/json' },
-          method: 'DELETE',
-        });
-        await refrescar();
+      const quitar = document.createElement('button');
+      quitar.type = 'button';
+      quitar.className = 'chico peligro';
+      quitar.textContent = 'Quitar';
+      quitar.setAttribute('aria-label', `Quitar la frase: ${frase.texto}`);
+      quitar.onclick = async () => {
+        try {
+          await api(
+            '/api/frases',
+            json('DELETE', { etiqueta: frase.etiqueta, texto: frase.texto }),
+          );
+          toast('Frase quitada.');
+          await cargar();
+        } catch (error) {
+          toast(mensajeDe(error), 'error');
+        }
       };
-      fila.append(b);
+      fila.append(quitar);
     } else {
-      const s = document.createElement('span');
-      s.className = 'base';
-      s.textContent = 'plantilla';
-      fila.append(s);
+      fila.append(
+        Object.assign(document.createElement('span'), {
+          className: 'origen',
+          textContent: 'plantilla',
+        }),
+      );
     }
     tabla.append(fila);
   }
+  const resto = visibles.length - lista.length;
+  $('conteo-frases').textContent =
+    resto > 0
+      ? `Mostrando ${lista.length} de ${visibles.length} frases.`
+      : `${visibles.length} frases.`;
+  if (resto > 0) {
+    const mas = document.createElement('button');
+    mas.type = 'button';
+    mas.className = 'chico';
+    mas.textContent = `Mostrar las ${resto} que faltan`;
+    mas.onclick = () => {
+      mostrarTodas = true;
+      pintarTabla();
+    };
+    $('conteo-frases').append(' ', mas);
+  }
 }
 
-async function refrescar() {
-  await cargarEstado();
-  await cargarFrases();
+function pintarSelector() {
+  const selector = $('etiqueta-frase');
+  const actual = selector.value;
+  selector.replaceChildren(
+    ...(estado?.modelo.etiquetas ?? []).map((e) =>
+      Object.assign(document.createElement('option'), {
+        textContent: e.replace('_', ' '),
+        value: e,
+      }),
+    ),
+  );
+  if (actual) selector.value = actual;
 }
 
-$('form-frase').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const texto = $('texto-frase').value;
+function mensajeDe(error) {
+  return error.message === 'sin-conexion'
+    ? 'No hay conexión con el entrenador.'
+    : error.message;
+}
+
+async function cargar() {
   try {
-    await api('/api/frases', {
-      body: JSON.stringify({ etiqueta: $('etiqueta-frase').value, texto }),
-      headers: { 'Content-Type': 'application/json' },
-      method: 'POST',
-    });
-    $('texto-frase').value = '';
-    await refrescar();
+    [estado, frases] = await Promise.all([
+      api('/api/estado'),
+      api('/api/frases'),
+    ]);
+    aviso(null);
   } catch (error) {
-    $('conteo-frases').textContent = error.message;
+    aviso(
+      error.message === 'sin-conexion'
+        ? 'Se perdió la conexión con el entrenador. Revisá que siga corriendo (pnpm --filter @anden/entrenador iniciar) y volvé a abrir esta página.'
+        : error.message,
+    );
+    return;
+  }
+  pintarTablero();
+  pintarChips();
+  pintarSelector();
+  pintarTabla();
+  dibujarRed();
+  dibujarMatriz();
+  $('boton-exportar').disabled = !estado.sinExportar;
+}
+
+/* ---------- agregar frase ---------- */
+$('form-frase').addEventListener('submit', async (evento) => {
+  evento.preventDefault();
+  const entrada = $('texto-frase');
+  const texto = entrada.value.trim();
+  if (texto.length < 2) return;
+  try {
+    await api(
+      '/api/frases',
+      json('POST', { etiqueta: $('etiqueta-frase').value, texto }),
+    );
+    entrada.value = '';
+    $('nota-frase').textContent =
+      'Agregada. Entrená de nuevo para que la red la aprenda.';
+    toast('Frase agregada.');
+    await cargar();
+    entrada.focus();
+  } catch (error) {
+    $('nota-frase').textContent = mensajeDe(error);
+    $('nota-frase').classList.add('alerta');
+    setTimeout(() => $('nota-frase').classList.remove('alerta'), 3000);
   }
 });
-$('filtro-etiqueta').addEventListener('change', cargarFrases);
-
-$('form-probar').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const r = await api('/api/probar', {
-    body: JSON.stringify({ texto: $('texto-probar').value }),
-    headers: { 'Content-Type': 'application/json' },
-    method: 'POST',
-  });
-  const cont = $('resultado-probar');
-  cont.innerHTML = '';
-  for (const p of r)
-    cont.append(
-      barra(
-        p.etiqueta,
-        p.probabilidad,
-        `${(p.probabilidad * 100).toFixed(1)}%`,
-      ),
-    );
+$('buscar-frase').addEventListener('input', (e) => {
+  busqueda = e.target.value;
+  mostrarTodas = false;
+  pintarTabla();
 });
 
-$('form-entrenar').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const datos = new URLSearchParams(new FormData(e.target));
+/* ---------- entrenar ---------- */
+function leerOpciones() {
+  try {
+    return {
+      ...OPCIONES_DE_SIEMPRE,
+      ...JSON.parse(localStorage.getItem(CLAVE_OPCIONES) ?? '{}'),
+    };
+  } catch {
+    return { ...OPCIONES_DE_SIEMPRE };
+  }
+}
+
+function ponerOpciones(opciones) {
+  for (const [nombre, valor] of Object.entries(opciones)) {
+    const campo = document.querySelector(`#form-entrenar [name=${nombre}]`);
+    if (campo) campo.value = valor;
+  }
+}
+
+function guardarOpciones() {
+  try {
+    localStorage.setItem(
+      CLAVE_OPCIONES,
+      JSON.stringify(Object.fromEntries(new FormData($('form-entrenar')))),
+    );
+  } catch {
+    /* sin almacenamiento se usan los valores de siempre */
+  }
+}
+
+function progreso(fraccion) {
+  $('barra-progreso').style.width = `${Math.round(fraccion * 100)}%`;
+  $('barra-progreso').parentElement.setAttribute(
+    'aria-valuenow',
+    String(Math.round(fraccion * 100)),
+  );
+}
+
+$('boton-restablecer').addEventListener('click', () => {
+  ponerOpciones(OPCIONES_DE_SIEMPRE);
+  guardarOpciones();
+  toast('Valores de siempre.');
+});
+
+$('form-entrenar').addEventListener('submit', (evento) => {
+  evento.preventDefault();
+  if (entrenando) return;
+  guardarOpciones();
+  const datos = new URLSearchParams(new FormData(evento.target));
+  const total = Number(datos.get('epocas')) || 1;
   historial = [];
+  entrenando = true;
+  progreso(0);
   const boton = $('boton-entrenar');
   boton.disabled = true;
   boton.textContent = 'Entrenando…';
+  $('nota-entrenar').textContent = 'Entrenando con todas las frases…';
   const fuente = new EventSource(`/api/entrenar?${datos}`);
-  fuente.addEventListener('epoca', (ev) => {
-    historial.push(JSON.parse(ev.data));
-    dibujarCurvas();
-  });
-  const terminar = async () => {
+  let termino = false;
+  const cerrar = () => {
+    entrenando = false;
     fuente.close();
     boton.disabled = false;
-    boton.textContent = 'Entrenar con todas las frases';
-    await refrescar();
+    boton.textContent = 'Entrenar';
   };
-  fuente.addEventListener('fin', terminar);
-  fuente.addEventListener('error', terminar);
+  fuente.addEventListener('epoca', (e) => {
+    const info = JSON.parse(e.data);
+    historial.push(info);
+    progreso(info.epoca / total);
+    $('t-pie').textContent =
+      `Entrenando · época ${info.epoca} de ${total} · pérdida ${info.perdida.toFixed(3)}${info.precisionValidacion !== null ? ` · validación ${porcentaje(info.precisionValidacion)}` : ''}`;
+    dibujarCurvas();
+  });
+  fuente.addEventListener('midiendo', () => {
+    $('t-pie').textContent =
+      'Midiendo el acierto real con plantillas que la red nunca vio…';
+    $('nota-entrenar').textContent = 'Midiendo el acierto real…';
+  });
+  fuente.addEventListener('fin', async () => {
+    termino = true;
+    cerrar();
+    progreso(1);
+    $('nota-entrenar').textContent =
+      'Listo. Probala y, si te gusta, guardala en la app.';
+    toast('Entrenamiento terminado.');
+    await cargar();
+  });
+  fuente.addEventListener('error', (e) => {
+    if (termino) return;
+    cerrar();
+    $('nota-entrenar').textContent = 'El entrenamiento se interrumpió.';
+    toast(
+      e.data ? JSON.parse(e.data).mensaje : 'Se interrumpió el entrenamiento.',
+      'error',
+    );
+    cargar();
+  });
 });
 
+/* ---------- guardar el modelo en la app (con confirmación) ---------- */
 $('boton-exportar').addEventListener('click', async () => {
-  const r = await api('/api/exportar', { method: 'POST' });
-  $('nota-exportar').textContent =
-    `Guardado en ${r.archivo}. Hacé commit y volvé a compilar la app para que lo use.`;
+  const boton = $('boton-exportar');
+  if (!confirmandoGuardar) {
+    boton.textContent = 'Confirmar: reescribe intenciones.ts';
+    confirmandoGuardar = setTimeout(() => {
+      confirmandoGuardar = null;
+      boton.textContent = 'Guardar este modelo en la app';
+    }, 4000);
+    return;
+  }
+  clearTimeout(confirmandoGuardar);
+  confirmandoGuardar = null;
+  boton.textContent = 'Guardar este modelo en la app';
+  try {
+    const r = await api('/api/exportar', { method: 'POST' });
+    $('nota-exportar').textContent =
+      `Guardado en ${r.archivo}. Hacé commit de ese archivo y volvé a compilar la app.`;
+    toast('Modelo guardado en la app.');
+  } catch (error) {
+    toast(mensajeDe(error), 'error');
+  }
 });
 
-refrescar().catch((e) => {
-  $('estado').textContent = e.message;
+/* ---------- probar ---------- */
+function pintarResultado(lista) {
+  const caja = $('resultado-probar');
+  caja.replaceChildren();
+  lista.forEach((p, i) => {
+    const fila = document.createElement('div');
+    fila.className = `renglon-led${i === 0 ? ' primero' : ''}`;
+    const nombre = Object.assign(document.createElement('span'), {
+      className: 'nombre',
+      textContent: p.etiqueta.replace('_', ' '),
+    });
+    const segmentos = document.createElement('div');
+    segmentos.className = 'segmentos';
+    const encendidos = Math.round(p.probabilidad * 20);
+    for (let k = 0; k < 20; k += 1)
+      segmentos.append(
+        Object.assign(document.createElement('i'), {
+          className: k < encendidos ? 'on' : '',
+        }),
+      );
+    const valor = Object.assign(document.createElement('span'), {
+      className: 'valor',
+      textContent: `${(p.probabilidad * 100).toFixed(1)}%`,
+    });
+    fila.append(nombre, segmentos, valor);
+    caja.append(fila);
+  });
+  const primera = lista[0];
+  if (primera && primera.probabilidad < UMBRAL) {
+    caja.append(
+      Object.assign(document.createElement('p'), {
+        className: 'vacio',
+        style: 'margin-top:12px',
+        textContent: 'POR DEBAJO DEL 45 %: EN LA APP DIRÍA «NO TE ENTENDÍ».',
+      }),
+    );
+  }
+}
+
+async function probar(texto) {
+  try {
+    pintarResultado(await api('/api/probar', json('POST', { texto })));
+  } catch (error) {
+    toast(mensajeDe(error), 'error');
+  }
+}
+
+$('form-probar').addEventListener('submit', (evento) => {
+  evento.preventDefault();
+  void probar($('texto-probar').value);
 });
+
+for (const ejemplo of EJEMPLOS) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.textContent = ejemplo;
+  b.onclick = () => {
+    $('texto-probar').value = ejemplo;
+    void probar(ejemplo);
+  };
+  $('ejemplos').append(b);
+}
+
+/* ---------- navegación ---------- */
+const enlaces = [...document.querySelectorAll('[data-seccion]')];
+const observador = new IntersectionObserver(
+  (entradas) => {
+    for (const entrada of entradas) {
+      if (!entrada.isIntersecting) continue;
+      for (const a of enlaces)
+        a.setAttribute(
+          'aria-current',
+          String(a.dataset.seccion === entrada.target.id),
+        );
+    }
+  },
+  { rootMargin: '-35% 0px -55% 0px' },
+);
+for (const a of enlaces) {
+  const seccion = document.getElementById(a.dataset.seccion);
+  if (seccion) observador.observe(seccion);
+}
+
+/* ---------- arranque ---------- */
+ponerOpciones(leerOpciones());
 dibujarCurvas();
+void cargar();
+window.addEventListener('resize', () => {
+  dibujarCurvas();
+  dibujarRed();
+  dibujarMatriz();
+});
+window
+  .matchMedia('(prefers-color-scheme: dark)')
+  .addEventListener('change', () => {
+    dibujarCurvas();
+    dibujarRed();
+    dibujarMatriz();
+  });
