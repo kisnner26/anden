@@ -35,4 +35,16 @@ export default tseslint.config(
       '@typescript-eslint/no-require-imports': 'off',
     },
   },
+  {
+    files: ['apps/entrenador/publico/**/*.js'],
+    languageOptions: {
+      globals: {
+        EventSource: 'readonly',
+        FormData: 'readonly',
+        URLSearchParams: 'readonly',
+        document: 'readonly',
+        fetch: 'readonly',
+      },
+    },
+  },
 );
