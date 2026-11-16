@@ -82,4 +82,8 @@ describe('proximaSalida', () => {
     ];
     expect(proximaSalida(lista, AHORA).id).toBe('buena');
   });
+
+  it('devuelve nulo si no queda ninguna', () => {
+    expect(proximaSalida([salida('pasada', 8)], AHORA)).toBeNull();
+  });
 });
