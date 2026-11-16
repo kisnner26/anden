@@ -47,4 +47,19 @@ describe('ContadorPasajeros', () => {
     );
     expect(alCambiar).toHaveBeenCalledWith(1);
   });
+
+  it('con un pasajero el botón de menos está apagado y no cambia nada', async () => {
+    const alCambiar = jest.fn();
+    const pantalla = await render(
+      <ContadorPasajeros alCambiar={alCambiar} cantidad={1} />,
+    );
+    const menos = pantalla.getByRole('button', {
+      name: t('rutas.menosPasajeros'),
+    });
+    expect(menos.props.accessibilityState).toEqual(
+      expect.objectContaining({ disabled: true }),
+    );
+    await fireEvent.press(menos);
+    expect(alCambiar).not.toHaveBeenCalled();
+  });
 });
