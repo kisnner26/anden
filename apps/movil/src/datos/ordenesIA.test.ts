@@ -168,6 +168,13 @@ describe('entenderCuando', () => {
     const r = entenderCuando('un boleto pasado mañana', ahora);
     expect(r?.dia?.getDate()).toBe(15);
   });
+
+  it('entiende por la mañana como hoy en la franja de la mañana', () => {
+    const ahora = new Date(2026, 10, 13, 5, 0);
+    const r = entenderCuando('salida por la mañana', ahora);
+    expect(r?.dia?.getDate()).toBe(13);
+    expect(r?.franja).toBe('manana');
+  });
 });
 
 describe('reservar con cuándo', () => {
