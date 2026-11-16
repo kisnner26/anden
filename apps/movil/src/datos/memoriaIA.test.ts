@@ -143,4 +143,9 @@ describe('guardado de la memoria', () => {
     await guardarMemoria('ana', memoria);
     expect(await leerMemoriaGuardada('ana')).toEqual(memoria);
   });
+
+  it('no mezcla la memoria de dos cuentas', async () => {
+    await guardarMemoria('ana', registrarReserva(MEMORIA_VACIA, 'Boaco'));
+    expect(await leerMemoriaGuardada('luis')).toEqual(MEMORIA_VACIA);
+  });
 });
