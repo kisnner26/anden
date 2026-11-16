@@ -8,6 +8,8 @@ import {
   borrarMemoria,
   destinoHabitual,
   guardarMemoria,
+  guardarMemoriaActiva,
+  leerMemoriaActiva,
   leerMemoriaGuardada,
   leerMemoria,
   momentoDelDia,
@@ -154,5 +156,11 @@ describe('guardado de la memoria', () => {
     await guardarMemoria('ana', registrarReserva(MEMORIA_VACIA, 'Boaco'));
     await borrarMemoria('ana');
     expect(await leerMemoriaGuardada('ana')).toEqual(MEMORIA_VACIA);
+  });
+});
+
+describe('permiso de la memoria', () => {
+  it('por defecto la IA puede recordar', async () => {
+    expect(await leerMemoriaActiva()).toBe(true);
   });
 });
