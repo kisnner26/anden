@@ -31,4 +31,9 @@ describe('urlDelPuente', () => {
     expect(urlDelPuente('')).toBeNull();
     expect(urlDelPuente('http://192.168.1.52:99999')).toBeNull();
   });
+
+  it('rechaza direcciones con trucos en el nombre', () => {
+    expect(urlDelPuente('http://192.168.1.52.evil.com:4780')).toBeNull();
+    expect(urlDelPuente('http://user@192.168.1.52:4780')).toBeNull();
+  });
 });
