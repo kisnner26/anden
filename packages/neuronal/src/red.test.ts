@@ -46,4 +46,9 @@ describe('crearRed', () => {
       Array.from(b.capas[0]!.pesos),
     );
   });
+
+  it('los sesgos empiezan en cero', () => {
+    const red = crearRed(4, [6], 3);
+    expect(Array.from(red.capas[0]!.sesgos).every((s) => s === 0)).toBe(true);
+  });
 });
