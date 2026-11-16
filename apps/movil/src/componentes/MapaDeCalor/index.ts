@@ -1,1 +1,0 @@
-export { MapaDeCalor } from './MapaDeCalor';
