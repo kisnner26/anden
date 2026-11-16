@@ -28,6 +28,16 @@ function dibujar(alPreguntar = jest.fn(), ia: ValorIA = IA) {
 }
 
 describe('BarraPreguntaIA', () => {
+  it('sin sugerencias deja solo el campo para escribir', async () => {
+    const p = await renderPantalla(
+      <ContextoIA.Provider value={IA}>
+        <BarraPreguntaIA alPreguntar={jest.fn()} />
+      </ContextoIA.Provider>,
+    );
+    expect(p.getByLabelText('Tu pregunta al asistente')).toBeTruthy();
+    expect(p.queryByText('¿Cuál me conviene?')).toBeNull();
+  });
+
   it('envía lo escrito y limpia el campo', async () => {
     const alPreguntar = jest.fn();
     const p = await dibujar(alPreguntar);
