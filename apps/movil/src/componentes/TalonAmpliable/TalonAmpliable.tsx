@@ -13,6 +13,7 @@ import { useTema } from '@/tema/useTema';
 import { t } from '@/textos/t';
 
 import { useBrilloMaximo } from './useBrilloMaximo';
+import { useAppActiva } from '@/tema/useAppActiva';
 
 export interface PropiedadesTalonAmpliable {
   /** el boleto que se ve normal; lo que se agranda lo dibuja OverlayBoleto con este mismo avance */
@@ -33,6 +34,7 @@ export function TalonAmpliable({
 }: PropiedadesTalonAmpliable) {
   const { colores } = useTema();
   const reducido = useMovimientoReducido();
+  const activa = useAppActiva();
   const sentir = useSensaciones();
   const [sostenido, establecerSostenido] = useState(false);
   const pista = useRef(new Animated.Value(0)).current;
@@ -53,7 +55,7 @@ export function TalonAmpliable({
 
   // la barrita sube y baja para que se note que el boleto se puede arrastrar
   useEffect(() => {
-    if (!habilitado || reducido) return;
+    if (!habilitado || reducido || !activa) return;
     const bucle = Animated.loop(
       Animated.sequence([
         Animated.timing(pista, {
@@ -71,7 +73,7 @@ export function TalonAmpliable({
     );
     bucle.start();
     return () => bucle.stop();
-  }, [habilitado, pista, reducido]);
+  }, [activa, habilitado, pista, reducido]);
 
   const arrastre = useMemo(
     () =>
