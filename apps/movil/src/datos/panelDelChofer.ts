@@ -17,3 +17,22 @@ export function viajesDeHoy(viajes: readonly Salida[], ahora: Date): Salida[] {
     )
     .sort((a, b) => a.salida.getTime() - b.salida.getTime());
 }
+
+/** el viaje que sigue: el primero sin cerrar que sale desde media hora antes de ahora; nulo si ya no hay */
+export function proximoViaje(
+  viajes: readonly Salida[],
+  cerrados: ReadonlySet<string>,
+  ahora: Date,
+): Salida | null {
+  const desde = ahora.getTime() - 30 * 60_000;
+  return (
+    [...viajes]
+      .filter(
+        (viaje) =>
+          viaje.estado !== 'cancelado' &&
+          !cerrados.has(viaje.viajeId) &&
+          viaje.salida.getTime() >= desde,
+      )
+      .sort((a, b) => a.salida.getTime() - b.salida.getTime())[0] ?? null
+  );
+}
