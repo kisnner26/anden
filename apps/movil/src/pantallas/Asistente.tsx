@@ -66,6 +66,7 @@ import {
 import { FICHAS } from '@/datos/fichasCiudad';
 import { mismoDia } from '@/datos/dias';
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
+import { gustosDeViaje } from '@/datos/gustosDeViaje';
 import { useBoletos } from '@/datos/useBoletos';
 import { useConexion } from '@/datos/useConexion';
 import { useEncomiendas } from '@/datos/useEncomiendas';
@@ -311,6 +312,8 @@ export function Asistente({
       orden.origen,
       new Date(),
       orden.cuando,
+      // reservar elige la que más le conviene; "el próximo bus" sigue siendo el más próximo
+      orden.tipo === 'reservar' ? gustosDeViaje(boletos) : undefined,
     );
     if (!salida) {
       return orden.cuando
