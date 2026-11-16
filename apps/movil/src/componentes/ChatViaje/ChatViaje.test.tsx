@@ -92,6 +92,20 @@ describe('ChatViaje', () => {
     expect(pantalla.getByLabelText('Tu mensaje').props.value).toBe('Hola');
   });
 
+  it('si el servidor rechazó por el viaje explica que todavía no está en camino', async () => {
+    const pantalla = await dibujar({
+      alEnviar: envio(false),
+      razonFallo: 'fuera-de-viaje',
+    });
+    await fireEvent.changeText(pantalla.getByLabelText('Tu mensaje'), 'Hola');
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Enviar mensaje' }),
+    );
+    expect(
+      pantalla.getByText(/el chofer tiene que registrar la salida/),
+    ).toBeTruthy();
+  });
+
   it('con la conversación vacía ofrece frases rápidas que se envían con un toque', async () => {
     const alEnviar = envio(true);
     const pantalla = await dibujar({
