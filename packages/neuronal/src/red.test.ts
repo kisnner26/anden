@@ -82,4 +82,10 @@ describe('avanzar', () => {
     expect(pasada.activaciones).toHaveLength(3);
     expect(pasada.activaciones.map((a) => a.length)).toEqual([4, 6, 3]);
   });
+
+  it('las capas ocultas no dejan pasar números negativos', () => {
+    const red = crearRed(4, [6], 3);
+    const pasada = avanzar(red, new Float32Array([-1, -2, 3, 4]));
+    expect(Array.from(pasada.activaciones[1]!).every((a) => a >= 0)).toBe(true);
+  });
 });
