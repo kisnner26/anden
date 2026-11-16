@@ -1,6 +1,8 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
 import {
+  TRANSMISION,
+  configurarTransmision,
   crearTransmisionLocal,
   sinSenal,
   type PosicionBus,
@@ -99,5 +101,13 @@ describe('sinSenal', () => {
     servicio.detener('via_1');
     expect(servicio.instantanea().posiciones.size).toBe(0);
     expect(servicio.instantanea().activos).toEqual([]);
+  });
+});
+
+describe('transmisión compartida', () => {
+  it('sin configurar usa la transmisión local', () => {
+    configurarTransmision(() => crearTransmisionLocal());
+    TRANSMISION.iniciar('via_9', 'cho_1');
+    expect(TRANSMISION.activos()).toEqual(['via_9']);
   });
 });
