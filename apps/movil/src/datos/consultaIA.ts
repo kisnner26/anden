@@ -15,6 +15,7 @@ import { hechosDeLugares, lugaresParaPregunta } from './lugaresTuristicos';
 import { agruparPorDestino } from './historialViajes';
 import type { BoletoGuardado } from './reserva';
 import type { Salida } from './salidas';
+import { boletosVigentes } from './boletosVigentes';
 import { sinTildes } from './texto';
 
 /** todo lo que la app sabe de la persona y del momento; es lo que se le comparte al modelo */
@@ -207,13 +208,7 @@ export function contextoPersonal(estado: EstadoApp): string[] {
   const lineas: string[] = [
     `La persona se llama ${estado.nombre || 'sin nombre'} y usa la app como ${estado.rol}${estado.plus ? ', con Andén Plus' : ''}. Hoy es ${DIAS_COMPLETOS[ahora.getDay()]} ${formatoFechaCorta(ahora)} y son las ${formatoHoraCompleta(ahora)}.`,
   ];
-  const vigentes = estado.boletos
-    .filter(({ boleto }) => boleto.estado === 'vigente')
-    .sort(
-      (a, b) =>
-        new Date(a.resumen.salida).getTime() -
-        new Date(b.resumen.salida).getTime(),
-    );
+  const vigentes = boletosVigentes(estado.boletos);
   const enCurso = vigentes.find(({ resumen }) => {
     const salida = new Date(resumen.salida).getTime();
     return (
@@ -295,14 +290,7 @@ export function armarDatosParaElModelo(
     .filter((s) => s.salida.getTime() >= ahora.getTime() - 60 * 60_000)
     .sort((a, b) => a.salida.getTime() - b.salida.getTime())
     .slice(0, maximoSalidas);
-  const vigentes = estado.boletos
-    .filter(({ boleto }) => boleto.estado === 'vigente')
-    .sort(
-      (a, b) =>
-        new Date(a.resumen.salida).getTime() -
-        new Date(b.resumen.salida).getTime(),
-    )
-    .slice(0, 4);
+  const vigentes = boletosVigentes(estado.boletos).slice(0, 4);
   const recomendadas = recomendadasPorTrayecto(proximas, estado);
   return {
     boletos: vigentes.map((b) => lineaDeBoletoRica(b, ahora)),
