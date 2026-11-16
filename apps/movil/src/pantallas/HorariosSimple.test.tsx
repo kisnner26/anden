@@ -51,4 +51,12 @@ describe('HorariosSimple', () => {
       pantalla.getByText(t('pantallasSimples.horariosProxima')),
     ).toBeTruthy();
   });
+
+  it('cada salida dice la hora, el precio y los asientos', async () => {
+    mockLista = [salida('a', 12)];
+    const pantalla = await renderPantalla(
+      <HorariosSimple alAbrirViaje={jest.fn()} alSalir={jest.fn()} />,
+    );
+    expect(pantalla.getByText('12:00 p. m. · C$ 66 · quedan 9')).toBeTruthy();
+  });
 });
