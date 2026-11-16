@@ -9,4 +9,9 @@ describe('useSeguridad por defecto', () => {
     expect(result.current.activa).toBe(true);
     expect(result.current.vigilando).toBe(false);
   });
+
+  it('cambiar no falla', async () => {
+    const { result } = await renderHook(() => useSeguridad());
+    await expect(result.current.cambiar(false)).resolves.toBeUndefined();
+  });
 });
