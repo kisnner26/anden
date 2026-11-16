@@ -59,4 +59,10 @@ describe('useAppActiva', () => {
     await pantalla.unmount();
     expect(remove).toHaveBeenCalledTimes(1);
   });
+
+  it('un estado desconocido cuenta como a la vista', async () => {
+    simular('unknown');
+    const { result } = await renderHook(() => useAppActiva());
+    expect(result.current).toBe(true);
+  });
 });
