@@ -56,6 +56,7 @@ export const textos = {
     atajoHorarios: 'Horarios',
     atajoRutas: 'Rutas',
     sinSalidas: 'No quedan salidas por hoy.',
+    sinSalidasPista: 'El último bus ya llegó. Las de mañana están en Horarios.',
     tarifasMuestra: 'Tarifas de muestra',
     sinTerminales: 'No encontramos terminales.',
     comoLlegar: 'Cómo llegar',

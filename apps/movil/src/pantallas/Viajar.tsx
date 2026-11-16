@@ -197,7 +197,11 @@ export function Viajar({
             salida={proxima}
           />
         ) : (
-          <EstadoVacio tipo="salidas" titulo={t('viajar.sinSalidas')} />
+          <EstadoVacio
+            detalle={t('viajar.sinSalidasPista')}
+            tipo="salidas"
+            titulo={t('viajar.sinSalidas')}
+          />
         )}
 
         {alAbrirDondeViene && (
