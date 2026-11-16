@@ -80,6 +80,20 @@ describe('Rutas', () => {
     expect(alElegirAsientos.mock.calls[0]?.[0]).toMatch(/^via_/);
   });
 
+  it('elegir asientos lleva también cuántos pasajeros se dijeron', async () => {
+    const alElegirAsientos = jest.fn();
+    const pantalla = await renderPantalla(
+      <Rutas alElegirAsientos={alElegirAsientos} />,
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Más pasajeros' }),
+    );
+    await fireEvent.press(
+      pantalla.getByRole('button', { name: 'Elegir asientos' }),
+    );
+    expect(alElegirAsientos.mock.calls[0]?.[1]).toBe(2);
+  });
+
   it('abre el mapa del corredor', async () => {
     const alAbrirRuta = jest.fn();
     const pantalla = await renderPantalla(<Rutas alAbrirRuta={alAbrirRuta} />);
