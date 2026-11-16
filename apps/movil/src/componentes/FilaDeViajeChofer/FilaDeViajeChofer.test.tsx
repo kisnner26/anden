@@ -78,4 +78,14 @@ describe('FilaDeViajeChofer', () => {
     expect(pantalla.getByText(t('nuevoViaje.retirarConfirmar'))).toBeTruthy();
     expect(pantalla.queryByText(t('nuevoViaje.retirar'))).toBeNull();
   });
+
+  it('un viaje cerrado muestra lo cobrado y no se puede retirar', async () => {
+    const pantalla = await dibujar({ cobrado: 240 });
+    expect(
+      pantalla.getByText(
+        rellenar(t('conductor.cerradoCorto'), { cobrado: 240 }),
+      ),
+    ).toBeTruthy();
+    expect(pantalla.queryByText(t('nuevoViaje.retirar'))).toBeNull();
+  });
 });
