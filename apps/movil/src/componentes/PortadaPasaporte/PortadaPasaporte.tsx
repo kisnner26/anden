@@ -59,11 +59,13 @@ export function PortadaPasaporte({
       giro.setValue(abierta ? 1 : 0);
       return;
     }
-    Animated.timing(giro, {
+    const animacion = Animated.timing(giro, {
       duration: movimiento.aperturaPasaporte,
       toValue: abierta ? 1 : 0,
       useNativeDriver: true,
-    }).start();
+    });
+    animacion.start();
+    return () => animacion.stop();
   }, [abierta, giro, reducido]);
 
   if (reducido && abierta) return null;
