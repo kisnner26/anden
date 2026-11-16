@@ -170,7 +170,17 @@
     "sitios para visitar en {c}",
     "historia de {c}",
     "que ver en {c} un fin de semana",
-    "soy turista que me recomiendas de {c}"
+    "soy turista que me recomiendas de {c}",
+    "que lugares conocer en {c}",
+    "que comer en {c}",
+    "que tiene {c} para turistas",
+    "dime sitios bonitos de {c}",
+    "que puedo hacer en {c} un dia",
+    "platos tipicos de {c}",
+    "que ver en {c}",
+    "quiero conocer {c} que me recomiendas",
+    "atracciones de {c}",
+    "que es lo mas bonito de {c}"
   ],
   "avisar": [
     "avisame antes de que salga mi bus",
