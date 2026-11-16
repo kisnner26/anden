@@ -1,6 +1,8 @@
 import { digitosTelefonoNi } from '@anden/dominio';
 
 import { mismoDia, sumarDias } from './dias';
+import type { GustosDeViaje } from './gustosDeViaje';
+import { mejorSalida } from './mejorSalida';
 import type { Salida } from './salidas';
 
 /** lo que la persona le pide hacer a Andén dentro de la app, en vez de solo preguntarle */
@@ -213,6 +215,8 @@ export function proximaSalidaA(
   origen: string | null,
   ahora: Date,
   cuando?: CuandoPedido,
+  /** si se pasan los gustos (aunque vacíos), no se toma la más próxima sino la que más le conviene */
+  gustos?: GustosDeViaje,
 ): Salida | null {
   const rango = cuando?.franja ? RANGOS[cuando.franja] : null;
   const candidatas = salidas.filter(
@@ -240,7 +244,12 @@ export function proximaSalidaA(
       )[0] ?? null
     );
   }
+  const elegida =
+    gustos === undefined
+      ? null
+      : mejorSalida(candidatas, { ahora, cuando: cuando ?? null, gustos });
   return (
+    elegida?.salida ??
     candidatas.sort((a, b) => a.salida.getTime() - b.salida.getTime())[0] ??
     null
   );
