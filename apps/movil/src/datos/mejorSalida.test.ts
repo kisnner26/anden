@@ -58,6 +58,17 @@ describe('mejorSalida', () => {
     expect(elegida?.salida.viajeId).toBe('pronto');
   });
 
+  it('prefiere la barata aunque salga un poco más tarde', () => {
+    const elegida = mejorSalida(
+      [
+        salida('cara', 11, { tarifa: 80 }),
+        salida('barata', 12, { tarifa: 46 }),
+      ],
+      { ahora: AHORA },
+    );
+    expect(elegida?.salida.viajeId).toBe('barata');
+    expect(elegida?.motivos).toContain('es la más barata');
+  });
 
 
 
