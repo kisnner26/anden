@@ -42,4 +42,9 @@ describe('useModoSimple', () => {
     const { result } = await renderHook(() => useModoSimple());
     await waitFor(() => expect(result.current.activo).toBe(true));
   });
+
+  it('por defecto queda apagado una vez leído', async () => {
+    const { result } = await renderHook(() => useModoSimple());
+    await waitFor(() => expect(result.current.activo).toBe(false));
+  });
 });
