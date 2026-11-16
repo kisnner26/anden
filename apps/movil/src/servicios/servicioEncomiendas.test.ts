@@ -45,4 +45,11 @@ describe('encomiendas locales', () => {
     expect(lista.find((e) => e.id === a.id)?.estado).toBe('aceptada');
     expect(lista.find((e) => e.id === b.id)?.estado).toBe(b.estado);
   });
+
+  it('actualizar una que no existe no agrega nada', async () => {
+    const servicio = crearEncomiendasLocal();
+    const fantasma = nuevaEncomienda(DATOS, new Date(2026, 10, 13, 9, 0));
+    await servicio.actualizar(fantasma);
+    expect(await servicio.listar()).toEqual([]);
+  });
 });
