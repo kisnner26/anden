@@ -13,4 +13,8 @@ describe('indiceMayor', () => {
   it('devuelve la posición del valor más alto', () => {
     expect(indiceMayor(new Float32Array([0.1, 0.7, 0.2]))).toBe(1);
   });
+
+  it('con un empate se queda con la primera', () => {
+    expect(indiceMayor(new Float32Array([0.5, 0.5]))).toBe(0);
+  });
 });
