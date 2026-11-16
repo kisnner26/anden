@@ -102,6 +102,12 @@ describe('sinSenal', () => {
     expect(servicio.instantanea().posiciones.size).toBe(0);
     expect(servicio.instantanea().activos).toEqual([]);
   });
+
+  it('justo en el límite todavía tiene señal', () => {
+    expect(sinSenal(POSICION, new Date('2026-11-12T18:01:30.000Z'))).toBe(
+      false,
+    );
+  });
 });
 
 describe('transmisión compartida', () => {
