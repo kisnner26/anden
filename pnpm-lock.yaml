@@ -253,6 +253,12 @@ importers:
         specifier: ^5.0.5
         version: 5.0.5(@types/node@26.6.6)(jsdom@26.1.0(supports-color@8.1.1))(vite@7.3.8(@types/node@26.6.6)(lightningcss@1.33.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
+  apps/entrenador:
+    dependencies:
+      '@anden/neuronal':
+        specifier: workspace:*
+        version: link:../../packages/neuronal
+
   apps/movil:
     dependencies:
       '@anden/dominio':
