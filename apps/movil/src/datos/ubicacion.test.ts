@@ -46,6 +46,19 @@ describe('solicitarAccesoUbicacion', () => {
     });
     expect(Location.requestForegroundPermissionsAsync).not.toHaveBeenCalled();
   });
+
+  it('deja pendiente un permiso sin respuesta', async () => {
+    jest.mocked(Location.hasServicesEnabledAsync).mockResolvedValue(true);
+    jest
+      .mocked(Location.requestForegroundPermissionsAsync)
+      .mockResolvedValue({
+        canAskAgain: true,
+        status: Location.PermissionStatus.UNDETERMINED,
+      } as never);
+    await expect(solicitarAccesoUbicacion()).resolves.toEqual({
+      estado: 'pendiente',
+    });
+  });
 });
 
 describe('consultarAccesoUbicacion', () => {
