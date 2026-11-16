@@ -70,6 +70,17 @@ describe('mejorSalida', () => {
     expect(elegida?.motivos).toContain('es la más barata');
   });
 
+  it('esquiva la atrasada cuando hay otra a tiempo', () => {
+    const elegida = mejorSalida(
+      [
+        salida('atrasada', 11, { minutosAtraso: 45, estado: 'atrasado' }),
+        salida('a-tiempo', 12),
+      ],
+      { ahora: AHORA },
+    );
+    expect(elegida?.salida.viajeId).toBe('a-tiempo');
+    expect(elegida?.motivos).toContain('sale a tiempo');
+  });
 
 
 
