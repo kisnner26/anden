@@ -286,6 +286,7 @@ export const textos = {
     mejorDiaValor: '{dia}: C$ {cobrado}',
     sinMejorDia: 'Sin viajes en el período',
     recientesSeccion: 'Últimos viajes cerrados',
+    viajeCerrado: 'Viaje cerrado',
     resumenSeccion: 'Resumen del período',
     sinCierres:
       'Todavía no cerraste ningún viaje. Cuando termines uno, acá ves cómo te va.',
@@ -1297,8 +1298,11 @@ export const textos = {
   buscarPasajeros: {
     activa: 'Buscando pasajeros hasta las {hora}',
     boton: 'Buscar pasajeros',
+    cerrar: 'Cerrar',
     cuanto: '¿Por cuánto tiempo?',
     detener: 'Dejar de buscar',
+    explicacion:
+      'Tu viaje aparece como "busca pasajeros" mientras dure la búsqueda.',
     fallo: 'No se pudo avisar. Revisá tu conexión.',
     minutos: '{n} min',
     pasajero: 'Busca pasajeros',
