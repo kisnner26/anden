@@ -1,8 +1,10 @@
 import { describe, expect, it } from '@jest/globals';
 
 import {
+  chatDisponible,
   MAXIMO_MENSAJE,
   ordenarMensajes,
+  sinLeer,
   textoDeMensaje,
   type MensajeViaje,
 } from './mensajesViaje';
@@ -46,5 +48,40 @@ describe('ordenarMensajes', () => {
       mensaje('a', '2026-11-16T10:00:00Z'),
     ]);
     expect(lista).toHaveLength(1);
+  });
+});
+
+describe('sinLeer', () => {
+  const lista = [
+    mensaje('a', '2026-11-16T10:00:00Z', 'chofer'),
+    mensaje('b', '2026-11-16T10:05:00Z', 'pasajero'),
+    mensaje('c', '2026-11-16T10:10:00Z', 'chofer'),
+  ];
+
+  it('sin nada visto cuenta todos los de la otra persona', () => {
+    expect(sinLeer(lista, 'pasajero', null)).toBe(2);
+  });
+
+  it('solo cuenta los que llegaron después de lo visto', () => {
+    expect(sinLeer(lista, 'pasajero', '2026-11-16T10:05:00Z')).toBe(1);
+  });
+
+  it('los propios mensajes nunca cuentan', () => {
+    expect(sinLeer(lista, 'chofer', null)).toBe(1);
+  });
+});
+
+describe('chatDisponible', () => {
+  it('con el viaje en ruta hay conversación', () => {
+    expect(chatDisponible('en-ruta', false)).toBe(true);
+  });
+
+  it('con la ruta compartida hay conversación aunque el estado no se haya actualizado', () => {
+    expect(chatDisponible('abordando', true)).toBe(true);
+  });
+
+  it('antes de salir y sin ruta compartida no hay conversación', () => {
+    expect(chatDisponible('programado', false)).toBe(false);
+    expect(chatDisponible('llego', false)).toBe(false);
   });
 });
