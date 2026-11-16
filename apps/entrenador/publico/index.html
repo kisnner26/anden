@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Red del asistente</title>
+  <link rel="stylesheet" href="/estilo.css">
+</head>
+<body>
+  <header class="cabecera">
+    <div>
+      <p class="micro">ANDÉN / RED NEURONAL LOCAL</p>
+      <h1>La red del asistente.</h1>
+    </div>
+    <div class="estado" id="estado" aria-live="polite">cargando…</div>
+  </header>
+
+  <main class="rejilla">
+    <section class="panel" aria-labelledby="t-entrenar">
+      <p class="micro" id="t-entrenar">01 / ENTRENAR</p>
+      <form id="form-entrenar" class="controles">
+        <label>épocas <input name="epocas" type="number" min="1" max="400" value="80"></label>
+        <label>neuronas ocultas <input name="oculta" type="number" min="4" max="256" value="32"></label>
+        <label>casillas por frase <input name="dimension" type="number" min="64" max="4096" step="64" value="512"></label>
+        <label>tasa de aprendizaje <input name="tasa" type="number" min="0.0001" max="0.1" step="0.0005" value="0.01"></label>
+        <label>semilla <input name="semilla" type="number" min="1" value="7"></label>
+        <button type="submit" id="boton-entrenar">Entrenar con todas las frases</button>
+      </form>
+      <canvas id="curvas" width="520" height="220" aria-label="Pérdida y precisión por época"></canvas>
+      <p class="leyenda"><span class="punto p1"></span>pérdida <span class="punto p2"></span>pérdida de validación <span class="punto p3"></span>precisión de validación</p>
+      <button type="button" id="boton-exportar" class="secundario" disabled>Guardar este modelo en la app</button>
+      <p class="nota" id="nota-exportar"></p>
+    </section>
+
+    <section class="panel ancho" aria-labelledby="t-red">
+      <p class="micro" id="t-red">02 / LA RED</p>
+      <canvas id="red" width="820" height="330" aria-label="Diagrama de la red neuronal"></canvas>
+      <p class="nota" id="nota-red"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="t-probar">
+      <p class="micro" id="t-probar">03 / PROBAR</p>
+      <form id="form-probar" class="fila">
+        <input id="texto-probar" type="text" maxlength="160" placeholder="escribí una frase, por ejemplo: cuánto cuesta ir a Boaco" autocomplete="off">
+        <button type="submit">Probar</button>
+      </form>
+      <div id="resultado-probar" class="barras"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="t-matriz">
+      <p class="micro" id="t-matriz">04 / DÓNDE SE CONFUNDE</p>
+      <canvas id="matriz" width="520" height="420" aria-label="Matriz de confusión"></canvas>
+      <div id="precision-clases" class="barras"></div>
+      <p class="nota" id="nota-matriz">Entrená un modelo para ver en qué intenciones se confunde.</p>
+    </section>
+
+    <section class="panel ancho" aria-labelledby="t-frases">
+      <p class="micro" id="t-frases">05 / FRASES PARA ENTRENAR</p>
+      <form id="form-frase" class="fila">
+        <input id="texto-frase" type="text" maxlength="160" placeholder="una frase nueva, como la diría una persona" autocomplete="off">
+        <select id="etiqueta-frase" aria-label="Intención"></select>
+        <button type="submit">Agregar</button>
+      </form>
+      <div class="fila filtro">
+        <select id="filtro-etiqueta" aria-label="Filtrar por intención"><option value="">todas las intenciones</option></select>
+        <span class="nota" id="conteo-frases"></span>
+      </div>
+      <div class="tabla" id="tabla-frases"></div>
+    </section>
+  </main>
+  <script src="/app.js" type="module"></script>
+</body>
+</html>
