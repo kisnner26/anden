@@ -72,4 +72,11 @@ describe('entrenar', () => {
       Array.from(b.capas[0]!.pesos),
     );
   });
+
+  it('con validación mide aparte sin entrenar con esos ejemplos', () => {
+    const red = crearRed(2, [6], 2, 4);
+    const h = entrenar(red, dosGrupos(), { epocas: 3, validacion: 0.25 });
+    expect(h[0]!.perdidaValidacion).not.toBeNull();
+    expect(h[0]!.precisionValidacion).not.toBeNull();
+  });
 });
