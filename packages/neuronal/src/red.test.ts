@@ -20,3 +20,14 @@ describe('softmax', () => {
     expect(p[0]! + p[1]!).toBeCloseTo(1, 6);
   });
 });
+
+describe('crearRed', () => {
+  it('arma una capa por cada salto de tamaño', () => {
+    const red = crearRed(4, [6, 5], 3);
+    expect(red.capas.map((c) => [c.entradas, c.salidas])).toEqual([
+      [4, 6],
+      [6, 5],
+      [5, 3],
+    ]);
+  });
+});
