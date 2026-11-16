@@ -2,6 +2,7 @@ import { useEffect, type ReactNode } from 'react';
 
 import { cargarViajesGuardados, sincronizarViajes } from './sincronizarViajes';
 import { useSesion } from './useSesion';
+import { iniciarSondeo } from './sondeo';
 
 const CADA_MS = 8000;
 
@@ -14,8 +15,8 @@ export function ProveedorViajes({ children }: { children: ReactNode }) {
     if (!hayCuenta) return;
     // primero lo guardado, para que haya salidas aunque no haya señal; después lo que diga el servidor
     void cargarViajesGuardados().then(() => sincronizarViajes());
-    const temporizador = setInterval(() => void sincronizarViajes(), CADA_MS);
-    return () => clearInterval(temporizador);
+    const pararSondeo = iniciarSondeo(() => void sincronizarViajes(), CADA_MS);
+    return pararSondeo;
   }, [hayCuenta]);
 
   return children;
