@@ -49,4 +49,16 @@ describe('HojaPasajero', () => {
     });
     expect(p.getByText(/No se pudo llamar/)).toBeTruthy();
   });
+
+  it('sin la opción de escribir no muestra el botón del chat', async () => {
+    const p = await dibujar();
+    expect(p.queryByText('Escribirle por el chat')).toBeNull();
+  });
+
+  it('con la opción de escribir la pide con el boleto del pasajero', async () => {
+    const alEscribir = jest.fn();
+    const p = await dibujar({ alEscribir });
+    await fireEvent.press(p.getByText('Escribirle por el chat'));
+    expect(alEscribir).toHaveBeenCalledWith('bol_1');
+  });
 });
