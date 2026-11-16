@@ -47,4 +47,12 @@ describe('rasgos', () => {
     const lista = rasgos('bus');
     expect(lista).toEqual(expect.arrayContaining(['c:^bu', 'c:bus', 'c:us$']));
   });
+
+  it('una palabra mal escrita comparte trozos con la correcta', () => {
+    const a = new Set(rasgos('boaco'));
+    const compartidos = rasgos('boacoo').filter(
+      (r) => a.has(r) && r.startsWith('c:'),
+    );
+    expect(compartidos.length).toBeGreaterThanOrEqual(3);
+  });
 });
