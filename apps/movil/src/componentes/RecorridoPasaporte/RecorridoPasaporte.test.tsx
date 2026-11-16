@@ -42,4 +42,11 @@ describe('RecorridoPasaporte', () => {
     const pantalla = await render(<RecorridoPasaporte ciudades={HECHAS} />);
     expect(pantalla.getByTestId('recorrido-pasaporte')).toBeTruthy();
   });
+
+  it('en espera sigue accesible', async () => {
+    const pantalla = await render(
+      <RecorridoPasaporte activo={false} ciudades={HECHAS} />,
+    );
+    expect(pantalla.getByLabelText(t('pasaporte.recorrido'))).toBeTruthy();
+  });
 });
