@@ -28,6 +28,8 @@ export interface PropiedadesAsientos {
   alVolver: () => void;
   /** el código del grupo cuando se llegó desde un enlace: sugiere asientos junto a los de los amigos */
   grupo?: string;
+  /** cuántos pasajeros se dijeron en Rutas: el pie cuenta cuántos asientos faltan por elegir */
+  pasajeros?: number;
   viajeId: string;
 }
 
@@ -62,6 +64,7 @@ export function Asientos({
   alSeguir,
   alVolver,
   grupo,
+  pasajeros,
   viajeId,
 }: PropiedadesAsientos) {
   const { colores } = useTema();
@@ -315,8 +318,14 @@ export function Asientos({
             style={[tipografia.etiqueta, { color: colores.sobreNegroSuave }]}
           >
             {cantidad === 0
-              ? t('asientos.totalEtiqueta')
-              : `${cantidad} ${cantidad === 1 ? t('asientos.unAsiento') : t('asientos.variosAsientos')} · ${elegidos.join(' y ')}`}
+              ? pasajeros && pasajeros > 1
+                ? rellenar(t('asientos.elegiN'), { n: pasajeros })
+                : t('asientos.totalEtiqueta')
+              : `${cantidad} ${cantidad === 1 ? t('asientos.unAsiento') : t('asientos.variosAsientos')} · ${elegidos.join(' y ')}${
+                  pasajeros && cantidad < pasajeros
+                    ? ` · ${rellenar(t('asientos.faltanN'), { n: pasajeros - cantidad })}`
+                    : ''
+                }`}
           </Text>
           <Text style={[tipografia.datoGrande, { color: colores.sobreNegro }]}>
             {total ? `C$ ${total.total}` : 'C$ 0'}

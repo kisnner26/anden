@@ -1026,6 +1026,8 @@ export const textos = {
     puerta: 'Puerta',
     seguir: 'Seguir',
     unAsiento: 'asiento',
+    elegiN: 'Elegí {n} asientos',
+    faltanN: 'faltan {n}',
     variosAsientos: 'asientos',
     porPasajero: 'c/u',
     tarifaMuestra: 'tarifa de muestra',
