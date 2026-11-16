@@ -31,4 +31,10 @@ describe('vectorizar', () => {
   it('un texto sin palabras da un vector de ceros', () => {
     expect(Array.from(vectorizar('¿?', 64)).every((x) => x === 0)).toBe(true);
   });
+
+  it('el mismo texto da el mismo vector', () => {
+    expect(Array.from(vectorizar('mi boleto', 128))).toEqual(
+      Array.from(vectorizar('mi boleto', 128)),
+    );
+  });
 });
