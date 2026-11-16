@@ -15,4 +15,11 @@ describe('validarPedido', () => {
     expect(validarPedido({ pregunta: 'hola' })).toBeNull();
     expect(validarPedido({ instrucciones: 1, pregunta: 'hola' })).toBeNull();
   });
+
+  it('rechaza una pregunta vacía o demasiado larga', () => {
+    expect(validarPedido({ instrucciones: '', pregunta: '   ' })).toBeNull();
+    expect(
+      validarPedido({ instrucciones: '', pregunta: 'a'.repeat(601) }),
+    ).toBeNull();
+  });
 });
