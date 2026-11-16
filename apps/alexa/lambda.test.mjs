@@ -25,4 +25,21 @@ describe('pedidoValido', () => {
       ),
     ).toBe(false);
   });
+
+  it('rechaza un pedido con fecha vieja o futura', () => {
+    expect(
+      pedidoValido(
+        pedido('amzn1.ask.skill.abc', '2026-11-13T15:50:00Z'),
+        'amzn1.ask.skill.abc',
+        AHORA,
+      ),
+    ).toBe(false);
+    expect(
+      pedidoValido(
+        pedido('amzn1.ask.skill.abc', '2026-11-13T16:10:00Z'),
+        'amzn1.ask.skill.abc',
+        AHORA,
+      ),
+    ).toBe(false);
+  });
 });
