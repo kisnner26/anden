@@ -22,4 +22,10 @@ describe('useMemoriaIA por defecto', () => {
       result.current.recordarPregunta('bus a Boaco', ['Boaco']),
     ).toBeUndefined();
   });
+
+  it('olvidar y cambiar el permiso no fallan', async () => {
+    const { result } = await renderHook(() => useMemoriaIA());
+    await expect(result.current.olvidar()).resolves.toBeUndefined();
+    await expect(result.current.cambiarPermiso(false)).resolves.toBeUndefined();
+  });
 });
