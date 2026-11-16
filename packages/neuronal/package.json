@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "test": "pnpm --workspace-root exec vitest run packages/neuronal --no-fsModuleCache",
-    "tipos": "pnpm --workspace-root exec tsc --project packages/neuronal/tsconfig.json --noEmit"
+    "tipos": "pnpm --workspace-root exec tsc --project packages/neuronal/tsconfig.json --noEmit",
+    "entrenar": "node scripts/entrenar-intenciones.ts",
+    "generar": "node scripts/generar-intenciones.ts"
   },
   "main": "src/index.ts",
   "types": "src/index.ts"
