@@ -6,6 +6,7 @@ import { Aparece } from '@/componentes/Aparece';
 import { Avatar } from '@/componentes/Avatar';
 import { Bloque } from '@/componentes/Bloque';
 import { FilaDeViajeChofer } from '@/componentes/FilaDeViajeChofer';
+import { ResumenDelDiaChofer } from '@/componentes/ResumenDelDiaChofer';
 import { BuscarPasajeros } from '@/componentes/BuscarPasajeros';
 import { BotonAccion } from '@/componentes/BotonAccion';
 import { Icono } from '@/componentes/Icono';
@@ -26,6 +27,12 @@ import { useSesion } from '@/datos/useSesion';
 import { obtenerMuestra, useAhora } from '@/datos/useSalidas';
 import { useViajesEnVivo } from '@/datos/useTransmision';
 import { type MotivoCancelacion } from '@/datos/motivoCancelacion';
+import {
+  cobradoDeHoy,
+  pasajerosReservados,
+  proximoViaje,
+  viajesDeHoy,
+} from '@/datos/panelDelChofer';
 import { espacios, tamanosControl } from '@/tema/espacios';
 import { tipografia } from '@/tema/tipografia';
 import { useTema } from '@/tema/useTema';
@@ -96,6 +103,23 @@ export function ConductorInicio({
         : [],
     [ahora, choferId],
   );
+  const resumen = useMemo(() => {
+    const deHoy = viajesDeHoy(viajes, ahora);
+    const propios = cierres.filter((cierre) => cierre.choferId === choferId);
+    return {
+      cobrado: cobradoDeHoy(propios, ahora),
+      pasajeros: deHoy.reduce(
+        (suma, viaje) => suma + pasajerosReservados(viaje),
+        0,
+      ),
+      proximo: proximoViaje(
+        deHoy,
+        new Set(propios.map((cierre) => cierre.viajeId)),
+        ahora,
+      ),
+      viajes: deHoy.length,
+    };
+  }, [ahora, choferId, cierres, viajes]);
   const [retirando, establecerRetirando] = useState<string | null>(null);
   const [motivo, establecerMotivo] = useState<MotivoCancelacion | null>(null);
   const [falloBusqueda, establecerFalloBusqueda] = useState(false);
@@ -197,6 +221,16 @@ export function ConductorInicio({
       <Text style={[tipografia.cuerpo, { color: colores.tintaSuave }]}>
         {t('conductor.detalle')}
       </Text>
+
+      {resumen.viajes > 0 && (
+        <ResumenDelDiaChofer
+          alAbrirProximo={alAbrirViaje}
+          cobrado={resumen.cobrado}
+          pasajeros={resumen.pasajeros}
+          proximo={resumen.proximo}
+          viajes={resumen.viajes}
+        />
+      )}
 
       {alNuevoViaje && (
         <BotonAccion
