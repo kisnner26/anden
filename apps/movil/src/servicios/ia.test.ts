@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { crearIAGemini, motivoNoDisponible } from './ia';
+import { crearIAApple, crearIAGemini, motivoNoDisponible } from './ia';
 
 describe('motivoNoDisponible', () => {
   it('no hay motivo cuando está disponible', () => {
@@ -55,5 +55,13 @@ describe('motivos de no disponibilidad', () => {
     expect(
       motivoNoDisponible('sistema-antiguo', 'Apple Intelligence'),
     ).toContain('versión más nueva');
+  });
+});
+
+describe('motores de IA', () => {
+  it('el de Apple se llama Apple Intelligence', () => {
+    const ia = crearIAApple();
+    expect(ia.nombre).toBe('Apple Intelligence');
+    expect(ia.proveedor).toBe('apple');
   });
 });
