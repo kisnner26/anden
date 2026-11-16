@@ -10,6 +10,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Avatar } from '@/componentes/Avatar';
+import { AjusteClaudePuente } from '@/componentes/AjusteClaudePuente';
 import { Bloque } from '@/componentes/Bloque';
 import { Icono } from '@/componentes/Icono';
 import { Interruptor } from '@/componentes/Interruptor';
@@ -532,6 +533,8 @@ export function Ajustes({
           </Pressable>
         </>
       )}
+
+      <AjusteClaudePuente />
 
       <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
         {t('seguridad.titulo')}
