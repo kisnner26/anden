@@ -18,4 +18,14 @@ describe('FormaPaquete', () => {
     const pantalla = await render(<FormaPaquete tamano="grande" />);
     expect(pantalla.toJSON()).not.toBeNull();
   });
+
+  it('cada tamaño se dibuja distinto', async () => {
+    const a = JSON.stringify(
+      (await render(<FormaPaquete tamano="sobre" />)).toJSON(),
+    );
+    const b = JSON.stringify(
+      (await render(<FormaPaquete tamano="grande" />)).toJSON(),
+    );
+    expect(a).not.toBe(b);
+  });
 });
