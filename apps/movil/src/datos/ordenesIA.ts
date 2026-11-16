@@ -1,5 +1,6 @@
 import { digitosTelefonoNi } from '@anden/dominio';
 
+import { accionDeOrden, type AccionIA } from './accionesIA';
 import { mismoDia, sumarDias } from './dias';
 import type { GustosDeViaje } from './gustosDeViaje';
 import { mejorSalida } from './mejorSalida';
@@ -25,6 +26,7 @@ export interface CuandoPedido {
 }
 
 export type Orden =
+  | { accion: AccionIA; tipo: 'accion' }
   | { pantalla: PantallaAbrible; tipo: 'abrir' }
   | {
       cuando?: CuandoPedido;
@@ -166,6 +168,9 @@ export function interpretarOrden(
         : (clave as PantallaAbrible);
     return { pantalla, tipo: 'abrir' };
   }
+
+  const accion = accionDeOrden(limpio);
+  if (accion) return { accion, tipo: 'accion' };
 
   const destino = ciudadEn(
     normal.includes(' desde ')

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   KeyboardAvoidingView,
+  Linking,
   Platform,
   Pressable,
   ScrollView,
@@ -66,7 +67,16 @@ import {
 import { FICHAS } from '@/datos/fichasCiudad';
 import { mismoDia } from '@/datos/dias';
 import { formatoFechaCorta, formatoHoraCompleta } from '@/datos/formato';
+import type { AccionIA } from '@/datos/accionesIA';
+import {
+  enlaceDeViaje,
+  leerContacto,
+  mensajeDeViaje,
+  urlSms,
+} from '@/datos/contactoConfianza';
+import { armarDetalle } from '@/datos/detalle';
 import { gustosDeViaje } from '@/datos/gustosDeViaje';
+import { useRecordatorios } from '@/datos/useRecordatorios';
 import { useBoletos } from '@/datos/useBoletos';
 import { useConexion } from '@/datos/useConexion';
 import { useEncomiendas } from '@/datos/useEncomiendas';
@@ -77,7 +87,7 @@ import { sugerenciasDelMomento } from '@/datos/sugerenciasIA';
 import { useIA } from '@/datos/useIA';
 import { useMemoriaIA } from '@/datos/useMemoriaIA';
 import { useTurista } from '@/datos/useTurista';
-import { useSalidas } from '@/datos/useSalidas';
+import { obtenerMuestra, useSalidas } from '@/datos/useSalidas';
 import { useVoz } from '@/datos/useVoz';
 import { motivoNoDisponible } from '@/servicios/ia';
 import {
@@ -275,6 +285,51 @@ export function Asistente({
     }
   }
 
+  const recordatorios = useRecordatorios();
+
+  /** lo que el asistente hace por la persona con su próximo boleto: avisarle, compartir el viaje o abrir una pantalla */
+  async function ejecutarAccion(accion: AccionIA): Promise<string> {
+    if (accion.tipo === 'abrir') {
+      alAbrirPantalla?.(accion.pantalla);
+      return t(`ia.abriendo.${accion.pantalla}`);
+    }
+    if (!proximoBoleto) return t('accionesIA.sinBoleto');
+    const { boleto, resumen } = proximoBoleto;
+    if (accion.tipo === 'avisar') {
+      const salida = salidas.find((s) => s.viajeId === boleto.viajeId);
+      if (!salida) return t('accionesIA.fallo');
+      const resultado = await recordatorios.programar(salida, accion.minutos);
+      if (resultado === 'listo') {
+        return rellenar(t('accionesIA.avisoListo'), {
+          destino: resumen.destino,
+          minutos: accion.minutos,
+        });
+      }
+      if (resultado === 'ya-paso') return t('accionesIA.avisoYaPaso');
+      if (resultado === 'permiso-negado') return t('accionesIA.avisoPermiso');
+      return t('accionesIA.fallo');
+    }
+    const contacto = await leerContacto();
+    if (!contacto) return t('accionesIA.sinContacto');
+    const detalle = armarDetalle(obtenerMuestra(), boleto.viajeId, new Date());
+    const mensaje = mensajeDeViaje({
+      chofer: nombrePropio(resumen.choferNombre),
+      destino: resumen.destino,
+      enlace: enlaceDeViaje(boleto.viajeId),
+      llegada: detalle ? formatoHoraCompleta(detalle.llegada) : '',
+      placa: resumen.placa,
+      salida: formatoHoraCompleta(new Date(resumen.salida)),
+    });
+    try {
+      await Linking.openURL(urlSms(contacto, mensaje));
+    } catch {
+      return t('accionesIA.fallo');
+    }
+    return rellenar(t('accionesIA.compartirListo'), {
+      nombre: contacto.nombre,
+    });
+  }
+
   /** ejecuta lo que la persona pidió dentro de la app; devuelve lo que se le contesta, o nulo si no era una orden */
   async function ejecutarOrden(pedido: string): Promise<string | null> {
     if (pendiente?.tipo === 'telefono') {
@@ -294,6 +349,7 @@ export function Asistente({
     ];
     const orden = interpretarOrden(pedido, ciudades);
     if (!orden) return null;
+    if (orden.tipo === 'accion') return ejecutarAccion(orden.accion);
     if (orden.tipo === 'abrir') {
       if (!alAbrirPantalla) return null;
       alAbrirPantalla(orden.pantalla);
@@ -1050,6 +1106,34 @@ export function Asistente({
                         etiqueta={t('asistenteRico.boletosTitulo')}
                       />
                     </Aparece>
+                  ) : null}
+                  {esUltimo &&
+                  !intercambio.enCurso &&
+                  rica &&
+                  rica.acciones.length > 0 ? (
+                    <View style={estilos.sugerencias}>
+                      {rica.acciones.map((accion) => {
+                        const etiqueta =
+                          accion.tipo === 'abrir'
+                            ? t(`ia.abriendo.${accion.pantalla}`)
+                            : accion.tipo === 'avisar'
+                              ? rellenar(t('accionesIA.avisar'), {
+                                  minutos: accion.minutos,
+                                })
+                              : t('accionesIA.compartir');
+                        return (
+                          <Chip
+                            alCambiar={() =>
+                              void ejecutarAccion(accion).then((respuesta) =>
+                                responder(etiqueta, respuesta, false),
+                              )
+                            }
+                            etiqueta={etiqueta}
+                            key={JSON.stringify(accion)}
+                          />
+                        );
+                      })}
+                    </View>
                   ) : null}
                   {relacionadas.length > 0 && (
                     <View style={estilos.relacionadas}>
