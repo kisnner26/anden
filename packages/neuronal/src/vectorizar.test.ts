@@ -37,4 +37,10 @@ describe('vectorizar', () => {
       Array.from(vectorizar('mi boleto', 128)),
     );
   });
+
+  it('las tildes y las mayúsculas no cambian el vector', () => {
+    expect(Array.from(vectorizar('¿Cuánto cuesta?', 128))).toEqual(
+      Array.from(vectorizar('cuanto cuesta', 128)),
+    );
+  });
 });
