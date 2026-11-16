@@ -190,7 +190,15 @@
     "quiero un recordatorio de mi salida",
     "notificame cuando falte poco",
     "avisame una hora antes de mi viaje",
-    "pon un aviso para mi boleto"
+    "pon un aviso para mi boleto",
+    "recuerdame cuando falte media hora",
+    "avisame cuando sea hora de salir",
+    "ponme un recordatorio de mi boleto",
+    "quiero una notificacion antes del bus",
+    "alertame 15 minutos antes",
+    "avisame una hora antes de que salga",
+    "no quiero perder mi bus avisame",
+    "activar aviso de mi viaje"
   ],
   "compartir": [
     "comparte mi viaje",
