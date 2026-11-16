@@ -38,4 +38,12 @@ describe('entrenar', () => {
     entrenar(red, xor(), { epocas: 200, lote: 8, semilla: 2, tasa: 0.02 });
     expect(evaluar(red, xor()).precision).toBe(1);
   });
+
+  it('la pérdida baja de la primera a la última época', () => {
+    const red = crearRed(2, [8], 2, 3);
+    const historial = entrenar(red, dosGrupos(), { epocas: 40, semilla: 1 });
+    expect(historial[historial.length - 1]!.perdida).toBeLessThan(
+      historial[0]!.perdida,
+    );
+  });
 });
