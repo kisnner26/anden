@@ -10,4 +10,8 @@ describe('normalizar', () => {
   it('junta los espacios repetidos y recorta', () => {
     expect(normalizar('  bus   a    Boaco  ')).toBe('bus a boaco');
   });
+
+  it('cambia los signos por espacios', () => {
+    expect(normalizar('hola,mundo!')).toBe('hola mundo');
+  });
 });
