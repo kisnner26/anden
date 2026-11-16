@@ -14,6 +14,8 @@ export interface Modelo {
   }[];
   /** de cuándo es y con qué se entrenó; sirve para saber qué modelo se está usando */
   meta: {
+    /** con plantillas completas que la red nunca vio: la medida honesta de qué tan bien generaliza; nulo si no se midió */
+    aciertoReal?: number | null;
     ejemplos: number;
     entrenadoEn: string;
     precisionValidacion: number | null;
@@ -109,6 +111,8 @@ export function leerModelo(json: string): Modelo | null {
     dimension: m.dimension,
     etiquetas: m.etiquetas as string[],
     meta: {
+      aciertoReal:
+        typeof meta.aciertoReal === 'number' ? meta.aciertoReal : null,
       ejemplos: typeof meta.ejemplos === 'number' ? meta.ejemplos : 0,
       entrenadoEn: typeof meta.entrenadoEn === 'string' ? meta.entrenadoEn : '',
       precisionValidacion:
