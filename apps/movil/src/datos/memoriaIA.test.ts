@@ -94,6 +94,12 @@ describe('leerMemoria', () => {
     expect(memoria.preguntas).toEqual(['a']);
     expect(memoria.usos).toBe(0);
   });
+
+  it('ignora horas con una forma que no es de 24 valores', () => {
+    const memoria = leerMemoria(JSON.stringify({ horas: [1, 2, 3], usos: 2 }));
+    expect(memoria.horas).toEqual(MEMORIA_VACIA.horas);
+    expect(memoria.usos).toBe(2);
+  });
 });
 
 describe('claveMemoriaDe', () => {
