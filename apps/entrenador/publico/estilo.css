@@ -47,3 +47,5 @@ button:disabled { opacity: 0.4; cursor: default; }
 .etiqueta { font: 500 11px ui-monospace, monospace; color: var(--ambar); }
 .renglon button { background: transparent; border: 1px solid var(--linea); color: var(--suave); padding: 6px 12px; min-height: 30px; font-size: 12px; }
 .renglon .base { color: var(--suave); font-size: 11px; text-align: right; }
+.dos { display: grid; grid-template-columns: minmax(280px, 0.8fr) 1.2fr; gap: 28px; align-items: start; }
+@media (max-width: 900px) { .dos { grid-template-columns: 1fr; } }
