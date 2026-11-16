@@ -77,4 +77,14 @@ describe('iniciarSondeo', () => {
     jest.advanceTimersByTime(1000);
     expect(tarea).toHaveBeenCalledTimes(1);
   });
+
+  it('al parar deja de repetir y deja de escuchar el estado', () => {
+    const tarea = jest.fn();
+    const { f, remove } = fuente();
+    const parar = iniciarSondeo(tarea, 1000, f);
+    parar();
+    jest.advanceTimersByTime(5000);
+    expect(tarea).not.toHaveBeenCalled();
+    expect(remove).toHaveBeenCalledTimes(1);
+  });
 });
