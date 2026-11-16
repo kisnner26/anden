@@ -30,5 +30,5 @@ se validan antes de guardarse.
 ## Límites
 
 La precisión sobre frases de validación sale de un sorteo y se ve inflada porque las plantillas se repiten con cada
-ciudad. `pnpm --filter @anden/neuronal exec node scripts/entrenar-intenciones.ts` mide aparte con plantillas completas
+ciudad. `pnpm --filter @anden/neuronal entrenar` mide aparte con plantillas completas
 que la red no vio, que es la cifra honesta.
