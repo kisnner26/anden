@@ -16,6 +16,7 @@ import { useRecorrido } from '@/datos/useRecorrido';
 import { useSesion } from '@/datos/useSesion';
 import { useSonidos } from '@/datos/useSonidos';
 import { useTransmision, useViajesEnVivo } from '@/datos/useTransmision';
+import { trayectoDelViaje } from '@/datos/trayectoDelViaje';
 import { armarCierre } from '@/servicios/cierres';
 import { sincronizarViajes } from '@/datos/sincronizarViajes';
 import { marcarLlegada } from '@/servicios/supabase/viajesSupabase';
@@ -73,6 +74,8 @@ function VigiaDelViaje({ viajeId }: { viajeId: string }) {
       registro,
       viajeId,
       sesion.choferId,
+      new Date(),
+      trayectoDelViaje(viajeId),
     );
     detenerTransmision(viajeId);
     void cerrar(resumen).then(() => sonar('fin'));

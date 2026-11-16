@@ -65,6 +65,7 @@ import { useSesion } from '@/datos/useSesion';
 import { obtenerMuestra } from '@/datos/useSalidas';
 import { useSonidos } from '@/datos/useSonidos';
 import { useTransmision } from '@/datos/useTransmision';
+import { trayectoDelViaje } from '@/datos/trayectoDelViaje';
 import { armarCierre } from '@/servicios/cierres';
 import { resumenDeCobro } from '@/servicios/pagos';
 import { espacios, radios, tamanosControl } from '@/tema/espacios';
@@ -209,6 +210,8 @@ export function ConductorViaje({
     registro,
     viajeId,
     choferId,
+    new Date(),
+    trayectoDelViaje(viajeId),
   );
 
   function leerBoleto(texto: string): ResultadoDeLectura {
@@ -507,6 +510,7 @@ export function ConductorViaje({
             </BloqueNegro>
           </View>
         }
+        cabeceraDesplazable
         espacioFinal={espacios.cuarentaYOcho}
       >
         {!cierre && (
