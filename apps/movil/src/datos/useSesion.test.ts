@@ -17,4 +17,10 @@ describe('useSesion por defecto', () => {
       ok: false,
     });
   });
+
+  it('registrar responde que no hay conexión', async () => {
+    const { result } = await renderHook(() => useSesion());
+    const resultado = await result.current.registrar({} as never);
+    expect(resultado).toEqual({ error: 'conexion', ok: false });
+  });
 });
