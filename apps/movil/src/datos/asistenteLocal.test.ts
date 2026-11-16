@@ -55,4 +55,10 @@ describe('intencionLocal', () => {
   it('reconoce un saludo', () => {
     expect(intencionLocal('hola')?.etiqueta).toBe('saludo');
   });
+
+  it('reconoce una pregunta por el próximo bus', () => {
+    expect(intencionLocal('cuál es el próximo bus a Juigalpa')?.etiqueta).toBe(
+      'proximo_bus',
+    );
+  });
 });
