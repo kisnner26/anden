@@ -6,4 +6,8 @@ describe('sinTildes', () => {
   it('quita las tildes', () => {
     expect(sinTildes('León')).toBe('leon');
   });
+
+  it('pasa a minúsculas', () => {
+    expect(sinTildes('MANAGUA')).toBe('managua');
+  });
 });
