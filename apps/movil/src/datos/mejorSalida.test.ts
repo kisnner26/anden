@@ -33,4 +33,15 @@ describe('esTomable', () => {
     expect(esTomable(salida('b', 11), AHORA)).toBe(true);
   });
 
+  it('descarta venta cerrada, sin asientos y canceladas', () => {
+    expect(esTomable(salida('a', 12, { ventaAbierta: false }), AHORA)).toBe(
+      false,
+    );
+    expect(esTomable(salida('b', 12, { asientosLibres: 0 }), AHORA)).toBe(
+      false,
+    );
+    expect(esTomable(salida('c', 12, { estado: 'cancelado' }), AHORA)).toBe(
+      false,
+    );
+  });
 });
