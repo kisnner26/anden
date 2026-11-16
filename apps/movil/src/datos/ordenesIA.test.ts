@@ -200,6 +200,12 @@ describe('entenderCuando', () => {
     expect(entenderCuando('a las 4 pm', ahora)?.hora).toBe(16);
     expect(entenderCuando('a las 6 de la mañana', ahora)?.hora).toBe(6);
   });
+
+  it('no inventa un cuándo si el texto no dice nada', () => {
+    expect(
+      entenderCuando('un boleto a Boaco', new Date(2026, 10, 13, 10, 0)),
+    ).toBeNull();
+  });
 });
 
 describe('reservar con cuándo', () => {
