@@ -45,5 +45,12 @@ describe('gustosDeViaje', () => {
     expect(gustos.servicio).toBe('expreso');
   });
 
+  it('deja el servicio sin definir si hay empate', () => {
+    const gustos = gustosDeViaje([
+      boleto(6, 0, 'expreso'),
+      boleto(7, 0, 'ordinario'),
+    ]);
+    expect(gustos.servicio).toBeNull();
+  });
 
 });
