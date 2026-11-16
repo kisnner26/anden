@@ -25,4 +25,10 @@ describe('EsqueletoIA', () => {
       '"accessibilityElementsHidden":true',
     );
   });
+
+  it('dibuja tres líneas por defecto', async () => {
+    const pantalla = await render(<EsqueletoIA />);
+    const caja = pantalla.toJSON() as { children: unknown[] };
+    expect(caja.children).toHaveLength(3);
+  });
 });
