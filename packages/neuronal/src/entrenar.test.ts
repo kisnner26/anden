@@ -32,4 +32,10 @@ describe('entrenar', () => {
     entrenar(red, dosGrupos(), { epocas: 80, semilla: 1 });
     expect(evaluar(red, dosGrupos()).precision).toBeGreaterThan(0.95);
   });
+
+  it('aprende el XOR, que una sola capa no puede', () => {
+    const red = crearRed(2, [12], 2, 5);
+    entrenar(red, xor(), { epocas: 200, lote: 8, semilla: 2, tasa: 0.02 });
+    expect(evaluar(red, xor()).precision).toBe(1);
+  });
 });
