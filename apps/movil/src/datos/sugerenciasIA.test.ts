@@ -135,4 +135,17 @@ describe('sugerencias por momento', () => {
     }
     expect(vista).toBe(true);
   });
+
+  it('con el boleto lejos pregunta cuándo sale', () => {
+    let vista = false;
+    for (let semilla = 0; semilla < 30; semilla += 1) {
+      const lista = sugerenciasDelMomento({
+        ...BASE,
+        boletoProximo: { destino: 'Boaco', minutosParaSalir: 600 },
+        semilla,
+      });
+      if (lista.includes('¿Cuándo sale mi boleto?')) vista = true;
+    }
+    expect(vista).toBe(true);
+  });
 });
