@@ -6,6 +6,7 @@ import { Autobus } from '@/componentes/Autobus';
 import { conAlfa } from '@/tema/alfa';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import { useTema } from '@/tema/useTema';
+import { useAppActiva } from '@/tema/useAppActiva';
 
 export type TipoIlustracion = 'boletos' | 'error' | 'salidas';
 
@@ -19,8 +20,9 @@ function Flotar({ children }: { children: React.ReactNode }) {
   const reducido = useMovimientoReducido();
   const flote = useRef(new Animated.Value(0)).current;
 
+  const activa = useAppActiva();
   useEffect(() => {
-    if (reducido) return;
+    if (reducido || !activa) return;
     const bucle = Animated.loop(
       Animated.sequence([
         Animated.timing(flote, {
@@ -39,7 +41,7 @@ function Flotar({ children }: { children: React.ReactNode }) {
     );
     bucle.start();
     return () => bucle.stop();
-  }, [flote, reducido]);
+  }, [activa, flote, reducido]);
 
   return (
     <Animated.View
@@ -71,8 +73,9 @@ function Chispa({ demora, x, y }: { demora: number; x: number; y: number }) {
   const reducido = useMovimientoReducido();
   const brillo = useRef(new Animated.Value(reducido ? 0.7 : 0)).current;
 
+  const activa = useAppActiva();
   useEffect(() => {
-    if (reducido) return;
+    if (reducido || !activa) return;
     const bucle = Animated.loop(
       Animated.sequence([
         Animated.delay(demora),
@@ -91,7 +94,7 @@ function Chispa({ demora, x, y }: { demora: number; x: number; y: number }) {
     );
     bucle.start();
     return () => bucle.stop();
-  }, [brillo, demora, reducido]);
+  }, [activa, brillo, demora, reducido]);
 
   return (
     <Animated.View
@@ -236,8 +239,9 @@ function DibujoSalidas({ tamano }: { tamano: number }) {
   const reducido = useMovimientoReducido();
   const camino = useRef(new Animated.Value(0)).current;
 
+  const activa = useAppActiva();
   useEffect(() => {
-    if (reducido) return;
+    if (reducido || !activa) return;
     const bucle = Animated.loop(
       Animated.timing(camino, {
         duration: 1400,
@@ -248,7 +252,7 @@ function DibujoSalidas({ tamano }: { tamano: number }) {
     );
     bucle.start();
     return () => bucle.stop();
-  }, [camino, reducido]);
+  }, [activa, camino, reducido]);
 
   return (
     <View
