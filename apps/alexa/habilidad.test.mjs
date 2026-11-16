@@ -39,4 +39,9 @@ describe('ciudadDe', () => {
     expect(ciudadDe('BOACO')).toBe('Boaco');
     expect(ciudadDe(' juigalpa ')).toBe('Juigalpa');
   });
+
+  it('devuelve nulo si no es una ciudad conocida', () => {
+    expect(ciudadDe('León')).toBeNull();
+    expect(ciudadDe(undefined)).toBeNull();
+  });
 });
