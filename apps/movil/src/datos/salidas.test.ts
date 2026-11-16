@@ -68,6 +68,19 @@ describe('proximaSalida', () => {
   it('devuelve nulo si no queda ninguna pendiente', () => {
     expect(proximaSalida([])).toBeNull();
   });
+
+  it('cuenta el atraso para decidir cuál sale primero', () => {
+    const salidas = armarSalidas(crearMuestra(AHORA), AHORA).filter(
+      (s) => s.estado !== 'en-ruta' && s.estado !== 'llego',
+    );
+    const orden = [...salidas].sort(
+      (a, b) =>
+        a.salida.getTime() +
+        a.minutosAtraso * 60_000 -
+        (b.salida.getTime() + b.minutosAtraso * 60_000),
+    );
+    expect(proximaSalida(salidas)?.viajeId).toBe(orden[0]?.viajeId);
+  });
 });
 
 describe('salidasDeChofer', () => {
