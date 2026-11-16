@@ -79,4 +79,15 @@ describe('SelectorSalida', () => {
       pantalla.getByLabelText(/^9:00 a\. m\., /).props.accessibilityState,
     ).toEqual(expect.objectContaining({ selected: false }));
   });
+
+  it('dice agotado cuando no quedan asientos', async () => {
+    const pantalla = await render(
+      <SelectorSalida
+        alElegir={jest.fn()}
+        elegida={null}
+        salidas={[salida('a', 9, { asientosLibres: 0 })]}
+      />,
+    );
+    expect(pantalla.getByText(t('horarios.agotado'))).toBeTruthy();
+  });
 });
