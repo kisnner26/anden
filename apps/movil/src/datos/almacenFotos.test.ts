@@ -28,6 +28,12 @@ describe('nombreDeFoto', () => {
   it('no toma como extensión algo que está en medio del nombre', () => {
     expect(nombreDeFoto('file:///tmp/foto.png.bak', 1, 0.5)).toMatch(/\.jpg$/);
   });
+
+  it('arma el nombre con letras y números sin separadores', () => {
+    expect(nombreDeFoto('x.png', 1700000000000, 0.5)).toMatch(
+      /^[0-9a-z]+\.png$/,
+    );
+  });
 });
 
 describe('esReferenciaGuardada', () => {
