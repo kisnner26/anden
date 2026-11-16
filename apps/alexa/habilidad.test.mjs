@@ -166,4 +166,18 @@ describe('responder', () => {
     expect(r.response.shouldEndSession).toBe(false);
     expect(r.response.reprompt).toBeDefined();
   });
+
+  it('si la API falla lo dice con calma y cierra', async () => {
+    const r = await responder(
+      pedido('ProximoBusIntent', 'Boaco'),
+      async () => {
+        throw new Error('caída');
+      },
+      AHORA,
+    );
+    expect(r.response.outputSpeech.text).toContain(
+      'No pude consultar las salidas',
+    );
+    expect(r.response.shouldEndSession).toBe(true);
+  });
 });
