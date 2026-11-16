@@ -29,6 +29,12 @@ describe('gustosDeViaje', () => {
     expect(gustos.viajes).toBe(3);
   });
 
+  it('junta las horas cercanas a la medianoche', () => {
+    const gustos = gustosDeViaje([boleto(23, 50), boleto(0, 10)]);
+    expect(gustos.horaPreferida === 0 || gustos.horaPreferida === 1440).toBe(
+      true,
+    );
+  });
 
 
 
