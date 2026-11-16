@@ -16,4 +16,9 @@ describe('useRecordatorios por defecto', () => {
       'permiso-negado',
     );
   });
+
+  it('quitar no falla', async () => {
+    const { result } = await renderHook(() => useRecordatorios());
+    await expect(result.current.quitar('via_1')).resolves.toBeUndefined();
+  });
 });
