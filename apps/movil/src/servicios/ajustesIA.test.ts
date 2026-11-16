@@ -23,6 +23,11 @@ describe('IA activada', () => {
     await guardarIAActivada(false);
     expect(await leerIAActivada()).toBe(false);
   });
+
+  it('no cambia el modo turista', async () => {
+    await guardarIAActivada(true);
+    expect(await leerTurista()).toBe(false);
+  });
 });
 
 describe('modo turista', () => {
