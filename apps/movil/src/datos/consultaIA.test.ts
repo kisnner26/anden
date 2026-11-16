@@ -129,6 +129,33 @@ describe('entenderPregunta', () => {
   });
 });
 
+describe('recomendadasPorTrayecto', () => {
+  it('marca la que más conviene entre varias del mismo trayecto', () => {
+    const datos = armarDatosParaElModelo(
+      estado({
+        salidas: [
+          salida('via_cara', 0, 12, { tarifa: 90 }),
+          salida('via_barata', 0, 13, { tarifa: 46 }),
+        ],
+      }),
+      {},
+    );
+    const marcadas = datos.salidas.filter((s) =>
+      s.linea.includes('LA QUE MÁS CONVIENE'),
+    );
+    expect(marcadas.map((s) => s.id)).toEqual(['via_barata']);
+    expect(marcadas[0]?.linea).toContain('es la más barata');
+  });
+
+  it('no marca nada si el trayecto tiene una sola salida', () => {
+    const datos = armarDatosParaElModelo(
+      estado({ salidas: [salida('via_sola', 0, 12)] }),
+      {},
+    );
+    expect(datos.salidas[0]?.linea).not.toContain('LA QUE MÁS CONVIENE');
+  });
+});
+
 describe('hechosParaPregunta', () => {
   const todas = [
     salida('via_hoy', 0, 15),
