@@ -18,3 +18,12 @@ describe('indiceMayor', () => {
     expect(indiceMayor(new Float32Array([0.5, 0.5]))).toBe(0);
   });
 });
+
+describe('evaluar', () => {
+  it('sin ejemplos da cero', () => {
+    expect(evaluar(crearRed(2, [3], 2), [])).toEqual({
+      perdida: 0,
+      precision: 0,
+    });
+  });
+});
