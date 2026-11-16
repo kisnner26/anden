@@ -106,4 +106,15 @@ describe('mejorSalida', () => {
     expect(elegida?.salida.viajeId).toBe('ahora');
   });
 
+  it('se inclina por la hora y el servicio de siempre', () => {
+    const elegida = mejorSalida(
+      [salida('ordinaria', 11), salida('expresa', 15, { servicio: 'expreso' })],
+      {
+        ahora: AHORA,
+        gustos: { horaPreferida: 15 * 60, servicio: 'expreso', viajes: 5 },
+      },
+    );
+    expect(elegida?.salida.viajeId).toBe('expresa');
+    expect(elegida?.motivos).toContain('es a la hora que suele viajar');
+  });
 });
