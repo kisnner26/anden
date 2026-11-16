@@ -10,6 +10,7 @@ import { LineaEstadoEncomienda } from '@/componentes/LineaEstadoEncomienda';
 import {
   etapasCumplidas,
   MOTIVOS_RECHAZO,
+  urlLlamadaDestinatario,
   type Encomienda,
   type MotivoRechazo,
 } from '@/datos/encomiendas';
@@ -108,11 +109,10 @@ export function ConductorEncomiendas() {
         </Text>
         <Pressable
           accessibilityRole="link"
-          onPress={() =>
-            void Linking.openURL(
-              `tel:+505${encomienda.telefonoDestinatario}`,
-            ).catch(() => undefined)
-          }
+          onPress={() => {
+            const enlace = urlLlamadaDestinatario(encomienda);
+            if (enlace) void Linking.openURL(enlace).catch(() => undefined);
+          }}
           style={estilos.llamar}
         >
           <Text style={[tipografia.pequeno, { color: colores.ambarTexto }]}>
