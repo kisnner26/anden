@@ -157,4 +157,14 @@ describe('actividadDeHerramienta', () => {
     expect(actividadDeHerramienta('buscarSalidas')).toBe('Buscando salidas');
     expect(actividadDeHerramienta('otra')).toBe('Pensando');
   });
+
+  it('nombra el resto de las herramientas', () => {
+    expect(actividadDeHerramienta('salidaMasBarata')).toBe(
+      'Comparando tarifas',
+    );
+    expect(actividadDeHerramienta('misBoletos')).toBe('Revisando tus boletos');
+    expect(actividadDeHerramienta('fichaDeCiudad')).toBe(
+      'Consultando la ciudad',
+    );
+  });
 });
