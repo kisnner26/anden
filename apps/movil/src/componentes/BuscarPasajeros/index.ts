@@ -1,0 +1,1 @@
+export { BuscarPasajeros } from './BuscarPasajeros';
