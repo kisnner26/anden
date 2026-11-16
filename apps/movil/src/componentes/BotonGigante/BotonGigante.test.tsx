@@ -37,4 +37,15 @@ describe('BotonGigante', () => {
       pantalla.getByRole('button', { name: 'Boaco. 10:30 a. m.' }),
     ).toBeTruthy();
   });
+
+  it('usa la etiqueta accesible si se la dan', async () => {
+    const pantalla = await render(
+      <BotonGigante
+        alPresionar={jest.fn()}
+        etiqueta="Boaco"
+        etiquetaAccesible="Ir a Boaco"
+      />,
+    );
+    expect(pantalla.getByRole('button', { name: 'Ir a Boaco' })).toBeTruthy();
+  });
 });
