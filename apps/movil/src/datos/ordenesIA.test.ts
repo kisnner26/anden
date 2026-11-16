@@ -162,6 +162,12 @@ describe('entenderCuando', () => {
   it('sin nada de tiempo devuelve nulo', () => {
     expect(entenderCuando('un asiento a Boaco', AHORA)).toBeNull();
   });
+
+  it('entiende pasado mañana', () => {
+    const ahora = new Date(2026, 10, 13, 10, 0);
+    const r = entenderCuando('un boleto pasado mañana', ahora);
+    expect(r?.dia?.getDate()).toBe(15);
+  });
 });
 
 describe('reservar con cuándo', () => {
