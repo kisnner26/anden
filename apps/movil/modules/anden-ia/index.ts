@@ -26,9 +26,10 @@ interface ModuloAndenIA {
     datosJson: string,
     pregunta: string,
   ): Promise<string>;
+  /** la ruta del PNG, o "error:" y el motivo */
   crearPostal?(ciudad: string, descripcion: string): Promise<string>;
   disponibilidad(): Promise<DisponibilidadIA>;
-  estadoImagenes?(): Promise<'disponible' | 'no-disponible' | 'sistema-antiguo'>;
+  estadoImagenes?(): Promise<string>;
   olvidar?(conversacion: string): Promise<boolean>;
   precalentar?(conversacion: string, instrucciones: string): Promise<boolean>;
   responder(instrucciones: string, pregunta: string): Promise<string>;
@@ -57,25 +58,29 @@ export async function responderConElModelo(
 /** si el módulo instalado sabe crear imágenes (iOS con Image Playground) */
 export const sabeCrearImagenes = modulo?.crearPostal !== undefined;
 
-/** si este teléfono puede crear imágenes ahora mismo */
-export async function puedeCrearImagenes(): Promise<boolean> {
+/** "disponible" si este teléfono puede crear imágenes ahora mismo; si no, el motivo (no-compatible, no-lista, idioma-no-soportado, sistema-antiguo, sin-modulo, fallo) */
+export async function estadoDeImagenes(): Promise<string> {
+  if (!modulo?.estadoImagenes) return 'sin-modulo';
   try {
-    return (await modulo?.estadoImagenes?.()) === 'disponible';
+    return await modulo.estadoImagenes();
   } catch {
-    return false;
+    return 'fallo';
   }
 }
 
-/** una postal ilustrada de la ciudad, hecha en el teléfono; devuelve la ruta del archivo o nulo si no se pudo */
+/** una postal ilustrada de la ciudad, hecha en el teléfono: la ruta del archivo o el motivo por el que no se pudo */
 export async function crearPostalDeCiudad(
   ciudad: string,
   descripcion: string,
-): Promise<string | null> {
+): Promise<{ ruta: string } | { motivo: string }> {
+  if (!modulo?.crearPostal) return { motivo: 'sin-modulo' };
   try {
-    const ruta = await modulo?.crearPostal?.(ciudad, descripcion);
-    return ruta ? ruta : null;
+    const resultado = await modulo.crearPostal(ciudad, descripcion);
+    return resultado.startsWith('error:')
+      ? { motivo: resultado.slice('error:'.length) || 'fallo' }
+      : { ruta: resultado };
   } catch {
-    return null;
+    return { motivo: 'fallo' };
   }
 }
 
