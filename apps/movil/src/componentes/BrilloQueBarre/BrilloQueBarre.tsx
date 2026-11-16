@@ -6,6 +6,7 @@ import { conAlfa } from '@/tema/alfa';
 import { paletaPasaporte } from '@/tema/colores';
 import { movimiento } from '@/tema/movimiento';
 import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
+import { useAppActiva } from '@/tema/useAppActiva';
 
 export interface PropiedadesBrilloQueBarre {
   /** pausa antes de cada barrido, en milisegundos */
@@ -23,11 +24,12 @@ export function BrilloQueBarre({
   retardo = 0,
 }: PropiedadesBrilloQueBarre) {
   const reducido = useMovimientoReducido();
+  const activa = useAppActiva();
   const avance = useRef(new Animated.Value(0)).current;
   const [ancho, establecerAncho] = useState(0);
 
   useEffect(() => {
-    if (reducido || ancho === 0) return;
+    if (reducido || !activa || ancho === 0) return;
     const bucle = Animated.loop(
       Animated.sequence([
         Animated.delay(retardo),
@@ -46,7 +48,7 @@ export function BrilloQueBarre({
     );
     bucle.start();
     return () => bucle.stop();
-  }, [ancho, avance, pausa, reducido, retardo]);
+  }, [activa, ancho, avance, pausa, reducido, retardo]);
 
   if (reducido) return null;
   return (
