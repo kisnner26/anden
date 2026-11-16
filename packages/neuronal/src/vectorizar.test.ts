@@ -43,4 +43,13 @@ describe('vectorizar', () => {
       Array.from(vectorizar('cuanto cuesta', 128)),
     );
   });
+
+  it('una palabra mal escrita queda cerca de la correcta', () => {
+    const a = vectorizar('boaco', 512);
+    const b = vectorizar('boacoo', 512);
+    const c = vectorizar('encomienda', 512);
+    const punto = (x: Float32Array, y: Float32Array) =>
+      x.reduce((s, v, i) => s + v * y[i]!, 0);
+    expect(punto(a, b)).toBeGreaterThan(punto(a, c));
+  });
 });
