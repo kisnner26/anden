@@ -24,4 +24,8 @@ describe('palabras', () => {
   it('separa las palabras', () => {
     expect(palabras('Quiero ir a León')).toEqual(['quiero', 'ir', 'a', 'leon']);
   });
+
+  it('un texto vacío no tiene palabras', () => {
+    expect(palabras('   ')).toEqual([]);
+  });
 });
