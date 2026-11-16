@@ -22,4 +22,8 @@ describe('ciudadConocida', () => {
       'Managua',
     );
   });
+
+  it('distingue mayúsculas para no aceptar textos armados', () => {
+    expect(ciudadConocida('boaco', CIUDADES, 'Managua')).toBe('Managua');
+  });
 });
