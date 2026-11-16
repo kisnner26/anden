@@ -1,5 +1,5 @@
-// puente entre la app de Andén y Claude Code de esta Mac: node servidor.ts
-// la app manda la pregunta por la red local con un código de emparejamiento; el puente se la pasa a `claude -p`
+// puente entre el panel de la cooperativa y Claude Code de esta Mac: node servidor.ts
+// el panel manda la pregunta por la red local con un código de emparejamiento; el puente se la pasa a `claude -p`
 // (con tu suscripción, sin herramientas ni archivos) y devuelve el texto
 import { randomBytes } from 'node:crypto';
 import {
@@ -20,6 +20,7 @@ import { join } from 'node:path';
 import { preguntarAClaude, validarPedido } from './claude.ts';
 import {
   codigoDeCabecera,
+  cabecerasCors,
   codigoValido,
   crearLimite,
   esRedLocal,
@@ -54,6 +55,7 @@ let ocupado = false;
 
 function json(res: ServerResponse, codigo: number, cuerpo: unknown): void {
   res.writeHead(codigo, {
+    ...cabecerasCors(),
     'Cache-Control': 'no-store',
     'Content-Type': 'application/json; charset=utf-8',
   });
@@ -86,6 +88,11 @@ async function atender(
 ): Promise<void> {
   if (!esRedLocal(req.socket.remoteAddress))
     return json(res, 403, { error: 'solo desde la red local' });
+  // la consulta previa del navegador no trae el código: solo dice qué se permite
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204, cabecerasCors());
+    return void res.end();
+  }
   if (!codigoValido(codigoDeCabecera(req.headers.authorization), CODIGO))
     return json(res, 401, { error: 'código incorrecto' });
   if (!permitido())
@@ -130,7 +137,7 @@ createServer((req, res) => void atender(req, res)).listen(
     for (const d of direcciones)
       console.log(`Dirección: http://${d}:${PUERTO}`);
     console.log(
-      'En la app: Ajustes > Claude desde tu Mac. Solo responde a equipos de tu red local y con ese código.',
+      'En el panel de la cooperativa: Asistente > escribir la dirección y el código. Solo responde a equipos de tu red local y con ese código.',
     );
   },
 );
