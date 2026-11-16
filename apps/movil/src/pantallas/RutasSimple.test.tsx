@@ -30,4 +30,11 @@ describe('RutasSimple', () => {
     await fireEvent.press(pantalla.getByText('Juigalpa a Managua'));
     expect(alBuscar).toHaveBeenCalledWith('Managua');
   });
+
+  it('cada viaje dice cuántos kilómetros son', async () => {
+    const pantalla = await renderPantalla(
+      <RutasSimple alBuscar={jest.fn()} alSalir={jest.fn()} />,
+    );
+    expect(pantalla.getAllByText(/\d+ km/).length).toBe(4);
+  });
 });
