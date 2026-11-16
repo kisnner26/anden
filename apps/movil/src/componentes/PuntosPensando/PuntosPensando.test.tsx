@@ -25,4 +25,10 @@ describe('PuntosPensando', () => {
       '"accessibilityElementsHidden":true',
     );
   });
+
+  it('dibuja tres puntos', async () => {
+    const pantalla = await render(<PuntosPensando />);
+    const fila = pantalla.toJSON() as { children: unknown[] };
+    expect(fila.children).toHaveLength(3);
+  });
 });
