@@ -108,4 +108,11 @@ describe('FilaDeViajeChofer', () => {
     expect(pantalla.getByText(t('motivoCancelacion.pocos'))).toBeTruthy();
     expect(pantalla.getByText(t('motivoCancelacion.otro'))).toBeTruthy();
   });
+
+  it('elegir un motivo avisa cuál', async () => {
+    const alElegirMotivo = jest.fn();
+    const pantalla = await dibujar({ alElegirMotivo, pideMotivo: true });
+    await fireEvent.press(pantalla.getByText(t('motivoCancelacion.clima')));
+    expect(alElegirMotivo).toHaveBeenCalledWith('clima');
+  });
 });
