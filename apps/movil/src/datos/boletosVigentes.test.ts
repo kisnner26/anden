@@ -11,4 +11,14 @@ describe('boletosVigentes', () => {
     usado.boleto = { ...usado.boleto, estado: 'usado' };
     expect(boletosVigentes([usado, vigente])).toEqual([vigente]);
   });
+
+  it('pone adelante el que sale primero', () => {
+    const tarde = boletoDePrueba(new Date(2026, 10, 20, 18, 0), 1, 'AAAA1111');
+    const temprano = boletoDePrueba(
+      new Date(2026, 10, 20, 6, 0),
+      2,
+      'BBBB2222',
+    );
+    expect(boletosVigentes([tarde, temprano])).toEqual([temprano, tarde]);
+  });
 });
