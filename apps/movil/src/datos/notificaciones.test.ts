@@ -140,3 +140,16 @@ describe('cancelarRecordatorio', () => {
     expect(cancelScheduledNotificationAsync).toHaveBeenCalledWith('id-7');
   });
 });
+
+describe('avisos con la app abierta', () => {
+  it('muestra el aviso como banner sin sonido', async () => {
+    mostrarAvisosConLaAppAbierta();
+    const manejador = jest.mocked(setNotificationHandler).mock.calls[0]?.[0];
+    expect(await manejador?.handleNotification({} as never)).toEqual({
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+      shouldShowBanner: true,
+      shouldShowList: true,
+    });
+  });
+});
