@@ -90,6 +90,13 @@ describe('mejorSalida', () => {
     expect(elegida?.salida.viajeId).toBe('holgada');
   });
 
+  it('respeta lo pedido aunque haya una salida más cercana', () => {
+    const elegida = mejorSalida([salida('ahora', 11), salida('noche', 19)], {
+      ahora: AHORA,
+      cuando: { dia: null, franja: 'noche', hora: null },
+    });
+    expect(elegida?.salida.viajeId).toBe('noche');
+  });
 
 
 });
