@@ -79,13 +79,15 @@ export function RecorridoPasaporte({
       return;
     }
     if (!activo) return;
-    Animated.timing(trazo, {
+    const animacion = Animated.timing(trazo, {
       delay: retardo,
       duration: movimiento.trazoRecorrido,
       easing: Easing.inOut(Easing.cubic),
       toValue: 1,
       useNativeDriver: false,
-    }).start();
+    });
+    animacion.start();
+    return () => animacion.stop();
   }, [activo, reducido, retardo, trazo]);
 
   return (
