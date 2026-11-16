@@ -13,6 +13,7 @@ import { useMovimientoReducido } from '@/tema/useMovimientoReducido';
 import { useTema } from '@/tema/useTema';
 import { rellenar } from '@/textos/rellenar';
 import { t } from '@/textos/t';
+import { useAppActiva } from '@/tema/useAppActiva';
 
 const COLUMNA_HORA = 76;
 const NODO = 14;
@@ -21,10 +22,11 @@ const NODO = 14;
 function Nodo({ esProxima, salio }: { esProxima: boolean; salio: boolean }) {
   const { colores } = useTema();
   const reducido = useMovimientoReducido();
+  const activa = useAppActiva();
   const onda = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (reducido || !esProxima) return;
+    if (reducido || !activa || !esProxima) return;
     const bucle = Animated.loop(
       Animated.timing(onda, {
         duration: 1600,
@@ -34,7 +36,7 @@ function Nodo({ esProxima, salio }: { esProxima: boolean; salio: boolean }) {
     );
     bucle.start();
     return () => bucle.stop();
-  }, [esProxima, onda, reducido]);
+  }, [activa, esProxima, onda, reducido]);
 
   return (
     <View style={estilos.nodoCaja}>
