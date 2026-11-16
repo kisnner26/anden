@@ -192,6 +192,19 @@ describe('agruparHabituales', () => {
     ];
     expect(sinHabitual(lista, ['a', 'b']).map((h) => h.id)).toEqual(['c']);
   });
+
+  it('junta los días y ordena las horas del mismo trayecto', () => {
+    const miercoles: Habitual = {
+      ...HABITUAL,
+      dias: [3],
+      hora: '05:30',
+      id: 'hab_2',
+    };
+    const [grupo] = agruparHabituales([HABITUAL, miercoles]);
+    expect(grupo?.dias).toEqual([1, 3]);
+    expect(grupo?.horas).toEqual(['05:30', '06:00']);
+    expect(grupo?.miembros).toHaveLength(2);
+  });
 });
 
 describe('proximaDelGrupo', () => {
