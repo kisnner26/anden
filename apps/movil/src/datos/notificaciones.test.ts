@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import {
   SchedulableTriggerInputTypes,
   addNotificationResponseReceivedListener,
+  cancelScheduledNotificationAsync,
+  setNotificationHandler,
   setNotificationCategoryAsync,
   getPermissionsAsync,
   requestPermissionsAsync,
@@ -9,6 +11,7 @@ import {
 } from 'expo-notifications';
 
 import {
+  cancelarRecordatorio,
   mostrarAvisosConLaAppAbierta,
   leerPermiso,
   pedirPermiso,
@@ -128,5 +131,12 @@ describe('acciones del recordatorio', () => {
       .mock.calls[0]?.[0];
     alResponder?.({ actionIdentifier: 'ver-boleto' } as never);
     expect(scheduleNotificationAsync).not.toHaveBeenCalled();
+  });
+});
+
+describe('cancelarRecordatorio', () => {
+  it('cancela el aviso programado con su identificador', async () => {
+    await cancelarRecordatorio('id-7');
+    expect(cancelScheduledNotificationAsync).toHaveBeenCalledWith('id-7');
   });
 });
