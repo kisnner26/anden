@@ -152,4 +152,9 @@ describe('avisos con la app abierta', () => {
       shouldShowList: true,
     });
   });
+
+  it('registra las acciones del recordatorio al activarse', () => {
+    mostrarAvisosConLaAppAbierta();
+    expect(setNotificationCategoryAsync).toHaveBeenCalledTimes(1);
+  });
 });
