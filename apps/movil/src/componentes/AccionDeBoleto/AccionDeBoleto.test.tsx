@@ -17,4 +17,20 @@ describe('AccionDeBoleto', () => {
     await fireEvent.press(pantalla.getByRole('button', { name: 'Compartir' }));
     expect(alPresionar).toHaveBeenCalledTimes(1);
   });
+
+  it('el lector de pantalla lee la etiqueta accesible si la hay', async () => {
+    const pantalla = await render(
+      <AccionDeBoleto
+        alPresionar={jest.fn()}
+        etiqueta="Aviso"
+        etiquetaAccesible="Activar el aviso antes de la salida"
+        tipo="recordatorio"
+      />,
+    );
+    expect(
+      pantalla.getByRole('button', {
+        name: 'Activar el aviso antes de la salida',
+      }),
+    ).toBeTruthy();
+  });
 });
