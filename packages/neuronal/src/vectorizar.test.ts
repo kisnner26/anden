@@ -16,3 +16,9 @@ describe('hash', () => {
       expect(hash(t)).toBeGreaterThanOrEqual(0);
   });
 });
+
+describe('vectorizar', () => {
+  it('tiene el largo pedido', () => {
+    expect(vectorizar('bus a boaco', 128)).toHaveLength(128);
+  });
+});
