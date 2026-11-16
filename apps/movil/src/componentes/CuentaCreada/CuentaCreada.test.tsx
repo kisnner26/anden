@@ -78,4 +78,13 @@ describe('CuentaCreada', () => {
     });
     expect(alTerminar).not.toHaveBeenCalled();
   });
+
+  it('avisa que terminó pasados 2,2 segundos', async () => {
+    const alTerminar = jest.fn();
+    await render(<CuentaCreada alTerminar={alTerminar} nombre="Ana" />);
+    await act(async () => {
+      jest.advanceTimersByTime(2200);
+    });
+    expect(alTerminar).toHaveBeenCalledTimes(1);
+  });
 });
