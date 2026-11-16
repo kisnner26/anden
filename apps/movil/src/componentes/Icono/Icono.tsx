@@ -7,6 +7,7 @@ import { DibujoBoleto } from './dibujos/Boleto';
 import { DibujoCampana } from './dibujos/Campana';
 import { DibujoConfirmar } from './dibujos/Confirmar';
 import { DibujoEstrella } from './dibujos/Estrella';
+import { DibujoFiltro } from './dibujos/Filtro';
 import { DibujoLupa } from './dibujos/Lupa';
 import { DibujoMas } from './dibujos/Mas';
 import { DibujoPestanaBoletos } from './dibujos/PestanaBoletos';
@@ -27,6 +28,7 @@ const DIBUJOS = {
   campana: DibujoCampana,
   confirmar: DibujoConfirmar,
   estrella: DibujoEstrella,
+  filtro: DibujoFiltro,
   lupa: DibujoLupa,
   mas: DibujoMas,
   pestanaBoletos: DibujoPestanaBoletos,
@@ -42,6 +44,7 @@ const DIBUJOS = {
 
 /** glifos de un solo trazo: sin color propio se pintan con la tinta del tema, para que se vean en oscuro */
 const GLIFOS_DE_TINTA: readonly string[] = [
+  'filtro',
   'pestanaBoletos',
   'pestanaHorarios',
   'pestanaRutas',
