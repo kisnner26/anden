@@ -37,6 +37,7 @@ console.log(
 );
 
 const final = entrenarClasificador(frases, { epocas: 80, validacion: 0 });
+final.modelo.meta.aciertoReal = aciertos / aparte.length;
 mkdirSync(join(aqui, '..', 'src', 'modelos'), { recursive: true });
 writeFileSync(
   join(aqui, '..', 'src', 'modelos', 'intenciones.ts'),
