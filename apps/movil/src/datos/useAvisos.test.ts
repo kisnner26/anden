@@ -16,4 +16,9 @@ describe('useAvisos por defecto', () => {
     expect(result.current.activadas).toBe(false);
     expect(result.current.permiso).toBe('sin-preguntar');
   });
+
+  it('activar responde que no quedó activo', async () => {
+    const { result } = await renderHook(() => useAvisos());
+    expect(await result.current.activar()).toBe(false);
+  });
 });
