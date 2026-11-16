@@ -30,13 +30,15 @@ export function BarraDeNivel({ avance, retardo = 0 }: PropiedadesBarraDeNivel) {
       lleno.setValue(avance.progreso);
       return;
     }
-    Animated.timing(lleno, {
+    const animacion = Animated.timing(lleno, {
       delay: retardo,
       duration: movimiento.crecimientoBarra,
       easing: Easing.out(Easing.cubic),
       toValue: avance.progreso,
       useNativeDriver: false,
-    }).start();
+    });
+    animacion.start();
+    return () => animacion.stop();
   }, [avance.progreso, lleno, reducido, retardo]);
 
   const siguiente = avance.siguiente;
