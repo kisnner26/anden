@@ -19,4 +19,14 @@ describe('GaleriaLugares', () => {
     expect(pantalla.getAllByText('Boaco').length).toBe(lugares.length);
     expect(pantalla.getByText(lugares[0]!.titulo)).toBeTruthy();
   });
+
+  it('cada lugar se anuncia con su nombre y su descripción', async () => {
+    const lugares = lugaresDeCiudad('Boaco');
+    const pantalla = await render(<GaleriaLugares lugares={lugares} />);
+    for (const lugar of lugares) {
+      expect(
+        pantalla.getByLabelText(`${lugar.titulo}. ${lugar.descripcion}`),
+      ).toBeTruthy();
+    }
+  });
 });
