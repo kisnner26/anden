@@ -205,6 +205,16 @@ describe('agruparHabituales', () => {
     expect(grupo?.horas).toEqual(['05:30', '06:00']);
     expect(grupo?.miembros).toHaveLength(2);
   });
+
+  it('separa los trayectos con otro sentido', () => {
+    const vuelta: Habitual = {
+      ...HABITUAL,
+      destino: 'Boaco',
+      id: 'hab_v',
+      origen: 'Managua',
+    };
+    expect(agruparHabituales([HABITUAL, vuelta])).toHaveLength(2);
+  });
 });
 
 describe('proximaDelGrupo', () => {
