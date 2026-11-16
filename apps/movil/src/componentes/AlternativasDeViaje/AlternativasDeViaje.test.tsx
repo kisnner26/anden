@@ -38,4 +38,15 @@ describe('AlternativasDeViaje', () => {
     );
     expect(pantalla.getByText(t('alternativas.detalle'))).toBeTruthy();
   });
+
+  it('sin salidas lo dice', async () => {
+    const pantalla = await render(
+      <AlternativasDeViaje
+        alElegir={jest.fn()}
+        eligiendo={null}
+        salidas={[]}
+      />,
+    );
+    expect(pantalla.getByText(t('alternativas.ninguna'))).toBeTruthy();
+  });
 });
