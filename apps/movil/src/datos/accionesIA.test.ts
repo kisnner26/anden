@@ -17,3 +17,15 @@ describe('minutosValidos', () => {
     expect(minutosValidos('mucho')).toBe(30);
   });
 });
+
+describe('leerAcciones', () => {
+  it('deja las acciones conocidas con valores válidos', () => {
+    expect(
+      leerAcciones([{ minutos: 20, tipo: 'avisar' }, { tipo: 'compartir' }]),
+    ).toEqual([{ minutos: 15, tipo: 'avisar' }, { tipo: 'compartir' }]);
+  });
+
+
+
+
+});
