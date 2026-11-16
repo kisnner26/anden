@@ -87,3 +87,15 @@ describe('proximaSalida', () => {
     expect(proximaSalida([salida('pasada', 8)], AHORA)).toBeNull();
   });
 });
+
+describe('responder', () => {
+  it('al abrir la habilidad saluda y explica qué se puede preguntar', async () => {
+    const r = await responder(
+      { request: { type: 'LaunchRequest' } },
+      async () => [],
+      AHORA,
+    );
+    expect(r.response.outputSpeech.text).toContain('Hola, soy Andén');
+    expect(r.response.shouldEndSession).toBe(false);
+  });
+});
