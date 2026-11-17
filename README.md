@@ -66,3 +66,34 @@ Publicá tus viajes, escaneá el boleto de quien sube, compartí tu ubicación m
 - **Seguridad:** detección de choques con aviso a un contacto de confianza y llamada a emergencias.
 - **Conductor:** publicar y retirar viajes, pasajeros a bordo con escaneo, cierre con cobros, encomiendas y resumen del día.
 - **Extras:** pasaporte de viajes, Andén Plus, modo simple con botones grandes y app para Apple Watch.
+
+## Estructura
+
+| Carpeta | Qué es |
+|---|---|
+| `apps/movil` | La app (Expo SDK 58, React Native, TypeScript) |
+| `apps/reloj` | La app de Apple Watch |
+| `apps/cooperativa` | Panel web de la cooperativa |
+| `apps/entrenador` | Laboratorio de la red neuronal del asistente |
+| `apps/api` | La API |
+| `apps/puente-claude` | Puente para usar Claude Code desde el panel de la cooperativa |
+| `apps/alexa` | Habilidad de Alexa (en desarrollo, sin publicar) |
+| `packages/dominio` | Reglas de negocio: precios, asientos, boletos |
+| `packages/datos` | Contratos de datos compartidos |
+| `packages/neuronal` | La red neuronal del asistente |
+| `supabase` | Migraciones de la base de datos |
+| `docs` | Plan del producto, diseño, arquitectura y tesis |
+
+## Cómo correrlo
+
+```sh
+pnpm install
+pnpm verificar          # tipos, lint, formato y pruebas
+cd apps/movil && pnpm start
+```
+
+El plan del producto está en [`docs/plan`](docs/plan/01-producto.md) y el protocolo de trabajo en [`AGENTS.md`](AGENTS.md).
+
+## Estado
+
+En desarrollo. La app corre en iPhone y la mayor parte está probada con pruebas automáticas; el chat del viaje necesita las migraciones `0029` y `0030` de `supabase/migrations`.
