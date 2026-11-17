@@ -48,3 +48,12 @@ Publicá tus viajes, escaneá el boleto de quien sube, compartí tu ubicación m
     <td align="center"><img src="docs/media/capturas/conductor-05-ganancias.jpg" width="190" alt="Ganancias"><br><sub>Ganancias</sub></td>
   </tr>
 </table>
+
+## Paneles web
+
+- **Cooperativa** (`apps/cooperativa`): viajes, conductores, solicitudes, finanzas, alertas de seguridad y una sección para preguntarle a Claude Code sobre la operación.
+- **Red del asistente** (`apps/entrenador`): un laboratorio local para ver, entrenar y probar la red neuronal que contesta en el teléfono cuando no hay Apple Intelligence ni Gemini.
+
+<p align="center">
+  <img src="docs/media/paneles/entrenador-01-resumen.png" alt="Panel de la red neuronal del asistente" width="720">
+</p>
