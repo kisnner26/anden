@@ -1,5 +1,11 @@
 # Andén
 
-App móvil para iOS y Android: reservar asiento, comprar el boleto, ver horarios, rutas y choferes de los buses interurbanos e interlocales de Nicaragua.
+Reservá tu asiento, seguí tu bus en el mapa y hablá con tu chofer. App móvil para iOS y Android para los buses interlocales de Nicaragua: Managua, Boaco y Juigalpa.
 
-En desarrollo. El plan está en [`docs/plan`](docs/plan/01-producto.md) y el protocolo de trabajo en [`AGENTS.md`](AGENTS.md).
+<p align="center">
+  <a href="docs/media/teaser-anden.mp4">
+    <img src="docs/media/teaser-poster.jpg" alt="Teaser de Andén: ver el video" width="300">
+  </a>
+  <br>
+  <sub>Teaser de 30 s grabado en un iPhone. Tocá la imagen para verlo.</sub>
+</p>
