@@ -34,3 +34,17 @@ Preguntá por horarios y tarifas, reservá asiento y llevá tu boleto con QR. Cu
     <td align="center"><img src="docs/media/capturas/pasajero-13-encomienda.jpg" width="190" alt="Encomienda"><br><sub>Encomienda</sub></td>
   </tr>
 </table>
+
+## Para el conductor
+
+Publicá tus viajes, escaneá el boleto de quien sube, compartí tu ubicación mientras manejás y cerrá el viaje con lo cobrado.
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/media/capturas/conductor-01-inicio.jpg" width="190" alt="Inicio con el resumen del día"><br><sub>Inicio con el resumen del día</sub></td>
+    <td align="center"><img src="docs/media/capturas/conductor-02-buen-viaje.jpg" width="190" alt="Salida del viaje"><br><sub>Salida del viaje</sub></td>
+    <td align="center"><img src="docs/media/capturas/conductor-03-mapa-en-vivo.jpg" width="190" alt="Mapa en vivo"><br><sub>Mapa en vivo</sub></td>
+    <td align="center"><img src="docs/media/capturas/conductor-04-pasajeros-a-bordo.jpg" width="190" alt="Pasajeros a bordo"><br><sub>Pasajeros a bordo</sub></td>
+    <td align="center"><img src="docs/media/capturas/conductor-05-ganancias.jpg" width="190" alt="Ganancias"><br><sub>Ganancias</sub></td>
+  </tr>
+</table>
