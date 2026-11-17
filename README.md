@@ -57,3 +57,12 @@ Publicá tus viajes, escaneá el boleto de quien sube, compartí tu ubicación m
 <p align="center">
   <img src="docs/media/paneles/entrenador-01-resumen.png" alt="Panel de la red neuronal del asistente" width="720">
 </p>
+
+## Qué incluye
+
+- **Reservas:** horarios por terminal, elegir asiento, pago al abordar, boletos con QR, reserva en grupo y transferir un boleto.
+- **Viaje en curso:** mapa con el recorrido, hora estimada de llegada, la unidad y su placa, quién conduce, chat con el chofer (solo mientras el viaje va en camino), seguridad y calificación.
+- **Asistente:** usa la IA del teléfono y, si no hay, una red neuronal propia con 13 intenciones y un 84 % de acierto medido con plantillas que nunca vio.
+- **Seguridad:** detección de choques con aviso a un contacto de confianza y llamada a emergencias.
+- **Conductor:** publicar y retirar viajes, pasajeros a bordo con escaneo, cierre con cobros, encomiendas y resumen del día.
+- **Extras:** pasaporte de viajes, Andén Plus, modo simple con botones grandes y app para Apple Watch.
