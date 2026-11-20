@@ -1562,6 +1562,15 @@ export const textos = {
     pasarme: 'Pasarme a la salida de las {hora}, {dia}',
     titulo: 'Pasate a otra salida',
   },
+  boletoDePapel: {
+    titulo: 'Tu boleto de papel',
+    detalle: 'Igual que el que te da la cooperativa al subir.',
+    llamar: 'Para más información llamá a los números',
+    asiento: 'Asiento',
+    valor: 'Valor',
+    sale: 'Sale',
+    codigo: 'Código de abordaje',
+  },
   boleto: {
     compartirCorto: 'Compartir',
     recordatorioCorto: 'Recordar',
