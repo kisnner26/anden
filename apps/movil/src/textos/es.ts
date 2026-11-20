@@ -1448,6 +1448,12 @@ export const textos = {
     rutasTitulo: 'Adónde se puede ir',
     rutasViaje: '{origen} a {destino}',
   },
+  boletoClasico: {
+    detalle:
+      'Muestra tu boleto con el formato del boleto de papel de la cooperativa. Apagado, ves el boleto de Andén.',
+    seccion: 'Boleto',
+    titulo: 'Boleto clásico',
+  },
   modoSimple: {
     detalle:
       'Un inicio con botones muy grandes y pocas palabras, para quien usa poco el teléfono.',
