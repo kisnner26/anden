@@ -1570,7 +1570,6 @@ export const textos = {
   },
   boletoDePapel: {
     titulo: 'Tu boleto de papel',
-    detalle: 'Igual que el que te da la cooperativa al subir.',
     llamar: 'Para más información llamá a los números',
     asiento: 'Asiento',
     valor: 'Valor',

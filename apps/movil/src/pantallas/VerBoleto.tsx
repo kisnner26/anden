@@ -66,6 +66,7 @@ import {
   urlSms,
   type ContactoConfianza,
 } from '@/datos/contactoConfianza';
+import { useBoletoClasico } from '@/datos/boletoClasico';
 import { armarDetalle } from '@/datos/detalle';
 import { formatoHoraCompleta } from '@/datos/formato';
 import { nombreCompleto, nombrePropio } from '@/datos/perfil';
@@ -209,6 +210,7 @@ export function VerBoleto({
   const [pidiendoContacto, establecerPidiendoContacto] = useState(false);
 
   const { perfil } = usePerfil();
+  const boletoClasico = useBoletoClasico();
   const sonar = useSonidos();
   const progresoAmpliado = useRef(new Animated.Value(0)).current;
   const { plus } = useSuscripcion();
@@ -417,22 +419,16 @@ export function VerBoleto({
           </Text>
         )}
 
-        <TalonAmpliable habilitado={puedeOperar} progreso={progresoAmpliado}>
+        {boletoClasico.activo === true ? (
           <TalonRasgado rasgado={guardado.boleto.estado === 'usado'}>
-            <TalonBoleto guardado={guardado} />
-          </TalonRasgado>
-        </TalonAmpliable>
-
-        {guardado.boleto.estado !== 'cancelado' ? (
-          <View style={estilos.papel}>
-            <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
-              {t('boletoDePapel.titulo').toUpperCase()}
-            </Text>
-            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
-              {t('boletoDePapel.detalle')}
-            </Text>
             <BoletoDePapel guardado={guardado} />
-          </View>
+          </TalonRasgado>
+        ) : boletoClasico.activo === false ? (
+          <TalonAmpliable habilitado={puedeOperar} progreso={progresoAmpliado}>
+            <TalonRasgado rasgado={guardado.boleto.estado === 'usado'}>
+              <TalonBoleto guardado={guardado} />
+            </TalonRasgado>
+          </TalonAmpliable>
         ) : null}
 
         {puedeOperar && cielo ? (
@@ -873,7 +869,6 @@ export function VerBoleto({
 }
 
 const estilos = StyleSheet.create({
-  papel: { gap: espacios.ocho },
   raiz: { flex: 1 },
   cancelado: { gap: 4, padding: espacios.dieciseis },
   cambiarContacto: { textAlign: 'center', textDecorationLine: 'underline' },

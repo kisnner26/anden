@@ -70,35 +70,43 @@ describe('VerBoleto', () => {
     const pantalla = await dibujar();
     expect(await pantalla.findByTestId('talon-boleto')).toBeTruthy();
     expect(pantalla.getByText('K7RM 4QX9')).toBeTruthy();
-    // el QR está en el talón y otra vez en el boleto de papel
-    expect(pantalla.getAllByLabelText('QR K7RM4QX9')).toHaveLength(2);
+    expect(pantalla.getByLabelText('QR K7RM4QX9')).toBeTruthy();
   });
 
   it('recuerda cuánto pagar al abordar y llevar el monto exacto', async () => {
     const pantalla = await dibujar();
     expect(await pantalla.findByText('Pagás al abordar')).toBeTruthy();
-    // el monto aparece en el talón, en el pago al abordar y en el valor del boleto de papel
-    expect(pantalla.getAllByText('C$ 46')).toHaveLength(3);
+    expect(pantalla.getAllByText('C$ 46')).toHaveLength(2);
     expect(pantalla.getByText('Llevá el monto exacto.')).toBeTruthy();
   });
 
-  it('muestra debajo el boleto de papel de la cooperativa', async () => {
+  it('por defecto muestra solo el boleto de Andén, sin el de papel', async () => {
     const pantalla = await dibujar();
-    expect(await pantalla.findByTestId('boleto-de-papel')).toBeTruthy();
-    expect(pantalla.getByText('TU BOLETO DE PAPEL')).toBeTruthy();
+    expect(await pantalla.findByTestId('talon-boleto')).toBeTruthy();
+    expect(pantalla.queryByTestId('boleto-de-papel')).toBeNull();
   });
 
-  it('un boleto cancelado no muestra el boleto de papel', async () => {
-    const base = boletoDePrueba(new Date(Date.now() + 60 * 60_000));
-    await AsyncStorage.setItem(
-      CLAVE_BOLETOS,
-      JSON.stringify([
-        { ...base, boleto: { ...base.boleto, estado: 'cancelado' } },
-      ]),
-    );
-    const pantalla = await dibujar();
-    await pantalla.findByText(/Boleto cancelado|Cancelado|cancelad/i);
-    expect(pantalla.queryByTestId('boleto-de-papel')).toBeNull();
+  describe('con el boleto clásico encendido', () => {
+    beforeEach(async () => {
+      await AsyncStorage.setItem('anden.boletoClasico', '1');
+    });
+
+    it('muestra el boleto de papel de la cooperativa', async () => {
+      const pantalla = await dibujar();
+      expect(await pantalla.findByTestId('boleto-de-papel')).toBeTruthy();
+    });
+
+    it('no muestra a la vez el boleto de Andén', async () => {
+      const pantalla = await dibujar();
+      await pantalla.findByTestId('boleto-de-papel');
+      expect(pantalla.queryByTestId('talon-boleto')).toBeNull();
+    });
+
+    it('el código para abordar sale una sola vez', async () => {
+      const pantalla = await dibujar();
+      await pantalla.findByTestId('boleto-de-papel');
+      expect(pantalla.getAllByLabelText('QR K7RM4QX9')).toHaveLength(1);
+    });
   });
 
   it('abre el perfil del chofer', async () => {
