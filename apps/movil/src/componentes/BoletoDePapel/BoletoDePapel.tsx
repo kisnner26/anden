@@ -189,7 +189,7 @@ export function BoletoDePapel({ guardado }: PropiedadesBoletoDePapel) {
             { color: colores.tintaPapel },
           ]}
         >
-          {`* ${contacto.cierre} *`}
+          {contacto.cierre}
         </Text>
       </View>
     </View>

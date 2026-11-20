@@ -58,7 +58,7 @@ describe('BoletoDePapel', () => {
     expect(
       pantalla.getByText('SE HACEN VIAJES DE TURISMO DENTRO Y FUERA DEL PAÍS'),
     ).toBeTruthy();
-    expect(pantalla.getByText('* Bendición de Dios *')).toBeTruthy();
+    expect(pantalla.getByText('Bendición de Dios')).toBeTruthy();
   });
 
   it('se anuncia completo a los lectores de pantalla', async () => {
