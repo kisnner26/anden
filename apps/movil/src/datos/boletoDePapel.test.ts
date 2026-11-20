@@ -1,6 +1,10 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { rotuloDelServicio, trayectoImpreso } from './boletoDePapel';
+import {
+  contactoDeCooperativa,
+  rotuloDelServicio,
+  trayectoImpreso,
+} from './boletoDePapel';
 
 describe('rotuloDelServicio', () => {
   it('el expreso se rotula como expreso interlocal', () => {
@@ -23,5 +27,26 @@ describe('trayectoImpreso', () => {
 
   it('recorta los espacios de los extremos', () => {
     expect(trayectoImpreso(' Managua ', ' Juigalpa ')).toBe('MANAGUA–JUIGALPA');
+  });
+});
+
+describe('contactoDeCooperativa', () => {
+  it('trae un teléfono de cada operador', () => {
+    const operadores = contactoDeCooperativa(
+      'Cooperativa de muestra',
+    ).telefonos.map((telefono) => telefono.operador);
+    expect(operadores).toEqual(['Claro', 'Tigo']);
+  });
+
+  it('los teléfonos tienen formato de ocho dígitos con guion', () => {
+    for (const { numero } of contactoDeCooperativa('x').telefonos) {
+      expect(numero).toMatch(/^\d{4}-\d{4}$/);
+    }
+  });
+
+  it('trae leyendas y un cierre', () => {
+    const contacto = contactoDeCooperativa('x');
+    expect(contacto.leyendas.length).toBeGreaterThan(0);
+    expect(contacto.cierre).not.toBe('');
   });
 });
