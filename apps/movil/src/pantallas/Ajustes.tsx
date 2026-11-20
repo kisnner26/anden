@@ -16,6 +16,7 @@ import { Interruptor } from '@/componentes/Interruptor';
 import { actividadesDisponibles } from '../../modules/anden-actividad';
 import { usePreferenciaActividad } from '@/datos/preferenciaActividad';
 import { useInicioAutomatico } from '@/datos/inicioAutomatico';
+import { useBoletoClasico } from '@/datos/boletoClasico';
 import { useModoSimple } from '@/datos/modoSimple';
 import { MascotaRumbo } from '@/componentes/MascotaRumbo';
 import { useMascota } from '@/datos/useMascota';
@@ -123,6 +124,7 @@ export function Ajustes({
   const inicioAutomatico = useInicioAutomatico();
   const preferenciaActividad = usePreferenciaActividad();
   const modoSimple = useModoSimple();
+  const boletoClasico = useBoletoClasico();
   const [actividadSoportada, establecerActividadSoportada] = useState(false);
   useEffect(() => {
     let vigente = true;
@@ -421,6 +423,26 @@ export function Ajustes({
           alCambiar={(encender) => void inicioAutomatico.cambiar(encender)}
           deshabilitado={inicioAutomatico.activo === null}
           etiqueta={t('inicioAutomatico.titulo')}
+        />
+      </Bloque>
+
+      <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+        {t('boletoClasico.seccion')}
+      </Text>
+      <Bloque estiloContenido={estilos.filaOpcion}>
+        <View style={estilos.texto}>
+          <Text style={[tipografia.subtitulo, { color: colores.tinta }]}>
+            {t('boletoClasico.titulo')}
+          </Text>
+          <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+            {t('boletoClasico.detalle')}
+          </Text>
+        </View>
+        <Interruptor
+          activo={boletoClasico.activo === true}
+          alCambiar={(encender) => void boletoClasico.cambiar(encender)}
+          deshabilitado={boletoClasico.activo === null}
+          etiqueta={t('boletoClasico.titulo')}
         />
       </Bloque>
 
