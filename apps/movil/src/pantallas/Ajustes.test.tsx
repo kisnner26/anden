@@ -303,4 +303,41 @@ describe('Ajustes', () => {
       expect(await AsyncStorage.getItem('anden.inicioAutomatico')).toBe('1'),
     );
   });
+
+  it('ofrece el boleto clásico apagado por defecto', async () => {
+    const pantalla = await renderPantalla(
+      <ProveedorSesion>
+        <Ajustes alVolver={() => undefined} />
+      </ProveedorSesion>,
+    );
+    const interruptor = await pantalla.findByRole('switch', {
+      name: 'Boleto clásico',
+    });
+    await waitFor(() =>
+      expect(interruptor.props.accessibilityState).toMatchObject({
+        checked: false,
+        disabled: false,
+      }),
+    );
+  });
+
+  it('permite encender el boleto clásico y lo recuerda', async () => {
+    const pantalla = await renderPantalla(
+      <ProveedorSesion>
+        <Ajustes alVolver={() => undefined} />
+      </ProveedorSesion>,
+    );
+    const interruptor = await pantalla.findByRole('switch', {
+      name: 'Boleto clásico',
+    });
+    await waitFor(() =>
+      expect(interruptor.props.accessibilityState).toMatchObject({
+        disabled: false,
+      }),
+    );
+    await fireEvent.press(interruptor);
+    await waitFor(async () =>
+      expect(await AsyncStorage.getItem('anden.boletoClasico')).toBe('1'),
+    );
+  });
 });
