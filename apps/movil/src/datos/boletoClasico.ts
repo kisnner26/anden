@@ -10,3 +10,11 @@ export async function leerBoletoClasico(): Promise<boolean> {
     return false;
   }
 }
+
+const oyentes = new Set<(activo: boolean) => void>();
+
+/** guarda la elección y avisa al instante a las pantallas que la están mostrando */
+export async function guardarBoletoClasico(activo: boolean): Promise<void> {
+  await AsyncStorage.setItem(CLAVE_BOLETO_CLASICO, activo ? '1' : '0');
+  for (const oyente of oyentes) oyente(activo);
+}
