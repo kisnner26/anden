@@ -20,6 +20,7 @@ import { PuntoDeEncuentro } from '@/componentes/PuntoDeEncuentro';
 import { CalificarViaje } from '@/componentes/CalificarViaje';
 import { OverlayBoleto, TalonAmpliable } from '@/componentes/TalonAmpliable';
 import { TalonBoleto } from '@/componentes/TalonBoleto';
+import { BoletoDePapel } from '@/componentes/BoletoDePapel';
 import { TalonRasgado } from '@/componentes/TalonRasgado';
 import { estadoVisibleBoleto } from '@/datos/estadoBoleto';
 import { faseDeActividad } from '@/datos/faseDelViaje';
@@ -421,6 +422,18 @@ export function VerBoleto({
             <TalonBoleto guardado={guardado} />
           </TalonRasgado>
         </TalonAmpliable>
+
+        {guardado.boleto.estado !== 'cancelado' ? (
+          <View style={estilos.papel}>
+            <Text style={[tipografia.etiqueta, { color: colores.ambarTexto }]}>
+              {t('boletoDePapel.titulo').toUpperCase()}
+            </Text>
+            <Text style={[tipografia.pequeno, { color: colores.tintaSuave }]}>
+              {t('boletoDePapel.detalle')}
+            </Text>
+            <BoletoDePapel guardado={guardado} />
+          </View>
+        ) : null}
 
         {puedeOperar && cielo ? (
           <PlanDelViaje
@@ -860,6 +873,7 @@ export function VerBoleto({
 }
 
 const estilos = StyleSheet.create({
+  papel: { gap: espacios.ocho },
   raiz: { flex: 1 },
   cancelado: { gap: 4, padding: espacios.dieciseis },
   cambiarContacto: { textAlign: 'center', textDecorationLine: 'underline' },
